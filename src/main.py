@@ -1,6 +1,6 @@
 import argparse
 import json
-from functools import lru_cache
+from functools import cache
 from pathlib import Path
 
 import polars as pl
@@ -41,7 +41,7 @@ def process_codon_table_from_file(organism_name: str) -> pl.DataFrame:
     return processed_df
 
 
-@lru_cache
+@cache
 def get_available_organism_list():
     return [file.name.replace(".txt", "") for file in TABLE_BASE_PATH.iterdir()]
 
