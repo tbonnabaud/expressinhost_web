@@ -1,11 +1,12 @@
 import argparse
 import json
+from functools import lru_cache
 from pathlib import Path
 
 import polars as pl
 
 from .codon_tables import process_raw_codon_table
-from .constantes import ORGANISM_LIST, TABLE_HEADERS
+from .constantes import TABLE_HEADERS
 from .postprocessing import clear_output_sequences, compare_sequences
 from .preprocessing import align_nucleotide_sequences, clear_nucleotide_sequences
 from .simulations import (
@@ -21,11 +22,12 @@ from .utils import (
     write_text_to_file,
 )
 
+TABLE_BASE_PATH = Path("codon_tables/")
+
 
 def process_codon_table_from_file(organism_name: str) -> pl.DataFrame:
-    table_base_path = Path("codon_tables/")
     table_df = pl.read_csv(
-        table_base_path / f"{organism_name}.txt",
+        TABLE_BASE_PATH / f"{organism_name}.txt",
         has_header=False,
         separator="\t",
         new_columns=TABLE_HEADERS,
@@ -39,8 +41,13 @@ def process_codon_table_from_file(organism_name: str) -> pl.DataFrame:
     return processed_df
 
 
+@lru_cache
+def get_available_organism_list():
+    return [file.name.replace(".txt", "") for file in TABLE_BASE_PATH.iterdir()]
+
+
 def find_organism_from_nucleotide_name(name: str) -> str:
-    for organism in ORGANISM_LIST:
+    for organism in get_available_organism_list():
         if organism.lower() in name.lower():
             return organism
 

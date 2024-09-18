@@ -25,22 +25,6 @@ AA_LIST = [
     "Val",
 ]
 
-ORGANISM_LIST = [
-    "Arabidopsis_thaliana",
-    "Bacillus_subtilis",
-    "Caenorhabditis_elegans",
-    "Danio_rerio",
-    "Drosophila_melanogaster",
-    "Escherichia_coli",
-    "Gallus_gallus",
-    "Homo_sapiens",
-    "Komagataella_pastoris",
-    "Methanocaldococcus_jannaschii",
-    "Saccharomyces_cerevisiae",
-    "Staphylococcus_aureus",
-    "Xenopus_laevis",
-]
-
 TABLE_HEADERS = [
     "AA",
     "tRNA",
