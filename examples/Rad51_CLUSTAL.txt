@@ -1,0 +1,109 @@
+CLUSTAL
+
+Staphylococcus_aureus_recA             ------------------------------------------------------------	0
+Methanocaldococcus_jannaschii_DSM      --------------MITFIYFFG----NIIYYLPIYSYINNY------------------	24
+Caenorhabditis_elegans_Rad51           MGQSWGYEGIAKRSLCTHKWLYNLNLHSINLFLPIESKMSAQASRQKKS----------D	50
+Drosophila_melanogaster_Rad51          ------------------------------------------------------------	0
+Saccharomyces_cerevisiae_Rad51         ------MSQVQEQHISESQLQYGNG--SLMSTVPADLSQSVVDGNGNGSSEDIEATNGSG	52
+Arabidopsis_thaliana_Rad51             ------------------------------------------------------------	0
+Danio_rerio_Rad51                      ------------------------------------------------------------	0
+Xenopus_laevis_Rad51                   ------------------------------------------------------------	0
+Homo_sapiens_Rad51                     ------------------------------------------------------------	0
+Gallus_gallus_Rad51                    ------------------------------------------------------------	0
+                                                                                                   
+
+Staphylococcus_aureus_recA             ------------------------------------------------------------	0
+Methanocaldococcus_jannaschii_DSM      ---KF----M--------------LMVIIMDDLTQLPGVGPTTAEKLKEAGYTDFMKIAT	63
+Caenorhabditis_elegans_Rad51           QEQRAADQALLNAAIE--DNAMEQDENFTVIDKLESSGISSGDISKLKEAGYYTYESLAF	108
+Drosophila_melanogaster_Rad51          -----MEKLT---NVQAQ-QEEEEEEGPLSVTKLIGGSITAKDIKLLQQASLHTVESVAN	51
+Saccharomyces_cerevisiae_Rad51         DGGGLQEQAEAQGEMEDEAYDEAALGSFVPIEKLQVNGITMADVKKLRESGLHTAEAVAY	112
+Arabidopsis_thaliana_Rad51             --MTTMEQRRNQNAVQQQDDEETQH-GPFPVEQLQAAGIASVDVKKLRDAGLCTVEGVAY	57
+Danio_rerio_Rad51                      --MAM--RNASRVEVEAEVEEEENF-GPQPVSRLEQSGISSSDIKKLEDGGFHTVEAVAY	55
+Xenopus_laevis_Rad51                   --MAM--QAHYEA----EATEEEHF-GPQAISRLEQCGINANDVKKLEEAGFHTVEAVAY	51
+Homo_sapiens_Rad51                     --MAM--QMQLEA-NADTSVEEESF-GPQPISRLEQCGINANDVKKLEEAGFHTVEAVAY	54
+Gallus_gallus_Rad51                    --MAM--QVQFEA-STDTSAEEESF-GPEPISRLEQCGINANDVKKLEEAGYHTVESVAH	54
+                                                                                                   
+
+Staphylococcus_aureus_recA             --------MDNDRQKALDTVIK----NMEKSFGKGAVMKLGDNIGRRVSTTSTGSVTLDN	48
+Methanocaldococcus_jannaschii_DSM      ASIGELTEIDGISEKAAARIIEAARELCNLGFKSGTEVL---SQRKNIWKLSTGSKNLDE	120
+Caenorhabditis_elegans_Rad51           TTRRELRNVKGISDQKAEKIMKEAMKFVQMGFTTGAEVH---VKRSQLVQIRTGSASLDR	165
+Drosophila_melanogaster_Rad51          ATKKQLMAIPGLGGGKVEQIITEANKLVPLGFLSARTFY---QMRADVVQLSTGSKELDK	108
+Saccharomyces_cerevisiae_Rad51         APRKDLLEIKGISEAKADKLLNEAARLVPMGFVTAADFH---MRRSELICLTTGSKNLDT	169
+Arabidopsis_thaliana_Rad51             TPRKDLLQIKGISDAKVDKIVEAASKLVPLGFTSASQLH---AQRQEIIQITSGSRELDK	114
+Danio_rerio_Rad51                      APKKELLNIKGISEAKADKILTEAAKMVPMGFTTATEFH---QRRAEIIQISTGSKELDK	112
+Xenopus_laevis_Rad51                   APKKELLNIKGISEAKAEKILAEAAKLVPMGFTTATEFH---QRRSEIIQISTGSKELDK	108
+Homo_sapiens_Rad51                     APKKELINIKGISEAKADKILAEAAKLVPMGFTTATEFH---QRRSEIIQITTGSKELDK	111
+Gallus_gallus_Rad51                    APKKELLNIKGISEAKADKILAEAAKLVPMGFTTATEFH---QRRSEIIQITTGSKELDK	111
+                                               : .        ::         .* ..  .         :    :**  ** 
+
+Staphylococcus_aureus_recA             ALGVGGYPKGRIIEIYGPESSGKTTVALHAIAEVQ---------------SNGGVAAFID	93
+Methanocaldococcus_jannaschii_DSM      ILG-GGLESQSVTEFAGMFGSGKTQIAHQACVNLQCPERIVADDAIKDEILNEPKAVYID	179
+Caenorhabditis_elegans_Rad51           LLG-GGIETGSITEVYGEYRTGKTQLCHSLAVLCQLPIDMG---------GGEGKCMYID	215
+Drosophila_melanogaster_Rad51          LLG-GGIETGSITEIFGEFRCGKTQLCHTLAVTCQLPISQK---------GGEGKCMYID	158
+Saccharomyces_cerevisiae_Rad51         LLG-GGVETGSITELFGEFRTGKSQLCHTLAVTCQIPLDIG---------GGEGKCLYID	219
+Arabidopsis_thaliana_Rad51             VLE-GGIETGSITELYGEFRSGKTQLCHTLCVTCQLPMDQG---------GGEGKAMYID	164
+Danio_rerio_Rad51                      LLQ-GGIETGSITEMFGEFRTGKTQLCHTLAVTCQLPIDQG---------GGEGKAMYID	162
+Xenopus_laevis_Rad51                   LLQ-GGVETGSITEMFGEFRTGKTQLCHTLAVTCQLPIDRG---------GGEGKAMYID	158
+Homo_sapiens_Rad51                     LLQ-GGIETGSITEMFGEFRTGKTQICHTLAVTCQLPIDRG---------GGEGKAMYID	161
+Gallus_gallus_Rad51                    LLQ-GGIETGSITELFGEFRTGKTQLCHTLAVTCQLPIDRG---------GGEGKAMYID	161
+                                        *  **  .  : *. *    **: :.    .  *                .   . :**
+
+Staphylococcus_aureus_recA             AEHALDPEYAQA----LGVDI----DNLYLSQ---PDHGEQGLEIAEAFVRS-GAVDIVV	141
+Methanocaldococcus_jannaschii_DSM      TEGTFRPERIVQMAEALGLDGNEVLNNIFVARAYNSDMQMLYAENVENLIREGHNIKLVI	239
+Caenorhabditis_elegans_Rad51           TNATFRPERIIAIAQRYNMDSAHVLENIAVARAYNSEHLMALIIRAGAMMSE-SRYAVVI	274
+Drosophila_melanogaster_Rad51          TENTFRPERLAAIAQRYKLNESEVLDNVAFTRAHNSDQQTKLIQMAAGMLFE-SRYALLI	217
+Saccharomyces_cerevisiae_Rad51         TEGTFRPVRLVSIAQRFGLDPDDALNNVAYARAYNADHQLRLLDAAAQMMSE-SRFSLIV	278
+Arabidopsis_thaliana_Rad51             AEGTFRPQRLLQIADRFGLNGADVLENVAYARAYNTDHQSRLLLEAASMMIE-TRFALLI	223
+Danio_rerio_Rad51                      TEGTFRPERLLAVAERYGLVGSDVLDNVAYARAFNTDHQTQLLYQASAMMTE-SRYALLI	221
+Xenopus_laevis_Rad51                   TEGTFRPERLLAVAERYGLSGSDVLDNVAYARAFNTDHQTQLLYQASAMMAE-SRYALLI	217
+Homo_sapiens_Rad51                     TEGTFRPERLLAVAERYGLSGSDVLDNVAYARAFNTDHQTQLLYQASAMMVE-SRYALLI	220
+Gallus_gallus_Rad51                    TEGTFRPERLLAVAERYGLSGSDVLDNVAYARGFNTDHQTQLLYQASAMMAE-SRYALLI	220
+                                       :: :: *           :      :*:  ::    :        .  :: .     :::
+
+Staphylococcus_aureus_recA             VDSVAALTPKAEI-EGEMGDTHVGLQARLMSQALRKLSGAISKSNTTAIFINQIREKV--	198
+Methanocaldococcus_jannaschii_DSM      VDSLTSTFRTEYIGRGKLAERQQK-----LGRHMATLNKLADIYNCVVIVTNQVAARPDA	294
+Caenorhabditis_elegans_Rad51           VDCATAHFRNEYTGRGDLAERQMK-----LSAFLKCLAKLADEYGVAVIITNQVVAQVDG	329
+Drosophila_melanogaster_Rad51          VDSAMALYRSDYIGRGELAARQNH-----LGLFLRMLQRLADEFGVAVVITNQVTASLDG	272
+Saccharomyces_cerevisiae_Rad51         VDSVMALYRTDFSGRGELSARQMH-----LAKFMRALQRLADQFGVAVVVTNQVVAQVDG	333
+Arabidopsis_thaliana_Rad51             VDSATALYRTDFSGRGELSARQMH-----LAKFLRSLQKLADEFGVAVVITNQVVAQVDG	278
+Danio_rerio_Rad51                      VDSATALYRTDYSGRGELSARQGH-----LGRFLRMLLRLADEFGVAVVITNQVVAQVDG	276
+Xenopus_laevis_Rad51                   VDSATALYRTDYSGRGELSARQMH-----LARFLRMLLRLADEFGVAVVITNQVVAQVDG	272
+Homo_sapiens_Rad51                     VDSATALYRTDYSGRGELSARQMH-----LARFLRMLLRLADEFGVAVVITNQVVAQVDG	275
+Gallus_gallus_Rad51                    VDSATALYRTDYSGRGELSARQMH-----LARFLRMLLRLADEFGVAVVITNQVVAQVDG	275
+                                       **.  :   .    .*.:.  :       :.  :  *    .  . ..:. **:      
+
+Staphylococcus_aureus_recA             --GVMFGNPETTPGGRALKFYSSVRLEVRRAEQLKQGQEIVGNRTKIKVVKNKVAPPFRV	256
+Methanocaldococcus_jannaschii_DSM      L----FGPSEQAIGGHIVGHAATFRIFLRKAKGDKRVAK---------LYDS---PHLP-	337
+Caenorhabditis_elegans_Rad51           GASMFQADAKKPIGGHIIAHMSTTRLYLRKGKGENRVAK---------MVQS---PNLP-	376
+Drosophila_melanogaster_Rad51          A-PGM-FDAKKPIGGHIMAHSSTTRLYLRKGKGETRICK---------IYDS---PCLP-	317
+Saccharomyces_cerevisiae_Rad51         G-MAFNPDPKKPIGGNIMAHSSTTRLGFKKGKGCQRLCK---------VVDS---PCLP-	379
+Arabidopsis_thaliana_Rad51             S-ALFAGPQFKPIGGNIMAHATTTRLALRKGRAEERICK---------VISS---PCLP-	324
+Danio_rerio_Rad51                      A-AMFSADPKKPIGGNILAHASTTRLYLRKGRGETRICK---------IYDS---PCLP-	322
+Xenopus_laevis_Rad51                   A-AMFAADPKKPIGGNIIAHASTTRLYLRKGRGETRICK---------IYDS---PCLP-	318
+Homo_sapiens_Rad51                     A-AMFAADPKKPIGGNIIAHASTTRLYLRKGRGETRICK---------IYDS---PCLP-	321
+Gallus_gallus_Rad51                    A-AMFAADPKKPIGGNIIAHASTTRLYLRKGRGETRICK---------IYDS---PCLP-	321
+                                                    **. : . :: *: .::..   :  :         : ..   * :  
+
+Staphylococcus_aureus_recA             AEVDIMY---GQGISKEGELIDLGVENDIVDKSGAWYSYNGERMGQGKENVKMYLKENPQ	313
+Methanocaldococcus_jannaschii_DSM      -DAEAMFRITEKGIHD--------------------------------------------	352
+Caenorhabditis_elegans_Rad51           -EAEATYSITNHGIEDARED----------------------------------------	395
+Drosophila_melanogaster_Rad51          -ESEAMFAILPDGIGDARES----------------------------------------	336
+Saccharomyces_cerevisiae_Rad51         -EAECVFAIYEDGVGDPREEDE--------------------------------------	400
+Arabidopsis_thaliana_Rad51             -EAEARFQISTEGVTDCKD-----------------------------------------	342
+Danio_rerio_Rad51                      -EAEAMFAINADGVGDAKD-----------------------------------------	340
+Xenopus_laevis_Rad51                   -EAEAMFAINADGVGDAKD-----------------------------------------	336
+Homo_sapiens_Rad51                     -EAEAMFAINADGVGDAKD-----------------------------------------	339
+Gallus_gallus_Rad51                    -EAEAMFAINADGVGDAKE-----------------------------------------	339
+                                        : :  :    .*: .                                            
+
+Staphylococcus_aureus_recA             IKEEIDRKLREKLGISDGDVEETEDAPKSLFDEE	347
+Methanocaldococcus_jannaschii_DSM      ----------------------------------	352
+Caenorhabditis_elegans_Rad51           ----------------------------------	395
+Drosophila_melanogaster_Rad51          ----------------------------------	336
+Saccharomyces_cerevisiae_Rad51         ----------------------------------	400
+Arabidopsis_thaliana_Rad51             ----------------------------------	342
+Danio_rerio_Rad51                      ----------------------------------	340
+Xenopus_laevis_Rad51                   ----------------------------------	336
+Homo_sapiens_Rad51                     ----------------------------------	339
+Gallus_gallus_Rad51                    ----------------------------------	339
+                                                                         

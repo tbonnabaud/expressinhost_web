@@ -1,0 +1,9 @@
+.vscode
+.venv
+venv
+.conda
+output
+tmp
+dist
+.env
+*.pyc
