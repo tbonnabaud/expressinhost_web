@@ -122,14 +122,17 @@ def run_simulation(
 
     nucleotide_names = [record.name for record in nucleotide_sequences]
 
+    output_path = Path(f"output/{host_organism}")
+    output_path.mkdir(parents=True, exist_ok=True)
+
     cleared_output_sequences = clear_output_sequences(output_sequences)
-    write_text_to_file("\n".join(cleared_output_sequences), f"output/{mode}.txt")
+    write_text_to_file("\n".join(cleared_output_sequences), output_path / f"{mode}.txt")
 
     identity_percentages = compare_sequences(
         cleared_nucleotide_sequences, cleared_output_sequences
     )
 
-    with open(f"output/{mode}_identity_percentages.json", "w") as f:
+    with open(output_path / f"{mode}_identity_percentages.json", "w") as f:
         name_result_mapping = dict(zip(nucleotide_names, identity_percentages))
         json.dump(name_result_mapping, f, indent=4)
 
@@ -140,9 +143,6 @@ def main(
     host_organism: str,
     mode: str,
 ):
-    output_dirpath = Path("output/")
-    output_dirpath.mkdir(exist_ok=True)
-
     tmp_dirpath = Path("tmp/")
     (tmp_dirpath / "processed_tables").mkdir(parents=True, exist_ok=True)
 
