@@ -9,7 +9,7 @@ from .codon_tables import process_raw_codon_table
 from .constantes import TABLE_HEADERS
 from .postprocessing import clear_output_sequences, compare_sequences
 from .preprocessing import align_nucleotide_sequences, clear_nucleotide_sequences
-from .simulations import (
+from .sequence_tuning import (
     direct_mapping,
     optimisation_and_conservation_1,
     optimisation_and_conservation_2,
