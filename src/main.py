@@ -146,7 +146,7 @@ def run_simulation(
         nucleotide_sequences, cleared_output_sequences
     ):
         raise NoAminoAcidConservation(
-            "Amino acid sequences are supposed to be the same."
+            "Amino acid sequences from input and output are supposed to be the same."
         )
 
     with open(output_path / f"{mode}_identity_percentages.json", "w") as f:
