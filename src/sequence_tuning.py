@@ -118,7 +118,7 @@ def optimisation_and_conservation_1(
     symbol_sequence: str,
     native_codon_tables: list[pl.DataFrame],
     host_codon_table: pl.DataFrame,
-):
+) -> list[str]:
     results = []
     sub_host_table_rows = host_codon_table.select(["AA", "Codon", "Rank"]).rows(
         named=True
@@ -195,7 +195,7 @@ def optimisation_and_conservation_2(
     symbol_sequence: str,
     native_codon_tables: list[pl.DataFrame],
     host_codon_table: pl.DataFrame,
-):
+) -> list[str]:
     cpt_symbols = [0.0 for _ in range(len(aligned_nucleotide_sequences[0]))]
 
     # Make a loop on all natives to create the corresponding "0" and "S" file ("S" indicate slow codons)
