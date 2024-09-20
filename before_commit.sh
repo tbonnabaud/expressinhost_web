@@ -1,4 +1,4 @@
 #!/bin/bash
 
-black .
+black ./src
 isort --profile black ./src
