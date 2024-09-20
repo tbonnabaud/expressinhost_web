@@ -5,8 +5,10 @@ from pathlib import Path
 
 import polars as pl
 
+from .checks import check_amino_acido_conservation, check_nucleotides_clustal_identity
 from .codon_tables import process_raw_codon_table
 from .constantes import TABLE_HEADERS
+from .exceptions import NoAminoAcidConservation, NoIdenticalSequencesError
 from .postprocessing import clear_output_sequences, compare_sequences
 from .preprocessing import align_nucleotide_sequences, clear_nucleotide_sequences
 from .sequence_tuning import (
@@ -86,6 +88,14 @@ def run_simulation(
 
         clustal_sequences = parse_sequences(clustal_file_content, "clustal")
 
+        # Ensure sequences are the same in the two files
+        if not check_nucleotides_clustal_identity(
+            nucleotide_sequences, clustal_sequences
+        ):
+            raise NoIdenticalSequencesError(
+                "Sequences are not identical. Check their value in the two files and check their order."
+            )
+
         # Only for testing purpose
         write_text_to_file(
             "\n".join([str(r.seq) for r in clustal_sequences]),
@@ -131,6 +141,13 @@ def run_simulation(
     identity_percentages = compare_sequences(
         cleared_nucleotide_sequences, cleared_output_sequences
     )
+
+    if not check_amino_acido_conservation(
+        nucleotide_sequences, cleared_output_sequences
+    ):
+        raise NoAminoAcidConservation(
+            "Amino acid sequences are supposed to be the same."
+        )
 
     with open(output_path / f"{mode}_identity_percentages.json", "w") as f:
         name_result_mapping = dict(zip(nucleotide_names, identity_percentages))
