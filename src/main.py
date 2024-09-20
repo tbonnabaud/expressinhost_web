@@ -57,7 +57,7 @@ def find_organism_from_nucleotide_name(name: str) -> str:
 
 
 @timeit
-def run_simulation(
+def run_tuning(
     nucleotide_file_content: str,
     clustal_file_content: str | None,
     host_organism: str,
@@ -171,13 +171,11 @@ def main(
     nucleotide_file_content = read_text_file(nucleotide_file_path)
 
     if clustal_file_path is None:
-        run_simulation(nucleotide_file_content, None, host_organism, mode)
+        run_tuning(nucleotide_file_content, None, host_organism, mode)
 
     else:
         clustal_file_content = read_text_file(clustal_file_path)
-        run_simulation(
-            nucleotide_file_content, clustal_file_content, host_organism, mode
-        )
+        run_tuning(nucleotide_file_content, clustal_file_content, host_organism, mode)
 
 
 if __name__ == "__main__":
