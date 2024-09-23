@@ -6,6 +6,7 @@ from Bio.SeqRecord import SeqRecord
 def check_nucleotides_clustal_identity(
     nucleotide_sequences: list[SeqRecord], clustal_sequences: list[SeqRecord]
 ) -> bool:
+    """Ensure the translation of nucleotide sequences are matching the amino-acid sequences in the CLUSTAL file."""
     for nucleotide_record, clustal_record in zip(
         nucleotide_sequences,
         clustal_sequences,
