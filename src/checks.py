@@ -35,7 +35,12 @@ def check_amino_acido_conservation(
     for input_record, processed_seq in zip(
         nucleotide_sequences, processed_nucleotide_sequences
     ):
-        if input_record.translate().seq != Seq(processed_seq).translate():
+        input_aa_sequence = input_record.translate(cds=True).seq
+        output_aa_sequence = Seq(processed_seq).translate(cds=True)
+
+        if input_aa_sequence != output_aa_sequence:
+            print(input_aa_sequence)
+            print(output_aa_sequence)
             return False
 
     return True
