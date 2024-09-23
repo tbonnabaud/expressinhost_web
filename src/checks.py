@@ -16,10 +16,10 @@ def check_nucleotides_clustal_identity(
             # of three, and that there is a single in frame stop codon at the end (this will be
             # excluded from the protein sequence, regardless of the to_stop option).
             # If these tests fail, an exception is raised.
-            translation = str(nucleotide_record.translate(cds=True).seq)
+            translated_seq = str(nucleotide_record.translate(cds=True).seq)
             clustal_seq = str(clustal_record.seq).replace("-", "")
 
-            if translation != clustal_seq:
+            if translated_seq != clustal_seq:
                 return False
 
         except TranslationError as exc:
