@@ -12,6 +12,7 @@ def check_nucleotides_clustal_identity(
         clustal_sequences,
     ):
         try:
+            # Boolean, indicates this is a complete CDS.
             # If cds=True, this checks the sequence starts with a valid alternative start codon
             # (which will be translated as methionine, M), that the sequence length is a multiple
             # of three, and that there is a single in frame stop codon at the end (this will be
@@ -36,10 +37,11 @@ def check_amino_acido_conservation(
     for input_record, processed_seq in zip(
         nucleotide_sequences, processed_nucleotide_sequences
     ):
-        input_aa_sequence = input_record.translate(cds=True).seq
-        output_aa_sequence = Seq(processed_seq).translate(cds=True)
+        input_aa_sequence = input_record.translate(to_stop=True).seq
+        output_aa_sequence = Seq(processed_seq).translate(to_stop=True)
 
         if input_aa_sequence != output_aa_sequence:
+            print("Conservation check fails for:", input_record.name)
             print(input_aa_sequence)
             print(output_aa_sequence)
             return False
