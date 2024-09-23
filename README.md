@@ -10,7 +10,9 @@ classDiagram
     results <|-- identity_percentages
 
     class codon_tables {
+        organsim: varchar
         name: varchar
+        custom: boolean
         amino_acid: varchar
         anti_codon: varchar
         codon: varchar
@@ -20,7 +22,7 @@ classDiagram
 
     class users {
         email: varchar
-        <!-- creation_date: datetime -->
+        creation_date: datetime
         password: varchar
     }
 
