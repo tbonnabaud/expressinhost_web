@@ -1,10 +1,13 @@
 import time
+from functools import cache
 from io import StringIO
 from pathlib import Path
 
 from Bio import AlignIO, SeqIO
 from Bio.Align import MultipleSeqAlignment
 from Bio.SeqRecord import SeqRecord
+
+from .constantes import TABLE_BASE_PATH
 
 
 def timeit(func):
@@ -56,3 +59,17 @@ def parse_alignments(raw_content: str, format: str) -> list[MultipleSeqAlignment
 
         else:
             print("Fail to parse file. Ensure file is correctly formatted.")
+
+
+@cache
+def get_available_organism_list():
+    return [file.name.replace(".txt", "") for file in TABLE_BASE_PATH.iterdir()]
+
+
+def find_organism_from_nucleotide_name(name: str) -> str:
+    """Guess organism name from nucleotide name."""
+    for organism in get_available_organism_list():
+        if organism.lower() in name.lower():
+            return organism
+
+    raise Exception(f"Organism not found for nucleotide: {name}.")

@@ -1,6 +1,12 @@
 import polars as pl
 
-from .constantes import AA_LIST, SLOW_SPEED_THRESHOLD, WOBBLE_RATE
+from .constantes import (
+    AA_LIST,
+    SLOW_SPEED_THRESHOLD,
+    TABLE_BASE_PATH,
+    TABLE_HEADERS,
+    WOBBLE_RATE,
+)
 
 
 def process_raw_codon_table(raw_codon_table: pl.DataFrame) -> pl.DataFrame:
@@ -156,3 +162,19 @@ def process_raw_codon_table(raw_codon_table: pl.DataFrame) -> pl.DataFrame:
             symbol_speed_col,
         ]
     )
+
+
+def process_codon_table_from_file(organism_name: str) -> pl.DataFrame:
+    table_df = pl.read_csv(
+        TABLE_BASE_PATH / f"{organism_name}.txt",
+        has_header=False,
+        separator="\t",
+        new_columns=TABLE_HEADERS,
+    )
+    processed_df = process_raw_codon_table(table_df)
+    processed_df.write_csv(
+        f"tmp/processed_tables/Processed_{organism_name}.csv",
+        separator="\t",
+    )
+
+    return processed_df
