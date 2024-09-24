@@ -1,21 +1,8 @@
-from dataclasses import dataclass
-
 from Bio.Data.CodonTable import TranslationError
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 
-
-@dataclass
-class BadSequence:
-    name: str
-    msg: str
-
-
-@dataclass
-class MismatchingSequences:
-    name: str
-    sequence1: str
-    sequence2: str
+from .schemas import BadSequence, MismatchingSequences
 
 
 def check_nucleotides_clustal_identity(
@@ -43,13 +30,15 @@ def check_nucleotides_clustal_identity(
                 is_ok = False
                 errors.append(
                     MismatchingSequences(
-                        nucleotide_record.name, translated_seq, clustal_seq
+                        name=nucleotide_record.name,
+                        sequence1=translated_seq,
+                        sequence2=clustal_seq,
                     )
                 )
 
         except TranslationError as exc:
             is_ok = False
-            errors.append(BadSequence(nucleotide_record.name, str(exc)))
+            errors.append(BadSequence(name=nucleotide_record.name, msg=str(exc)))
 
     return is_ok, errors
 
@@ -70,7 +59,9 @@ def check_amino_acido_conservation(
             is_ok = False
             errors.append(
                 MismatchingSequences(
-                    input_record.name, str(input_aa_sequence), str(output_aa_sequence)
+                    name=input_record.name,
+                    sequence1=str(input_aa_sequence),
+                    sequence2=str(output_aa_sequence),
                 )
             )
 

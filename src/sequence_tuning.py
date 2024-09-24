@@ -9,6 +9,7 @@ from .codon_tables import process_codon_table_from_file
 from .exceptions import NoAminoAcidConservation, NoIdenticalSequencesError
 from .postprocessing import clear_output_sequences, compare_sequences
 from .preprocessing import align_nucleotide_sequences, clear_nucleotide_sequences
+from .schemas import TuningParameters
 from .utils import (
     find_organism_from_nucleotide_name,
     parse_alignments,
@@ -320,9 +321,7 @@ def run_tuning(
     clustal_file_content: str | None,
     host_organism: str,
     mode: str,
-    wobble_rate: float,
-    slow_speed_threshold: float,
-    conservation_threshold: float,
+    tuning_parameters: TuningParameters,
 ) -> tuple[dict[str, str], dict[str, str]]:
     nucleotide_sequences = parse_sequences(nucleotide_file_content, "fasta")
     cleared_nucleotide_sequences = clear_nucleotide_sequences(nucleotide_sequences)
@@ -333,12 +332,16 @@ def run_tuning(
     ]
 
     native_codon_tables = [
-        process_codon_table_from_file(name, wobble_rate, slow_speed_threshold)
+        process_codon_table_from_file(
+            name, tuning_parameters.wobble_rate, tuning_parameters.slow_speed_threshold
+        )
         for name in native_organism_list
     ]
 
     host_codon_table = process_codon_table_from_file(
-        host_organism, wobble_rate, slow_speed_threshold
+        host_organism,
+        tuning_parameters.wobble_rate,
+        tuning_parameters.slow_speed_threshold,
     )
 
     if mode == "direct_mapping":
@@ -391,7 +394,7 @@ def run_tuning(
                 symbol_sequence,
                 native_codon_tables,
                 host_codon_table,
-                conservation_threshold,
+                tuning_parameters.conservation_threshold,
             )
 
         else:
