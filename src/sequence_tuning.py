@@ -21,6 +21,17 @@ from .utils import (
 STOP_CODON = "UAA"
 
 
+def find_amino_acid_and_rank(
+    codon: str, table: list[dict]
+) -> tuple[str, float] | tuple[None, None]:
+    """Return the tuple corresponding to the given codon."""
+    for row in table:
+        if row["Codon"] == codon:
+            return row["AA"], row["Rank"]
+
+    return None, None
+
+
 def select_conserved_codons(
     potential_codons: list[str],
     potential_ranks: list[float],
@@ -86,19 +97,11 @@ def direct_mapping(
                 new_line += input_codon
 
             else:
-                is_codon_in_table = False
-                rank = 0.0
-                amino_acid = ""
+                amino_acid, rank = find_amino_acid_and_rank(
+                    input_codon, sub_native_rows
+                )
 
-                for native_row in sub_native_rows:
-                    # When native codon is found
-                    if native_row["Codon"] == input_codon:
-                        rank = native_row["Rank"]
-                        amino_acid = native_row["AA"]
-                        is_codon_in_table = True
-                        break
-
-                if not is_codon_in_table:
+                if amino_acid is None:
                     new_line += STOP_CODON
 
                 else:
@@ -152,19 +155,11 @@ def optimisation_and_conservation_1(
                 new_line += input_codon
 
             else:
-                is_codon_in_table = False
-                rank = 0.0
-                amino_acid = ""
+                amino_acid, rank = find_amino_acid_and_rank(
+                    input_codon, sub_native_rows
+                )
 
-                for native_row in sub_native_rows:
-                    # When native codon is found
-                    if native_row["Codon"] == input_codon:
-                        rank = native_row["Rank"]
-                        amino_acid = native_row["AA"]
-                        is_codon_in_table = True
-                        break
-
-                if not is_codon_in_table:
+                if amino_acid is None:
                     new_line += STOP_CODON
 
                 else:
@@ -267,19 +262,11 @@ def optimisation_and_conservation_2(
                 new_line += input_codon
 
             else:
-                is_codon_in_table = False
-                rank = 0.0
-                amino_acid = ""
+                amino_acid, rank = find_amino_acid_and_rank(
+                    input_codon, sub_native_rows
+                )
 
-                for native_row in sub_native_rows:
-                    # When native codon is found
-                    if native_row["Codon"] == input_codon:
-                        rank = native_row["Rank"]
-                        amino_acid = native_row["AA"]
-                        is_codon_in_table = True
-                        break
-
-                if not is_codon_in_table:
+                if amino_acid is None:
                     new_line += STOP_CODON
 
                 else:
