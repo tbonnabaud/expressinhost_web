@@ -320,7 +320,7 @@ def run_tuning(
     clustal_file_content: str | None,
     host_organism: str,
     mode: str,
-):
+) -> tuple[dict[str, str], dict[str, str]]:
     nucleotide_sequences = parse_sequences(nucleotide_file_content, "fasta")
     cleared_nucleotide_sequences = clear_nucleotide_sequences(nucleotide_sequences)
 
@@ -347,12 +347,16 @@ def run_tuning(
         clustal_sequences = parse_sequences(clustal_file_content, "clustal")
 
         # Ensure sequences are the same in the two files
-        if not check_nucleotides_clustal_identity(
+        match check_nucleotides_clustal_identity(
             nucleotide_sequences, clustal_sequences
         ):
-            raise NoIdenticalSequencesError(
-                "Sequences are not identical. Check their value in the two files and check their order."
-            )
+            case (False, errors):
+                print(errors)
+                raise NoIdenticalSequencesError(
+                    "Sequences are not identical. Check their value in the two files and check their order."
+                )
+            case _:
+                pass
 
         # Only for testing purpose
         write_text_to_file(
@@ -400,13 +404,22 @@ def run_tuning(
         cleared_nucleotide_sequences, cleared_output_sequences
     )
 
-    if not check_amino_acido_conservation(
+    # Ensure input and ouput nucleotide sequences have the same amino-acid sequences
+    match check_amino_acido_conservation(
         nucleotide_sequences, cleared_output_sequences
     ):
-        raise NoAminoAcidConservation(
-            "Amino acid sequences from input and output are supposed to be the same."
-        )
+        case (False, errors):
+            print(errors)
+            raise NoAminoAcidConservation(
+                "Amino acid sequences from input and output are supposed to be the same."
+            )
+        case _:
+            pass
+
+    output_sequence_mapping = dict(zip(nucleotide_names, cleared_output_sequences))
+    identity_percentage_mapping = dict(zip(nucleotide_names, identity_percentages))
 
     with open(output_path / f"{mode}_identity_percentages.json", "w") as f:
-        name_result_mapping = dict(zip(nucleotide_names, identity_percentages))
-        json.dump(name_result_mapping, f, indent=4)
+        json.dump(identity_percentage_mapping, f, indent=4)
+
+    return output_sequence_mapping, identity_percentage_mapping

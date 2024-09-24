@@ -1,12 +1,30 @@
+from dataclasses import dataclass
+
 from Bio.Data.CodonTable import TranslationError
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 
 
+@dataclass
+class BadSequence:
+    name: str
+    msg: str
+
+
+@dataclass
+class MismatchingSequences:
+    name: str
+    sequence1: str
+    sequence2: str
+
+
 def check_nucleotides_clustal_identity(
     nucleotide_sequences: list[SeqRecord], clustal_sequences: list[SeqRecord]
-) -> bool:
+) -> tuple[bool, list[MismatchingSequences | BadSequence]]:
     """Ensure the translation of nucleotide sequences are matching the amino-acid sequences in the CLUSTAL file."""
+    is_ok = True
+    errors = []
+
     for nucleotide_record, clustal_record in zip(
         nucleotide_sequences,
         clustal_sequences,
@@ -22,18 +40,26 @@ def check_nucleotides_clustal_identity(
             clustal_seq = str(clustal_record.seq).replace("-", "")
 
             if translated_seq != clustal_seq:
-                return False
+                is_ok = False
+                errors.append(
+                    MismatchingSequences(
+                        nucleotide_record.name, translated_seq, clustal_seq
+                    )
+                )
 
         except TranslationError as exc:
-            print(exc)
-            return False
+            is_ok = False
+            errors.append(BadSequence(nucleotide_record.name, str(exc)))
 
-    return True
+    return is_ok, errors
 
 
 def check_amino_acido_conservation(
     nucleotide_sequences: list[SeqRecord], processed_nucleotide_sequences: list[str]
-) -> bool:
+) -> tuple[bool, list[MismatchingSequences]]:
+    is_ok = True
+    errors = []
+
     for input_record, processed_seq in zip(
         nucleotide_sequences, processed_nucleotide_sequences
     ):
@@ -41,9 +67,11 @@ def check_amino_acido_conservation(
         output_aa_sequence = Seq(processed_seq).translate(to_stop=True)
 
         if input_aa_sequence != output_aa_sequence:
-            print("Conservation check fails for:", input_record.name)
-            print(input_aa_sequence)
-            print(output_aa_sequence)
-            return False
+            is_ok = False
+            errors.append(
+                MismatchingSequences(
+                    input_record.name, str(input_aa_sequence), str(output_aa_sequence)
+                )
+            )
 
-    return True
+    return is_ok, errors
