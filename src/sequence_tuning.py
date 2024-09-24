@@ -97,6 +97,7 @@ def direct_mapping(
                 new_line += input_codon
 
             else:
+                # Find amino-acid corresponding to native codon
                 amino_acid, rank = find_amino_acid_and_rank(
                     input_codon, sub_native_rows
                 )
@@ -155,6 +156,7 @@ def optimisation_and_conservation_1(
                 new_line += input_codon
 
             else:
+                # Find amino-acid corresponding to native codon
                 amino_acid, rank = find_amino_acid_and_rank(
                     input_codon, sub_native_rows
                 )
@@ -262,6 +264,7 @@ def optimisation_and_conservation_2(
                 new_line += input_codon
 
             else:
+                # Find amino-acid corresponding to native codon
                 amino_acid, rank = find_amino_acid_and_rank(
                     input_codon, sub_native_rows
                 )
