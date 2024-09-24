@@ -1,15 +1,11 @@
 import polars as pl
 
-from .constantes import (
-    AA_LIST,
-    SLOW_SPEED_THRESHOLD,
-    TABLE_BASE_PATH,
-    TABLE_HEADERS,
-    WOBBLE_RATE,
-)
+from .constantes import AA_LIST, TABLE_BASE_PATH, TABLE_HEADERS
 
 
-def process_raw_codon_table(raw_codon_table: pl.DataFrame) -> pl.DataFrame:
+def process_raw_codon_table(
+    raw_codon_table: pl.DataFrame, wobble_rate: float, slow_speed_threshold: float
+) -> pl.DataFrame:
     """Any raw data table contains:
     - column 1: amino acid (AA)
     - column 2: anti-codon (tRNA)
@@ -71,7 +67,7 @@ def process_raw_codon_table(raw_codon_table: pl.DataFrame) -> pl.DataFrame:
                     # We search its corresponding codon
                     if codon_col[t] == corresp_codon_col[k]:
                         # And calculate its GCN using the GCN of the codon it wobbles with, and the wobbling rate
-                        gcn_col[k] = gcn_col[t] - WOBBLE_RATE * gcn_col[t]
+                        gcn_col[k] = gcn_col[t] - wobble_rate * gcn_col[t]
 
             # If the GCN is higher than the top one
             if gcn_col[k] > top_gcn_aa:
@@ -143,10 +139,10 @@ def process_raw_codon_table(raw_codon_table: pl.DataFrame) -> pl.DataFrame:
 
     # Tag the codons of low "SPEED" over the entire table
     for k in range(61):
-        # If codon's SPEED is below the threshold set by the SLOW_SPEED_THRESHOLD.
+        # If codon's SPEED is below the threshold set by the slow_speed_threshold.
         # That threshold is a limit SPEED value, independent from the number of codons that can fall in that category.
         if speed_col[k] < lowest_speed + (
-            SLOW_SPEED_THRESHOLD * (average_speed - lowest_speed)
+            slow_speed_threshold * (average_speed - lowest_speed)
         ):
             symbol_speed_col[k] = "S"
 
@@ -164,14 +160,16 @@ def process_raw_codon_table(raw_codon_table: pl.DataFrame) -> pl.DataFrame:
     )
 
 
-def process_codon_table_from_file(organism_name: str) -> pl.DataFrame:
+def process_codon_table_from_file(
+    organism_name: str, wobble_rate: float, slow_speed_threshold: float
+) -> pl.DataFrame:
     table_df = pl.read_csv(
         TABLE_BASE_PATH / f"{organism_name}.txt",
         has_header=False,
         separator="\t",
         new_columns=TABLE_HEADERS,
     )
-    processed_df = process_raw_codon_table(table_df)
+    processed_df = process_raw_codon_table(table_df, wobble_rate, slow_speed_threshold)
     processed_df.write_csv(
         f"tmp/processed_tables/Processed_{organism_name}.csv",
         separator="\t",

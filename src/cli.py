@@ -1,6 +1,7 @@
 import argparse
 from pathlib import Path
 
+from .constantes import CONSERVATION_THRESHOLD, SLOW_SPEED_THRESHOLD, WOBBLE_RATE
 from .sequence_tuning import run_tuning
 from .utils import read_text_file
 
@@ -22,11 +23,27 @@ def run_as_cli(
     nucleotide_file_content = read_text_file(nucleotide_file_path)
 
     if clustal_file_path is None:
-        run_tuning(nucleotide_file_content, None, host_organism, mode)
+        run_tuning(
+            nucleotide_file_content,
+            None,
+            host_organism,
+            mode,
+            WOBBLE_RATE,
+            SLOW_SPEED_THRESHOLD,
+            CONSERVATION_THRESHOLD,
+        )
 
     else:
         clustal_file_content = read_text_file(clustal_file_path)
-        run_tuning(nucleotide_file_content, clustal_file_content, host_organism, mode)
+        run_tuning(
+            nucleotide_file_content,
+            clustal_file_content,
+            host_organism,
+            mode,
+            WOBBLE_RATE,
+            SLOW_SPEED_THRESHOLD,
+            CONSERVATION_THRESHOLD,
+        )
 
 
 if __name__ == "__main__":

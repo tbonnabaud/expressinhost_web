@@ -6,7 +6,6 @@ import polars as pl
 
 from .checks import check_amino_acido_conservation, check_nucleotides_clustal_identity
 from .codon_tables import process_codon_table_from_file
-from .constantes import CONSERVATION_THRESHOLD
 from .exceptions import NoAminoAcidConservation, NoIdenticalSequencesError
 from .postprocessing import clear_output_sequences, compare_sequences
 from .preprocessing import align_nucleotide_sequences, clear_nucleotide_sequences
@@ -208,6 +207,7 @@ def optimisation_and_conservation_2(
     symbol_sequence: str,
     native_codon_tables: list[pl.DataFrame],
     host_codon_table: pl.DataFrame,
+    conservation_threshold: float,
 ) -> list[str]:
     cpt_symbols = [0.0 for _ in range(len(aligned_nucleotide_sequences[0]))]
 
@@ -237,7 +237,7 @@ def optimisation_and_conservation_2(
     # Analyse the conservation of slow codons for all native sequences and create a one line sequence
     # of "0" and "S" to indicate where codon speed should be conserved instead of optimised
     for symbol in cpt_symbols:
-        if symbol >= CONSERVATION_THRESHOLD * native_table_nb:
+        if symbol >= conservation_threshold * native_table_nb:
             symbol_sequence += "S"
         else:
             symbol_sequence += "0"
@@ -320,6 +320,9 @@ def run_tuning(
     clustal_file_content: str | None,
     host_organism: str,
     mode: str,
+    wobble_rate: float,
+    slow_speed_threshold: float,
+    conservation_threshold: float,
 ) -> tuple[dict[str, str], dict[str, str]]:
     nucleotide_sequences = parse_sequences(nucleotide_file_content, "fasta")
     cleared_nucleotide_sequences = clear_nucleotide_sequences(nucleotide_sequences)
@@ -330,10 +333,13 @@ def run_tuning(
     ]
 
     native_codon_tables = [
-        process_codon_table_from_file(name) for name in native_organism_list
+        process_codon_table_from_file(name, wobble_rate, slow_speed_threshold)
+        for name in native_organism_list
     ]
 
-    host_codon_table = process_codon_table_from_file(host_organism)
+    host_codon_table = process_codon_table_from_file(
+        host_organism, wobble_rate, slow_speed_threshold
+    )
 
     if mode == "direct_mapping":
         output_sequences = direct_mapping(
@@ -385,6 +391,7 @@ def run_tuning(
                 symbol_sequence,
                 native_codon_tables,
                 host_codon_table,
+                conservation_threshold,
             )
 
         else:
