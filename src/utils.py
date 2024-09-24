@@ -2,12 +2,14 @@ import time
 from functools import cache
 from io import StringIO
 from pathlib import Path
+from typing import Literal
 
 from Bio import AlignIO, SeqIO
 from Bio.Align import MultipleSeqAlignment
 from Bio.SeqRecord import SeqRecord
 
 from .constantes import TABLE_BASE_PATH
+from .exceptions import ClustalFormatError, FastaFormatError
 
 
 def timeit(func):
@@ -33,32 +35,38 @@ def write_text_to_file(content: str, path: Path | str):
         f.write(content)
 
 
-def parse_sequences(raw_content: str, format: str) -> list[SeqRecord]:
+def parse_sequences(
+    raw_content: str, format: Literal["fasta", "clustal"]
+) -> list[SeqRecord]:
     try:
         return [record for record in SeqIO.parse(StringIO(raw_content), format)]
 
     except Exception:
         if format == "clustal":
-            print(
+            raise ClustalFormatError(
                 "Fail to parse file. Ensure header start with CLUSTAL and file is correctly formatted."
             )
 
         else:
-            print("Fail to parse file. Ensure file is correctly formatted.")
+            raise FastaFormatError(
+                "Fail to parse file. Ensure file is correctly formatted."
+            )
 
 
-def parse_alignments(raw_content: str, format: str) -> list[MultipleSeqAlignment]:
+def parse_alignments(
+    raw_content: str, format: Literal["fasta", "clustal"]
+) -> list[MultipleSeqAlignment]:
     try:
         return [record for record in AlignIO.parse(StringIO(raw_content), format)]
 
     except Exception:
         if format == "clustal":
-            print(
+            ClustalFormatError(
                 "Fail to parse file. Ensure header start with CLUSTAL and file is correctly formatted."
             )
 
         else:
-            print("Fail to parse file. Ensure file is correctly formatted.")
+            FastaFormatError("Fail to parse file. Ensure file is correctly formatted.")
 
 
 @cache
