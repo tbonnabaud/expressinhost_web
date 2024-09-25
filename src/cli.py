@@ -15,6 +15,8 @@ def run_as_cli(
 ):
     tmp_dirpath = Path("tmp/")
     (tmp_dirpath / "processed_tables").mkdir(parents=True, exist_ok=True)
+    # Create output directory
+    Path("output/").mkdir(exist_ok=True)
 
     # Remove existing files
     for path in tmp_dirpath.iterdir():
