@@ -41,10 +41,7 @@ def align_nucleotide_sequences(
                 new_line += "---"
 
             else:
-                letter1 = nucleo_seq[3 * m]
-                letter2 = nucleo_seq[3 * m + 1]
-                letter3 = nucleo_seq[3 * m + 2]
-                new_line += letter1 + letter2 + letter3
+                new_line += nucleo_seq[3 * m : 3 * m + 3]
                 m += 1
 
         aligned_nucleotide_sequences.append(new_line + "UAA")
