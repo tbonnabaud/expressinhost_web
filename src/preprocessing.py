@@ -6,7 +6,7 @@ from .utils import write_text_to_file
 
 
 def clear_nucleotide_sequences(nucleotide_sequences: list[SeqRecord]) -> list[str]:
-    stop_codon_pattern = re.compile(r"(UAA|UAG|UGA)#?$", re.IGNORECASE)
+    stop_codon_pattern = re.compile(r"(UAA|UAG|UGA)$", re.IGNORECASE)
     cleared_nucleotide_sequences = []
 
     for record in nucleotide_sequences:
