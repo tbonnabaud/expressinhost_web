@@ -1,0 +1,73 @@
+@startuml db_schema
+skinparam linetype ortho
+
+entity codon_tables {
+    * name: varchar <<PK>>
+    --
+    * creation_date: datetime
+    * organism: varchar
+    * custom: boolean
+}
+
+entity codon_translations {
+    * codon_table_name: varchar <<FK>> <<PK>>
+    * codon: varchar(3) <<PK>>
+    --
+    * anti_codon: varchar(3)
+    * amino_acid: varchar(3)
+    * trna_gcn: float
+    * corresponding_codon: varchar(3)
+}
+
+entity users {
+    * id: uuid <<PK>>
+    --
+    * creation_date: datetime
+    * email: varchar
+    * password: varchar
+}
+
+entity results {
+    * id: uuid <<PK>>
+    --
+    user_id: uuid <<FK>>
+    * creation_date: datetime
+    * private: boolean
+    * input_sequences: text
+    input_alignments: text
+    * host_organism: varchar
+    * mode: varchar
+    * parameters: json
+}
+
+json parameters {
+    "slow_speed_threshold": "number",
+    "conservation_threshold": "number",
+    "sequence_table_mapping": {
+        "string": "string",
+        "string": "string"
+    }
+}
+
+entity processed_sequences {
+    * id: uuid <<PK>>
+    --
+    * result_id: uuid <<FK>>
+    * name: varchar
+    * value: text
+}
+
+entity identity_percentages {
+    * id: uuid <<PK>>
+    --
+    * result_id: uuid <<FK>>
+    * name: varchar
+    * value: float
+}
+
+users |o--o{ results
+results ||--o{ processed_sequences
+results ||--o{ identity_percentages
+results -- parameters
+codon_tables ||--|{ codon_translations
+@enduml
