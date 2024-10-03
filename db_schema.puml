@@ -2,6 +2,14 @@
 skinparam linetype ortho
 ' left to right direction
 
+entity users {
+    * id: uuid <<PK>>
+    --
+    * creation_date: datetime
+    * email: varchar
+    * password: varchar
+}
+
 entity codon_tables {
     * name: varchar <<PK>>
     --
@@ -21,22 +29,12 @@ entity codon_translations {
     * corresponding_codon: varchar(3)
 }
 
-entity users {
-    * id: uuid <<PK>>
-    --
-    * creation_date: datetime
-    * email: varchar
-    * password: varchar
-}
-
 entity results {
     * id: uuid <<PK>>
     --
     user_id: uuid <<FK>>
     * creation_date: datetime
     * private: boolean
-    ' * input_sequences: text
-    ' input_alignments: text
     * host_organism: varchar
     * mode: varchar
     * parameters: json
