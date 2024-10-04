@@ -71,7 +71,7 @@ def parse_alignments(
 
 @cache
 def get_available_organism_list():
-    return [file.name.replace(".txt", "") for file in TABLE_BASE_PATH.iterdir()]
+    return [file.name.replace(".csv", "") for file in TABLE_BASE_PATH.iterdir()]
 
 
 def find_organism_from_nucleotide_name(name: str) -> str:

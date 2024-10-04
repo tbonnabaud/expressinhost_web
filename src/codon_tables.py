@@ -1,6 +1,6 @@
 import polars as pl
 
-from .constantes import AA_LIST, TABLE_BASE_PATH, TABLE_HEADERS
+from .constantes import AA_LIST, TABLE_BASE_PATH
 
 
 def process_raw_codon_table(
@@ -164,10 +164,9 @@ def process_codon_table_from_file(
     organism_name: str, wobble_rate: float, slow_speed_threshold: float
 ) -> pl.DataFrame:
     table_df = pl.read_csv(
-        TABLE_BASE_PATH / f"{organism_name}.txt",
-        has_header=False,
+        TABLE_BASE_PATH / f"{organism_name}.csv",
+        has_header=True,
         separator="\t",
-        new_columns=TABLE_HEADERS,
     )
     processed_df = process_raw_codon_table(table_df, wobble_rate, slow_speed_threshold)
     processed_df.write_csv(

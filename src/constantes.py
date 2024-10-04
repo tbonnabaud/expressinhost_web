@@ -28,11 +28,3 @@ AA_LIST = [
     "Tyr",
     "Val",
 ]
-
-TABLE_HEADERS = [
-    "AA",
-    "tRNA",
-    "Codon",
-    "GCN",
-    "Corresp_codon",
-]
