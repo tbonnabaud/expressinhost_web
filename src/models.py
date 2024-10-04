@@ -47,6 +47,7 @@ class CodonTranslation(Base):
     amino_acid: Mapped[str] = mapped_column(sa.String(length=3))
     trna_gcn: Mapped[float] = mapped_column(sa.Float)
     corresponding_codon: Mapped[str] = mapped_column(sa.String(length=3))
+    wobble_rate: Mapped[float] = mapped_column(sa.Float)
 
     __table_args__ = (
         sa.PrimaryKeyConstraint(
@@ -69,14 +70,13 @@ class Result(Base):
     creation_date: Mapped[datetime] = mapped_column(
         sa.DateTime, default=lambda: datetime.now(UTC)
     )
-    private: Mapped[bool] = mapped_column(sa.Boolean)
     host_organism: Mapped[str] = mapped_column(sa.String)
     mode: Mapped[str] = mapped_column(sa.String)
     parameters: Mapped[dict] = mapped_column(sa.JSON)
 
 
-class ProcessedSequence(Base):
-    __tablename__ = "processed_sequences"
+class Sequence(Base):
+    __tablename__ = "sequences"
 
     id: Mapped[UUID] = mapped_column(
         sa.UUID(as_uuid=True), primary_key=True, default=uuid4
@@ -86,18 +86,6 @@ class ProcessedSequence(Base):
         sa.ForeignKey("results.id", onupdate="CASCADE", ondelete="CASCADE"),
     )
     name: Mapped[UUID] = mapped_column(sa.String)
-    value: Mapped[float] = mapped_column(sa.Float)
-
-
-class IdentityPercentage(Base):
-    __tablename__ = "identity_percentages"
-
-    id: Mapped[UUID] = mapped_column(
-        sa.UUID(as_uuid=True), primary_key=True, default=uuid4
-    )
-    result_id: Mapped[UUID] = mapped_column(
-        sa.UUID(as_uuid=True),
-        sa.ForeignKey("results.id", onupdate="CASCADE", ondelete="CASCADE"),
-    )
-    name: Mapped[UUID] = mapped_column(sa.String)
-    value: Mapped[float] = mapped_column(sa.Float)
+    input: Mapped[str] = mapped_column(sa.Text)
+    output: Mapped[str] = mapped_column(sa.Text)
+    percentage_identity: Mapped[float] = mapped_column(sa.Float)

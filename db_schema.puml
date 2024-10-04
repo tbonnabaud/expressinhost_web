@@ -27,6 +27,7 @@ entity codon_translations {
     * amino_acid: varchar(3)
     * trna_gcn: float
     * corresponding_codon: varchar(3)
+    * wobble_rate: float
 }
 
 entity results {
@@ -34,7 +35,6 @@ entity results {
     --
     user_id: uuid <<FK>>
     * creation_date: datetime
-    * private: boolean
     * host_organism: varchar
     * mode: varchar
     * parameters: json
@@ -49,26 +49,19 @@ json parameters {
     }
 }
 
-entity processed_sequences {
+entity sequences {
     * id: uuid <<PK>>
     --
     * result_id: uuid <<FK>>
     * name: varchar
-    * value: text
-}
-
-entity identity_percentages {
-    * id: uuid <<PK>>
-    --
-    * result_id: uuid <<FK>>
-    * name: varchar
-    * value: float
+    * input: text
+    * output: text
+    * percentage_identity: float
 }
 
 users |o--o{ results
 users |o--o{ codon_tables
-results ||--o{ processed_sequences
-results ||--o{ identity_percentages
+results ||--o{ sequences
 results -- parameters
 codon_tables ||--|{ codon_translations
 @enduml
