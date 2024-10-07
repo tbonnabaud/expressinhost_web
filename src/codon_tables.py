@@ -4,7 +4,7 @@ from .constantes import AA_LIST, TABLE_BASE_PATH
 
 
 def process_raw_codon_table(
-    raw_codon_table: pl.DataFrame, wobble_rate: float, slow_speed_threshold: float
+    raw_codon_table: pl.DataFrame, slow_speed_threshold: float
 ) -> pl.DataFrame:
     """Any raw data table contains:
     - column 1: amino acid (AA)
@@ -12,6 +12,7 @@ def process_raw_codon_table(
     - column 3: codon (Codon)
     - column 4: tRNA GCN (GCN)
     - column 5: codon used in case of wobble (Corresp_codon)
+    - column 6: wobble rate
 
     All input raw tables contain 61 lines (for 61 codons).
 
@@ -35,12 +36,14 @@ def process_raw_codon_table(
     gcn_col = raw_codon_table["GCN"].cast(pl.Float64)
     # Column 5 of the input raw table
     corresp_codon_col = raw_codon_table["Corresp_codon"]
+    # Column 6 of the input raw table
+    wobble_rate_col = raw_codon_table["wobble_rate"]
 
-    # Colmun 6 to be added to the output processed table
+    # Colmun 7 to be added to the output processed table
     rank_col = pl.zeros(61, dtype=pl.Float64, eager=True).alias("Rank")
-    # Column 7 to be added to the output processed table
-    speed_col = pl.zeros(61, dtype=pl.Float64, eager=True).alias("Speed")
     # Column 8 to be added to the output processed table
+    speed_col = pl.zeros(61, dtype=pl.Float64, eager=True).alias("Speed")
+    # Column 9 to be added to the output processed table
     symbol_speed_col = pl.repeat("0", 61, dtype=pl.String, eager=True).alias(
         "Symbol_Speed"
     )
@@ -67,7 +70,7 @@ def process_raw_codon_table(
                     # We search its corresponding codon
                     if codon_col[t] == corresp_codon_col[k]:
                         # And calculate its GCN using the GCN of the codon it wobbles with, and the wobbling rate
-                        gcn_col[k] = gcn_col[t] - wobble_rate * gcn_col[t]
+                        gcn_col[k] = gcn_col[t] - wobble_rate_col[k] * gcn_col[t]
 
             # If the GCN is higher than the top one
             if gcn_col[k] > top_gcn_aa:
@@ -153,6 +156,7 @@ def process_raw_codon_table(
             codon_col,
             gcn_col,
             corresp_codon_col,
+            wobble_rate_col,
             rank_col,
             speed_col,
             symbol_speed_col,
@@ -161,14 +165,14 @@ def process_raw_codon_table(
 
 
 def process_codon_table_from_file(
-    organism_name: str, wobble_rate: float, slow_speed_threshold: float
+    organism_name: str, slow_speed_threshold: float
 ) -> pl.DataFrame:
     table_df = pl.read_csv(
         TABLE_BASE_PATH / f"{organism_name}.csv",
         has_header=True,
         separator="\t",
     )
-    processed_df = process_raw_codon_table(table_df, wobble_rate, slow_speed_threshold)
+    processed_df = process_raw_codon_table(table_df, slow_speed_threshold)
     processed_df.write_csv(
         f"tmp/processed_tables/Processed_{organism_name}.csv",
         separator="\t",

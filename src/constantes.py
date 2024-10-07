@@ -1,6 +1,5 @@
 from pathlib import Path
 
-WOBBLE_RATE = 0.35
 SLOW_SPEED_THRESHOLD = 0.50
 CONSERVATION_THRESHOLD = 0.75
 

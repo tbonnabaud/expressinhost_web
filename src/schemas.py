@@ -13,6 +13,5 @@ class MismatchingSequences(BaseModel):
 
 
 class TuningParameters(BaseModel):
-    wobble_rate: float
     slow_speed_threshold: float
     conservation_threshold: float

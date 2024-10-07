@@ -322,15 +322,12 @@ def run_tuning(
     ]
 
     native_codon_tables = [
-        process_codon_table_from_file(
-            name, tuning_parameters.wobble_rate, tuning_parameters.slow_speed_threshold
-        )
+        process_codon_table_from_file(name, tuning_parameters.slow_speed_threshold)
         for name in native_organism_list
     ]
 
     host_codon_table = process_codon_table_from_file(
         host_organism,
-        tuning_parameters.wobble_rate,
         tuning_parameters.slow_speed_threshold,
     )
 
