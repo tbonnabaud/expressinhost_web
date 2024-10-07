@@ -71,6 +71,7 @@ def process_raw_codon_table(
                     if codon_col[t] == corresp_codon_col[k]:
                         # And calculate its GCN using the GCN of the codon it wobbles with, and the wobbling rate
                         gcn_col[k] = gcn_col[t] - wobble_rate_col[k] * gcn_col[t]
+                        break
 
             # If the GCN is higher than the top one
             if gcn_col[k] > top_gcn_aa:
