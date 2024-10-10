@@ -25,7 +25,7 @@ class User(Base):
 class CodonTable(Base):
     __tablename__ = "codon_tables"
 
-    name: Mapped[UUID] = mapped_column(sa.String, primary_key=True)
+    name: Mapped[str] = mapped_column(sa.String, primary_key=True)
     user_id: Mapped[UUID | None] = mapped_column(
         sa.UUID(as_uuid=True),
         sa.ForeignKey("users.id", onupdate="CASCADE", ondelete="CASCADE"),
