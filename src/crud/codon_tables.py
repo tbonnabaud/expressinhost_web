@@ -7,16 +7,19 @@ from .base import BaseRepository
 
 
 class CodonTableRepository(BaseRepository):
-    def list(self, user_id: UUID | None, organism: str | None):
-        stmt = sa.select(CodonTable)
+    def list_defaults(self, organism: str | None):
+        stmt = sa.select(CodonTable).where(CodonTable.user_id == sa.null())
 
-        if user_id is None:
-            stmt = stmt.where(CodonTable.user_id == sa.null())
+        if organism:
+            stmt = stmt.where(CodonTable.organism == organism)
 
-        else:
-            stmt = stmt.where(
-                (CodonTable.user_id == user_id) | (CodonTable.user_id == sa.null())
-            )
+        return self.session.execute(stmt).scalars().all()
+
+    def list_defaults_and_from_user(self, user_id: UUID, organism: str | None):
+        """List both user and default tables."""
+        stmt = sa.select(CodonTable).where(
+            (CodonTable.user_id == user_id) | (CodonTable.user_id == sa.null())
+        )
 
         if organism:
             stmt = stmt.where(CodonTable.organism == organism)

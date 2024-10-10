@@ -5,7 +5,7 @@ from .base import BaseRepository
 
 
 class CodonTranslationRepository(BaseRepository):
-    def list(self, codon_table_name: str):
+    def list_from_table(self, codon_table_name: str):
         stmt = sa.select(CodonTranslation).where(
             CodonTranslation.codon_table_name == codon_table_name
         )

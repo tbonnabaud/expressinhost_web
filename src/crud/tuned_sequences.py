@@ -7,7 +7,7 @@ from .base import BaseRepository
 
 
 class TunedSequenceRepository(BaseRepository):
-    def list(self, result_id: UUID):
+    def list_from_result(self, result_id: UUID):
         stmt = sa.select(TunedSequence).where(TunedSequence.result_id == result_id)
 
         return self.session.execute(stmt).scalars().all()

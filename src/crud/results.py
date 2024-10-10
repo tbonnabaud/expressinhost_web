@@ -7,7 +7,7 @@ from .base import BaseRepository
 
 
 class ResultRepository(BaseRepository):
-    def list(self, user_id: UUID):
+    def list_from_user(self, user_id: UUID):
         stmt = sa.select(Result).where(Result.user_id == user_id)
 
         return self.session.execute(stmt).scalars().all()
