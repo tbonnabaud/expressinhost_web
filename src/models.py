@@ -85,7 +85,7 @@ class TunedSequence(Base):
         sa.UUID(as_uuid=True),
         sa.ForeignKey("results.id", onupdate="CASCADE", ondelete="CASCADE"),
     )
-    name: Mapped[UUID] = mapped_column(sa.String)
+    name: Mapped[str] = mapped_column(sa.String)
     input: Mapped[str] = mapped_column(sa.Text)
     output: Mapped[str] = mapped_column(sa.Text)
     percentage_identity: Mapped[float] = mapped_column(sa.Float)
