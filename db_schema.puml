@@ -49,7 +49,7 @@ json parameters {
     }
 }
 
-entity sequences {
+entity tuned_sequences {
     * id: uuid <<PK>>
     --
     * result_id: uuid <<FK>>
@@ -61,7 +61,7 @@ entity sequences {
 
 users |o--o{ results
 users |o--o{ codon_tables
-results ||--o{ sequences
+results ||--o{ tuned_sequences
 results -- parameters
 codon_tables ||--|{ codon_translations
 @enduml
