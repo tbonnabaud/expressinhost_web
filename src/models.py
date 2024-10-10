@@ -75,8 +75,8 @@ class Result(Base):
     parameters: Mapped[dict] = mapped_column(sa.JSON)
 
 
-class Sequence(Base):
-    __tablename__ = "sequences"
+class TunedSequence(Base):
+    __tablename__ = "tuned_sequences"
 
     id: Mapped[UUID] = mapped_column(
         sa.UUID(as_uuid=True), primary_key=True, default=uuid4
