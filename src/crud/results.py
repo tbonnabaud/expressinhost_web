@@ -7,29 +7,29 @@ from .base import BaseRepository
 
 
 class ResultRepository(BaseRepository):
-    def list(self, user_id: UUID) -> sa.Sequence[Result]:
+    def list(self, user_id: UUID):
         stmt = sa.select(Result).where(Result.user_id == user_id)
 
         return self.session.execute(stmt).scalars().all()
 
-    def get(self, id: UUID) -> Result | None:
+    def get(self, id: UUID):
         stmt = sa.select(Result).where(Result.id == id)
 
         return self.session.execute(stmt).scalar_one_or_none()
 
-    def add(self, data: dict) -> UUID | None:
+    def add(self, data: dict):
         stmt = sa.insert(Result).values(data).returning(Result.id)
         result = self.session.execute(stmt)
         self.session.commit()
 
         return result.scalar_one_or_none()
 
-    def update(self, id: UUID, data: dict) -> None:
+    def update(self, id: UUID, data: dict):
         stmt = sa.update(Result).where(Result.id == id).values(data)
         self.session.execute(stmt)
         self.session.commit()
 
-    def delete(self, id: UUID) -> None:
+    def delete(self, id: UUID):
         stmt = sa.delete(Result).where(Result.id == id)
         self.session.execute(stmt)
         self.session.commit()
