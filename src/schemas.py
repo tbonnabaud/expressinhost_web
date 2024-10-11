@@ -46,9 +46,16 @@ class CodonTable(BaseModel):
     custom: bool
 
 
-class CodonTableForm(BaseModel):
+class DefaultCodonTableForm(BaseModel):
     name: str
-    user_id: UUID | None
+    user_id: None
+    organism: str
+    custom: bool
+
+
+class UserCodonTableForm(BaseModel):
+    name: str
+    user_id: UUID
     organism: str
     custom: bool
 
