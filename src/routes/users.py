@@ -8,7 +8,7 @@ from ..crud.users import UserRepository
 from ..custom_types import SessionDependency
 from ..schemas import User, UserForm
 
-router = APIRouter(prefix="/api", tags=["users"])
+router = APIRouter(prefix="/api", tags=["Users"])
 
 
 @router.get("/users", response_model=list[User])

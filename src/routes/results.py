@@ -6,7 +6,7 @@ from ..crud.results import ResultRepository
 from ..custom_types import SessionDependency
 from ..schemas import Result
 
-router = APIRouter(prefix="/api", tags=["results"])
+router = APIRouter(prefix="/api", tags=["Results"])
 
 
 @router.get("/users/{user_id}/results", response_model=list[Result])

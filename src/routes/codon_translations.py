@@ -4,11 +4,11 @@ from ..crud.codon_translations import CodonTranslationRepository
 from ..custom_types import SessionDependency
 from ..schemas import CodonTranslation
 
-router = APIRouter(prefix="/api", tags=["codon_translations"])
+router = APIRouter(prefix="/api", tags=["Codon translations"])
 
 
 @router.get(
-    "/codon_table/{codon_table_name}/codon_translations",
+    "/codon-tables/{codon_table_name}/codon-translations",
     response_model=list[CodonTranslation],
 )
 def list_table_codon_translations(session: SessionDependency, codon_table_name: str):
@@ -16,7 +16,7 @@ def list_table_codon_translations(session: SessionDependency, codon_table_name: 
 
 
 @router.get(
-    "/codon_table/{codon_table_name}/codon_translations/{codon}",
+    "/codon-tables/{codon_table_name}/codon-translations/{codon}",
     response_model=CodonTranslation,
 )
 def get_codon_translation(
@@ -25,7 +25,7 @@ def get_codon_translation(
     return CodonTranslationRepository(session).get(codon_table_name, codon)
 
 
-@router.post("/codon_table/{codon_table_name}/codon_translations")
+@router.post("/codon-tables/{codon_table_name}/codon-translations")
 def add_table_codon_translations(
     session: SessionDependency,
     data_batch: list[CodonTranslation],
@@ -33,7 +33,7 @@ def add_table_codon_translations(
     return CodonTranslationRepository(session).add_batch(data_batch)
 
 
-@router.put("/codon_table/{codon_table_name}/codon_translations")
+@router.put("/codon-tables/{codon_table_name}/codon-translations")
 def update_table_codon_translations(
     session: SessionDependency,
     codon_table_name: str,
