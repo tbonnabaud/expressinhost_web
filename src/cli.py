@@ -28,6 +28,7 @@ def run_as_cli(
     tuning_parameters = TuningParameters(
         slow_speed_threshold=SLOW_SPEED_THRESHOLD,
         conservation_threshold=CONSERVATION_THRESHOLD,
+        sequence_table_mapping={},
     )
 
     if clustal_file_path is None:
