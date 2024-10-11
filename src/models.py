@@ -18,7 +18,7 @@ class User(Base):
     creation_date: Mapped[datetime] = mapped_column(
         sa.DateTime, default=lambda: datetime.now(UTC)
     )
-    email: Mapped[str] = mapped_column(sa.String)
+    email: Mapped[str] = mapped_column(sa.String, unique=True)
     password: Mapped[str] = mapped_column(sa.String)
 
 
