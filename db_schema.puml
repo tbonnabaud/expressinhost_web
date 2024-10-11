@@ -23,7 +23,7 @@ entity codon_translations {
     * codon_table_name: varchar <<FK>> <<PK>>
     * codon: varchar(3) <<PK>>
     --
-    * anti_codon: varchar(3)
+    * anticodon: varchar(3)
     * amino_acid: varchar(3)
     * trna_gcn: float
     * corresponding_codon: varchar(3)

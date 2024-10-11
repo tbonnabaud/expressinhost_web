@@ -63,7 +63,7 @@ class UserCodonTableForm(BaseModel):
 class CodonTranslation(BaseModel):
     codon_table_name: str
     codon: str
-    anti_codon: str
+    anticodon: str
     amino_acid: str
     trna_gcn: float
     corresponding_codon: str

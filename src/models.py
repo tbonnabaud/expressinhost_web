@@ -43,7 +43,7 @@ class CodonTranslation(Base):
 
     codon_table_name: Mapped[str] = mapped_column(sa.String)
     codon: Mapped[str] = mapped_column(sa.String(length=3))
-    anti_codon: Mapped[str] = mapped_column(sa.String(length=3))
+    anticodon: Mapped[str] = mapped_column(sa.String(length=3))
     amino_acid: Mapped[str] = mapped_column(sa.String(length=3))
     trna_gcn: Mapped[float] = mapped_column(sa.Float)
     corresponding_codon: Mapped[str] = mapped_column(sa.String(length=3))
