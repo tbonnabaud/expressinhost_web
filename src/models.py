@@ -46,7 +46,7 @@ class CodonTranslation(Base):
     anticodon: Mapped[str] = mapped_column(sa.String(length=3))
     amino_acid: Mapped[str] = mapped_column(sa.String(length=3))
     trna_gcn: Mapped[float] = mapped_column(sa.Float)
-    corresponding_codon: Mapped[str] = mapped_column(sa.String(length=3))
+    corresp_codon: Mapped[str] = mapped_column(sa.String(length=3))
     wobble_rate: Mapped[float] = mapped_column(sa.Float)
 
     __table_args__ = (

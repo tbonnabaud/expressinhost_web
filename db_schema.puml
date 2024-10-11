@@ -26,7 +26,7 @@ entity codon_translations {
     * anticodon: varchar(3)
     * amino_acid: varchar(3)
     * trna_gcn: float
-    * corresponding_codon: varchar(3)
+    * corresp_codon: varchar(3)
     * wobble_rate: float
 }
 
