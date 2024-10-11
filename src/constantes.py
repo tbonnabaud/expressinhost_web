@@ -5,7 +5,7 @@ CONSERVATION_THRESHOLD = 0.75
 
 TABLE_BASE_PATH = Path("codon_tables/")
 
-AA_LIST = [
+AMINO_ACID_LIST = [
     "Ala",
     "Arg",
     "Asn",

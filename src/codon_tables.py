@@ -1,6 +1,6 @@
 import polars as pl
 
-from .constantes import AA_LIST, TABLE_BASE_PATH
+from .constantes import AMINO_ACID_LIST, TABLE_BASE_PATH
 
 
 def process_raw_codon_table(
@@ -27,25 +27,25 @@ def process_raw_codon_table(
         pl.DataFrame: processed table with three more columns (Rank, Speed and Symbol_Speed)
     """
     # Column 1 of the input raw table
-    aa_col = raw_codon_table["AA"]
+    amino_acid_col = raw_codon_table["amino_acid"]
     # Column 2 of the input raw table
-    trna_col = raw_codon_table["tRNA"]
+    anticodon_col = raw_codon_table["anticodon"]
     # Column 3 of the input raw table
-    codon_col = raw_codon_table["Codon"]
+    codon_col = raw_codon_table["codon"]
     # Column 4 of the input raw table
-    gcn_col = raw_codon_table["GCN"].cast(pl.Float64)
+    gcn_col = raw_codon_table["trna_gcn"].cast(pl.Float64)
     # Column 5 of the input raw table
-    corresp_codon_col = raw_codon_table["Corresp_codon"]
+    corresp_codon_col = raw_codon_table["corresp_codon"]
     # Column 6 of the input raw table
     wobble_rate_col = raw_codon_table["wobble_rate"]
 
     # Colmun 7 to be added to the output processed table
-    rank_col = pl.zeros(61, dtype=pl.Float64, eager=True).alias("Rank")
+    rank_col = pl.zeros(61, dtype=pl.Float64, eager=True).alias("rank")
     # Column 8 to be added to the output processed table
-    speed_col = pl.zeros(61, dtype=pl.Float64, eager=True).alias("Speed")
+    speed_col = pl.zeros(61, dtype=pl.Float64, eager=True).alias("speed")
     # Column 9 to be added to the output processed table
     symbol_speed_col = pl.repeat("0", 61, dtype=pl.String, eager=True).alias(
-        "Symbol_Speed"
+        "symbol_speed"
     )
 
     # This index allows to know with which amino acid of the list we are dealing (the first is "Ala" the second is "Arg"...)
@@ -62,7 +62,7 @@ def process_raw_codon_table(
     # We complement the input raw table for the codons with GCN = 0 and we count the total number of GCN, including the complemented ones
     k = 0
     while k < 61:
-        if aa_col[k] == AA_LIST[aa_num]:
+        if amino_acid_col[k] == AMINO_ACID_LIST[aa_num]:
             # If no GCN for that codon
             if gcn_col[k] == 0:
                 # In all codons of the input raw table
@@ -85,7 +85,7 @@ def process_raw_codon_table(
             cpt_codons_aa += 1
             gcn_tot = gcn_tot + gcn_col[k]
 
-        elif aa_col[k] == AA_LIST[aa_num + 1]:
+        elif amino_acid_col[k] == AMINO_ACID_LIST[aa_num + 1]:
             # If more than one codon code for that amino acid
             if cpt_codons_aa > 1:
                 # For all codons of the amino acid we are currently dealing with
@@ -135,7 +135,7 @@ def process_raw_codon_table(
         k += 1
 
     # Calculate the "SPEED" and the average "SPEED" over the entire table
-    speed_col = gcn_col.clone().alias("Speed") / gcn_tot
+    speed_col = gcn_col.clone().alias("speed") / gcn_tot
     average_speed = speed_col.mean()
 
     # Search the lowest "SPEED" over the entire table
@@ -152,8 +152,8 @@ def process_raw_codon_table(
 
     return pl.DataFrame(
         [
-            aa_col,
-            trna_col,
+            amino_acid_col,
+            anticodon_col,
             codon_col,
             gcn_col,
             corresp_codon_col,
