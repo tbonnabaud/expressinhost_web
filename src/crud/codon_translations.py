@@ -37,10 +37,9 @@ class CodonTranslationRepository(BaseRepository):
         self.session.execute(stmt)
         self.session.commit()
 
-    def delete(self, codon_table_name: str, codon: str):
+    def delete_batch(self, codon_table_name: str):
         stmt = sa.delete(CodonTranslation).where(
-            CodonTranslation.codon_table_name == codon_table_name,
-            CodonTranslation.codon == codon,
+            CodonTranslation.codon_table_name == codon_table_name
         )
         self.session.execute(stmt)
         self.session.commit()
