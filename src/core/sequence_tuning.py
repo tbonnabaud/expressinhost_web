@@ -308,7 +308,7 @@ def run_tuning(
     host_codon_table: pl.DataFrame,
     mode: str,
     conservation_threshold: float | None,
-) -> tuple[dict[str, str], dict[str, str]]:
+) -> list[dict]:
     nucleotide_sequences = parse_sequences(nucleotide_file_content, "fasta")
     cleared_nucleotide_sequences = clear_nucleotide_sequences(nucleotide_sequences)
 
@@ -369,13 +369,7 @@ def run_tuning(
                 "Invalid mode. Should be direct_mapping, optimisation_and_conservation_1 or optimisation_and_conservation_2."
             )
 
-    nucleotide_names = [record.name for record in nucleotide_sequences]
-
-    # output_path = Path(f"output/{host_organism}")
-    # output_path.mkdir(parents=True, exist_ok=True)
-
     cleared_output_sequences = clear_output_sequences(output_sequences)
-    # write_text_to_file("\n".join(cleared_output_sequences), output_path / f"{mode}.txt")
 
     identity_percentages = compare_sequences(
         cleared_nucleotide_sequences, cleared_output_sequences
@@ -393,10 +387,21 @@ def run_tuning(
         case _:
             pass
 
-    output_sequence_mapping = dict(zip(nucleotide_names, cleared_output_sequences))
-    identity_percentage_mapping = dict(zip(nucleotide_names, identity_percentages))
+    output_list = []
 
-    # with open(output_path / f"{mode}_identity_percentages.json", "w") as f:
-    #     json.dump(identity_percentage_mapping, f, indent=4)
+    for name, input, output, identity_percentage in zip(
+        map(lambda record: record.name, nucleotide_sequences),
+        map(lambda record: str(record.seq), nucleotide_sequences),
+        cleared_output_sequences,
+        identity_percentages,
+    ):
+        output_list.append(
+            {
+                "name": name,
+                "input": input,
+                "output": output,
+                "identity_percentage": identity_percentage,
+            }
+        )
 
-    return output_sequence_mapping, identity_percentage_mapping
+    return output_list
