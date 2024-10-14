@@ -1,5 +1,5 @@
-from fastapi import FastAPI, status
-from fastapi.responses import RedirectResponse, Response
+from fastapi import FastAPI
+from fastapi.responses import RedirectResponse
 
 from .database import engine
 from .models import Base
