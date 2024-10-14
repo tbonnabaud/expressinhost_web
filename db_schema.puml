@@ -1,6 +1,5 @@
 @startuml db_schema
 skinparam linetype ortho
-' left to right direction
 
 entity users {
     * id: uuid <<PK>>
@@ -35,19 +34,18 @@ entity results {
     --
     user_id: uuid <<FK>>
     * creation_date: datetime
-    * host_organism: varchar
+    * host_codon_table_name: varchar <<FK>>
     * mode: varchar
-    * parameters: json
+    * slow_speed_threshold: float
+    * conservation_threshold: float
 }
 
-json parameters {
-    "slow_speed_threshold": "number",
-    "conservation_threshold": "number",
-    "sequence_table_mapping": {
-        "string": "string",
-        "string": "string"
-    }
+entity results_native_codon_tables {
+    * result_id: uuid <<PK>>
+    * sequence_name: varchar <<PK>>
+    * codon_table_name: varchar <<PK>>
 }
+note right: Many to many relationship\nfor native codon tables\nand sequence names
 
 entity tuned_sequences {
     * id: uuid <<PK>>
@@ -62,6 +60,8 @@ entity tuned_sequences {
 users |o--o{ results
 users |o--o{ codon_tables
 results ||--o{ tuned_sequences
-results -- parameters
+results |o--{ codon_tables
+results }|--|{ results_native_codon_tables
+codon_tables }|--|{ results_native_codon_tables
 codon_tables ||--|{ codon_translations
 @enduml
