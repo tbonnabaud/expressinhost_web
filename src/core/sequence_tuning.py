@@ -2,11 +2,11 @@ import random
 
 import polars as pl
 
+from ..schemas import TuningParameters
 from .checks import check_amino_acido_conservation, check_nucleotides_clustal_identity
 from .exceptions import NoAminoAcidConservation, NoIdenticalSequencesError
 from .postprocessing import clear_output_sequences, compare_sequences
 from .preprocessing import align_nucleotide_sequences, clear_nucleotide_sequences
-from .schemas import TuningParameters
 from .utils import (
     get_clustal_symbol_sequence,
     parse_sequences,

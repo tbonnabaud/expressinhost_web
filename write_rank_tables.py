@@ -2,10 +2,10 @@ from pathlib import Path
 
 import polars as pl
 
-from src.codon_tables import process_codon_table_from_file
-from src.constantes import CONSERVATION_THRESHOLD, SLOW_SPEED_THRESHOLD, WOBBLE_RATE
+from core.codon_tables import process_codon_table_from_file
+from core.constantes import CONSERVATION_THRESHOLD, SLOW_SPEED_THRESHOLD, WOBBLE_RATE
 from src.schemas import TuningParameters
-from src.utils import (
+from core.utils import (
     find_organism_from_nucleotide_name,
     parse_sequences,
     read_text_file,

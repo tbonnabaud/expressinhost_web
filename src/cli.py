@@ -2,11 +2,11 @@ import argparse
 import re
 from pathlib import Path
 
-from .codon_tables import process_codon_table_from_file
-from .constantes import CONSERVATION_THRESHOLD, SLOW_SPEED_THRESHOLD
+from .core.codon_tables import process_codon_table_from_file
+from .core.constantes import CONSERVATION_THRESHOLD, SLOW_SPEED_THRESHOLD
+from .core.sequence_tuning import run_tuning
+from .core.utils import find_organism_from_nucleotide_name, read_text_file
 from .schemas import TuningParameters
-from .sequence_tuning import run_tuning
-from .utils import find_organism_from_nucleotide_name, read_text_file
 
 
 def create_and_clean_dirs():

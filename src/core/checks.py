@@ -2,7 +2,7 @@ from Bio.Data.CodonTable import TranslationError
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 
-from .schemas import BadSequence, MismatchingSequences
+from ..schemas import BadSequence, MismatchingSequences
 
 
 def check_nucleotides_clustal_identity(
