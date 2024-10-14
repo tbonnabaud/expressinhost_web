@@ -1,18 +1,15 @@
 import argparse
+import re
 from pathlib import Path
 
+from .codon_tables import process_codon_table_from_file
 from .constantes import CONSERVATION_THRESHOLD, SLOW_SPEED_THRESHOLD
 from .schemas import TuningParameters
 from .sequence_tuning import run_tuning
-from .utils import read_text_file
+from .utils import find_organism_from_nucleotide_name, read_text_file
 
 
-def run_as_cli(
-    nucleotide_file_path: Path,
-    clustal_file_path: Path | None,
-    host_organism: str,
-    mode: str,
-):
+def create_and_clean_dirs():
     tmp_dirpath = Path("tmp/")
     (tmp_dirpath / "processed_tables").mkdir(parents=True, exist_ok=True)
     # Create output directory
@@ -23,17 +20,46 @@ def run_as_cli(
         if path.is_file():
             path.unlink()
 
+
+def run_as_cli(
+    nucleotide_file_path: Path,
+    clustal_file_path: Path | None,
+    host_codon_table_name: str,
+    mode: str,
+):
     nucleotide_file_content = read_text_file(nucleotide_file_path)
 
     tuning_parameters = TuningParameters(
         slow_speed_threshold=SLOW_SPEED_THRESHOLD,
         conservation_threshold=CONSERVATION_THRESHOLD,
-        sequence_table_mapping={},
+    )
+
+    sequence_names = re.findall(
+        r"^\> ?([\w ]*\w)", nucleotide_file_content, re.MULTILINE
+    )
+
+    native_codon_table_names = [
+        find_organism_from_nucleotide_name(name) for name in sequence_names
+    ]
+
+    native_codon_tables = [
+        process_codon_table_from_file(name, tuning_parameters.slow_speed_threshold)
+        for name in native_codon_table_names
+    ]
+
+    host_codon_table = process_codon_table_from_file(
+        host_codon_table_name,
+        tuning_parameters.slow_speed_threshold,
     )
 
     if clustal_file_path is None:
         run_tuning(
-            nucleotide_file_content, None, host_organism, mode, tuning_parameters
+            nucleotide_file_content,
+            None,
+            native_codon_tables,
+            host_codon_table,
+            mode,
+            tuning_parameters,
         )
 
     else:
@@ -41,7 +67,8 @@ def run_as_cli(
         run_tuning(
             nucleotide_file_content,
             clustal_file_content,
-            host_organism,
+            native_codon_tables,
+            host_codon_table,
             mode,
             tuning_parameters,
         )

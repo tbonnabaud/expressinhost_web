@@ -23,7 +23,6 @@ class FilterParams(BaseModel):
 class TuningParameters(BaseModel):
     slow_speed_threshold: float
     conservation_threshold: float
-    sequence_table_mapping: dict[str, str]
 
 
 class User(BaseModel):

@@ -1,18 +1,14 @@
-import json
 import random
-from pathlib import Path
 
 import polars as pl
 
 from .checks import check_amino_acido_conservation, check_nucleotides_clustal_identity
-from .codon_tables import process_codon_table_from_file
 from .exceptions import NoAminoAcidConservation, NoIdenticalSequencesError
 from .postprocessing import clear_output_sequences, compare_sequences
 from .preprocessing import align_nucleotide_sequences, clear_nucleotide_sequences
 from .schemas import TuningParameters
 from .utils import (
-    find_organism_from_nucleotide_name,
-    parse_alignments,
+    get_clustal_symbol_sequence,
     parse_sequences,
     timeit,
     write_text_to_file,
@@ -309,27 +305,13 @@ def optimisation_and_conservation_2(
 def run_tuning(
     nucleotide_file_content: str,
     clustal_file_content: str | None,
-    host_organism: str,
+    native_codon_tables: list[pl.DataFrame],
+    host_codon_table: pl.DataFrame,
     mode: str,
     tuning_parameters: TuningParameters,
 ) -> tuple[dict[str, str], dict[str, str]]:
     nucleotide_sequences = parse_sequences(nucleotide_file_content, "fasta")
     cleared_nucleotide_sequences = clear_nucleotide_sequences(nucleotide_sequences)
-
-    native_organism_list = [
-        find_organism_from_nucleotide_name(record.name)
-        for record in nucleotide_sequences
-    ]
-
-    native_codon_tables = [
-        process_codon_table_from_file(name, tuning_parameters.slow_speed_threshold)
-        for name in native_organism_list
-    ]
-
-    host_codon_table = process_codon_table_from_file(
-        host_organism,
-        tuning_parameters.slow_speed_threshold,
-    )
 
     if mode == "direct_mapping":
         output_sequences = direct_mapping(
@@ -364,8 +346,7 @@ def run_tuning(
             clustal_sequences, cleared_nucleotide_sequences
         )
 
-        clustal_alignments = parse_alignments(clustal_file_content, "clustal")[0]
-        symbol_sequence = clustal_alignments.column_annotations.get("clustal_consensus")
+        symbol_sequence = get_clustal_symbol_sequence(clustal_file_content)
 
         if mode == "optimisation_and_conservation_1":
             output_sequences = optimisation_and_conservation_1(
@@ -391,11 +372,11 @@ def run_tuning(
 
     nucleotide_names = [record.name for record in nucleotide_sequences]
 
-    output_path = Path(f"output/{host_organism}")
-    output_path.mkdir(parents=True, exist_ok=True)
+    # output_path = Path(f"output/{host_organism}")
+    # output_path.mkdir(parents=True, exist_ok=True)
 
     cleared_output_sequences = clear_output_sequences(output_sequences)
-    write_text_to_file("\n".join(cleared_output_sequences), output_path / f"{mode}.txt")
+    # write_text_to_file("\n".join(cleared_output_sequences), output_path / f"{mode}.txt")
 
     identity_percentages = compare_sequences(
         cleared_nucleotide_sequences, cleared_output_sequences
@@ -416,7 +397,7 @@ def run_tuning(
     output_sequence_mapping = dict(zip(nucleotide_names, cleared_output_sequences))
     identity_percentage_mapping = dict(zip(nucleotide_names, identity_percentages))
 
-    with open(output_path / f"{mode}_identity_percentages.json", "w") as f:
-        json.dump(identity_percentage_mapping, f, indent=4)
+    # with open(output_path / f"{mode}_identity_percentages.json", "w") as f:
+    #     json.dump(identity_percentage_mapping, f, indent=4)
 
     return output_sequence_mapping, identity_percentage_mapping
