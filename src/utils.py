@@ -69,6 +69,11 @@ def parse_alignments(
             FastaFormatError("Fail to parse file. Ensure file is correctly formatted.")
 
 
+def get_clustal_symbol_sequence(clustal_file_content: str) -> str:
+    clustal_alignments = parse_alignments(clustal_file_content, "clustal")[0]
+    return clustal_alignments.column_annotations.get("clustal_consensus")
+
+
 @cache
 def get_available_organism_list():
     return [file.name.replace(".csv", "") for file in TABLE_BASE_PATH.iterdir()]
