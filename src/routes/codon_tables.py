@@ -6,7 +6,7 @@ from ..crud.codon_tables import CodonTableRepository
 from ..custom_types import SessionDependency
 from ..schemas import CodonTable, UserCodonTableForm
 
-router = APIRouter(prefix="/api", tags=["Codon tables"])
+router = APIRouter(tags=["Codon tables"])
 
 
 @router.get("/codon-tables", response_model=list[CodonTable])

@@ -1,5 +1,5 @@
-from fastapi import FastAPI
-from fastapi.responses import RedirectResponse
+from fastapi import FastAPI, status
+from fastapi.responses import RedirectResponse, Response
 
 from .database import engine
 from .models import Base
@@ -24,13 +24,23 @@ app = FastAPI(title="ExpressInHost")
 #     allow_headers=["*"],
 # )
 
-app.include_router(codon_tables.router)
-app.include_router(codon_translations.router)
-app.include_router(results.router)
-app.include_router(tuned_sequences.router)
-app.include_router(users.router)
+api_app = FastAPI(title="ExpressInHost API")
+
+api_app.include_router(codon_tables.router)
+api_app.include_router(codon_translations.router)
+api_app.include_router(results.router)
+api_app.include_router(tuned_sequences.router)
+api_app.include_router(users.router)
 
 
-@app.get("/")
+@api_app.get("/")
+async def api_root() -> RedirectResponse:
+    return RedirectResponse(url="/api/docs")
+
+
+app.mount("/api", api_app)
+
+
+@app.get("/{full_path:path}")
 async def root() -> RedirectResponse:
     return RedirectResponse(url="/docs")

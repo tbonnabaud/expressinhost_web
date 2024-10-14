@@ -4,7 +4,7 @@ from ..crud.codon_translations import CodonTranslationRepository
 from ..custom_types import SessionDependency
 from ..schemas import CodonTranslation
 
-router = APIRouter(prefix="/api", tags=["Codon translations"])
+router = APIRouter(tags=["Codon translations"])
 
 
 @router.get(

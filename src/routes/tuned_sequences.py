@@ -6,7 +6,7 @@ from ..crud.tuned_sequences import TunedSequenceRepository
 from ..custom_types import SessionDependency
 from ..schemas import TunedSequence
 
-router = APIRouter(prefix="/api", tags=["Tuned sequences"])
+router = APIRouter(tags=["Tuned sequences"])
 
 
 @router.get("/results/{result_id}/tuned-sequences", response_model=list[TunedSequence])
