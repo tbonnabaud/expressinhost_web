@@ -82,3 +82,13 @@ class TunedSequence(BaseModel):
     input: str
     output: str
     percentage_identity: float
+
+
+class RunTuningForm(BaseModel):
+    nucleotide_file_content: str
+    clustal_file_content: str | None
+    host_codon_table_name: str
+    sequences_native_codon_tables: dict[str, str]
+    mode: str
+    slow_speed_threshold: float
+    conservation_threshold: float | None
