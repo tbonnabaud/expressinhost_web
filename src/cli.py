@@ -6,7 +6,6 @@ from .core.codon_tables import process_codon_table_from_file
 from .core.constantes import CONSERVATION_THRESHOLD, SLOW_SPEED_THRESHOLD
 from .core.sequence_tuning import run_tuning
 from .core.utils import find_organism_from_nucleotide_name, read_text_file
-from .schemas import TuningParameters
 
 
 def create_and_clean_dirs():
@@ -29,11 +28,6 @@ def run_as_cli(
 ):
     nucleotide_file_content = read_text_file(nucleotide_file_path)
 
-    tuning_parameters = TuningParameters(
-        slow_speed_threshold=SLOW_SPEED_THRESHOLD,
-        conservation_threshold=CONSERVATION_THRESHOLD,
-    )
-
     sequence_names = re.findall(
         r"^\> ?([\w ]*\w)", nucleotide_file_content, re.MULTILINE
     )
@@ -43,13 +37,13 @@ def run_as_cli(
     ]
 
     native_codon_tables = [
-        process_codon_table_from_file(name, tuning_parameters.slow_speed_threshold)
+        process_codon_table_from_file(name, SLOW_SPEED_THRESHOLD)
         for name in native_codon_table_names
     ]
 
     host_codon_table = process_codon_table_from_file(
         host_codon_table_name,
-        tuning_parameters.slow_speed_threshold,
+        SLOW_SPEED_THRESHOLD,
     )
 
     if clustal_file_path is None:
@@ -59,7 +53,7 @@ def run_as_cli(
             native_codon_tables,
             host_codon_table,
             mode,
-            tuning_parameters,
+            None,
         )
 
     else:
@@ -70,7 +64,7 @@ def run_as_cli(
             native_codon_tables,
             host_codon_table,
             mode,
-            tuning_parameters,
+            CONSERVATION_THRESHOLD,
         )
 
 

@@ -20,11 +20,6 @@ class FilterParams(BaseModel):
     offset: int = Field(0, ge=0)
 
 
-class TuningParameters(BaseModel):
-    slow_speed_threshold: float
-    conservation_threshold: float
-
-
 class User(BaseModel):
     id: UUID
     creation_date: datetime
@@ -73,9 +68,11 @@ class Result(BaseModel):
     id: UUID
     user_id: UUID | None
     creation_date: datetime
-    host_organism: str
+    host_codon_table_name: str
+    sequences_native_codon_tables: dict[str, str]
     mode: str
-    parameters: TuningParameters
+    slow_speed_threshold: float
+    conservation_threshold: float | None
 
 
 class TunedSequence(BaseModel):

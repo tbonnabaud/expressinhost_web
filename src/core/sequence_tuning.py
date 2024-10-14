@@ -2,7 +2,6 @@ import random
 
 import polars as pl
 
-from ..schemas import TuningParameters
 from .checks import check_amino_acido_conservation, check_nucleotides_clustal_identity
 from .exceptions import NoAminoAcidConservation, NoIdenticalSequencesError
 from .postprocessing import clear_output_sequences, compare_sequences
@@ -308,7 +307,7 @@ def run_tuning(
     native_codon_tables: list[pl.DataFrame],
     host_codon_table: pl.DataFrame,
     mode: str,
-    tuning_parameters: TuningParameters,
+    conservation_threshold: float | None,
 ) -> tuple[dict[str, str], dict[str, str]]:
     nucleotide_sequences = parse_sequences(nucleotide_file_content, "fasta")
     cleared_nucleotide_sequences = clear_nucleotide_sequences(nucleotide_sequences)
@@ -362,7 +361,7 @@ def run_tuning(
                 symbol_sequence,
                 native_codon_tables,
                 host_codon_table,
-                tuning_parameters.conservation_threshold,
+                conservation_threshold,
             )
 
         else:

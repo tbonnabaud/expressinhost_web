@@ -70,9 +70,13 @@ class Result(Base):
     creation_date: Mapped[datetime] = mapped_column(
         sa.DateTime, default=lambda: datetime.now(UTC)
     )
-    host_organism: Mapped[str] = mapped_column(sa.String)
+    host_codon_table_name: Mapped[str] = mapped_column(sa.String)
+    sequences_native_codon_tables: Mapped[dict] = mapped_column(sa.JSON)
     mode: Mapped[str] = mapped_column(sa.String)
-    parameters: Mapped[dict] = mapped_column(sa.JSON)
+    slow_speed_threshold: Mapped[float] = mapped_column(sa.Float)
+    conservation_threshold: Mapped[float | None] = mapped_column(
+        sa.Float, nullable=True
+    )
 
 
 class TunedSequence(Base):
