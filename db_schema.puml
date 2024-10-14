@@ -34,18 +34,24 @@ entity results {
     --
     user_id: uuid <<FK>>
     * creation_date: datetime
-    * host_codon_table_name: varchar <<FK>>
+    * host_codon_table_name: varchar
+    * sequences_native_codon_tables: json
     * mode: varchar
     * slow_speed_threshold: float
-    * conservation_threshold: float
+    conservation_threshold: float
 }
 
-entity results_native_codon_tables {
-    * result_id: uuid <<PK>>
-    * sequence_name: varchar <<PK>>
-    * codon_table_name: varchar <<PK>>
+json sequences_native_codon_tables {
+    "seq1": "table1",
+    "seq2": "table2"
 }
-note right: Many to many relationship\nfor native codon tables\nand sequence names
+
+' entity results_native_codon_tables {
+'     * result_id: uuid <<PK>> <<FK>>
+'     * sequence_name: varchar <<PK>>
+'     * codon_table_name: varchar <<PK>> <<FK>>
+' }
+' note right: Many to many relationship\nfor native codon tables\nand sequence names
 
 entity tuned_sequences {
     * id: uuid <<PK>>
@@ -61,7 +67,8 @@ users |o--o{ results
 users |o--o{ codon_tables
 results ||--o{ tuned_sequences
 results |o--{ codon_tables
-results }|--|{ results_native_codon_tables
-codon_tables }|--|{ results_native_codon_tables
+results ||--|| sequences_native_codon_tables
+' results }|--|{ results_native_codon_tables
+' codon_tables }|--|{ results_native_codon_tables
 codon_tables ||--|{ codon_translations
 @enduml
