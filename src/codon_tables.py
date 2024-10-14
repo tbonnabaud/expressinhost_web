@@ -166,16 +166,16 @@ def process_raw_codon_table(
 
 
 def process_codon_table_from_file(
-    organism_name: str, slow_speed_threshold: float
+    codon_table_name: str, slow_speed_threshold: float
 ) -> pl.DataFrame:
     table_df = pl.read_csv(
-        TABLE_BASE_PATH / f"{organism_name}.csv",
+        TABLE_BASE_PATH / f"{codon_table_name}.csv",
         has_header=True,
         separator="\t",
     )
     processed_df = process_raw_codon_table(table_df, slow_speed_threshold)
     processed_df.write_csv(
-        f"tmp/processed_tables/Processed_{organism_name}.csv",
+        f"tmp/processed_tables/Processed_{codon_table_name}.csv",
         separator="\t",
     )
 
