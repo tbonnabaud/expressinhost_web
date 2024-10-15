@@ -6,6 +6,7 @@ import { RouterLink, RouterView } from 'vue-router'
   <header>
     <nav>
       <ul>
+        <li><img id="logo" src="./assets/logo.png" alt="Logo" /></li>
         <li><strong>ExpressInHost</strong></li>
       </ul>
 
@@ -46,5 +47,9 @@ nav a.router-link-exact-active {
 
 nav a.router-link-exact-active:hover {
   background-color: transparent;
+}
+
+#logo {
+  max-height: 1.5em;
 }
 </style>
