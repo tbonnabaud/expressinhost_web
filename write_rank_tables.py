@@ -2,10 +2,9 @@ from pathlib import Path
 
 import polars as pl
 
-from core.codon_tables import process_codon_table_from_file
-from core.constantes import CONSERVATION_THRESHOLD, SLOW_SPEED_THRESHOLD, WOBBLE_RATE
-from src.schemas import TuningParameters
-from core.utils import (
+from backend.core.codon_tables import process_codon_table_from_file
+from backend.core.constantes import SLOW_SPEED_THRESHOLD
+from backend.core.utils import (
     find_organism_from_nucleotide_name,
     parse_sequences,
     read_text_file,
@@ -33,12 +32,6 @@ def generate_rank_lists(
     host_organism: str,
     results_path: Path,
 ):
-    tuning_parameters = TuningParameters(
-        wobble_rate=WOBBLE_RATE,
-        slow_speed_threshold=SLOW_SPEED_THRESHOLD,
-        conservation_threshold=CONSERVATION_THRESHOLD,
-    )
-
     input_content = read_text_file(input_sequence_path)
     input_records = parse_sequences(input_content, "fasta")
 
@@ -50,16 +43,13 @@ def generate_rank_lists(
     ]
 
     native_codon_tables = [
-        process_codon_table_from_file(
-            name, tuning_parameters.wobble_rate, tuning_parameters.slow_speed_threshold
-        )
+        process_codon_table_from_file(name, SLOW_SPEED_THRESHOLD)
         for name in native_organism_list
     ]
 
     host_codon_table = process_codon_table_from_file(
         host_organism,
-        tuning_parameters.wobble_rate,
-        tuning_parameters.slow_speed_threshold,
+        SLOW_SPEED_THRESHOLD,
     )
 
     host_codon_rows = host_codon_table.rows(named=True)

@@ -1,4 +1,4 @@
 #!/bin/bash
 
-black ./src
-isort --profile black ./src
+black ./backend
+isort --profile black ./backend
