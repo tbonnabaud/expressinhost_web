@@ -3,7 +3,14 @@ from fastapi.responses import RedirectResponse
 
 from .database import engine
 from .models import Base
-from .routes import codon_tables, codon_translations, results, tuned_sequences, users
+from .routes import (
+    codon_tables,
+    codon_translations,
+    results,
+    tuned_sequences,
+    tuning,
+    users,
+)
 
 # from fastapi.middleware.cors import CORSMiddleware
 
@@ -26,11 +33,12 @@ app = FastAPI(title="ExpressInHost")
 
 api_app = FastAPI(title="ExpressInHost API")
 
+api_app.include_router(users.router)
 api_app.include_router(codon_tables.router)
 api_app.include_router(codon_translations.router)
 api_app.include_router(results.router)
 api_app.include_router(tuned_sequences.router)
-api_app.include_router(users.router)
+api_app.include_router(tuning.router)
 
 
 @api_app.get("/")
