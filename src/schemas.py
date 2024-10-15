@@ -81,7 +81,7 @@ class TunedSequence(BaseModel):
     name: str
     input: str
     output: str
-    percentage_identity: float
+    identity_percentage: float
 
 
 class RunTuningForm(BaseModel):

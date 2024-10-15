@@ -92,4 +92,4 @@ class TunedSequence(Base):
     name: Mapped[str] = mapped_column(sa.String)
     input: Mapped[str] = mapped_column(sa.Text)
     output: Mapped[str] = mapped_column(sa.Text)
-    percentage_identity: Mapped[float] = mapped_column(sa.Float)
+    identity_percentage: Mapped[float] = mapped_column(sa.Float)
