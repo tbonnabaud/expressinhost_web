@@ -45,8 +45,7 @@ def launch_tuning(session: SessionDependency, form: RunTuningForm):
         form.conservation_threshold,
     )
 
-    result_repo = ResultRepository(session)
-    result_id = result_repo.add(
+    result_id = ResultRepository(session).add(
         {
             "user_id": None,
             "host_codon_table_name": form.host_codon_table_name,
@@ -60,7 +59,6 @@ def launch_tuning(session: SessionDependency, form: RunTuningForm):
     for seq in output:
         seq["result_id"] = result_id
 
-    tuned_sequence_repo = TunedSequenceRepository(session)
-    tuned_sequence_repo.add_batch(output)
+    TunedSequenceRepository(session).add_batch(output)
 
     return result_id
