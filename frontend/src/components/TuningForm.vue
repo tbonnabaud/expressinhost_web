@@ -1,18 +1,26 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ref, onMounted } from 'vue'
 import { readTextFile } from '@/utils/helpers'
 import { CODON_TABLE_LIST } from '@/utils/constants'
+
+interface CodonTable {
+  name: string
+  organism: string
+  custom: boolean
+}
 
 const fastaContent = ref('')
 const clustalContent = ref('')
 
-const codonTableList = ref(CODON_TABLE_LIST)
+const codonTableList = ref([] as Array<CodonTable>)
 
 const sequenceNameList = computed(() => {
   // Match the group after ">" symbol
   const fastaSeqNameRegex = /^\>\s*(.*\w)/gm
   return Array.from(fastaContent.value.matchAll(fastaSeqNameRegex), m => m[1])
 })
+
+onMounted(() => (codonTableList.value = CODON_TABLE_LIST))
 
 async function setFastaContent(event: Event) {
   fastaContent.value = await readTextFile(event)
