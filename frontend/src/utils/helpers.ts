@@ -14,8 +14,11 @@ export async function readTextFile(event: Event) {
   if (target.files && target.files.length > 0) {
     const file = target.files[0]
     const text = await file.text()
+
     return text
   }
+
+  console.error('No file.')
 
   return ''
 }
