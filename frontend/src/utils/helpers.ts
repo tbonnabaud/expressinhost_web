@@ -4,7 +4,7 @@
  * @param {Event} event - The `event` parameter in the `readTextFile` function is an event object that
  * is passed to the function when it is triggered. In this case, it is expected to be of type `Event`,
  * which is a standard DOM event object. The event object contains information about the event that
- * occurred
+ * occurred.
  * @returns The `readTextFile` function returns the text content of the file selected by the user if a
  * file is selected. If no file is selected, it returns an empty string.
  */
