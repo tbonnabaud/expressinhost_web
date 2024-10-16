@@ -6,8 +6,7 @@ const fastaContent = ref('')
 
 const sequenceNames = computed(() => {
   const fastaSeqRegex = /^\> ?([\w ]*\w)/gm
-
-  return [...fastaContent.value.matchAll(fastaSeqRegex)].map(m => m[1])
+  return Array.from(fastaContent.value.matchAll(fastaSeqRegex), m => m[1])
 })
 
 async function readText(event: Event) {
