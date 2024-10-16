@@ -2,7 +2,23 @@
 import { computed, ref } from 'vue'
 
 const fastaContent = ref('')
-// const clustalContent = ref("")
+const clustalContent = ref('')
+
+const codonTableNameList = ref([
+  'Arabidopsis_thaliana',
+  'Bacillus_subtilis',
+  'Caenorhabditis_elegans',
+  'Danio_rerio',
+  'Drosophila_melanogaster',
+  'Escherichia_coli',
+  'Gallus_gallus',
+  'Homo_sapiens',
+  'Komagataella_pastoris',
+  'Methanocaldococcus_jannaschii',
+  'Saccharomyces_cerevisiae',
+  'Staphylococcus_aureus',
+  'Xenopus_laevis',
+])
 
 const sequenceNames = computed(() => {
   const fastaSeqRegex = /^\> ?([\w ]*\w)/gm
@@ -24,6 +40,10 @@ async function readText(event: Event) {
 async function setFastaContent(event: Event) {
   fastaContent.value = await readText(event)
 }
+
+async function setClustalContent(event: Event) {
+  clustalContent.value = await readText(event)
+}
 </script>
 
 <template>
@@ -39,7 +59,7 @@ async function setFastaContent(event: Event) {
 
         <div class="input-file">
           <label for="clustal">Alignment file (CLUSTAL, optional)</label>
-          <input type="file" name="" id="clustal" />
+          <input type="file" name="" id="clustal" @change="setClustalContent" />
         </div>
       </div>
     </section>
@@ -47,39 +67,52 @@ async function setFastaContent(event: Event) {
     <section>
       <h2>Sequences</h2>
 
-      <table>
+      <table v-if="sequenceNames.length">
         <tbody>
           <tr v-for="seq in sequenceNames" :key="seq">
             <td>{{ seq }}</td>
             <td class="select-cell">
-              <select name="" id="">
-                <option value="">Table1</option>
-                <option value="">Table2</option>
-                <option value="">Table3</option>
+              <select name="" id="" required>
+                <option value=""></option>
+                <option
+                  v-for="codonTableName in codonTableNameList"
+                  :key="codonTableName"
+                  :value="codonTableName"
+                >
+                  {{ codonTableName }}
+                </option>
               </select>
             </td>
           </tr>
         </tbody>
       </table>
+
+      <p v-else>No sequence. Please provide a valid FASTA file.</p>
     </section>
 
     <section>
       <h2>Host organism</h2>
 
       <div class="flex-container">
-        <div id="organism">
+        <!-- <div id="organism">
           <label for="">Host organism</label>
           <select name="">
             <option value="">Escherichia_coli</option>
             <option value="">Danio_rerio</option>
           </select>
-        </div>
+        </div> -->
 
         <div id="tableName">
           <label for="">Table name</label>
-          <select name="">
-            <option value="">Escherichia_coli_Default</option>
-            <option value="">Escherichia_coli_Custom</option>
+          <select name="" id="" required>
+            <option value=""></option>
+            <option
+              v-for="codonTableName in codonTableNameList"
+              :key="codonTableName"
+              :value="codonTableName"
+            >
+              {{ codonTableName }}
+            </option>
           </select>
         </div>
       </div>
