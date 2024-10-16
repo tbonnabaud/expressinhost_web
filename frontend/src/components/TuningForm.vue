@@ -34,6 +34,21 @@ async function setFastaContent(event: Event) {
 async function setClustalContent(event: Event) {
   clustalContent.value = await readTextFile(event)
 }
+
+/**
+ * Try to guess the first corresponding codon table name.
+ * @param {string} sequenceName - Name of the sequence
+ * @returns First corresponding codon table name or empty string if not found.
+ */
+function selectTableName(sequenceName: string) {
+  for (const tableName of codonTableNameList.value) {
+    if (sequenceName.toLowerCase().includes(tableName.toLowerCase())) {
+      return tableName
+    }
+  }
+
+  return ''
+}
 </script>
 
 <template>
@@ -62,7 +77,7 @@ async function setClustalContent(event: Event) {
           <tr v-for="seq in sequenceNames" :key="seq">
             <td>{{ seq }}</td>
             <td class="select-cell">
-              <select name="" id="" required>
+              <select name="" id="" required :value="selectTableName(seq)">
                 <option value=""></option>
                 <option
                   v-for="codonTableName in codonTableNameList"
