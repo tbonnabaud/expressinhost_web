@@ -33,7 +33,8 @@ import { RouterLink, RouterView } from 'vue-router'
 
 <style scoped>
 nav {
-  margin: 0 2em;
+  padding: 0 2em;
+  margin: 0;
 }
 
 nav li {
