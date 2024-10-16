@@ -7,10 +7,3 @@
 .flex-container {
   display: flex;
 }
-
-@media (min-width: 768px) {
-  .container {
-    padding-left: 15em;
-    padding-right: 15em;
-  }
-}
