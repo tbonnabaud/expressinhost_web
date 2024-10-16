@@ -195,8 +195,9 @@ function selectTableName(sequenceName: string) {
   text-align: center;
 }
 
-td select {
+.select-cell select {
   width: 100%;
+  margin: 0;
 }
 
 td {
