@@ -21,7 +21,7 @@ const codonTableNameList = ref([
   'Xenopus_laevis',
 ])
 
-const sequenceNames = computed(() => {
+const sequenceNameList = computed(() => {
   // Match the group after ">" symbol
   const fastaSeqNameRegex = /^\>\s*(.*\w)/gm
   return Array.from(fastaContent.value.matchAll(fastaSeqNameRegex), m => m[1])
@@ -74,7 +74,7 @@ function selectTableName(sequenceName: string) {
     <section>
       <h2>Sequences</h2>
 
-      <table v-if="sequenceNames.length">
+      <table v-if="sequenceNameList.length">
         <thead>
           <tr>
             <th>Sequence name</th>
@@ -83,7 +83,7 @@ function selectTableName(sequenceName: string) {
         </thead>
 
         <tbody>
-          <tr v-for="seq in sequenceNames" :key="seq">
+          <tr v-for="seq in sequenceNameList" :key="seq">
             <td>{{ seq }}</td>
             <td class="select-cell">
               <select name="" id="" required :value="selectTableName(seq)">
