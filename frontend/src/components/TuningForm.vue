@@ -114,8 +114,8 @@ function selectTableName(sequenceName: string) {
           </select>
         </div> -->
 
-        <div id="tableName">
-          <label for="">Table name</label>
+        <div id="hostCodonTable">
+          <!-- <label for="">Table name</label> -->
           <select name="" id="" required>
             <option value=""></option>
             <option
@@ -184,7 +184,7 @@ function selectTableName(sequenceName: string) {
 }
 
 #organism,
-#tableName {
+#hostCodonTable {
   flex: auto;
   margin: 10px;
   width: 100%;
