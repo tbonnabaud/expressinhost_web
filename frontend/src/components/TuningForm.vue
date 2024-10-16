@@ -1,25 +1,12 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { readTextFile } from '@/utils/helpers'
+import { CODON_TABLE_LIST } from '@/utils/constants'
 
 const fastaContent = ref('')
 const clustalContent = ref('')
 
-const codonTableNameList = ref([
-  'Arabidopsis_thaliana',
-  'Bacillus_subtilis',
-  'Caenorhabditis_elegans',
-  'Danio_rerio',
-  'Drosophila_melanogaster',
-  'Escherichia_coli',
-  'Gallus_gallus',
-  'Homo_sapiens',
-  'Komagataella_pastoris',
-  'Methanocaldococcus_jannaschii',
-  'Saccharomyces_cerevisiae',
-  'Staphylococcus_aureus',
-  'Xenopus_laevis',
-])
+const codonTableList = ref(CODON_TABLE_LIST)
 
 const sequenceNameList = computed(() => {
   // Match the group after ">" symbol
@@ -43,9 +30,9 @@ async function setClustalContent(event: Event) {
 function selectTableName(sequenceName: string) {
   const lowerCaseSequenceName = sequenceName.toLowerCase()
 
-  for (const tableName of codonTableNameList.value) {
-    if (lowerCaseSequenceName.includes(tableName.toLowerCase())) {
-      return tableName
+  for (const tableName of codonTableList.value) {
+    if (lowerCaseSequenceName.includes(tableName.name.toLowerCase())) {
+      return tableName.name
     }
   }
 
@@ -89,11 +76,11 @@ function selectTableName(sequenceName: string) {
               <select name="" id="" required :value="selectTableName(seq)">
                 <option value=""></option>
                 <option
-                  v-for="codonTableName in codonTableNameList"
-                  :key="codonTableName"
-                  :value="codonTableName"
+                  v-for="codonTableName in codonTableList"
+                  :key="codonTableName.name"
+                  :value="codonTableName.name"
                 >
-                  {{ codonTableName }}
+                  {{ codonTableName.name }}
                 </option>
               </select>
             </td>
@@ -121,11 +108,11 @@ function selectTableName(sequenceName: string) {
           <select name="" id="" required>
             <option value=""></option>
             <option
-              v-for="codonTableName in codonTableNameList"
-              :key="codonTableName"
-              :value="codonTableName"
+              v-for="codonTableName in codonTableList"
+              :key="codonTableName.name"
+              :value="codonTableName.name"
             >
-              {{ codonTableName }}
+              {{ codonTableName.name }}
             </option>
           </select>
         </div>
