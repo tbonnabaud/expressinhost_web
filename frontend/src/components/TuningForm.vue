@@ -41,8 +41,10 @@ async function setClustalContent(event: Event) {
  * @returns First corresponding codon table name or empty string if not found.
  */
 function selectTableName(sequenceName: string) {
+  const lowerCaseSequenceName = sequenceName.toLowerCase()
+
   for (const tableName of codonTableNameList.value) {
-    if (sequenceName.toLowerCase().includes(tableName.toLowerCase())) {
+    if (lowerCaseSequenceName.includes(tableName.toLowerCase())) {
       return tableName
     }
   }
