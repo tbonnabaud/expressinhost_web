@@ -22,7 +22,7 @@ const codonTableNameList = ref([
 
 const sequenceNames = computed(() => {
   // Match the group after ">" symbol
-  const fastaSeqNameRegex = /^\> ?(.*\w)/gm
+  const fastaSeqNameRegex = /^\>\s*(.*\w)/gm
   return Array.from(fastaContent.value.matchAll(fastaSeqNameRegex), m => m[1])
 })
 
