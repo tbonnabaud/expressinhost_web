@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
+import { readTextFile } from '@/utils/helpers'
 
 const fastaContent = ref('')
 const clustalContent = ref('')
@@ -26,24 +27,12 @@ const sequenceNames = computed(() => {
   return Array.from(fastaContent.value.matchAll(fastaSeqNameRegex), m => m[1])
 })
 
-async function readText(event: Event) {
-  const target = event.target as HTMLInputElement
-
-  if (target.files && target.files.length > 0) {
-    const file = target.files[0]
-    const text = await file.text()
-    return text
-  }
-
-  return ''
-}
-
 async function setFastaContent(event: Event) {
-  fastaContent.value = await readText(event)
+  fastaContent.value = await readTextFile(event)
 }
 
 async function setClustalContent(event: Event) {
-  clustalContent.value = await readText(event)
+  clustalContent.value = await readTextFile(event)
 }
 </script>
 
