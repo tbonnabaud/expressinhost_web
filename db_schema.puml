@@ -1,5 +1,11 @@
 @startuml db_schema
 skinparam linetype ortho
+skinparam dpi 200
+
+' !theme amiga
+' left to right direction
+' skinparam BackgroundColor transparent
+' skinparam ClassBackgroundColor #1b212c
 
 entity users {
     * id: uuid <<PK>>
