@@ -28,9 +28,7 @@ def run_as_cli(
 ):
     nucleotide_file_content = read_text_file(nucleotide_file_path)
 
-    sequence_names = re.findall(
-        r"^\> ?([\w ]*\w)", nucleotide_file_content, re.MULTILINE
-    )
+    sequence_names = re.findall(r"^\>\s*(.*\w)", nucleotide_file_content, re.MULTILINE)
 
     native_codon_table_names = [
         find_organism_from_nucleotide_name(name) for name in sequence_names
