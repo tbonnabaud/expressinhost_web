@@ -1,4 +1,31 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { computed, ref } from 'vue'
+
+const fastaContent = ref('')
+// const clustalContent = ref("")
+
+const sequenceNames = computed(() => {
+  const fastaSeqRegex = /^\> ?([\w ]*\w)/gm
+
+  return [...fastaContent.value.matchAll(fastaSeqRegex)].map(m => m[1])
+})
+
+async function readText(event: Event) {
+  const target = event.target as HTMLInputElement
+
+  if (target.files && target.files.length > 0) {
+    const file = target.files[0]
+    const text = await file.text()
+    return text
+  }
+
+  return ''
+}
+
+async function setFastaContent(event: Event) {
+  fastaContent.value = await readText(event)
+}
+</script>
 
 <template>
   <form>
@@ -8,7 +35,7 @@
       <div class="flex-container">
         <div class="input-file">
           <label for="fasta">Sequence file (FASTA)</label>
-          <input type="file" name="" id="fasta" />
+          <input type="file" name="" id="fasta" @change="setFastaContent" />
         </div>
 
         <div class="input-file">
@@ -23,28 +50,8 @@
 
       <table>
         <tbody>
-          <tr>
-            <td>Sequence1</td>
-            <td class="select-cell">
-              <select name="" id="">
-                <option value="">Table1</option>
-                <option value="">Table2</option>
-                <option value="">Table3</option>
-              </select>
-            </td>
-          </tr>
-          <tr>
-            <td>Sequence2</td>
-            <td class="select-cell">
-              <select name="" id="">
-                <option value="">Table1</option>
-                <option value="">Table2</option>
-                <option value="">Table3</option>
-              </select>
-            </td>
-          </tr>
-          <tr>
-            <td>Sequence3</td>
+          <tr v-for="seq in sequenceNames" :key="seq">
+            <td>{{ seq }}</td>
             <td class="select-cell">
               <select name="" id="">
                 <option value="">Table1</option>
