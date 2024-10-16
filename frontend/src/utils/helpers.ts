@@ -1,16 +1,12 @@
 /**
- * The function `readTextFile` reads the text content of a file selected by the user through an HTML
- * input element.
- *
- * Args:
- *   event (Event): The `event` parameter is an event object that is passed to the `readTextFile`
- * function. It is of type `Event` and is used to capture the event that triggered the function, such
- * as a file input change event.
- *
- * Returns:
- *   The `readTextFile` function returns the text content of the file selected by the user in the HTML
- * input element. If a file is selected, the function reads the text content of the file asynchronously
- * and returns it. If no file is selected, an empty string `''` is returned.
+ * This TypeScript function reads the text content of a file selected by the user through an HTML input
+ * element.
+ * @param {Event} event - The `event` parameter in the `readTextFile` function is an event object that
+ * is passed to the function when it is triggered. In this case, it is expected to be of type `Event`,
+ * which is a standard DOM event object. The event object contains information about the event that
+ * occurred
+ * @returns The `readTextFile` function returns the text content of the file selected by the user if a
+ * file is selected. If no file is selected, it returns an empty string.
  */
 export async function readTextFile(event: Event) {
   const target = event.target as HTMLInputElement
