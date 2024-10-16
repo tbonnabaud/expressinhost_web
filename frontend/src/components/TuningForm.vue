@@ -21,8 +21,9 @@ const codonTableNameList = ref([
 ])
 
 const sequenceNames = computed(() => {
-  const fastaSeqRegex = /^\> ?([\w ]*\w)/gm
-  return Array.from(fastaContent.value.matchAll(fastaSeqRegex), m => m[1])
+  // Match the group after ">" symbol
+  const fastaSeqNameRegex = /^\> ?(.*\w)/gm
+  return Array.from(fastaContent.value.matchAll(fastaSeqNameRegex), m => m[1])
 })
 
 async function readText(event: Event) {
