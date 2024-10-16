@@ -73,6 +73,13 @@ function selectTableName(sequenceName: string) {
       <h2>Sequences</h2>
 
       <table v-if="sequenceNames.length">
+        <thead>
+          <tr>
+            <th>Sequence name</th>
+            <th>Codon table</th>
+          </tr>
+        </thead>
+
         <tbody>
           <tr v-for="seq in sequenceNames" :key="seq">
             <td>{{ seq }}</td>
