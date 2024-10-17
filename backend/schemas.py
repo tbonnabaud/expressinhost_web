@@ -1,7 +1,8 @@
+import re
 from datetime import datetime
 from uuid import UUID
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ValidationError, field_validator
 
 
 class BadSequence(BaseModel):
@@ -13,6 +14,13 @@ class MismatchingSequences(BaseModel):
     name: str
     sequence1: str
     sequence2: str
+
+
+class FormModel:
+    @field_validator("name")
+    @staticmethod
+    def clean(value: str):
+        return value.strip()
 
 
 class FilterParams(BaseModel):
@@ -31,6 +39,16 @@ class UserForm(BaseModel):
     email: str
     password: str
 
+    @field_validator("email")
+    @staticmethod
+    def valid_email(value: str):
+        value = value.strip()
+
+        if not re.match(r"^[\w\-\.]+@([\w\-]+\.)+\w{2,4}$", value):
+            raise ValidationError("Invalid e-mail address.")
+
+        return value
+
 
 class CodonTable(BaseModel):
     name: str
@@ -44,11 +62,21 @@ class DefaultCodonTableForm(BaseModel):
     user_id: None = None
     organism: str
 
+    @field_validator("name", "organism")
+    @staticmethod
+    def clean(value: str):
+        return value.strip()
+
 
 class UserCodonTableForm(BaseModel):
     name: str
     user_id: UUID
     organism: str
+
+    @field_validator("name", "organism")
+    @staticmethod
+    def clean(value: str):
+        return value.strip()
 
 
 class CodonTranslation(BaseModel):
