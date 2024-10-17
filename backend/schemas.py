@@ -43,7 +43,7 @@ class UserForm(BaseModel):
     @field_validator("email")
     @staticmethod
     def valid_email(value: str):
-        value = value.strip()
+        value = value.strip().lower()
 
         if not re.match(r"^[\w\-\.]+@([\w\-]+\.)+\w{2,4}$", value):
             raise ValidationError("Invalid e-mail address.")
