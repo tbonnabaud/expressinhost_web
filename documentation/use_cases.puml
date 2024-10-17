@@ -1,0 +1,31 @@
+@startuml use_cases
+left to right direction
+skinparam dpi 200
+
+' skinparam BackgroundColor #1b212c
+' skinparam ActorBackgroundColor #fff
+' skinparam ActorBorderColor #fff
+' skinparam ActorFontColor #fff
+' skinparam UsecaseBackgroundColor #1b212c
+' skinparam UsecaseBorderColor #fff
+' skinparam UsecaseFontColor #fff
+
+actor LoggedUser
+actor GuestUser
+
+usecase "Add/Edit codon table" as u1
+usecase "Run tuning" as u2
+usecase "Read result" as u3
+usecase "Download result" as u4
+usecase "Access to previous results" as u5
+
+GuestUser --> u2 #line:DodgerBlue
+GuestUser --> u3 #line:DodgerBlue
+GuestUser --> u4 #line:DodgerBlue
+
+LoggedUser --> u1 #line:crimson
+LoggedUser --> u2 #line:crimson
+LoggedUser --> u3 #line:crimson
+LoggedUser --> u4 #line:crimson
+LoggedUser --> u5 #line:crimson
+@enduml
