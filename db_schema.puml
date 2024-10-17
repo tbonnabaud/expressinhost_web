@@ -13,6 +13,7 @@ entity users {
     * creation_date: datetime
     * email: varchar
     * password: varchar
+    * role: varchar
 }
 
 entity codon_tables {
