@@ -68,6 +68,12 @@ class DefaultCodonTableForm(BaseModel):
     def clean(value: str):
         return value.strip()
 
+    @field_validator("organism")
+    @staticmethod
+    def normalize(value: str):
+        # Return value with binomial nomenclature
+        return re.sub(r"[\s_\-]+", " ", value).capitalize()
+
 
 class UserCodonTableForm(BaseModel):
     name: str
@@ -78,6 +84,12 @@ class UserCodonTableForm(BaseModel):
     @staticmethod
     def clean(value: str):
         return value.strip()
+
+    @field_validator("organism")
+    @staticmethod
+    def normalize(value: str):
+        # Return value with binomial nomenclature
+        return re.sub(r"[\s_\-]+", " ", value).capitalize()
 
 
 class CodonTranslation(BaseModel):
