@@ -3,7 +3,7 @@ from datetime import datetime
 from typing import Literal
 from uuid import UUID
 
-from pydantic import BaseModel, Field, ValidationError, field_validator
+from pydantic import BaseModel, Field, field_validator
 
 
 class BadSequence(BaseModel):
@@ -46,7 +46,7 @@ class UserForm(BaseModel):
         value = value.strip().lower()
 
         if not re.match(r"^[\w\-\.]+@([\w\-]+\.)+\w{2,4}$", value):
-            raise ValidationError("Invalid e-mail address.")
+            raise ValueError("Invalid e-mail address.")
 
         return value
 
