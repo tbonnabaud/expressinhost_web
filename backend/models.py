@@ -20,6 +20,7 @@ class User(Base):
     )
     email: Mapped[str] = mapped_column(sa.String, unique=True)
     password: Mapped[str] = mapped_column(sa.String)
+    role: Mapped[str] = mapped_column(sa.String)
 
 
 class CodonTable(Base):
@@ -35,7 +36,6 @@ class CodonTable(Base):
         sa.DateTime, default=lambda: datetime.now(UTC)
     )
     organism: Mapped[str] = mapped_column(sa.String)
-    custom: Mapped[bool] = mapped_column(sa.Boolean)
 
 
 class CodonTranslation(Base):

@@ -24,7 +24,7 @@ class User(BaseModel):
     id: UUID
     creation_date: datetime
     email: str
-    # password: str
+    role: str
 
 
 class UserForm(BaseModel):
@@ -37,21 +37,18 @@ class CodonTable(BaseModel):
     user_id: UUID | None
     creation_date: datetime
     organism: str
-    custom: bool
 
 
 class DefaultCodonTableForm(BaseModel):
     name: str
-    user_id: None
+    user_id: None = None
     organism: str
-    custom: bool
 
 
 class UserCodonTableForm(BaseModel):
     name: str
     user_id: UUID
     organism: str
-    custom: bool
 
 
 class CodonTranslation(BaseModel):
