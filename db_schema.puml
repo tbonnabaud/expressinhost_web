@@ -21,7 +21,6 @@ entity codon_tables {
     user_id: uuid <<FK>>
     * creation_date: datetime
     * organism: varchar
-    * custom: boolean
 }
 
 entity codon_translations {
