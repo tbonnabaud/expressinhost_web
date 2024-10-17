@@ -1,5 +1,6 @@
 import re
 from datetime import datetime
+from typing import Literal
 from uuid import UUID
 
 from pydantic import BaseModel, Field, ValidationError, field_validator
@@ -114,6 +115,10 @@ class RunTuningForm(BaseModel):
     clustal_file_content: str | None
     host_codon_table_name: str
     sequences_native_codon_tables: dict[str, str]
-    mode: str
+    mode: Literal[
+        "direct_mapping",
+        "optimisation_and_conservation_1",
+        "optimisation_and_conservation_2",
+    ]
     slow_speed_threshold: float
     conservation_threshold: float | None
