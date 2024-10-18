@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, onMounted } from 'vue'
-import { readTextFile } from '@/utils/helpers'
-import { CODON_TABLE_LIST } from '@/utils/constants'
+import { readTextFile } from '@/lib/helpers'
+import { CODON_TABLE_LIST } from '@/lib/constants'
 
 interface CodonTable {
   name: string
