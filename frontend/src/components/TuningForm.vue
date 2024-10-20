@@ -5,6 +5,8 @@ import { CODON_TABLE_LIST } from '@/lib/constants'
 import type { CodonTable, RunTrainingForm } from '@/lib/interfaces'
 import { API } from '@/lib/api'
 
+const emit = defineEmits(['submit'])
+
 const form = reactive({
   nucleotide_file_content: '',
   clustal_file_content: '',
@@ -65,7 +67,9 @@ function selectTableName(sequenceName: string) {
 
 async function runTuning() {
   // console.log(JSON.stringify(form))
-  await API.runTraining(form)
+  const output = await API.runTraining(form)
+  // console.log(JSON.stringify(output))
+  emit('submit', output)
 }
 </script>
 
