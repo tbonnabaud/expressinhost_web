@@ -1,5 +1,5 @@
 import re
-from datetime import datetime
+from datetime import UTC, datetime
 from typing import Literal
 from uuid import UUID
 
@@ -103,9 +103,9 @@ class CodonTranslation(BaseModel):
 
 
 class Result(BaseModel):
-    id: UUID
-    user_id: UUID | None
-    creation_date: datetime
+    id: UUID | None = None
+    user_id: UUID | None = None
+    creation_date: datetime = datetime.now(UTC)
     host_codon_table_name: str
     sequences_native_codon_tables: dict[str, str]
     mode: str
@@ -114,8 +114,8 @@ class Result(BaseModel):
 
 
 class TunedSequence(BaseModel):
-    id: UUID
-    result_id: UUID
+    id: UUID | None = None
+    result_id: UUID | None = None
     name: str
     input: str
     output: str
@@ -134,3 +134,8 @@ class RunTuningForm(BaseModel):
     ]
     slow_speed_threshold: float
     conservation_threshold: float | None
+
+
+class TuningOutput(BaseModel):
+    result: Result
+    tuned_sequences: list[TunedSequence]
