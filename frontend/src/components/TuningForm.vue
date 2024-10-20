@@ -2,22 +2,17 @@
 import { ref, onMounted, reactive, watch } from 'vue'
 import { readTextFile } from '@/lib/helpers'
 import { CODON_TABLE_LIST } from '@/lib/constants'
-
-interface CodonTable {
-  name: string
-  organism: string
-  custom: boolean
-}
+import type { CodonTable, RunTrainingForm } from '@/lib/interfaces'
 
 const form = reactive({
   nucleotide_file_content: '',
   clustal_file_content: '',
   host_codon_table_name: '',
-  sequences_native_codon_tables: {} as Record<string, string>,
+  sequences_native_codon_tables: {},
   mode: 'direct_mapping',
   slow_speed_threshold: 0.5,
   conservation_threshold: 0.75,
-})
+} as RunTrainingForm)
 
 const codonTableList = ref([] as Array<CodonTable>)
 
