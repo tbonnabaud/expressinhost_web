@@ -17,9 +17,9 @@ const mode = computed(
 </script>
 
 <template>
-  <h1>Expression in {{ hostCondonTable }}</h1>
+  <h2>Expression in {{ hostCondonTable }}</h2>
 
-  <p>{{ mode }}</p>
+  <p><strong>Mode:</strong> {{ mode }}</p>
 
   <pre>{{ JSON.stringify(tuned_sequences, null, 2) }}</pre>
 </template>
