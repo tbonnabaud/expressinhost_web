@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, onMounted } from 'vue'
+import { ref, onMounted, reactive, watch } from 'vue'
 import { readTextFile } from '@/lib/helpers'
 import { CODON_TABLE_LIST } from '@/lib/constants'
 
@@ -9,25 +9,45 @@ interface CodonTable {
   custom: boolean
 }
 
-const fastaContent = ref('')
-const clustalContent = ref('')
+const form = reactive({
+  nucleotide_file_content: '',
+  clustal_file_content: '',
+  host_codon_table_name: null,
+  sequences_native_codon_tables: {} as Record<string, string>,
+  mode: null,
+  slow_speed_threshold: 0.5,
+  conservation_threshold: 0.75,
+})
 
 const codonTableList = ref([] as Array<CodonTable>)
 
-const sequenceNameList = computed(() => {
-  // Match the group after ">" symbol
-  const fastaSeqNameRegex = /^\>\s*(.*\w)/gm
-  return Array.from(fastaContent.value.matchAll(fastaSeqNameRegex), m => m[1])
-})
-
 onMounted(() => (codonTableList.value = CODON_TABLE_LIST))
 
+watch(
+  () => form.nucleotide_file_content,
+  content => {
+    // Reset object
+    form.sequences_native_codon_tables = {}
+    const sequenceNames = parseFastaSequenceNames(content)
+
+    for (const seq of sequenceNames) {
+      form.sequences_native_codon_tables[seq] = selectTableName(seq)
+    }
+  },
+)
+
+function parseFastaSequenceNames(content: string) {
+  // Match the group after ">" symbol
+  const fastaSeqNameRegex = /^\>\s*(.*\w)/gm
+  return Array.from(content.matchAll(fastaSeqNameRegex), m => m[1])
+}
+
 async function setFastaContent(event: Event) {
-  fastaContent.value = await readTextFile(event)
+  form.nucleotide_file_content = await readTextFile(event)
 }
 
 async function setClustalContent(event: Event) {
-  clustalContent.value = await readTextFile(event)
+  form.clustal_file_content = await readTextFile(event)
 }
 
 /**
@@ -69,7 +89,7 @@ function selectTableName(sequenceName: string) {
     <section>
       <h2>Sequences</h2>
 
-      <table v-if="sequenceNameList.length">
+      <table v-if="Object.keys(form.sequences_native_codon_tables).length">
         <thead>
           <tr>
             <th>Sequence name</th>
@@ -78,10 +98,16 @@ function selectTableName(sequenceName: string) {
         </thead>
 
         <tbody>
-          <tr v-for="seq in sequenceNameList" :key="seq">
+          <tr
+            v-for="seq in Object.keys(form.sequences_native_codon_tables)"
+            :key="seq"
+          >
             <td>{{ seq }}</td>
             <td class="select-cell">
-              <select name="" id="" required :value="selectTableName(seq)">
+              <select
+                required
+                v-model="form.sequences_native_codon_tables[seq]"
+              >
                 <option value=""></option>
                 <option
                   v-for="codonTableName in codonTableList"
@@ -102,28 +128,22 @@ function selectTableName(sequenceName: string) {
     <section>
       <h2>Host organism</h2>
 
-      <div class="flex-container">
-        <!-- <div id="organism">
-          <label for="">Host organism</label>
-          <select name="">
-            <option value="">Escherichia_coli</option>
-            <option value="">Danio_rerio</option>
-          </select>
-        </div> -->
-
-        <div id="hostCodonTable">
-          <!-- <label for="">Table name</label> -->
-          <select name="" id="" required>
-            <option value=""></option>
-            <option
-              v-for="codonTableName in codonTableList"
-              :key="codonTableName.name"
-              :value="codonTableName.name"
-            >
-              {{ codonTableName.name }}
-            </option>
-          </select>
-        </div>
+      <div id="hostCodonTable">
+        <label for="">Table name</label>
+        <select
+          id="hostCodonTableName"
+          v-model="form.host_codon_table_name"
+          required
+        >
+          <option value=""></option>
+          <option
+            v-for="codonTableName in codonTableList"
+            :key="codonTableName.name"
+            :value="codonTableName.name"
+          >
+            {{ codonTableName.name }}
+          </option>
+        </select>
       </div>
     </section>
 
@@ -131,18 +151,26 @@ function selectTableName(sequenceName: string) {
       <h2>Mode</h2>
 
       <div id="mode-selector">
-        <input type="radio" name="mode" value="direct_mapping" checked />
+        <input
+          type="radio"
+          name="mode"
+          value="direct_mapping"
+          v-model="form.mode"
+          required
+        />
         <label>Direct mapping </label>
         <input
           type="radio"
           name="mode"
           value="optimisation_and_conservation_1"
+          v-model="form.mode"
         />
         <label>Optimisation and conservation 1 </label>
         <input
           type="radio"
           name="mode"
           value="optimisation_and_conservation_2"
+          v-model="form.mode"
         />
         <label>Optimisation and conservation 1 </label>
       </div>
@@ -153,20 +181,36 @@ function selectTableName(sequenceName: string) {
 
       <div class="flex-container">
         <div class="input-range">
-          <label for="">Slow speed threshold</label>
-          <input type="range" name="" id="" min="0" max="1" step="0.01" />
+          <label for=""
+            >Slow speed threshold = {{ form.slow_speed_threshold }}</label
+          >
+          <input
+            type="range"
+            min="0"
+            max="1"
+            step="0.01"
+            v-model="form.slow_speed_threshold"
+          />
         </div>
 
         <div class="input-range">
-          <label for="">Conservation threshold</label>
-          <input type="range" name="" id="" min="0" max="1" step="0.01" />
+          <label for=""
+            >Conservation threshold = {{ form.conservation_threshold }}</label
+          >
+          <input
+            type="range"
+            min="0"
+            max="1"
+            step="0.01"
+            v-model="form.conservation_threshold"
+          />
         </div>
       </div>
     </section>
 
     <hr />
 
-    <button id="run">Run tuning</button>
+    <button id="run" type="submit">Run tuning</button>
   </form>
 </template>
 
@@ -178,13 +222,6 @@ function selectTableName(sequenceName: string) {
 .input-range input {
   width: 90%;
   margin-bottom: 1em;
-}
-
-#organism,
-#hostCodonTable {
-  flex: auto;
-  margin: 10px;
-  width: 100%;
 }
 
 .input-range {
@@ -203,7 +240,6 @@ td {
 
 #run {
   width: 100%;
-  /* background-color: #294f29; */
 }
 
 #mode-selector {
