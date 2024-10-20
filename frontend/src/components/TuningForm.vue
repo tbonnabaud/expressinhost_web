@@ -14,7 +14,7 @@ const form = reactive({
   clustal_file_content: '',
   host_codon_table_name: null,
   sequences_native_codon_tables: {} as Record<string, string>,
-  mode: null,
+  mode: 'direct_mapping',
   slow_speed_threshold: 0.5,
   conservation_threshold: 0.75,
 })
