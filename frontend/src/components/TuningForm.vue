@@ -133,7 +133,7 @@ function runTuning() {
       <h2>Host organism</h2>
 
       <div id="hostCodonTable">
-        <label for="">Table name</label>
+        <label>Table name</label>
         <select
           id="hostCodonTableName"
           v-model="form.host_codon_table_name"
@@ -182,9 +182,7 @@ function runTuning() {
 
       <div class="flex-container">
         <div class="input-range">
-          <label for=""
-            >Slow speed threshold = {{ form.slow_speed_threshold }}</label
-          >
+          <label>Slow speed threshold = {{ form.slow_speed_threshold }}</label>
           <input
             type="range"
             min="0"
@@ -195,7 +193,7 @@ function runTuning() {
         </div>
 
         <div class="input-range">
-          <label for=""
+          <label
             >Conservation threshold = {{ form.conservation_threshold }}</label
           >
           <input
