@@ -1,6 +1,6 @@
 export interface RunTrainingForm {
   nucleotide_file_content: string
-  clustal_file_content?: string
+  clustal_file_content: string | null
   host_codon_table_name: string
   sequences_native_codon_tables: Record<string, string>
   mode: string
@@ -15,15 +15,19 @@ export interface CodonTable {
 }
 
 export interface Result {
+  id: string | null
+  user_id: string | null
   creation_date: string
   host_codon_table_name: string
   sequences_native_codon_tables: Record<string, string>
   mode: string
   slow_speed_threshold: number
-  conservation_threshold?: number
+  conservation_threshold: number | null
 }
 
 export interface TunedSequence {
+  id: string | null
+  result_id: string | null
   name: string
   input: string
   output: string
