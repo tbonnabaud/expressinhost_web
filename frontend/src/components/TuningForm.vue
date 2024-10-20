@@ -3,6 +3,7 @@ import { ref, onMounted, reactive, watch } from 'vue'
 import { readTextFile } from '@/lib/helpers'
 import { CODON_TABLE_LIST } from '@/lib/constants'
 import type { CodonTable, RunTrainingForm } from '@/lib/interfaces'
+import { API } from '@/lib/api'
 
 const form = reactive({
   nucleotide_file_content: '',
@@ -62,8 +63,9 @@ function selectTableName(sequenceName: string) {
   return ''
 }
 
-function runTuning() {
-  console.log(JSON.stringify(form))
+async function runTuning() {
+  // console.log(JSON.stringify(form))
+  await API.runTraining(form)
 }
 </script>
 
@@ -168,7 +170,7 @@ function runTuning() {
           value="optimisation_and_conservation_2"
           v-model="form.mode"
         />
-        <label>Optimisation and conservation 1 </label>
+        <label>Optimisation and conservation 2 </label>
       </div>
     </section>
 
