@@ -36,5 +36,5 @@ export interface TunedSequence {
 
 export interface TuningOutput {
   result: Result
-  tuned_sequences: TunedSequence
+  tuned_sequences: Array<TunedSequence>
 }
