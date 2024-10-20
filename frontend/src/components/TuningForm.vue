@@ -66,10 +66,14 @@ function selectTableName(sequenceName: string) {
 
   return ''
 }
+
+function runTuning() {
+  console.log(JSON.stringify(form))
+}
 </script>
 
 <template>
-  <form>
+  <form @submit.prevent="runTuning">
     <section>
       <h2>Data files</h2>
 
@@ -210,7 +214,7 @@ function selectTableName(sequenceName: string) {
 
     <hr />
 
-    <button id="run" type="submit">Run tuning</button>
+    <button id="runTuningButton" type="submit">Run tuning</button>
   </form>
 </template>
 
@@ -238,7 +242,7 @@ td {
   width: 50%;
 }
 
-#run {
+#runTuningButton {
   width: 100%;
 }
 
