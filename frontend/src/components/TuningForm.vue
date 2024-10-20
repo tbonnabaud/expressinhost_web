@@ -73,19 +73,19 @@ function runTuning() {
 </script>
 
 <template>
-  <form @submit.prevent="runTuning">
+  <form id="runTuningForm" @submit.prevent="runTuning">
     <section>
       <h2>Data files</h2>
 
       <div class="flex-container">
         <div class="input-file">
           <label for="fasta">Sequence file (FASTA)</label>
-          <input type="file" name="" id="fasta" @change="setFastaContent" />
+          <input type="file" id="fasta" @change="setFastaContent" />
         </div>
 
         <div class="input-file">
           <label for="clustal">Alignment file (CLUSTAL, optional)</label>
-          <input type="file" name="" id="clustal" @change="setClustalContent" />
+          <input type="file" id="clustal" @change="setClustalContent" />
         </div>
       </div>
     </section>
@@ -157,7 +157,6 @@ function runTuning() {
       <div id="mode-selector">
         <input
           type="radio"
-          name="mode"
           value="direct_mapping"
           v-model="form.mode"
           required
@@ -165,14 +164,12 @@ function runTuning() {
         <label>Direct mapping </label>
         <input
           type="radio"
-          name="mode"
           value="optimisation_and_conservation_1"
           v-model="form.mode"
         />
         <label>Optimisation and conservation 1 </label>
         <input
           type="radio"
-          name="mode"
           value="optimisation_and_conservation_2"
           v-model="form.mode"
         />
