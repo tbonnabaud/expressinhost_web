@@ -8,7 +8,7 @@ defineProps<TunedSequence>()
 <template>
   <h3>{{ name }}</h3>
 
-  <p><strong>-> Similarity:</strong> {{ identity_percentage }}</p>
+  <p><strong>-> Similarity:</strong> {{ identity_percentage.toFixed(2) }}%</p>
 
   <div class="sequence-group">
     <div class="sequence" v-html="input"></div>
