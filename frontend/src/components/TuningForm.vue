@@ -80,7 +80,7 @@ function runTuning() {
       <div class="flex-container">
         <div class="input-file">
           <label for="fasta">Sequence file (FASTA)</label>
-          <input type="file" id="fasta" @change="setFastaContent" />
+          <input type="file" id="fasta" @change="setFastaContent" required />
         </div>
 
         <div class="input-file">
