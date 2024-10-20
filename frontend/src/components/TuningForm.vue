@@ -12,7 +12,7 @@ interface CodonTable {
 const form = reactive({
   nucleotide_file_content: '',
   clustal_file_content: '',
-  host_codon_table_name: null,
+  host_codon_table_name: '',
   sequences_native_codon_tables: {} as Record<string, string>,
   mode: 'direct_mapping',
   slow_speed_threshold: 0.5,
