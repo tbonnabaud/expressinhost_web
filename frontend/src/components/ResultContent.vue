@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import type { TuningOutput } from '@/lib/interfaces'
 import { computed } from 'vue'
+import type { TuningOutput } from '@/lib/interfaces'
+import SequenceComparison from '@/components/SequenceComparison.vue'
 
 const props = defineProps<TuningOutput>()
 
@@ -21,5 +22,11 @@ const mode = computed(
 
   <p><strong>Mode:</strong> {{ mode }}</p>
 
-  <pre>{{ JSON.stringify(tuned_sequences, null, 2) }}</pre>
+  <div>
+    <SequenceComparison
+      v-for="(item, index) in tuned_sequences"
+      v-bind="item"
+      :key="index"
+    />
+  </div>
 </template>
