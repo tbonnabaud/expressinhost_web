@@ -23,7 +23,9 @@ function closeDropdown() {
 
 <template>
   <details class="dropdown" ref="dropdown">
-    <summary>{{ model || 'Select one...' }}</summary>
+    <summary>
+      {{ model || 'Select one...' }}
+    </summary>
 
     <ul>
       <li>
@@ -53,8 +55,11 @@ function closeDropdown() {
   overflow-y: scroll;
 }
 
-input {
+input[type='search'] {
   margin-bottom: 0;
+}
+
+input[type='radio'] {
   display: none;
 }
 </style>
