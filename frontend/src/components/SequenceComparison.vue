@@ -13,7 +13,7 @@ function colorSequences(inputSequence: string, outputSequence: string) {
   return [
     inputCodonArray
       .map((item, i) => {
-        if (item == outputCodonArray[i]) {
+        if (item != outputCodonArray[i]) {
           return `<span class="in-seq">${item}</span>`
         }
         return item
@@ -21,7 +21,7 @@ function colorSequences(inputSequence: string, outputSequence: string) {
       .join(''),
     outputCodonArray
       .map((item, i) => {
-        if (item == inputCodonArray[i]) {
+        if (item != inputCodonArray[i]) {
           return `<span class="out-seq">${item}</span>`
         }
         return item
