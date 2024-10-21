@@ -24,7 +24,8 @@ function closeDropdown() {
 <template>
   <details class="dropdown" ref="dropdown">
     <summary>{{ model }}</summary>
-    <ul class="option-list">
+
+    <ul>
       <li>
         <input
           type="search"
@@ -33,14 +34,25 @@ function closeDropdown() {
           v-model="filter"
         />
       </li>
-      <li v-for="option in filteredOptions" :key="option">
-        <label @click="closeDropdown">
-          <input type="radio" v-model="model" :value="option" />
-          {{ option }}
-        </label>
-      </li>
+      <div class="option-list">
+        <li v-for="option in filteredOptions" :key="option">
+          <label @click="closeDropdown">
+            <input type="radio" v-model="model" :value="option" />
+            {{ option }}
+          </label>
+        </li>
+      </div>
     </ul>
   </details>
 </template>
 
-<style scoped></style>
+<style scoped>
+.option-list {
+  max-height: 20em;
+  overflow-y: scroll;
+}
+
+input {
+  margin-bottom: 0;
+}
+</style>
