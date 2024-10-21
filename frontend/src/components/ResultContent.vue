@@ -18,14 +18,19 @@ const mode = computed(
 </script>
 
 <template>
+  <br />
   <h2>Expression in {{ hostCondonTable }}</h2>
 
   <p><strong>Mode:</strong> {{ mode }}</p>
 
+  <br />
+  <hr />
+
   <div>
     <SequenceComparison
       v-for="(item, index) in tuned_sequences"
-      v-bind="item"
+      :tuned-sequence="item"
+      :open="index == 0"
       :key="index"
     />
   </div>
