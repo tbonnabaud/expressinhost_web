@@ -23,7 +23,7 @@ function closeDropdown() {
 
 <template>
   <details class="dropdown" ref="dropdown">
-    <summary>{{ model }}</summary>
+    <summary>{{ model || 'Select one...' }}</summary>
 
     <ul>
       <li>
@@ -55,5 +55,6 @@ function closeDropdown() {
 
 input {
   margin-bottom: 0;
+  display: none;
 }
 </style>
