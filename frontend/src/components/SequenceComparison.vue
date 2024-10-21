@@ -60,7 +60,7 @@ function colorSequences(inputSequence: string, outputSequence: string) {
 
 <style scoped>
 .sequence {
-  height: 3em;
+  height: 2.5em;
   white-space: nowrap;
   font-family: monospace;
   font-size: 1.5em;
@@ -76,7 +76,7 @@ function colorSequences(inputSequence: string, outputSequence: string) {
 }
 
 .sequence-group-label label {
-  height: 3em;
+  height: 2.5em;
   font-weight: bold;
   text-decoration: underline;
 }
