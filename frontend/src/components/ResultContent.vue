@@ -23,15 +23,13 @@ const mode = computed(
 
   <p><strong>Mode:</strong> {{ mode }}</p>
 
-  <br />
+  <h3>Sequence comparisons</h3>
   <hr />
 
-  <div>
-    <SequenceComparison
-      v-for="(item, index) in tuned_sequences"
-      :tuned-sequence="item"
-      :open="index == 0"
-      :key="index"
-    />
-  </div>
+  <SequenceComparison
+    v-for="(item, index) in tuned_sequences"
+    :tuned-sequence="item"
+    :open="index == 0"
+    :key="index"
+  />
 </template>
