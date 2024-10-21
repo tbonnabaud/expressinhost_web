@@ -7,3 +7,11 @@
 .flex-container {
   display: flex;
 }
+
+.in-seq {
+  background-color: brown;
+}
+
+.out-seq {
+  background-color: green;
+}
