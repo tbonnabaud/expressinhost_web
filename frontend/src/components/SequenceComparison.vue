@@ -40,10 +40,7 @@ function colorSequences(inputSequence: string, outputSequence: string) {
   <details :open="open">
     <summary>{{ tunedSequence.name }}</summary>
 
-    <p>
-      <strong>-> Similarity:</strong>
-      {{ tunedSequence.identity_percentage.toFixed(2) }}%
-    </p>
+    <p>&rarr; Similarity:{{ tunedSequence.identity_percentage.toFixed(2) }}%</p>
 
     <div class="flex-container">
       <div class="sequence-group-label">
