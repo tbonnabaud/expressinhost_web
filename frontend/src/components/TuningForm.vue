@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { ref, onMounted, reactive, watch } from 'vue'
+import { ref, onMounted, reactive, watch, computed } from 'vue'
 import { readTextFile } from '@/lib/helpers'
 import { CODON_TABLE_LIST } from '@/lib/constants'
 import type { CodonTable, RunTrainingForm } from '@/lib/interfaces'
 import { API } from '@/lib/api'
+import SearchSelect from '@/components/SearchSelect.vue'
 
 const emit = defineEmits(['submit'])
 
@@ -18,6 +19,7 @@ const form = reactive({
 } as RunTrainingForm)
 
 const codonTableList = ref([] as Array<CodonTable>)
+const codonTableNameList = computed(() => codonTableList.value.map(e => e.name))
 
 onMounted(() => (codonTableList.value = CODON_TABLE_LIST))
 
@@ -109,7 +111,11 @@ async function runTuning() {
           >
             <td>{{ seq }}</td>
             <td class="select-cell">
-              <select
+              <SearchSelect
+                v-model="form.sequences_native_codon_tables[seq]"
+                :options="codonTableNameList"
+              />
+              <!-- <select
                 required
                 v-model="form.sequences_native_codon_tables[seq]"
               >
@@ -121,7 +127,7 @@ async function runTuning() {
                 >
                   {{ codonTableName.name }}
                 </option>
-              </select>
+              </select> -->
             </td>
           </tr>
         </tbody>
@@ -132,15 +138,18 @@ async function runTuning() {
 
     <section>
       <h2>Host organism</h2>
-
-      <div id="hostCodonTable">
+      <SearchSelect
+        v-model="form.host_codon_table_name"
+        :options="codonTableNameList"
+      />
+      <!-- <div id="hostCodonTable">
         <label>Table name</label>
         <select
           id="hostCodonTableName"
           v-model="form.host_codon_table_name"
           required
         >
-          <option value=""></option>
+          <option value=""><input type="text" placeholder="coucou" /></option>
           <option
             v-for="codonTableName in codonTableList"
             :key="codonTableName.name"
@@ -149,7 +158,7 @@ async function runTuning() {
             {{ codonTableName.name }}
           </option>
         </select>
-      </div>
+      </div> -->
     </section>
 
     <section>
