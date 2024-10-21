@@ -40,7 +40,9 @@ function colorSequences(inputSequence: string, outputSequence: string) {
   <details :open="open">
     <summary>{{ tunedSequence.name }}</summary>
 
-    <p>&rarr; Similarity:{{ tunedSequence.identity_percentage.toFixed(2) }}%</p>
+    <p>
+      &rarr; Similarity: {{ tunedSequence.identity_percentage.toFixed(2) }}%
+    </p>
 
     <div class="flex-container">
       <div class="sequence-group-label">
@@ -68,11 +70,11 @@ function colorSequences(inputSequence: string, outputSequence: string) {
 
 .sequence-group {
   overflow-x: scroll;
-  margin: 2em 0 0 1em;
+  margin: 1em 0 0 1em;
 }
 
 .sequence-group-label {
-  margin: 2em 0;
+  margin: 1em 0;
 }
 
 .sequence-group-label label {
