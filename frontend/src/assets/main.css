@@ -9,9 +9,19 @@
 }
 
 .in-seq {
-  background-color: brown;
+  background-color: #db5050;
 }
 
 .out-seq {
-  background-color: green;
+  background-color: #41a741;
+}
+
+@media (prefers-color-scheme: dark) {
+  .in-seq {
+    background-color: #a52a2a;
+  }
+
+  .out-seq {
+    background-color: #008000;
+  }
 }
