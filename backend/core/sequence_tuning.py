@@ -6,11 +6,10 @@ from .checks import check_amino_acido_conservation, check_nucleotides_clustal_id
 from .exceptions import NoAminoAcidConservation, NoIdenticalSequencesError
 from .postprocessing import clear_output_sequences, compare_sequences
 from .preprocessing import align_nucleotide_sequences, clear_nucleotide_sequences
-from .utils import (
+from .utils import (  # write_text_to_file,
     get_clustal_symbol_sequence,
     parse_sequences,
     timeit,
-    write_text_to_file,
 )
 
 STOP_CODON = "UAA"
@@ -120,7 +119,7 @@ def direct_mapping(
 
         results.append(new_line)
 
-    write_text_to_file("\n".join(results), "tmp/modif_sequences_6.txt")
+    # write_text_to_file("\n".join(results), "tmp/modif_sequences_6.txt")
 
     return results
 
@@ -190,7 +189,7 @@ def optimisation_and_conservation_1(
 
         results.append(new_line)
 
-    write_text_to_file("\n".join(results), "tmp/modif_sequences_6.txt")
+    # write_text_to_file("\n".join(results), "tmp/modif_sequences_6.txt")
 
     return results
 
@@ -235,7 +234,7 @@ def optimisation_and_conservation_2(
         else:
             symbol_sequence += "0"
 
-    write_text_to_file(symbol_sequence, "tmp/modif_sequences_7.txt")
+    # write_text_to_file(symbol_sequence, "tmp/modif_sequences_7.txt")
 
     # In a similar fashion as in optimisation_and_conservation_1,
     # optimise all sequences but mimic native speed where slow codons are conserved
@@ -295,7 +294,7 @@ def optimisation_and_conservation_2(
 
         results.append(new_line)
 
-    write_text_to_file("\n".join(results), "tmp/modif_sequences_6.txt")
+    # write_text_to_file("\n".join(results), "tmp/modif_sequences_6.txt")
 
     return results
 
@@ -335,11 +334,10 @@ def run_tuning(
             case _:
                 pass
 
-        # Only for testing purpose
-        write_text_to_file(
-            "\n".join([str(r.seq) for r in clustal_sequences]),
-            "tmp/modif_sequences_2.txt",
-        )
+        # write_text_to_file(
+        #     "\n".join([str(r.seq) for r in clustal_sequences]),
+        #     "tmp/modif_sequences_2.txt",
+        # )
 
         aligned_nucleotide_sequences = align_nucleotide_sequences(
             clustal_sequences, cleared_nucleotide_sequences
@@ -395,6 +393,7 @@ def run_tuning(
         cleared_output_sequences,
         identity_percentages,
     ):
+        # print(name, len(input) == len(output), len(output) - len(input))
         output_list.append(
             {
                 "name": name,

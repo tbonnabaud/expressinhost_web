@@ -174,9 +174,9 @@ def process_codon_table_from_file(
         separator="\t",
     )
     processed_df = process_raw_codon_table(table_df, slow_speed_threshold)
-    processed_df.write_csv(
-        f"tmp/processed_tables/Processed_{codon_table_name}.csv",
-        separator="\t",
-    )
+    # processed_df.write_csv(
+    #     f"tmp/processed_tables/Processed_{codon_table_name}.csv",
+    #     separator="\t",
+    # )
 
     return processed_df

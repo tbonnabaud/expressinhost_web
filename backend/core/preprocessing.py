@@ -17,9 +17,9 @@ def clear_nucleotide_sequences(nucleotide_sequences: list[SeqRecord]) -> list[st
 
         cleared_nucleotide_sequences.append(str_seq)
 
-    write_text_to_file(
-        "\n".join(cleared_nucleotide_sequences), "tmp/modif_sequences_4.txt"
-    )
+    # write_text_to_file(
+    #     "\n".join(cleared_nucleotide_sequences), "tmp/modif_sequences_4.txt"
+    # )
 
     return cleared_nucleotide_sequences
 
