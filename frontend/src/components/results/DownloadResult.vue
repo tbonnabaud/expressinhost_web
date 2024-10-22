@@ -23,7 +23,7 @@ function downloadFile() {
   // Creating a temporary link element
   const link = document.createElement('a')
   link.href = url
-  link.download = 'tuned_sequences.fasta'
+  link.download = `tuned_sequences_${props.result.mode}.fasta`
 
   // Append to the body, click and remove it
   document.body.appendChild(link)
