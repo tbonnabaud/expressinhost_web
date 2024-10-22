@@ -1,5 +1,6 @@
-from fastapi import FastAPI
-from fastapi.responses import RedirectResponse
+from fastapi import FastAPI, HTTPException, Request
+from fastapi.responses import FileResponse, RedirectResponse
+from fastapi.staticfiles import StaticFiles
 
 from .database import engine
 from .models import Base
@@ -46,9 +47,14 @@ async def api_root() -> RedirectResponse:
     return RedirectResponse(url="/api/docs")
 
 
+# Serve API
 app.mount("/api", api_app)
 
+# Serve the Vue.js application
+app.mount("/", StaticFiles(directory="frontend/dist", html=True), name="static")
 
-@app.get("/{full_path:path}")
-async def root() -> RedirectResponse:
-    return RedirectResponse(url="/docs")
+
+@app.exception_handler(404)
+async def root(request: Request, exc: HTTPException) -> FileResponse:
+    """Catch other routes."""
+    return FileResponse("frontend/dist/index.html", media_type="text/html")
