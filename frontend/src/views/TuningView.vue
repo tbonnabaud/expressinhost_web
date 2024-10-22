@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import TuningForm from '@/components/TuningForm.vue'
-import ResultContent from '@/components/ResultContent.vue'
 import type { TuningOutput } from '@/lib/interfaces'
+import TuningForm from '@/components/TuningForm.vue'
+import ResultContent from '@/components/results/ResultContent.vue'
 
 const tuningOutput = ref({} as TuningOutput)
 

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import type { TuningOutput } from '@/lib/interfaces'
-import SequenceComparison from '@/components/SequenceComparison.vue'
+import SequenceComparison from '@/components/results/SequenceComparison.vue'
 
 const props = defineProps<TuningOutput>()
 
