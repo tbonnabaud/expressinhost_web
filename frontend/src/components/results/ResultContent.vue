@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 import type { TuningOutput } from '@/lib/interfaces'
 import SequenceComparison from '@/components/results/SequenceComparison.vue'
+import DownloadResult from './DownloadResult.vue'
 
 const props = defineProps<TuningOutput>()
 
@@ -32,4 +33,6 @@ const mode = computed(
     :open="index == 0"
     :key="index"
   />
+
+  <DownloadResult :result="result" :tuned_sequences="tuned_sequences" />
 </template>
