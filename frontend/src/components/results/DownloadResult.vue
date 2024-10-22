@@ -9,7 +9,7 @@ function foldSequence(sequence: string) {
 
 function formatToFasta(tunedSequences: Array<TunedSequence>) {
   return tunedSequences
-    .map(e => `> ${e.name}\n${foldSequence(e.output)}`)
+    .map(e => `>${e.name}\n${foldSequence(e.output)}`)
     .join('\n\n')
 }
 
