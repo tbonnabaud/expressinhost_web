@@ -51,7 +51,6 @@ function closeDropdown() {
 <style scoped>
 .option-list {
   max-height: 30em;
-  bottom: 0;
   overflow-y: scroll;
 }
 
