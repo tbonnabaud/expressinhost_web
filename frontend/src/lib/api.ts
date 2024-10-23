@@ -6,32 +6,26 @@ const client = axios.create({
 })
 
 // Interceptor to unify error handling
-// client.interceptors.response.use(
-//   response => response,
-//   error => {
-//     if (axios.isAxiosError(error) && error.response) {
-//       console.error(error.message, error.response.data)
-//     } else {
-//       console.error('Network error or request failed')
-//     }
-
-//     return Promise.reject(error)
-//   },
-// )
+client.interceptors.response.use(
+  response => response,
+  error => {
+    if (axios.isAxiosError(error) && error.response) {
+      console.error(error.message, error.response.data)
+      return Promise.reject(error.message)
+    } else {
+      const message = 'Network error or request failed'
+      console.error(message)
+      return Promise.reject(message)
+    }
+  },
+)
 
 async function makeRequest(config: AxiosRequestConfig) {
   try {
     const response = await client.request(config)
     return [response.data, null]
   } catch (error) {
-    if (axios.isAxiosError(error) && error.response) {
-      console.error(error.message, error.response.data)
-      return [null, error.message]
-    } else {
-      const message = 'Network error or request failed'
-      console.error(message)
-      return [null, message]
-    }
+    return [null, error]
   }
 }
 
