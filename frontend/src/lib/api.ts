@@ -1,6 +1,8 @@
 import axios, { type AxiosRequestConfig } from 'axios'
 import type { RunTrainingForm, TuningOutput } from './interfaces'
 
+type ApiResponse<T> = [T | null, string | null]
+
 const client = axios.create({
   baseURL: '/api',
 })
@@ -41,5 +43,5 @@ const REQUESTS = {
 
 export const API = {
   runTraining: async (form: RunTrainingForm) =>
-    (await REQUESTS.post('/run-tuning', form)) as [TuningOutput, string],
+    (await REQUESTS.post('/run-tuning', form)) as ApiResponse<TuningOutput>,
 }
