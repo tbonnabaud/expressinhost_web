@@ -9,7 +9,7 @@ function parseResponse(response: AxiosResponse) {
   if (response.status == 200) {
     return response.data
   } else {
-    console.error(response.status, response.data)
+    console.error(response.status, response.statusText, response.data)
     return null
   }
 }
