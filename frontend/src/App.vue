@@ -12,17 +12,17 @@ import { RouterLink, RouterView } from 'vue-router'
 
       <ul>
         <li><RouterLink to="/" class="secondary">Home</RouterLink></li>
-        <li>
+        <!-- <li>
           <RouterLink to="/codon-tables" class="secondary"
             >Codon tables</RouterLink
           >
-        </li>
+        </li> -->
         <li><RouterLink to="/tuning" class="secondary">Tuning</RouterLink></li>
-        <li>
+        <!-- <li>
           <RouterLink to="/result-list" class="secondary"
             >Result list</RouterLink
           >
-        </li>
+        </li> -->
         <li><RouterLink to="/about" class="secondary">About</RouterLink></li>
       </ul>
     </nav>
