@@ -69,11 +69,29 @@ function selectTableName(sequenceName: string) {
   return ''
 }
 
+function formIsValid() {
+  for (const [key, value] of Object.entries(
+    form.sequences_native_codon_tables,
+  )) {
+    if (value == '') {
+      alert(`Missing table for sequence ${key}`)
+      return false
+    }
+  }
+
+  if (form.host_codon_table_name == '') {
+    alert('Missing table for host organism')
+    return false
+  }
+
+  return true
+}
+
 async function runTuning() {
-  // console.log(JSON.stringify(form))
-  const output = await API.runTraining(form)
-  // console.log(JSON.stringify(output))
-  emit('submit', output)
+  if (formIsValid()) {
+    const output = await API.runTraining(form)
+    emit('submit', output)
+  }
 }
 </script>
 
