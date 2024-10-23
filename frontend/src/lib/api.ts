@@ -1,10 +1,11 @@
-import axios from 'axios'
+import axios, { type AxiosRequestConfig } from 'axios'
 import type { RunTrainingForm, TuningOutput } from './interfaces'
 
 const client = axios.create({
   baseURL: '/api',
 })
 
+// Interceptor to unify error handling
 client.interceptors.response.use(
   response => response,
   error => {
@@ -19,39 +20,23 @@ client.interceptors.response.use(
   },
 )
 
+async function request(config: AxiosRequestConfig) {
+  try {
+    const response = await client.request(config)
+    return response.data
+  } catch {
+    return null
+  }
+}
+
 const REQUESTS = {
-  get: async (url: string, params?: object) => {
-    try {
-      const response = await client.get(url, { params })
-      return response.data
-    } catch {
-      return null
-    }
-  },
-  post: async (url: string, data?: object) => {
-    try {
-      const response = await client.post(url, data)
-      return response.data
-    } catch {
-      return null
-    }
-  },
-  put: async (url: string, data?: object) => {
-    try {
-      const response = await client.put(url, data)
-      return response.data
-    } catch {
-      return null
-    }
-  },
-  delete: async (url: string) => {
-    try {
-      const response = await client.delete(url)
-      return response.data
-    } catch {
-      return null
-    }
-  },
+  get: async (url: string, params?: object) =>
+    request({ method: 'get', url: url, params: params }),
+  post: async (url: string, data?: object) =>
+    request({ method: 'post', url: url, data: data }),
+  put: async (url: string, data?: object) =>
+    request({ method: 'put', url: url, data: data }),
+  delete: async (url: string) => request({ method: 'delete', url: url }),
 }
 
 export const API = {
