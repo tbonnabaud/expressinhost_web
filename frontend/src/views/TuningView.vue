@@ -6,8 +6,10 @@ import ResultContent from '@/components/results/ResultContent.vue'
 
 const tuningOutput = ref({} as TuningOutput)
 
-function handleSubmit(ouput: TuningOutput) {
-  tuningOutput.value = ouput
+function handleSubmit(output: TuningOutput) {
+  if (output) {
+    tuningOutput.value = output
+  }
 }
 </script>
 
