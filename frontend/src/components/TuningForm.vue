@@ -19,6 +19,8 @@ const form = reactive({
 } as RunTrainingForm)
 
 const codonTableList = ref([] as Array<CodonTable>)
+
+const clustalIsRequired = computed(() => form.mode != 'direct_mapping')
 const codonTableNameList = computed(() => codonTableList.value.map(e => e.name))
 
 onMounted(() => (codonTableList.value = CODON_TABLE_LIST))
@@ -88,7 +90,12 @@ async function runTuning() {
 
         <div class="input-file">
           <label for="clustal">Alignment file (CLUSTAL, optional)</label>
-          <input type="file" id="clustal" @change="setClustalContent" />
+          <input
+            type="file"
+            id="clustal"
+            @change="setClustalContent"
+            :required="clustalIsRequired"
+          />
         </div>
       </div>
     </section>
