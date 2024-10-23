@@ -19,3 +19,13 @@ export async function readTextFile(event: Event) {
 
   return ''
 }
+
+/**
+ * The function `sleep` returns a promise that resolves after a specified number of milliseconds.
+ * @param {number} ms - The `ms` parameter in the `sleep` function represents the number of
+ * milliseconds for which the function will pause execution before resolving the promise.
+ * @returns The `sleep` function is returning a Promise.
+ */
+export function sleep(ms: number) {
+  return new Promise(resolve => setTimeout(resolve, ms))
+}
