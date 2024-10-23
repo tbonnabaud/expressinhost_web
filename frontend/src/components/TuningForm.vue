@@ -92,8 +92,11 @@ async function runTuning() {
   tuningLoading.value = true
 
   if (formIsValid()) {
-    const output = await API.runTraining(form)
-    emit('submit', output)
+    const [data, error] = await API.runTraining(form)
+
+    if (!error) {
+      emit('submit', data)
+    }
   }
 
   tuningLoading.value = false

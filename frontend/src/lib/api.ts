@@ -22,14 +22,16 @@ const client = axios.create({
 async function makeRequest(config: AxiosRequestConfig) {
   try {
     const response = await client.request(config)
-    return response.data
+    return [response.data, null]
   } catch (error) {
     if (axios.isAxiosError(error) && error.response) {
       console.error(error.message, error.response.data)
+      return [null, error.message]
     } else {
-      console.error('Network error or request failed')
+      const message = 'Network error or request failed'
+      console.error(message)
+      return [null, message]
     }
-    return null
   }
 }
 
@@ -45,5 +47,5 @@ const REQUESTS = {
 
 export const API = {
   runTraining: async (form: RunTrainingForm) =>
-    (await REQUESTS.post('/run-tuning', form)) as TuningOutput,
+    (await REQUESTS.post('/run-tuning', form)) as [TuningOutput, string],
 }
