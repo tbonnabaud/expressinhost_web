@@ -19,6 +19,7 @@ const form = reactive({
 } as RunTrainingForm)
 
 const codonTableList = ref([] as Array<CodonTable>)
+const tuningLoading = ref(false)
 
 const clustalIsRequired = computed(() => form.mode != 'direct_mapping')
 const codonTableNameList = computed(() => codonTableList.value.map(e => e.name))
@@ -88,10 +89,14 @@ function formIsValid() {
 }
 
 async function runTuning() {
+  tuningLoading.value = true
+
   if (formIsValid()) {
     const output = await API.runTraining(form)
     emit('submit', output)
   }
+
+  tuningLoading.value = false
 }
 </script>
 
@@ -244,7 +249,9 @@ async function runTuning() {
 
     <hr />
 
-    <button id="runTuningButton" type="submit">Run tuning</button>
+    <button :aria-busy="tuningLoading" id="runTuningButton" type="submit">
+      {{ tuningLoading ? 'Tuning is running...' : 'Run tuning' }}
+    </button>
   </form>
 </template>
 
