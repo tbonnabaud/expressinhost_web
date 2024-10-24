@@ -10,19 +10,26 @@ defineEmits(['close'])
   <BaseModal :open="open" title="Sign in" @close="$emit('close')">
     <form>
       <fieldset>
-        <input
-          name="email"
-          type="email"
-          placeholder="Email"
-          autocomplete="email"
-          required
-        />
-        <input
-          name="password"
-          type="password"
-          placeholder="Password"
-          required
-        />
+        <label>
+          Email
+          <input
+            name="email"
+            type="email"
+            placeholder="Email"
+            autocomplete="email"
+            required
+          />
+        </label>
+
+        <label>
+          Password
+          <input
+            name="password"
+            type="password"
+            placeholder="Password"
+            required
+          />
+        </label>
       </fieldset>
     </form>
 
