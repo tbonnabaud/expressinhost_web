@@ -24,7 +24,7 @@ async function handleSubmit() {
 
 <template>
   <BaseModal :open="open" title="User login" @close="$emit('close')">
-    <form @submit="handleSubmit" ref="login-form">
+    <form @keyup.enter="handleSubmit" ref="login-form">
       <fieldset>
         <label>
           Email
