@@ -53,7 +53,7 @@ async function handleSubmit() {
 
     <p>
       Not registered? Please register
-      <RouterLink to="/sign-up" @click="$emit('close')">here</RouterLink>.
+      <RouterLink to="/register" @click="$emit('close')">here</RouterLink>.
     </p>
 
     <footer>
