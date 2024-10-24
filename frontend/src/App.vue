@@ -29,7 +29,7 @@ const openLoginForm = ref(false)
       <ul>
         <li><RouterLink to="/about" class="secondary">About</RouterLink></li>
         <li>
-          <button class="outline" @click="openLoginForm = true">Sign in</button>
+          <button class="outline" @click="openLoginForm = true">Log in</button>
         </li>
       </ul>
     </nav>

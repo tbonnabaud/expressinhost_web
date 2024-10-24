@@ -7,7 +7,7 @@ defineEmits(['close'])
 </script>
 
 <template>
-  <BaseModal :open="open" title="Sign in" @close="$emit('close')">
+  <BaseModal :open="open" title="User login" @close="$emit('close')">
     <form>
       <fieldset>
         <label>
@@ -34,7 +34,7 @@ defineEmits(['close'])
     </form>
 
     <p>
-      Not registered? Please sign up
+      Not registered? Please register
       <RouterLink to="/sign-up" @click="$emit('close')">here</RouterLink>.
     </p>
 
