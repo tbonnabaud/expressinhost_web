@@ -253,7 +253,7 @@ async function runTuning() {
     <hr />
 
     <button :aria-busy="tuningLoading" id="runTuningButton" type="submit">
-      {{ tuningLoading ? 'Tuning is running...' : 'Run tuning' }}
+      {{ tuningLoading ? 'Please wait...' : 'Run tuning' }}
     </button>
   </form>
 </template>
