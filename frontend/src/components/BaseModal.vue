@@ -2,17 +2,17 @@
 defineProps<{ open: boolean; title: string }>()
 const emit = defineEmits(['close'])
 
-function close() {
+function handleClose() {
   emit('close')
 }
 </script>
 
 <template>
   <Transition>
-    <dialog v-if="open" @click.self="close" open>
+    <dialog v-if="open" @click.self="handleClose" open>
       <article>
         <header>
-          <button aria-label="Close" rel="prev" @click="close"></button>
+          <button aria-label="Close" rel="prev" @click="handleClose"></button>
           <p>
             <strong class="modal-title">{{ title }}</strong>
           </p>
