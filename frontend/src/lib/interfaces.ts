@@ -1,3 +1,17 @@
+export interface User {
+  id: string
+  creation_date: string
+  email: string
+  role: string
+  full_name: string
+}
+
+export interface UserForm {
+  email: string
+  password: string
+  full_name: string
+}
+
 export interface RunTrainingForm {
   nucleotide_file_content: string
   clustal_file_content: string | null
