@@ -24,16 +24,13 @@ const openLoginForm = ref(false)
             >Result list</RouterLink
           >
         </li> -->
-        <li><RouterLink to="/about" class="secondary">About</RouterLink></li>
       </ul>
 
       <ul>
+        <li><RouterLink to="/about" class="secondary">About</RouterLink></li>
         <li>
-          <button class="outline secondary" @click="openLoginForm = true">
-            Sign in
-          </button>
+          <button class="outline" @click="openLoginForm = true">Sign in</button>
         </li>
-        <!-- <li><RouterLink to="/sign-up" class="secondary">Sign up</RouterLink></li> -->
       </ul>
     </nav>
   </header>
