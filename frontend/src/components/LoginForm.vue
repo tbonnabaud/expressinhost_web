@@ -1,14 +1,30 @@
 <script setup lang="ts">
 import { RouterLink } from 'vue-router'
 import BaseModal from './BaseModal.vue'
+import { reactive, useTemplateRef } from 'vue'
 
 defineProps<{ open: boolean }>()
-defineEmits(['close'])
+const emit = defineEmits(['close', 'login'])
+
+const form = reactive({
+  email: '',
+  password: '',
+})
+const formRef = useTemplateRef('login-form')
+
+async function handleSubmit() {
+  if (formRef.value?.checkValidity()) {
+    console.log(JSON.stringify(form))
+    emit('login')
+  } else {
+    formRef.value?.reportValidity()
+  }
+}
 </script>
 
 <template>
   <BaseModal :open="open" title="User login" @close="$emit('close')">
-    <form>
+    <form @submit="handleSubmit" ref="login-form">
       <fieldset>
         <label>
           Email
@@ -17,6 +33,7 @@ defineEmits(['close'])
             type="email"
             placeholder="Email"
             autocomplete="email"
+            v-model="form.email"
             required
           />
         </label>
@@ -27,6 +44,7 @@ defineEmits(['close'])
             name="password"
             type="password"
             placeholder="Password"
+            v-model="form.password"
             required
           />
         </label>
@@ -39,7 +57,7 @@ defineEmits(['close'])
     </p>
 
     <footer>
-      <button>Submit</button>
+      <button @click="handleSubmit">Submit</button>
     </footer>
   </BaseModal>
 </template>
