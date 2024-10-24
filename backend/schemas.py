@@ -34,11 +34,13 @@ class User(BaseModel):
     creation_date: datetime
     email: str
     role: str
+    full_name: str
 
 
 class UserForm(BaseModel):
     email: str
     password: str
+    full_name: str
 
     @field_validator("email")
     @staticmethod
@@ -49,6 +51,11 @@ class UserForm(BaseModel):
             raise ValueError("Invalid e-mail address.")
 
         return value
+
+    @field_validator("full_name")
+    @staticmethod
+    def clean(value: str):
+        return value.strip()
 
 
 class CodonTable(BaseModel):

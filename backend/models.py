@@ -21,6 +21,7 @@ class User(Base):
     email: Mapped[str] = mapped_column(sa.String, unique=True)
     password: Mapped[str] = mapped_column(sa.String)
     role: Mapped[str] = mapped_column(sa.String, default="member")
+    full_name: Mapped[str] = mapped_column(sa.String)
 
 
 class CodonTable(Base):

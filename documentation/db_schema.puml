@@ -14,6 +14,7 @@ entity users {
     * email: varchar
     * password: varchar
     * role: varchar
+    * full_name: varchar
 }
 
 entity codon_tables {
