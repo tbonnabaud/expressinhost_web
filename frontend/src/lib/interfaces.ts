@@ -12,6 +12,11 @@ export interface UserForm {
   full_name: string
 }
 
+export interface UserLogin {
+  email: string
+  password: string
+}
+
 export interface RunTrainingForm {
   nucleotide_file_content: string
   clustal_file_content: string | null
