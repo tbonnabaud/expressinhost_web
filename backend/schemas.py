@@ -58,6 +58,11 @@ class UserForm(BaseModel):
         return value.strip()
 
 
+class UserLogin(BaseModel):
+    email: str
+    password: str
+
+
 class CodonTable(BaseModel):
     name: str
     user_id: UUID | None
