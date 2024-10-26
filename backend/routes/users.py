@@ -26,11 +26,18 @@ def get_user(session: SessionDependency, user_id: UUID):
     return user
 
 
+@router.post("users/login")
+def log_in_user(session: SessionDependency):
+    return {}
+
+
 @router.post("/users", response_model=UUID)
 def add_user(session: SessionDependency, data: UserForm):
-    data.password = hash_password(data.password)
+    user = data.model_dump()
+    user["hashed_password"] = hash_password(data.password)
+    del user["password"]
 
-    return UserRepository(session).add(data.model_dump())
+    return UserRepository(session).add(user)
 
 
 @router.put("/users/{user_id}")
