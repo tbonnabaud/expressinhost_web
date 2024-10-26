@@ -12,7 +12,7 @@ entity users {
     --
     * creation_date: datetime
     * email: varchar
-    * password: varchar
+    * hashed_password: varchar
     * role: varchar
     * full_name: varchar
 }
