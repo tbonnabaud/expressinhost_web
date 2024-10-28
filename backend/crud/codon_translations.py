@@ -21,25 +21,25 @@ class CodonTranslationRepository(BaseRepository):
         return self.session.execute(stmt).scalar_one_or_none()
 
     def add_batch(self, data_batch: list[dict]):
-        stmt = sa.insert(CodonTranslation).values(data_batch)
-        self.session.execute(stmt)
-        self.session.commit()
+        with self.session.begin():
+            stmt = sa.insert(CodonTranslation).values(data_batch)
+            self.session.execute(stmt)
 
     def update(self, codon_table_name: str, codon: str, data: dict):
-        stmt = (
-            sa.update(CodonTranslation)
-            .where(
-                CodonTranslation.codon_table_name == codon_table_name,
-                CodonTranslation.codon == codon,
+        with self.session.begin():
+            stmt = (
+                sa.update(CodonTranslation)
+                .where(
+                    CodonTranslation.codon_table_name == codon_table_name,
+                    CodonTranslation.codon == codon,
+                )
+                .values(data)
             )
-            .values(data)
-        )
-        self.session.execute(stmt)
-        self.session.commit()
+            self.session.execute(stmt)
 
     def delete_batch(self, codon_table_name: str):
-        stmt = sa.delete(CodonTranslation).where(
-            CodonTranslation.codon_table_name == codon_table_name
-        )
-        self.session.execute(stmt)
-        self.session.commit()
+        with self.session.begin():
+            stmt = sa.delete(CodonTranslation).where(
+                CodonTranslation.codon_table_name == codon_table_name
+            )
+            self.session.execute(stmt)

@@ -32,18 +32,18 @@ class CodonTableRepository(BaseRepository):
         return self.session.execute(stmt).scalar_one_or_none()
 
     def add(self, data: dict):
-        stmt = sa.insert(CodonTable).values(data).returning(CodonTable.name)
-        result = self.session.execute(stmt)
-        self.session.commit()
+        with self.session.begin():
+            stmt = sa.insert(CodonTable).values(data).returning(CodonTable.name)
+            result = self.session.execute(stmt)
 
-        return result.scalar_one_or_none()
+            return result.scalar_one_or_none()
 
     def update(self, name: str, data: dict):
-        stmt = sa.update(CodonTable).where(CodonTable.name == name).values(data)
-        self.session.execute(stmt)
-        self.session.commit()
+        with self.session.begin():
+            stmt = sa.update(CodonTable).where(CodonTable.name == name).values(data)
+            self.session.execute(stmt)
 
     def delete(self, name: str):
-        stmt = sa.delete(CodonTable).where(CodonTable.name == name)
-        self.session.execute(stmt)
-        self.session.commit()
+        with self.session.begin():
+            stmt = sa.delete(CodonTable).where(CodonTable.name == name)
+            self.session.execute(stmt)

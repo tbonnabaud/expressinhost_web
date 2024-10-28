@@ -18,18 +18,18 @@ class ResultRepository(BaseRepository):
         return self.session.execute(stmt).scalar_one_or_none()
 
     def add(self, data: dict):
-        stmt = sa.insert(Result).values(data).returning(Result.id)
-        result = self.session.execute(stmt)
-        self.session.commit()
+        with self.session.begin():
+            stmt = sa.insert(Result).values(data).returning(Result.id)
+            result = self.session.execute(stmt)
 
-        return result.scalar_one_or_none()
+            return result.scalar_one_or_none()
 
     def update(self, id: UUID, data: dict):
-        stmt = sa.update(Result).where(Result.id == id).values(data)
-        self.session.execute(stmt)
-        self.session.commit()
+        with self.session.begin():
+            stmt = sa.update(Result).where(Result.id == id).values(data)
+            self.session.execute(stmt)
 
     def delete(self, id: UUID):
-        stmt = sa.delete(Result).where(Result.id == id)
-        self.session.execute(stmt)
-        self.session.commit()
+        with self.session.begin():
+            stmt = sa.delete(Result).where(Result.id == id)
+            self.session.execute(stmt)
