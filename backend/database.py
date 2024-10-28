@@ -9,5 +9,10 @@ LocalSession = sessionmaker(engine)
 
 def get_session():
     """Get a SQLAlchemy session."""
-    with LocalSession() as session:
+    session = LocalSession()
+
+    try:
         yield session
+
+    finally:
+        session.close()
