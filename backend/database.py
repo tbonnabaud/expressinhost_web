@@ -1,4 +1,7 @@
+from fastapi import status
+from fastapi.exceptions import HTTPException
 from sqlalchemy import create_engine
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import sessionmaker
 
 from .settings import settings
@@ -13,6 +16,10 @@ def get_session():
 
     try:
         yield session
+
+    except SQLAlchemyError as error:
+        print(error)
+        raise HTTPException(status.HTTP_500_INTERNAL_SERVER_ERROR, str(error))
 
     finally:
         session.close()
