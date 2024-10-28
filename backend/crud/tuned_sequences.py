@@ -19,15 +19,12 @@ class TunedSequenceRepository(BaseRepository):
 
     def add_batch(self, data_batch: list[dict]):
         stmt = sa.insert(TunedSequence).values(data_batch)
-        self.session.execute(stmt)
-        self.session.commit()
+        self.execute_with_commit(stmt)
 
     def update(self, id: UUID, data: dict):
         stmt = sa.update(TunedSequence).where(TunedSequence.id == id).values(data)
-        self.session.execute(stmt)
-        self.session.commit()
+        self.execute_with_commit(stmt)
 
     def delete(self, id: UUID):
         stmt = sa.delete(TunedSequence).where(TunedSequence.id == id)
-        self.session.execute(stmt)
-        self.session.commit()
+        self.execute_with_commit(stmt)
