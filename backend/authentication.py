@@ -12,6 +12,7 @@ from .custom_types import Session, SessionDependency
 from .settings import settings
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+optional_oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token", auto_error=False)
 ACCESS_TOKEN_EXPIRE_DELTA = timedelta(minutes=60)
 
 
