@@ -1,13 +1,14 @@
 import re
+from typing import Annotated
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 
+from ..authentication import get_current_user, optional_oauth2_scheme
 from ..core.codon_tables import process_codon_table_from_file
 from ..core.sequence_tuning import run_tuning
 from ..core.utils import find_organism_from_nucleotide_name
-
-# from ..crud.results import ResultRepository
-# from ..crud.tuned_sequences import TunedSequenceRepository
+from ..crud.results import ResultRepository
+from ..crud.tuned_sequences import TunedSequenceRepository
 from ..custom_types import SessionDependency
 
 # from ..models import CodonTranslation, Result
@@ -17,7 +18,11 @@ router = APIRouter(tags=["Tuning"])
 
 
 @router.post("/run-tuning", response_model=TuningOutput)
-def launch_tuning(session: SessionDependency, form: RunTuningForm):
+def launch_tuning(
+    session: SessionDependency,
+    token: Annotated[str | None, Depends(optional_oauth2_scheme)],
+    form: RunTuningForm,
+):
     sequence_names = re.findall(
         r"^\> *(.*\w)", form.nucleotide_file_content, re.MULTILINE
     )
@@ -53,17 +58,17 @@ def launch_tuning(session: SessionDependency, form: RunTuningForm):
         "conservation_threshold": form.conservation_threshold,
     }
 
-    user_id = None
+    user = get_current_user(session, token) if token else None
 
-    if user_id:
-        result["user_id"] = user_id
-        # result_id = ResultRepository(session).add(result)
+    if user:
+        result["user_id"] = user.id
+        result_id = ResultRepository(session).add(result)
 
-        # # Attach the tuned sequences to the result
-        # for seq in tuned_sequences:
-        #     seq["result_id"] = result_id
+        # Attach the tuned sequences to the result
+        for seq in tuned_sequences:
+            seq["result_id"] = result_id
 
-        # TunedSequenceRepository(session).add_batch(tuned_sequences)
+        TunedSequenceRepository(session).add_batch(tuned_sequences)
 
     return {
         "result": result,
