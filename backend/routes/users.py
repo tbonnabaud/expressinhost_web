@@ -24,7 +24,19 @@ def list_users(session: SessionDependency):
     return UserRepository(session).list()
 
 
-@router.get("/users/{user_id}", response_model=User)
+@router.get("/users/me", response_model=User)
+def get_me(session: SessionDependency, token: Annotated[str, Depends(oauth2_scheme)]):
+    current_user = get_current_user(session, token)
+
+    if current_user is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Not found.")
+
+    return current_user
+
+
+@router.get(
+    "/users/{user_id}", response_model=User, dependencies=[Depends(check_is_admin)]
+)
 def get_user(session: SessionDependency, user_id: UUID):
     user = UserRepository(session).get(user_id)
 
