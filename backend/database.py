@@ -1,8 +1,10 @@
-from fastapi import status
+from typing import Annotated
+
+from fastapi import Depends, status
 from fastapi.exceptions import HTTPException
 from sqlalchemy import create_engine
 from sqlalchemy.exc import SQLAlchemyError
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import Session, sessionmaker
 
 from .settings import settings
 
@@ -23,3 +25,6 @@ def get_session():
 
     finally:
         session.close()
+
+
+SessionDependency = Annotated[Session, Depends(get_session)]

@@ -8,7 +8,7 @@ from fastapi.exceptions import HTTPException
 from fastapi.security import OAuth2PasswordBearer
 
 from .crud.users import User, UserRepository
-from .custom_types import Session, SessionDependency
+from .database import Session, SessionDependency
 from .settings import settings
 
 ACCESS_TOKEN_EXPIRE_DELTA = timedelta(minutes=60)

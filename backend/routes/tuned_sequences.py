@@ -3,7 +3,7 @@ from uuid import UUID
 from fastapi import APIRouter
 
 from ..crud.tuned_sequences import TunedSequenceRepository
-from ..custom_types import SessionDependency
+from ..database import SessionDependency
 from ..schemas import TunedSequence
 
 router = APIRouter(tags=["Tuned sequences"])

@@ -3,7 +3,7 @@ from uuid import UUID
 from fastapi import APIRouter
 
 from ..crud.results import ResultRepository
-from ..custom_types import SessionDependency
+from ..database import SessionDependency
 from ..schemas import Result
 
 router = APIRouter(tags=["Results"])

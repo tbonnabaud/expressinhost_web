@@ -3,7 +3,7 @@ from uuid import UUID
 from fastapi import APIRouter
 
 from ..crud.codon_tables import CodonTableRepository
-from ..custom_types import SessionDependency
+from ..database import SessionDependency
 from ..schemas import CodonTable, UserCodonTableForm
 
 router = APIRouter(tags=["Codon tables"])

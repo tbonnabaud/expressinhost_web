@@ -15,7 +15,7 @@ from ..authentication import (
     oauth2_scheme,
 )
 from ..crud.users import UserRepository
-from ..custom_types import SessionDependency
+from ..database import SessionDependency
 from ..schemas import Token, User, UserForm
 
 router = APIRouter(tags=["Users"])

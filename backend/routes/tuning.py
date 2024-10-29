@@ -9,7 +9,7 @@ from ..core.sequence_tuning import run_tuning
 from ..core.utils import find_organism_from_nucleotide_name
 from ..crud.results import ResultRepository
 from ..crud.tuned_sequences import TunedSequenceRepository
-from ..custom_types import SessionDependency
+from ..database import SessionDependency
 
 # from ..models import CodonTranslation, Result
 from ..schemas import RunTuningForm, TuningOutput

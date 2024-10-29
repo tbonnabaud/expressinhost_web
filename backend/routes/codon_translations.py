@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 
 from ..crud.codon_translations import CodonTranslationRepository
-from ..custom_types import SessionDependency
+from ..database import SessionDependency
 from ..schemas import CodonTranslation
 
 router = APIRouter(tags=["Codon translations"])
