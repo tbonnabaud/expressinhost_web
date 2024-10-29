@@ -6,15 +6,17 @@ from fastapi.exceptions import HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
 
 from ..authentication import (
+    ACCESS_TOKEN_EXPIRE_DELTA,
     check_is_admin,
     check_password,
+    create_access_token,
     get_current_user,
     hash_password,
     oauth2_scheme,
 )
 from ..crud.users import UserRepository
 from ..custom_types import SessionDependency
-from ..schemas import User, UserForm
+from ..schemas import Token, User, UserForm
 
 router = APIRouter(tags=["Users"])
 
@@ -56,7 +58,11 @@ def log_in_user(
     if not user or not check_password(form_data.password, user.hashed_password):
         raise HTTPException(status_code=400, detail="Incorrect username or password")
 
-    return {"access_token": user.email, "token_type": "bearer"}
+    access_token = create_access_token(
+        data={"sub": user.email}, expires_delta=ACCESS_TOKEN_EXPIRE_DELTA
+    )
+
+    return Token(access_token=access_token, token_type="bearer")
 
 
 @router.post("/users", response_model=UUID)
