@@ -29,6 +29,11 @@ class FilterParams(BaseModel):
     offset: int = Field(0, ge=0)
 
 
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+
 class User(BaseModel):
     id: UUID
     creation_date: datetime
