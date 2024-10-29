@@ -16,6 +16,9 @@ ACCESS_TOKEN_EXPIRE_DELTA = timedelta(minutes=60)
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 optional_oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token", auto_error=False)
 
+TokenDependency = Annotated[str, Depends(oauth2_scheme)]
+OptionalTokenDependency = Annotated[str | None, Depends(optional_oauth2_scheme)]
+
 
 def hash_password(password: str) -> str:
     """
@@ -114,15 +117,11 @@ def get_current_user(session: Session, token: str) -> User:
     )
 
 
-def check_is_member(
-    session: SessionDependency, token: Annotated[str, Depends(oauth2_scheme)]
-):
+def check_is_member(session: SessionDependency, token: TokenDependency):
     return get_current_user(session, token)
 
 
-def check_is_admin(
-    session: SessionDependency, token: Annotated[str, Depends(oauth2_scheme)]
-):
+def check_is_admin(session: SessionDependency, token: TokenDependency):
     user = get_current_user(session, token)
 
     if user.role != "admin":

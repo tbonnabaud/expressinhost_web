@@ -1,9 +1,8 @@
 import re
-from typing import Annotated
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter
 
-from ..authentication import get_current_user, optional_oauth2_scheme
+from ..authentication import OptionalTokenDependency, get_current_user
 from ..core.codon_tables import process_codon_table_from_file
 from ..core.sequence_tuning import run_tuning
 from ..core.utils import find_organism_from_nucleotide_name
@@ -20,7 +19,7 @@ router = APIRouter(tags=["Tuning"])
 @router.post("/run-tuning", response_model=TuningOutput)
 def launch_tuning(
     session: SessionDependency,
-    token: Annotated[str | None, Depends(optional_oauth2_scheme)],
+    token: OptionalTokenDependency,
     form: RunTuningForm,
 ):
     sequence_names = re.findall(

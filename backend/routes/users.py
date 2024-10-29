@@ -7,12 +7,12 @@ from fastapi.security import OAuth2PasswordRequestForm
 
 from ..authentication import (
     ACCESS_TOKEN_EXPIRE_DELTA,
+    TokenDependency,
     check_is_admin,
     check_password,
     create_access_token,
     get_current_user,
     hash_password,
-    oauth2_scheme,
 )
 from ..crud.users import UserRepository
 from ..database import SessionDependency
@@ -27,7 +27,7 @@ def list_users(session: SessionDependency):
 
 
 @router.get("/users/me", response_model=User)
-def get_me(session: SessionDependency, token: Annotated[str, Depends(oauth2_scheme)]):
+def get_me(session: SessionDependency, token: TokenDependency):
     current_user = get_current_user(session, token)
 
     if current_user is None:
@@ -77,7 +77,7 @@ def add_user(session: SessionDependency, data: UserForm):
 @router.put("/users/me")
 def update_me(
     session: SessionDependency,
-    token: Annotated[str, Depends(oauth2_scheme)],
+    token: TokenDependency,
     data: UserForm,
 ):
     current_user = get_current_user(session, token)
@@ -90,9 +90,7 @@ def update_me(
 
 
 @router.delete("/users/me")
-def delete_me(
-    session: SessionDependency, token: Annotated[str, Depends(oauth2_scheme)]
-):
+def delete_me(session: SessionDependency, token: TokenDependency):
     current_user = get_current_user(session, token)
 
     return UserRepository(session).delete(current_user.id)
