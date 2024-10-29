@@ -11,9 +11,10 @@ from .crud.users import User, UserRepository
 from .custom_types import Session, SessionDependency
 from .settings import settings
 
+ACCESS_TOKEN_EXPIRE_DELTA = timedelta(minutes=60)
+
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 optional_oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token", auto_error=False)
-ACCESS_TOKEN_EXPIRE_DELTA = timedelta(minutes=60)
 
 
 def hash_password(password: str) -> str:
