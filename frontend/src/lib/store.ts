@@ -4,16 +4,16 @@ import type { User } from './interfaces'
 
 export const store = {
   currentUser: ref(null as User | null),
+  emptyCurrentUser() {
+    this.currentUser.value = null
+  },
   async setCurrentUser() {
     const [data, error] = await API.users.me()
 
     if (!error) {
       this.currentUser.value = data
     } else {
-      this.currentUser.value = null
+      this.emptyCurrentUser()
     }
-  },
-  emptyCurrentUser() {
-    this.currentUser.value = null
   },
 }
