@@ -19,6 +19,11 @@ client.interceptors.response.use(
   error => {
     if (axios.isAxiosError(error) && error.response) {
       console.error(error.message, error.response.data)
+
+      if (error.response.status == 401) {
+        localStorage.getItem('accessToken')
+      }
+
       return Promise.reject(error.message)
     } else {
       const message = 'Network error or request failed'
