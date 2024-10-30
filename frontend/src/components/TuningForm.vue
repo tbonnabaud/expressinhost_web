@@ -54,7 +54,7 @@ async function setClustalContent(event: Event) {
 }
 
 /**
- * Try to guess the first corresponding codon table name.
+ * Try to guess the first corresponding codon table name using organism name.
  * @param {string} sequenceName - Name of the sequence
  * @returns First corresponding codon table name or empty string if not found.
  */
@@ -62,7 +62,7 @@ function selectTableName(sequenceName: string) {
   const lowerCaseSequenceName = sequenceName.toLowerCase()
 
   for (const tableName of codonTableList.value) {
-    if (lowerCaseSequenceName.includes(tableName.name.toLowerCase())) {
+    if (lowerCaseSequenceName.includes(tableName.organism.toLowerCase())) {
       return tableName.name
     }
   }
