@@ -1,9 +1,19 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
 import LoginForm from '@/components/LoginForm.vue'
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
+import { store } from './lib/store'
+import { API } from './lib/api'
 
 const openLoginForm = ref(false)
+const user = store.currentUser
+
+onMounted(async () => API.users.isLoggedIn() && (await store.setCurrentUser()))
+
+function logout() {
+  API.users.logout()
+  store.emptyCurrentUser()
+}
 </script>
 
 <template>
@@ -28,7 +38,10 @@ const openLoginForm = ref(false)
 
       <ul>
         <li><RouterLink to="/about" class="secondary">About</RouterLink></li>
-        <li>
+        <li v-if="user" @click="logout">
+          <button class="outline secondary">Logout</button>
+        </li>
+        <li v-else>
           <button class="outline" @click="openLoginForm = true">Log in</button>
         </li>
       </ul>
