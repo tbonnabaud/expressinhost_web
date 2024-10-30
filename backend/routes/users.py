@@ -53,7 +53,7 @@ def log_in_user(
     session: SessionDependency,
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
 ):
-    user = UserRepository(session).get_by_email(form_data.username)
+    user = UserRepository(session).get_by_email(form_data.username.lower())
 
     if not user or not check_password(form_data.password, user.hashed_password):
         raise HTTPException(status_code=400, detail="Incorrect username or password")
