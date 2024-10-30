@@ -17,7 +17,7 @@ class UserRepository(BaseRepository):
 
         return self.session.execute(stmt).scalar_one_or_none()
 
-    def get_by_email(self, email: UUID):
+    def get_by_email(self, email: str):
         stmt = sa.select(User).where(User.email == email)
 
         return self.session.execute(stmt).scalar_one_or_none()
