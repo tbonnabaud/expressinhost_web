@@ -1,21 +1,28 @@
 <script setup lang="ts">
-import { RouterLink } from 'vue-router'
+import { RouterLink, useRouter } from 'vue-router'
 import BaseModal from './BaseModal.vue'
 import { reactive, useTemplateRef } from 'vue'
+import { API } from '@/lib/api'
 
 defineProps<{ open: boolean }>()
-const emit = defineEmits(['close', 'login'])
+const emit = defineEmits(['close'])
+
+const router = useRouter()
 
 const form = reactive({
-  email: '',
+  username: '',
   password: '',
 })
 const formRef = useTemplateRef('login-form')
 
 async function handleSubmit() {
   if (formRef.value?.checkValidity()) {
-    console.log(JSON.stringify(form))
-    emit('login')
+    const error = await API.users.login(form)
+    if (error === null) {
+      emit('close')
+      // Redirect to home
+      router.push('/')
+    }
   } else {
     formRef.value?.reportValidity()
   }
@@ -33,7 +40,7 @@ async function handleSubmit() {
             type="email"
             placeholder="Email"
             autocomplete="email"
-            v-model="form.email"
+            v-model="form.username"
             required
           />
         </label>

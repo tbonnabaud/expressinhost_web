@@ -1,5 +1,11 @@
 import axios, { type AxiosRequestConfig } from 'axios'
-import type { RunTrainingForm, TuningOutput, UserForm } from './interfaces'
+import type {
+  RunTrainingForm,
+  TuningOutput,
+  UserForm,
+  UserLogin,
+  Token,
+} from './interfaces'
 
 type ApiResponse<T> = [T | null, string | null]
 
@@ -22,6 +28,21 @@ client.interceptors.response.use(
   },
 )
 
+// Interceptor to add access token if exists
+client.interceptors.request.use(
+  request => {
+    const accessToken = localStorage.getItem('accessToken')
+    if (accessToken) {
+      request.headers['Authorization'] = `Bearer ${accessToken}`
+    }
+    return request
+  },
+  error => {
+    console.error(error)
+    return Promise.reject(error)
+  },
+)
+
 async function makeRequest(config: AxiosRequestConfig) {
   try {
     const response = await client.request(config)
@@ -29,6 +50,25 @@ async function makeRequest(config: AxiosRequestConfig) {
   } catch (error) {
     return [null, error]
   }
+}
+
+async function postForm(url: string, form: UserLogin) {
+  try {
+    const response = await client.postForm(url, form)
+    return [response.data, null] as [Token, null]
+  } catch (error) {
+    return [null, error] as [null, string]
+  }
+}
+
+async function login(form: UserLogin) {
+  const [data, error] = await postForm('/token', form)
+
+  if (!error && data) {
+    localStorage.setItem('accessToken', data.access_token)
+  }
+
+  return error
 }
 
 const REQUESTS = {
@@ -43,6 +83,10 @@ const REQUESTS = {
 
 const users = {
   register: async (form: UserForm) => await REQUESTS.post('/users', form),
+  login: async (form: UserLogin) => await login(form),
+  logout: () => localStorage.removeItem('accessToken'),
+  isLoggedIn: () => localStorage.getItem('accessToken') !== null,
+  me: async () => await REQUESTS.get('/users/me'),
 }
 
 export const API = {
