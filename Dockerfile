@@ -37,8 +37,15 @@ RUN python -m pip install -r requirements.txt
 
 COPY ./codon_tables ./codon_tables
 COPY ./backend ./backend
+
+# Copy migration stuff
+COPY ./alembic ./alembic
+COPY ./alembic.ini ./alembic.ini
+COPY ./run_with_migrations.sh ./run_with_migrations.sh
+
 COPY --from=frontend-builder /app/frontend/dist /app/frontend/dist
 
 EXPOSE 8000
 
-CMD ["uvicorn", "backend.main:app", "--host", "0.0.0.0"]
+# CMD ["uvicorn", "backend.main:app", "--host", "0.0.0.0"]
+CMD ["./run_with_migrations.sh"]

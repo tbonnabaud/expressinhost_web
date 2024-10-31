@@ -2,8 +2,6 @@ from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import FileResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 
-from .database import engine
-from .models import Base
 from .routes import (
     codon_tables,
     codon_translations,
@@ -14,9 +12,6 @@ from .routes import (
 )
 
 # from fastapi.middleware.cors import CORSMiddleware
-
-
-Base.metadata.create_all(engine, checkfirst=True)
 
 app = FastAPI(title="ExpressInHost")
 
