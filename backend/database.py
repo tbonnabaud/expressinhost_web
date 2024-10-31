@@ -8,7 +8,9 @@ from sqlalchemy.orm import Session, sessionmaker
 
 from .settings import settings
 
-engine = create_engine(settings.DATABASE_URL, echo=False)
+DATABASE_URL = f"postgresql://{settings.POSTGRES_USER}:{settings.POSTGRES_PASSWORD}@{settings.DB_HOST}/{settings.POSTGRES_DB}"
+
+engine = create_engine(DATABASE_URL, echo=False)
 LocalSession = sessionmaker(engine)
 
 
