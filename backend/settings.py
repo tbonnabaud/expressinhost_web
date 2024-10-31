@@ -5,7 +5,7 @@ class Settings(BaseSettings):
     POSTGRES_USER: str
     POSTGRES_PASSWORD: str
     POSTGRES_DB: str
-    DB_HOST: str
+    DB_HOST: str = "localhost"
     # openssl rand -hex 32
     JWT_SECRET_KEY: str = (
         "26192e0eba1df7e20106f2a2d55a65f1dde175361103721dd4b747cfbb5f2ab5"
