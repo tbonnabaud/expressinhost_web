@@ -1,0 +1,28 @@
+# version: '3.4'
+
+services:
+  db:
+    image: postgres
+    ports:
+      - 5432:5432
+    volumes:
+      - expressinhost-volume:/var/lib/postgresql/data
+    env_file:
+      - .env.compose
+    # restart: always
+
+  web:
+    image: expressinhostweb
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    ports:
+      - 8000:8000
+    env_file:
+      - .env.compose
+    depends_on:
+      - db
+    # restart: always
+
+volumes:
+  expressinhost-volume:
