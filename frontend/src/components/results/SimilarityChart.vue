@@ -1,26 +1,27 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed } from 'vue'
 import ChartWrapper from '../ChartWrapper.vue'
-import type { ChartOptions, ChartType } from 'chart.js'
+import type { ChartOptions } from 'chart.js'
 
 const props = defineProps<{
   labels: Array<string>
   values: Array<number>
 }>()
 
-const chartType = ref('bar' as ChartType)
-const chartData = ref({
-  labels: props.labels,
-  datasets: [
-    {
-      label: 'Similarity percentages',
-      data: props.values,
-      borderWidth: 2,
-    },
-  ],
+const data = computed(() => {
+  return {
+    labels: props.labels,
+    datasets: [
+      {
+        label: 'Similarity percentages',
+        data: props.values,
+        borderWidth: 2,
+      },
+    ],
+  }
 })
 
-const chartOptions = ref({
+const options: ChartOptions = {
   responsive: true,
   plugins: {
     legend: {
@@ -28,9 +29,9 @@ const chartOptions = ref({
       position: 'top',
     },
   },
-} as ChartOptions)
+}
 </script>
 
 <template>
-  <ChartWrapper :type="chartType" :data="chartData" :options="chartOptions" />
+  <ChartWrapper type="bar" :data="data" :options="options" />
 </template>
