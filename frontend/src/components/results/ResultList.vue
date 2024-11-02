@@ -9,6 +9,7 @@ const resultList = ref([] as Array<Result>)
 
 onMounted(async () => await fetchResultList())
 
+// Watch needed because query depends on a value in the store
 watch(currentUser, async () => await fetchResultList())
 
 async function fetchResultList() {
