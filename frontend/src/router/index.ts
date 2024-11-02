@@ -31,14 +31,15 @@ const router = createRouter({
       component: TuningView,
     },
     {
-      path: '/result-list',
+      path: '/results',
       name: 'result-list',
       component: ResultListView,
     },
     {
-      path: '/result',
+      path: '/results/:id',
       name: 'result',
       component: ResultView,
+      props: true,
     },
     {
       path: '/about',
