@@ -16,13 +16,9 @@ const modeLabelMapping: Record<string, string> = {
 const mode = computed(
   () => modeLabelMapping[props.result.mode] || 'Unknown mode',
 )
-const percentageLabels = computed(
-  () => props.tuned_sequences && props.tuned_sequences.map(e => e.name),
-)
-const percentageValues = computed(
-  () =>
-    props.tuned_sequences &&
-    props.tuned_sequences.map(e => e.identity_percentage),
+const percentageLabels = computed(() => props.tuned_sequences.map(e => e.name))
+const percentageValues = computed(() =>
+  props.tuned_sequences.map(e => e.identity_percentage),
 )
 </script>
 
