@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { API } from '@/lib/api'
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import ResultContent from '@/components/results/ResultContent.vue'
 import type { Result, TunedSequence } from '@/lib/interfaces'
 
@@ -11,9 +11,11 @@ const tunedSequences = ref([] as Array<TunedSequence>)
 
 onMounted(async () => {
   result.value = await fetchResult(props.id)
+})
 
-  if (result.value.id) {
-    tunedSequences.value = await fetchTunedSequences(result.value.id)
+watch(result, async value => {
+  if (value.id) {
+    tunedSequences.value = await fetchTunedSequences(value.id)
   }
 })
 
@@ -32,8 +34,6 @@ async function fetchTunedSequences(resultId: string) {
 
 <template>
   <main class="container">
-    <h1>Result</h1>
-
     <ResultContent :result="result" :tuned_sequences="tunedSequences" />
   </main>
 </template>
