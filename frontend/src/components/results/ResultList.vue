@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Result } from '@/lib/interfaces'
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import { API } from '@/lib/api'
 import { store } from '@/lib/store'
 
@@ -8,6 +8,8 @@ const currentUser = store.currentUser
 const resultList = ref([] as Array<Result>)
 
 onMounted(async () => await fetchResultList())
+
+watch(currentUser, async () => await fetchResultList())
 
 async function fetchResultList() {
   if (currentUser.value) {
