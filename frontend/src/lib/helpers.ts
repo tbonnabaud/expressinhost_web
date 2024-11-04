@@ -29,3 +29,15 @@ export async function readTextFile(event: Event) {
 export function sleep(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms))
 }
+
+/**
+ * The function `formatToLocaleDateString` converts a UTC date string to a localized date string.
+ * @param {string} utcDateString - A string representing a date and time in Coordinated Universal Time
+ * (UTC) format.
+ * @returns The function `formatToLocaleDateString` takes a UTC date string as input, converts it to a
+ * Date object, and then returns the date in a localized string format using the `toLocaleString`
+ * method.
+ */
+export function formatToLocaleDateString(utcDateString: string) {
+  return new Date(utcDateString).toLocaleString()
+}
