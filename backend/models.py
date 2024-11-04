@@ -16,7 +16,7 @@ class User(Base):
         sa.UUID(as_uuid=True), primary_key=True, default=uuid4
     )
     creation_date: Mapped[datetime] = mapped_column(
-        sa.DateTime, default=lambda: datetime.now(UTC)
+        sa.DateTime(timezone=True), default=lambda: datetime.now(UTC)
     )
     email: Mapped[str] = mapped_column(sa.String, unique=True, index=True)
     hashed_password: Mapped[str] = mapped_column(sa.String)
@@ -34,7 +34,7 @@ class CodonTable(Base):
         nullable=True,
     )
     creation_date: Mapped[datetime] = mapped_column(
-        sa.DateTime, default=lambda: datetime.now(UTC)
+        sa.DateTime(timezone=True), default=lambda: datetime.now(UTC)
     )
     organism: Mapped[str] = mapped_column(sa.String)
 
@@ -69,7 +69,7 @@ class Result(Base):
         nullable=True,
     )
     creation_date: Mapped[datetime] = mapped_column(
-        sa.DateTime, default=lambda: datetime.now(UTC)
+        sa.DateTime(timezone=True), default=lambda: datetime.now(UTC)
     )
     host_codon_table_name: Mapped[str] = mapped_column(sa.String)
     sequences_native_codon_tables: Mapped[dict] = mapped_column(sa.JSON)
