@@ -7,10 +7,25 @@ from .base import BaseRepository
 
 
 class ResultRepository(BaseRepository):
-    def list_from_user(self, user_id: UUID):
-        stmt = sa.select(Result).where(Result.user_id == user_id)
+    def list_from_user(self, user_id: UUID, offset: int | None, limit: int | None):
+        stmt = (
+            sa.select(Result)
+            .where(Result.user_id == user_id)
+            .offset(offset)
+            .limit(limit)
+            .order_by(sa.desc(Result.creation_date))
+        )
 
         return self.session.execute(stmt).scalars().all()
+
+    def count_from_user(self, user_id: UUID):
+        stmt = (
+            sa.select(sa.func.count())
+            .select_from(Result)
+            .where(Result.user_id == user_id)
+        )
+
+        return self.session.execute(stmt).scalar_one()
 
     def get(self, id: UUID):
         stmt = sa.select(Result).where(Result.id == id)

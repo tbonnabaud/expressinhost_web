@@ -94,8 +94,23 @@ const users = {
   me: async () => await REQUESTS.get('/users/me'),
 }
 
+const results = {
+  list: async (userId: string) =>
+    await REQUESTS.get(`/users/${userId}/results`),
+  count: async (userId: string) =>
+    await REQUESTS.get(`/users/${userId}/results/count`),
+  get: async (id: string) => await REQUESTS.get(`/results/${id}`),
+}
+
+const tunedSequences = {
+  list: async (resultId: string) =>
+    await REQUESTS.get(`/results/${resultId}/tuned-sequences`),
+}
+
 export const API = {
   runTraining: async (form: RunTrainingForm) =>
     (await REQUESTS.post('/run-tuning', form)) as ApiResponse<TuningOutput>,
   users: users,
+  results: results,
+  tunedSequences: tunedSequences,
 }

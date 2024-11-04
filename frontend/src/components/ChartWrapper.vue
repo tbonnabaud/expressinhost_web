@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref, onMounted, onBeforeUnmount } from 'vue'
+import { onMounted, onBeforeUnmount, watch, useTemplateRef } from 'vue'
 import {
   Chart,
   registerables,
@@ -22,7 +22,7 @@ interface ChartProps {
 const props = defineProps<ChartProps>()
 
 // Reference to the canvas element
-const chartCanvas = ref<HTMLCanvasElement | null>(null)
+const chartCanvas = useTemplateRef('chartCanvas')
 let chartInstance: Chart | null = null
 
 // Create the chart when the component is mounted
@@ -35,6 +35,17 @@ onMounted(() => {
     })
   }
 })
+
+// Watch new data
+watch(
+  () => props.data,
+  data => {
+    if (chartInstance) {
+      chartInstance.data = data
+      chartInstance.update()
+    }
+  },
+)
 
 // Destroy the chart instance when the component is unmounted
 onBeforeUnmount(() => {

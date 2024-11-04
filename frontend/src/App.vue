@@ -29,11 +29,9 @@ function logout() {
           >
         </li> -->
         <li><RouterLink to="/tuning" class="secondary">Tuning</RouterLink></li>
-        <!-- <li>
-          <RouterLink to="/result-list" class="secondary"
-            >Result list</RouterLink
-          >
-        </li> -->
+        <li v-if="user">
+          <RouterLink to="/results" class="secondary">Results</RouterLink>
+        </li>
       </ul>
 
       <ul>
