@@ -17,13 +17,6 @@ class MismatchingSequences(BaseModel):
     sequence2: str
 
 
-class FormModel:
-    @field_validator("name")
-    @staticmethod
-    def clean(value: str):
-        return value.strip()
-
-
 class FilterParams(BaseModel):
     limit: int = Field(100, gt=0, le=100)
     offset: int = Field(0, ge=0)
