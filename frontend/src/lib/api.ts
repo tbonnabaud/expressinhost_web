@@ -95,11 +95,9 @@ const users = {
 }
 
 const results = {
-  list: async (userId: string) =>
-    await REQUESTS.get(`/users/${userId}/results`),
-  count: async (userId: string) =>
-    await REQUESTS.get(`/users/${userId}/results/count`),
-  get: async (id: string) => await REQUESTS.get(`/results/${id}`),
+  list: async () => await REQUESTS.get(`/users/me/results`),
+  count: async () => await REQUESTS.get(`/users/me/results/count`),
+  get: async (id: string) => await REQUESTS.get(`/users/me/results/${id}`),
 }
 
 const tunedSequences = {
