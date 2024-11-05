@@ -18,10 +18,11 @@ client.interceptors.response.use(
   response => response,
   error => {
     if (axios.isAxiosError(error) && error.response) {
-      console.error(error.message, error.response.data)
-
       if (error.response.status == 401) {
+        console.warn(error.message, error.response.data)
         localStorage.removeItem('accessToken')
+      } else {
+        console.error(error.message, error.response.data)
       }
 
       return Promise.reject(error.message)
