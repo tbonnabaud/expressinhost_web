@@ -6,6 +6,7 @@ import type {
   UserLogin,
   Token,
 } from './interfaces'
+import { store } from './store'
 
 type ApiResponse<T> = [T | null, string | null]
 
@@ -21,6 +22,7 @@ client.interceptors.response.use(
       if (error.response.status == 401) {
         console.warn(error.message, error.response.data)
         localStorage.removeItem('accessToken')
+        store.emptyCurrentUser()
       } else {
         console.error(error.message, error.response.data)
       }
@@ -112,4 +114,12 @@ export const API = {
   users: users,
   results: results,
   tunedSequences: tunedSequences,
+}
+
+export async function setCurrentUserInStore() {
+  const [data, error] = await API.users.me()
+
+  if (error === null) {
+    store.setCurrentUser(data)
+  }
 }

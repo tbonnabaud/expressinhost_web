@@ -3,12 +3,12 @@ import { RouterLink, RouterView } from 'vue-router'
 import LoginForm from '@/components/LoginForm.vue'
 import { ref, onMounted } from 'vue'
 import { store } from './lib/store'
-import { API } from './lib/api'
+import { API, setCurrentUserInStore } from './lib/api'
 
 const openLoginForm = ref(false)
 const user = store.currentUser
 
-onMounted(async () => API.users.isLoggedIn() && (await store.setCurrentUser()))
+onMounted(async () => API.users.isLoggedIn() && (await setCurrentUserInStore()))
 
 function logout() {
   API.users.logout()

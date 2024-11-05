@@ -1,5 +1,4 @@
 import { ref } from 'vue'
-import { API } from './api'
 import type { User } from './interfaces'
 
 export const store = {
@@ -7,13 +6,7 @@ export const store = {
   emptyCurrentUser() {
     this.currentUser.value = null
   },
-  async setCurrentUser() {
-    const [data, error] = await API.users.me()
-
-    if (!error) {
-      this.currentUser.value = data
-    } else {
-      this.emptyCurrentUser()
-    }
+  setCurrentUser(user: User) {
+    this.currentUser.value = user
   },
 }
