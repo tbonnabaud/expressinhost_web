@@ -5,7 +5,7 @@ import polars as pl
 from .constantes import AMINO_ACID_LIST, TABLE_BASE_PATH
 
 
-@dataclass
+@dataclass(slots=True)
 class ProcessedCodonTableRow:
     amino_acid: str
     anticodon: str
@@ -20,7 +20,7 @@ class ProcessedCodonTableRow:
 
 def process_raw_codon_table(
     raw_codon_table: pl.DataFrame, slow_speed_threshold: float
-) -> list[dict]:
+) -> list[ProcessedCodonTableRow]:
     """Any raw data table contains:
     - column 1: amino acid (AA)
     - column 2: anti-codon (tRNA)
@@ -179,7 +179,7 @@ def process_raw_codon_table(
         ]
     )
 
-    return df.rows(named=True)
+    return [ProcessedCodonTableRow(**row) for row in df.iter_rows(named=True)]
 
 
 def process_codon_table_from_file(
