@@ -68,21 +68,15 @@ def get_random_equivalent_codon(selected_codons: list[str]) -> str:
 
 def direct_mapping(
     cleared_nucleotide_sequences: list[str],
-    native_codon_tables: list[pl.DataFrame],
-    host_codon_table: pl.DataFrame,
+    native_codon_tables: list[list[dict]],
+    host_codon_table: list[dict],
 ) -> list[str]:
     results = []
-    sub_host_table_rows = host_codon_table.select(["amino_acid", "codon", "rank"]).rows(
-        named=True
-    )
 
     for seq, native_codon_table in zip(
         cleared_nucleotide_sequences, native_codon_tables
     ):
         new_line = ""
-        sub_native_rows = native_codon_table.select(
-            ["amino_acid", "codon", "rank"]
-        ).rows(named=True)
 
         for t in range(int(len(seq) / 3)):
             input_codon = seq[3 * t : 3 * t + 3]
@@ -93,7 +87,7 @@ def direct_mapping(
             else:
                 # Find amino-acid corresponding to native codon
                 amino_acid, rank = find_amino_acid_and_rank(
-                    input_codon, sub_native_rows
+                    input_codon, native_codon_table
                 )
 
                 if amino_acid is None:
@@ -103,7 +97,7 @@ def direct_mapping(
                     potential_codons = []
                     potential_ranks = []
 
-                    for host_row in sub_host_table_rows:
+                    for host_row in host_codon_table:
                         if host_row["amino_acid"] == amino_acid:
                             potential_codons.append(host_row["codon"])
                             potential_ranks.append(host_row["rank"])
@@ -131,17 +125,11 @@ def optimisation_and_conservation_1(
     host_codon_table: pl.DataFrame,
 ) -> list[str]:
     results = []
-    sub_host_table_rows = host_codon_table.select(["amino_acid", "codon", "rank"]).rows(
-        named=True
-    )
 
     for seq, native_codon_table in zip(
         aligned_nucleotide_sequences, native_codon_tables
     ):
         new_line = ""
-        sub_native_rows = native_codon_table.select(
-            ["amino_acid", "codon", "rank"]
-        ).rows(named=True)
 
         for t in range(int(len(seq) / 3)):
             input_codon = seq[3 * t : 3 * t + 3]
@@ -152,7 +140,7 @@ def optimisation_and_conservation_1(
             else:
                 # Find amino-acid corresponding to native codon
                 amino_acid, rank = find_amino_acid_and_rank(
-                    input_codon, sub_native_rows
+                    input_codon, native_codon_table
                 )
 
                 if amino_acid is None:
@@ -162,7 +150,7 @@ def optimisation_and_conservation_1(
                     potential_codons = []
                     potential_ranks = []
 
-                    for host_row in sub_host_table_rows:
+                    for host_row in host_codon_table:
                         if host_row["amino_acid"] == amino_acid:
                             potential_codons.append(host_row["codon"])
                             potential_ranks.append(host_row["rank"])
@@ -197,8 +185,8 @@ def optimisation_and_conservation_1(
 def optimisation_and_conservation_2(
     aligned_nucleotide_sequences: list[str],
     symbol_sequence: str,
-    native_codon_tables: list[pl.DataFrame],
-    host_codon_table: pl.DataFrame,
+    native_codon_tables: list[list[dict]],
+    host_codon_table: list[dict],
     conservation_threshold: float,
 ) -> list[str]:
     cpt_symbols = [0.0 for _ in range(len(aligned_nucleotide_sequences[0]))]
@@ -207,15 +195,11 @@ def optimisation_and_conservation_2(
     for seq, native_codon_table in zip(
         aligned_nucleotide_sequences, native_codon_tables
     ):
-        sub_native_rows = native_codon_table.select(["codon", "symbol_speed"]).rows(
-            named=True
-        )
-
         for t in range(int(len(seq) / 3)):
             input_codon = seq[3 * t : 3 * t + 3]
 
             if input_codon != "---":
-                for native_row in sub_native_rows:
+                for native_row in native_codon_table:
                     # When native codon is found
                     if (
                         native_row["codon"] == input_codon
@@ -239,17 +223,11 @@ def optimisation_and_conservation_2(
     # In a similar fashion as in optimisation_and_conservation_1,
     # optimise all sequences but mimic native speed where slow codons are conserved
     results = []
-    sub_host_table_rows = host_codon_table.select(["amino_acid", "codon", "rank"]).rows(
-        named=True
-    )
 
     for seq, native_codon_table in zip(
         aligned_nucleotide_sequences, native_codon_tables
     ):
         new_line = ""
-        sub_native_rows = native_codon_table.select(
-            ["amino_acid", "codon", "rank"]
-        ).rows(named=True)
 
         for t in range(int(len(seq) / 3)):
             input_codon = seq[3 * t : 3 * t + 3]
@@ -260,7 +238,7 @@ def optimisation_and_conservation_2(
             else:
                 # Find amino-acid corresponding to native codon
                 amino_acid, rank = find_amino_acid_and_rank(
-                    input_codon, sub_native_rows
+                    input_codon, native_codon_table
                 )
 
                 if amino_acid is None:
@@ -270,7 +248,7 @@ def optimisation_and_conservation_2(
                     potential_codons = []
                     potential_ranks = []
 
-                    for host_row in sub_host_table_rows:
+                    for host_row in host_codon_table:
                         if host_row["amino_acid"] == amino_acid:
                             potential_codons.append(host_row["codon"])
                             potential_ranks.append(host_row["rank"])
@@ -303,8 +281,8 @@ def optimisation_and_conservation_2(
 def run_tuning(
     nucleotide_file_content: str,
     clustal_file_content: str | None,
-    native_codon_tables: list[pl.DataFrame],
-    host_codon_table: pl.DataFrame,
+    native_codon_tables: list[list[dict]],
+    host_codon_table: list[dict],
     mode: str,
     conservation_threshold: float | None,
 ) -> list[dict]:
