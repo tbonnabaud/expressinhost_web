@@ -21,7 +21,7 @@ client.interceptors.response.use(
       console.error(error.message, error.response.data)
 
       if (error.response.status == 401) {
-        localStorage.getItem('accessToken')
+        localStorage.removeItem('accessToken')
       }
 
       return Promise.reject(error.message)
