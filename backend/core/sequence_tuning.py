@@ -199,7 +199,7 @@ def optimisation_and_conservation_2(
             input_codon = seq[3 * t : 3 * t + 3]
 
             if input_codon != "---":
-                for native_row in native_codon_table:
+                for native_row in native_codon_table.values():
                     # When native codon is found
                     if (
                         native_row.codon == input_codon
