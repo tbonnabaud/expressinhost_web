@@ -1,7 +1,7 @@
 import random
 
 from .checks import check_amino_acido_conservation, check_nucleotides_clustal_identity
-from .codon_tables import ProcessedCodonTableRow
+from .codon_tables import ProcessedCodonTable
 from .exceptions import NoAminoAcidConservation, NoIdenticalSequencesError
 from .postprocessing import clear_output_sequences, compare_sequences
 from .preprocessing import align_nucleotide_sequences, clear_nucleotide_sequences
@@ -15,7 +15,7 @@ STOP_CODON = "UAA"
 
 
 def find_amino_acid_and_rank(
-    codon: str, table: dict[str, ProcessedCodonTableRow]
+    codon: str, table: ProcessedCodonTable
 ) -> tuple[str, float] | tuple[None, None]:
     """Return the tuple corresponding to the given codon."""
     row = table.get(codon)
@@ -68,8 +68,8 @@ def get_random_equivalent_codon(selected_codons: list[str]) -> str:
 
 def direct_mapping(
     cleared_nucleotide_sequences: list[str],
-    native_codon_tables: list[dict[str, ProcessedCodonTableRow]],
-    host_codon_table: dict[str, ProcessedCodonTableRow],
+    native_codon_tables: list[ProcessedCodonTable],
+    host_codon_table: ProcessedCodonTable,
 ) -> list[str]:
     results = []
 
@@ -121,8 +121,8 @@ def direct_mapping(
 def optimisation_and_conservation_1(
     aligned_nucleotide_sequences: list[str],
     symbol_sequence: str,
-    native_codon_tables: list[dict[str, ProcessedCodonTableRow]],
-    host_codon_table: dict[str, ProcessedCodonTableRow],
+    native_codon_tables: list[ProcessedCodonTable],
+    host_codon_table: ProcessedCodonTable,
 ) -> list[str]:
     results = []
 
@@ -185,8 +185,8 @@ def optimisation_and_conservation_1(
 def optimisation_and_conservation_2(
     aligned_nucleotide_sequences: list[str],
     symbol_sequence: str,
-    native_codon_tables: list[dict[str, ProcessedCodonTableRow]],
-    host_codon_table: dict[str, ProcessedCodonTableRow],
+    native_codon_tables: list[ProcessedCodonTable],
+    host_codon_table: ProcessedCodonTable,
     conservation_threshold: float,
 ) -> list[str]:
     cpt_symbols = [0.0 for _ in range(len(aligned_nucleotide_sequences[0]))]
@@ -281,8 +281,8 @@ def optimisation_and_conservation_2(
 def run_tuning(
     nucleotide_file_content: str,
     clustal_file_content: str | None,
-    native_codon_tables: list[dict[str, ProcessedCodonTableRow]],
-    host_codon_table: dict[str, ProcessedCodonTableRow],
+    native_codon_tables: list[ProcessedCodonTable],
+    host_codon_table: ProcessedCodonTable,
     mode: str,
     conservation_threshold: float | None,
 ) -> list[dict]:

@@ -19,9 +19,23 @@ class ProcessedCodonTableRow:
     symbol_speed: str
 
 
+@dataclass(slots=True)
+class ProcessedCodonTable:
+    indexed_rows: dict[str, ProcessedCodonTableRow]
+
+    def __getitem__(self, key):
+        return self.indexed_rows[key]
+
+    def get(self, key, default=None):
+        return self.indexed_rows.get(key, default)
+
+    def values(self):
+        return self.indexed_rows.values()
+
+
 def process_raw_codon_table(
     raw_codon_table: list[dict], slow_speed_threshold: float
-) -> list[ProcessedCodonTableRow]:
+) -> ProcessedCodonTable:
     """Any raw data table contains:
     - column 1: amino acid (amino_acid)
     - column 2: anti-codon (anticodon)
@@ -40,7 +54,7 @@ def process_raw_codon_table(
         raw_codon_table (list[dict]): raw table
 
     Returns:
-        list[ProcessedCodonTableRow]: processed table with three more columns (rank, speed and symbol_speed)
+        ProcessedCodonTable: indexed processed table with three more columns (rank, speed and symbol_speed)
     """
     # Column 1 of the input raw table
     amino_acid_col = [row["amino_acid"] for row in raw_codon_table]
@@ -164,25 +178,27 @@ def process_raw_codon_table(
         ):
             symbol_speed_col[k] = "S"
 
-    return {
-        row[2]: ProcessedCodonTableRow(*row)
-        for row in zip(
-            amino_acid_col,
-            anticodon_col,
-            codon_col,
-            gcn_col,
-            corresp_codon_col,
-            wobble_rate_col,
-            rank_col,
-            speed_col,
-            symbol_speed_col,
-        )
-    }
+    return ProcessedCodonTable(
+        indexed_rows={
+            row[2]: ProcessedCodonTableRow(*row)
+            for row in zip(
+                amino_acid_col,
+                anticodon_col,
+                codon_col,
+                gcn_col,
+                corresp_codon_col,
+                wobble_rate_col,
+                rank_col,
+                speed_col,
+                symbol_speed_col,
+            )
+        }
+    )
 
 
 def process_codon_table_from_file(
     codon_table_name: str, slow_speed_threshold: float
-) -> list[ProcessedCodonTableRow]:
+) -> ProcessedCodonTable:
     with open(TABLE_BASE_PATH / f"{codon_table_name}.csv") as file:
         reader = csv.DictReader(file, delimiter="\t")
 
