@@ -118,6 +118,11 @@ class Result(BaseModel):
     conservation_threshold: float | None
 
 
+class Profiles(BaseModel):
+    speed: list[float] | None
+    rank: list[float] | None
+
+
 class TunedSequence(BaseModel):
     id: UUID | None = None
     result_id: UUID | None = None
@@ -125,6 +130,8 @@ class TunedSequence(BaseModel):
     input: str
     output: str
     identity_percentage: float
+    input_profiles: Profiles
+    output_profiles: Profiles
 
 
 class RunTuningForm(BaseModel):

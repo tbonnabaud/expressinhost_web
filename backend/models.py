@@ -94,3 +94,5 @@ class TunedSequence(Base):
     input: Mapped[str] = mapped_column(sa.Text)
     output: Mapped[str] = mapped_column(sa.Text)
     identity_percentage: Mapped[float] = mapped_column(sa.Float)
+    input_profiles: Mapped[dict] = mapped_column(sa.JSON, default=lambda: {})
+    output_profiles: Mapped[dict] = mapped_column(sa.JSON, default=lambda: {})
