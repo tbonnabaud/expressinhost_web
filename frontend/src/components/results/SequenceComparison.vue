@@ -50,8 +50,8 @@ function colorSequences(inputSequence: string, outputSequence: string) {
 </script>
 
 <template>
-  <details :open="openDetails" @click="toggleDetails">
-    <summary>{{ tunedSequence.name }}</summary>
+  <details :open="openDetails" @click.prevent>
+    <summary @click="toggleDetails">{{ tunedSequence.name }}</summary>
 
     <p>
       &rarr; Similarity: {{ tunedSequence.identity_percentage.toFixed(2) }}%
