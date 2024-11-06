@@ -1,4 +1,5 @@
 import re
+from datetime import UTC, datetime
 
 from fastapi import APIRouter
 
@@ -50,6 +51,7 @@ def launch_tuning(
     )
 
     result = {
+        "creation_date": datetime.now(UTC),
         "host_codon_table_name": form.host_codon_table_name,
         "sequences_native_codon_tables": form.sequences_native_codon_tables,
         "mode": form.mode,

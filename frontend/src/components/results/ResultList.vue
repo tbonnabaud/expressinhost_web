@@ -15,7 +15,7 @@ watch(currentUser, async () => await fetchResultList())
 
 async function fetchResultList() {
   if (currentUser.value) {
-    const [data, error] = await API.results.list(currentUser.value.id)
+    const [data, error] = await API.results.list()
 
     if (!error) {
       resultList.value = data

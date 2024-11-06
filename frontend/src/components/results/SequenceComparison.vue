@@ -1,15 +1,28 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import type { TunedSequence } from '@/lib/interfaces'
+import ProfileChart from './ProfileChart.vue'
 
 const props = defineProps<{
   tunedSequence: TunedSequence
   open?: boolean
 }>()
 
+const openDetails = ref(false)
+
 const seqComparison = computed(() =>
   colorSequences(props.tunedSequence.input, props.tunedSequence.output),
 )
+
+onMounted(() => {
+  openDetails.value = Boolean(props.open)
+})
+
+function toggleDetails(event: Event) {
+  // Prevent the default toggle behavior of HTML <details> element
+  event.preventDefault()
+  openDetails.value = !openDetails.value
+}
 
 function colorSequences(inputSequence: string, outputSequence: string) {
   const inputCodonArray = inputSequence.match(/.{3}/g) || []
@@ -37,7 +50,7 @@ function colorSequences(inputSequence: string, outputSequence: string) {
 </script>
 
 <template>
-  <details :open="open">
+  <details :open="openDetails" @click="toggleDetails">
     <summary>{{ tunedSequence.name }}</summary>
 
     <p>
@@ -54,6 +67,20 @@ function colorSequences(inputSequence: string, outputSequence: string) {
         <div class="sequence" v-html="seqComparison[0]"></div>
         <div class="sequence" v-html="seqComparison[1]"></div>
       </div>
+    </div>
+
+    <div v-if="openDetails">
+      <ProfileChart
+        title="Speed profiles"
+        :input-values="tunedSequence.input_profiles.speed"
+        :output-values="tunedSequence.output_profiles.speed"
+      />
+
+      <ProfileChart
+        title="Rank profiles"
+        :input-values="tunedSequence.input_profiles.rank"
+        :output-values="tunedSequence.output_profiles.rank"
+      />
     </div>
   </details>
 

@@ -1,16 +1,22 @@
 <script setup lang="ts">
-import { API } from '@/lib/api'
 import { onMounted, ref, watch } from 'vue'
-import ResultContent from '@/components/results/ResultContent.vue'
+import { API } from '@/lib/api'
 import type { Result, TunedSequence } from '@/lib/interfaces'
+import { store } from '@/lib/store'
+import ResultContent from '@/components/results/ResultContent.vue'
+import RequiredAuth from '@/components/RequiredAuth.vue'
 
 const props = defineProps<{ id: string }>()
+
+const user = store.currentUser
 
 const result = ref({} as Result)
 const tunedSequences = ref([] as Array<TunedSequence>)
 
 onMounted(async () => {
-  result.value = await fetchResult(props.id)
+  if (user) {
+    result.value = await fetchResult(props.id)
+  }
 })
 
 watch(result, async value => {
@@ -34,7 +40,12 @@ async function fetchTunedSequences(resultId: string) {
 
 <template>
   <main class="container">
-    <ResultContent :result="result" :tuned_sequences="tunedSequences" />
+    <ResultContent
+      v-if="user"
+      :result="result"
+      :tuned_sequences="tunedSequences"
+    />
+    <RequiredAuth v-else />
   </main>
 </template>
 

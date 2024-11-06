@@ -2,8 +2,7 @@
 import { RouterLink, useRouter } from 'vue-router'
 import BaseModal from './BaseModal.vue'
 import { reactive, useTemplateRef } from 'vue'
-import { API } from '@/lib/api'
-import { store } from '@/lib/store'
+import { API, setCurrentUserInStore } from '@/lib/api'
 
 defineProps<{ open: boolean }>()
 const emit = defineEmits(['close'])
@@ -20,7 +19,7 @@ async function handleSubmit() {
   if (formRef.value?.checkValidity()) {
     const error = await API.users.login(form)
     if (error === null) {
-      await store.setCurrentUser()
+      await setCurrentUserInStore()
       emit('close')
       // Redirect to home
       router.push('/')

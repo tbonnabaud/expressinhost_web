@@ -21,7 +21,6 @@ numpy==2.1.1
 packaging==24.1
 pathspec==0.12.1
 platformdirs==4.3.6
-polars==1.7.1
 psycopg2-binary==2.9.9
 pyasn1==0.6.0
 pydantic==2.9.2

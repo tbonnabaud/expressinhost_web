@@ -1,18 +1,48 @@
-import polars as pl
+import csv
+from dataclasses import dataclass
+
+import numpy as np
 
 from .constantes import AMINO_ACID_LIST, TABLE_BASE_PATH
 
 
+@dataclass(slots=True)
+class ProcessedCodonTableRow:
+    amino_acid: str
+    anticodon: str
+    codon: str
+    trna_gcn: str
+    corresp_codon: str
+    wobble_rate: float
+    rank: float
+    speed: float
+    symbol_speed: str
+
+
+@dataclass(slots=True)
+class ProcessedCodonTable:
+    indexed_rows: dict[str, ProcessedCodonTableRow]
+
+    def __getitem__(self, key: str):
+        return self.indexed_rows[key]
+
+    def get(self, key: str):
+        return self.indexed_rows.get(key)
+
+    def values(self):
+        return self.indexed_rows.values()
+
+
 def process_raw_codon_table(
-    raw_codon_table: pl.DataFrame, slow_speed_threshold: float
-) -> pl.DataFrame:
+    raw_codon_table: list[dict], slow_speed_threshold: float
+) -> ProcessedCodonTable:
     """Any raw data table contains:
-    - column 1: amino acid (AA)
-    - column 2: anti-codon (tRNA)
-    - column 3: codon (Codon)
-    - column 4: tRNA GCN (GCN)
-    - column 5: codon used in case of wobble (Corresp_codon)
-    - column 6: wobble rate
+    - column 1: amino acid (amino_acid)
+    - column 2: anti-codon (anticodon)
+    - column 3: codon
+    - column 4: tRNA GCN (trna_gcn)
+    - column 5: codon used in case of wobble (corresp_codon)
+    - column 6: wobble rate (wobble_rate)
 
     All input raw tables contain 61 lines (for 61 codons).
 
@@ -21,32 +51,30 @@ def process_raw_codon_table(
     use databases such as "GtRNAdb: Genomic tRNA Database".
 
     Args:
-        raw_codon_table (pl.DataFrame): raw table
+        raw_codon_table (list[dict]): raw table
 
     Returns:
-        pl.DataFrame: processed table with three more columns (Rank, Speed and Symbol_Speed)
+        ProcessedCodonTable: indexed processed table with three more columns (rank, speed and symbol_speed)
     """
     # Column 1 of the input raw table
-    amino_acid_col = raw_codon_table["amino_acid"]
+    amino_acid_col = [row["amino_acid"] for row in raw_codon_table]
     # Column 2 of the input raw table
-    anticodon_col = raw_codon_table["anticodon"]
+    anticodon_col = [row["anticodon"] for row in raw_codon_table]
     # Column 3 of the input raw table
-    codon_col = raw_codon_table["codon"]
+    codon_col = [row["codon"] for row in raw_codon_table]
     # Column 4 of the input raw table
-    gcn_col = raw_codon_table["trna_gcn"].cast(pl.Float64)
+    gcn_col = np.array([float(row["trna_gcn"]) for row in raw_codon_table])
     # Column 5 of the input raw table
-    corresp_codon_col = raw_codon_table["corresp_codon"]
+    corresp_codon_col = [row["corresp_codon"] for row in raw_codon_table]
     # Column 6 of the input raw table
-    wobble_rate_col = raw_codon_table["wobble_rate"]
+    wobble_rate_col = np.array([float(row["wobble_rate"]) for row in raw_codon_table])
 
     # Colmun 7 to be added to the output processed table
-    rank_col = pl.zeros(61, dtype=pl.Float64, eager=True).alias("rank")
+    rank_col = np.zeros(61, dtype=np.float64)
     # Column 8 to be added to the output processed table
-    speed_col = pl.zeros(61, dtype=pl.Float64, eager=True).alias("speed")
+    speed_col = np.zeros(61, dtype=np.float64)
     # Column 9 to be added to the output processed table
-    symbol_speed_col = pl.repeat("0", 61, dtype=pl.String, eager=True).alias(
-        "symbol_speed"
-    )
+    symbol_speed_col = ["0" for _ in range(61)]
 
     # This index allows to know with which amino acid of the list we are dealing (the first is "Ala" the second is "Arg"...)
     aa_num = 0
@@ -135,7 +163,7 @@ def process_raw_codon_table(
         k += 1
 
     # Calculate the "SPEED" and the average "SPEED" over the entire table
-    speed_col = gcn_col.clone().alias("speed") / gcn_tot
+    speed_col = gcn_col / gcn_tot
     average_speed = speed_col.mean()
 
     # Search the lowest "SPEED" over the entire table
@@ -150,33 +178,28 @@ def process_raw_codon_table(
         ):
             symbol_speed_col[k] = "S"
 
-    return pl.DataFrame(
-        [
-            amino_acid_col,
-            anticodon_col,
-            codon_col,
-            gcn_col,
-            corresp_codon_col,
-            wobble_rate_col,
-            rank_col,
-            speed_col,
-            symbol_speed_col,
-        ]
+    return ProcessedCodonTable(
+        indexed_rows={
+            row[2]: ProcessedCodonTableRow(*row)
+            for row in zip(
+                amino_acid_col,
+                anticodon_col,
+                codon_col,
+                gcn_col,
+                corresp_codon_col,
+                wobble_rate_col,
+                rank_col,
+                speed_col,
+                symbol_speed_col,
+            )
+        }
     )
 
 
 def process_codon_table_from_file(
     codon_table_name: str, slow_speed_threshold: float
-) -> pl.DataFrame:
-    table_df = pl.read_csv(
-        TABLE_BASE_PATH / f"{codon_table_name}.csv",
-        has_header=True,
-        separator="\t",
-    )
-    processed_df = process_raw_codon_table(table_df, slow_speed_threshold)
-    # processed_df.write_csv(
-    #     f"tmp/processed_tables/Processed_{codon_table_name}.csv",
-    #     separator="\t",
-    # )
+) -> ProcessedCodonTable:
+    with open(TABLE_BASE_PATH / f"{codon_table_name}.csv") as file:
+        reader = csv.DictReader(file, delimiter="\t")
 
-    return processed_df
+        return process_raw_codon_table(list(reader), slow_speed_threshold)

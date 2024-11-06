@@ -27,8 +27,8 @@ class ResultRepository(BaseRepository):
 
         return self.session.execute(stmt).scalar_one()
 
-    def get(self, id: UUID):
-        stmt = sa.select(Result).where(Result.id == id)
+    def get(self, user_id: UUID, id: UUID):
+        stmt = sa.select(Result).where(Result.user_id == user_id, Result.id == id)
 
         return self.session.execute(stmt).scalar_one_or_none()
 
@@ -42,6 +42,6 @@ class ResultRepository(BaseRepository):
         stmt = sa.update(Result).where(Result.id == id).values(data)
         self.execute_with_commit(stmt)
 
-    def delete(self, id: UUID):
-        stmt = sa.delete(Result).where(Result.id == id)
+    def delete(self, user_id: UUID, id: UUID):
+        stmt = sa.delete(Result).where(Result.user_id == user_id, Result.id == id)
         self.execute_with_commit(stmt)

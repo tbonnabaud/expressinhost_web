@@ -49,6 +49,11 @@ export interface Result {
   conservation_threshold: number | null
 }
 
+export interface Profiles {
+  speed: Array<number>
+  rank: Array<number>
+}
+
 export interface TunedSequence {
   id: string | null
   result_id: string | null
@@ -56,6 +61,8 @@ export interface TunedSequence {
   input: string
   output: string
   identity_percentage: number
+  input_profiles: Profiles
+  output_profiles: Profiles
 }
 
 export interface TuningOutput {

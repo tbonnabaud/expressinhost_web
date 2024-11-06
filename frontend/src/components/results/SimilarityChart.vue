@@ -23,6 +23,12 @@ const data = computed(() => {
 
 const options: ChartOptions = {
   responsive: true,
+  scales: {
+    y: {
+      min: 0,
+      max: 100,
+    },
+  },
   plugins: {
     legend: {
       display: true,

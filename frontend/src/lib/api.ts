@@ -6,6 +6,7 @@ import type {
   UserLogin,
   Token,
 } from './interfaces'
+import { store } from './store'
 
 type ApiResponse<T> = [T | null, string | null]
 
@@ -18,10 +19,12 @@ client.interceptors.response.use(
   response => response,
   error => {
     if (axios.isAxiosError(error) && error.response) {
-      console.error(error.message, error.response.data)
-
       if (error.response.status == 401) {
-        localStorage.getItem('accessToken')
+        console.warn(error.message, error.response.data)
+        localStorage.removeItem('accessToken')
+        store.emptyCurrentUser()
+      } else {
+        console.error(error.message, error.response.data)
       }
 
       return Promise.reject(error.message)
@@ -95,11 +98,9 @@ const users = {
 }
 
 const results = {
-  list: async (userId: string) =>
-    await REQUESTS.get(`/users/${userId}/results`),
-  count: async (userId: string) =>
-    await REQUESTS.get(`/users/${userId}/results/count`),
-  get: async (id: string) => await REQUESTS.get(`/results/${id}`),
+  list: async () => await REQUESTS.get(`/users/me/results`),
+  count: async () => await REQUESTS.get(`/users/me/results/count`),
+  get: async (id: string) => await REQUESTS.get(`/users/me/results/${id}`),
 }
 
 const tunedSequences = {
@@ -113,4 +114,12 @@ export const API = {
   users: users,
   results: results,
   tunedSequences: tunedSequences,
+}
+
+export async function setCurrentUserInStore() {
+  const [data, error] = await API.users.me()
+
+  if (error === null) {
+    store.setCurrentUser(data)
+  }
 }
