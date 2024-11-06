@@ -277,6 +277,22 @@ def optimisation_and_conservation_2(
     return results
 
 
+def get_sequence_profiles(sequence: str, codon_table: ProcessedCodonTable):
+    """Get speed and rank profiles."""
+    speed_profile = []
+    rank_profile = []
+
+    for t in range(int(len(sequence) / 3)):
+        codon = sequence[3 * t : 3 * t + 3]
+        row = codon_table.get(codon)
+
+        if row:
+            speed_profile.append(row.speed)
+            rank_profile.append(row.rank)
+
+    return {"speed": speed_profile, "rank": rank_profile}
+
+
 @timeit
 def run_tuning(
     nucleotide_file_content: str,
@@ -365,11 +381,12 @@ def run_tuning(
 
     output_list = []
 
-    for name, input, output, identity_percentage in zip(
+    for name, input, output, identity_percentage, native_codon_table in zip(
         map(lambda record: record.name, nucleotide_sequences),
         map(lambda record: str(record.seq), nucleotide_sequences),
         cleared_output_sequences,
         identity_percentages,
+        native_codon_tables,
     ):
         # print(name, len(input) == len(output), len(output) - len(input))
         output_list.append(
@@ -378,6 +395,8 @@ def run_tuning(
                 "input": input,
                 "output": output,
                 "identity_percentage": identity_percentage,
+                "input_profiles": get_sequence_profiles(input, native_codon_table),
+                "output_profiles": get_sequence_profiles(output, host_codon_table),
             }
         )
 
