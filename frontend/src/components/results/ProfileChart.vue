@@ -29,6 +29,7 @@ const data = computed(() => {
 
 const options: ChartOptions = {
   responsive: true,
+  maintainAspectRatio: false,
   plugins: {
     legend: {
       display: true,
@@ -43,5 +44,13 @@ const options: ChartOptions = {
 </script>
 
 <template>
-  <ChartWrapper type="line" :data="data" :options="options" />
+  <div class="chart-wrapper">
+    <ChartWrapper type="line" :data="data" :options="options" />
+  </div>
 </template>
+
+<style scoped>
+.chart-wrapper {
+  height: 20vh;
+}
+</style>
