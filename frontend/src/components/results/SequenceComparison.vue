@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import type { TunedSequence } from '@/lib/interfaces'
+import ProfileChart from './ProfileChart.vue'
 
 const props = defineProps<{
   tunedSequence: TunedSequence
@@ -54,6 +55,20 @@ function colorSequences(inputSequence: string, outputSequence: string) {
         <div class="sequence" v-html="seqComparison[0]"></div>
         <div class="sequence" v-html="seqComparison[1]"></div>
       </div>
+    </div>
+
+    <div>
+      <ProfileChart
+        title="Speed profiles"
+        :input-values="tunedSequence.input_profiles.speed"
+        :output-values="tunedSequence.output_profiles.speed"
+      />
+
+      <ProfileChart
+        title="Rank profiles"
+        :input-values="tunedSequence.input_profiles.rank"
+        :output-values="tunedSequence.output_profiles.rank"
+      />
     </div>
   </details>
 
