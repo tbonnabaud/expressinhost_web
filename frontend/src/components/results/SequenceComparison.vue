@@ -18,9 +18,7 @@ onMounted(() => {
   openDetails.value = Boolean(props.open)
 })
 
-function toggleDetails(event: Event) {
-  // Prevent the default toggle behavior of HTML <details> element
-  event.preventDefault()
+function toggleDetails() {
   openDetails.value = !openDetails.value
 }
 
