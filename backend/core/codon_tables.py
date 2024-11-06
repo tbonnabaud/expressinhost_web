@@ -23,11 +23,11 @@ class ProcessedCodonTableRow:
 class ProcessedCodonTable:
     indexed_rows: dict[str, ProcessedCodonTableRow]
 
-    def __getitem__(self, key):
+    def __getitem__(self, key: str):
         return self.indexed_rows[key]
 
-    def get(self, key, default=None):
-        return self.indexed_rows.get(key, default)
+    def get(self, key: str):
+        return self.indexed_rows.get(key)
 
     def values(self):
         return self.indexed_rows.values()
