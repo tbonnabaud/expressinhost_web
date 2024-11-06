@@ -164,8 +164,8 @@ def process_raw_codon_table(
         ):
             symbol_speed_col[k] = "S"
 
-    return [
-        ProcessedCodonTableRow(*row)
+    return {
+        row[2]: ProcessedCodonTableRow(*row)
         for row in zip(
             amino_acid_col,
             anticodon_col,
@@ -177,7 +177,7 @@ def process_raw_codon_table(
             speed_col,
             symbol_speed_col,
         )
-    ]
+    }
 
 
 def process_codon_table_from_file(
