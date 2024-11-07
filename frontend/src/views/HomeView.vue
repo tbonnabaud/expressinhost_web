@@ -12,6 +12,8 @@ const user = store.currentUser
       ExpressInHost is an application for tuning the codon sequence of an mRNA
       for recombinant protein expression in a host microorganism.
     </p>
+
+    <p>⚠ This web application is under development ⚠</p>
   </main>
 </template>
 
