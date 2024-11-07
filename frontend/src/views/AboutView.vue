@@ -4,7 +4,9 @@
 
     <p>
       This application is currently being developed by
-      <a href="https://adelaideraguin.github.io/">Raguin's lab</a>.
+      <a href="https://adelaideraguin.github.io/" target="_blank"
+        >Raguin's lab</a
+      >.
     </p>
   </main>
 </template>
