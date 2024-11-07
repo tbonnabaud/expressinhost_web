@@ -1,12 +1,22 @@
 <template>
   <main class="container">
-    <h1>This is an about page</h1>
+    <h1>About</h1>
 
     <p>
-      Lorem ipsum dolor sit amet, consectetur adipisicing elit. Facere, fugit
-      blanditiis nesciunt magni pariatur, natus soluta quaerat impedit commodi,
-      voluptatum accusamus. Fugiat, totam dolore excepturi unde suscipit
-      deleniti quos veritatis!
+      This application is currently being developed by
+      <a href="https://adelaideraguin.github.io/">Raguin's lab</a>.
     </p>
   </main>
 </template>
+
+<style scoped>
+h1,
+p {
+  margin-top: 5em;
+  text-align: center;
+}
+
+p {
+  font-size: 1.5em;
+}
+</style>
