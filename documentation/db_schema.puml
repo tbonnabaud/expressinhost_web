@@ -5,7 +5,6 @@ skinparam dpi 200
 ' !theme amiga
 ' left to right direction
 ' skinparam BackgroundColor transparent
-' skinparam ClassBackgroundColor #1b212c
 
 entity users {
     * id: uuid <<PK>>
@@ -68,6 +67,18 @@ entity tuned_sequences {
     * input: text
     * output: text
     * percentage_identity: float
+    * input_profiles: json
+    * output_profiles: json
+}
+
+json input_profiles {
+    "speed": [0.0, 0.0],
+    "rank": [0.0, 0.0]
+}
+
+json output_profiles {
+    "speed": [0.0, 0.0],
+    "rank": [0.0, 0.0]
 }
 
 users |o--o{ results
@@ -77,5 +88,7 @@ results |o--{ codon_tables
 results ||--|| sequences_native_codon_tables
 ' results }|--|{ results_native_codon_tables
 ' codon_tables }|--|{ results_native_codon_tables
+tuned_sequences ||--|| input_profiles
+tuned_sequences ||--|| output_profiles
 codon_tables ||--|{ codon_translations
 @enduml
