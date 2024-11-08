@@ -45,6 +45,9 @@ async def api_root() -> RedirectResponse:
 # Serve API
 app.mount("/api", api_app)
 
+# Serve examples files
+app.mount("/examples", StaticFiles(directory="examples"), name="examples")
+
 # Serve the Vue.js application
 app.mount("/", StaticFiles(directory="frontend/dist", html=True), name="static")
 

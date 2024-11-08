@@ -112,6 +112,10 @@ async function runTuning() {
         <div class="input-file">
           <label for="fasta">Sequence file (FASTA)</label>
           <input type="file" id="fasta" @change="setFastaContent" required />
+          <i>
+            You can download an example sequence file
+            <a href="/examples/Rad51_nucleotide.txt" download>here</a>.
+          </i>
         </div>
 
         <div class="input-file">
@@ -122,6 +126,10 @@ async function runTuning() {
             @change="setClustalContent"
             :required="clustalIsRequired"
           />
+          <i>
+            You can download an example alignment file
+            <a href="/examples/Rad51_CLUSTAL.txt" download>here</a>.
+          </i>
         </div>
       </div>
     </section>
