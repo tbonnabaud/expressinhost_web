@@ -36,6 +36,7 @@ COPY requirements.txt .
 RUN python -m pip install -r requirements.txt
 
 COPY ./codon_tables ./codon_tables
+COPY ./examples ./examples
 COPY ./backend ./backend
 
 # Copy migration stuff
