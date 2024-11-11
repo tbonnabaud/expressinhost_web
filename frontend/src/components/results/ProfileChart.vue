@@ -17,11 +17,15 @@ const data = computed(() => {
         label: 'Input sequence',
         data: props.inputValues,
         pointStyle: false,
+        borderColor: '#a52a2a',
+        backgroundColor: '#a52a2a',
       },
       {
         label: 'Output sequence',
         data: props.outputValues,
         pointStyle: false,
+        borderColor: '#008000',
+        backgroundColor: '#008000',
       },
     ],
   }
