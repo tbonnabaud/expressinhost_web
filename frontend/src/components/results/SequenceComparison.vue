@@ -31,9 +31,9 @@ function toggleDetails() {
 function compareAndMapToArrayOfSpan(arr1: Array<string>, arr2: Array<string>) {
   return arr1.map((item, i) => {
     if (item != arr2[i]) {
-      return `<span class="modified-codon">${item}</span>`
+      return `<span data-tooltip="${i}" data-placement="bottom" class="codon modified-codon">${item}</span>`
     }
-    return `<span>${item}</span>`
+    return `<span class="codon" data-tooltip="${i}" data-placement="bottom">${item}</span>`
   })
 }
 
@@ -41,10 +41,14 @@ function colorSequences(inputSequence: string, outputSequence: string) {
   const inputCodonArray = inputSequence.match(/.{3}/g) || []
   const outputCodonArray = outputSequence.match(/.{3}/g) || []
 
-  return [
-    compareAndMapToArrayOfSpan(inputCodonArray, outputCodonArray).join(''),
-    compareAndMapToArrayOfSpan(outputCodonArray, inputCodonArray).join(''),
-  ]
+  return {
+    input: compareAndMapToArrayOfSpan(inputCodonArray, outputCodonArray).join(
+      '',
+    ),
+    output: compareAndMapToArrayOfSpan(outputCodonArray, inputCodonArray).join(
+      '',
+    ),
+  }
 }
 </script>
 
@@ -63,8 +67,11 @@ function colorSequences(inputSequence: string, outputSequence: string) {
       </div>
 
       <div class="sequence-group">
-        <div class="sequence input-sequence" v-html="seqComparison[0]"></div>
-        <div class="sequence output-sequence" v-html="seqComparison[1]"></div>
+        <div class="sequence input-sequence" v-html="seqComparison.input"></div>
+        <div
+          class="sequence output-sequence"
+          v-html="seqComparison.output"
+        ></div>
       </div>
     </div>
 
