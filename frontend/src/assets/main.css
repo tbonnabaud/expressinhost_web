@@ -1,4 +1,5 @@
 @import './pico.css';
+@import './sequences.css';
 
 :root {
   --pico-font-size: 100%;
@@ -12,22 +13,4 @@
   display: flex;
   justify-content: center;
   align-items: center;
-}
-
-.in-seq {
-  background-color: #db5050;
-}
-
-.out-seq {
-  background-color: #41a741;
-}
-
-@media (prefers-color-scheme: dark) {
-  .in-seq {
-    background-color: #a52a2a;
-  }
-
-  .out-seq {
-    background-color: #008000;
-  }
 }

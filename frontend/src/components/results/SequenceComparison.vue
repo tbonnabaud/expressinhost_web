@@ -22,28 +22,33 @@ function toggleDetails() {
   openDetails.value = !openDetails.value
 }
 
+/**
+ * Compare two arrays and return a new one with the elements of the first array surrounded
+ * by span tags and "modified-codon" class if value different from the other table.
+ * @param arr1
+ * @param arr2
+ */
+function compareAndMapToArrayOfSpan(arr1: Array<string>, arr2: Array<string>) {
+  return arr1.map((item, i) => {
+    if (item != arr2[i]) {
+      return `<span data-tooltip="${i}" data-placement="bottom" class="codon modified-codon">${item}</span>`
+    }
+    return `<span class="codon" data-tooltip="${i}" data-placement="bottom">${item}</span>`
+  })
+}
+
 function colorSequences(inputSequence: string, outputSequence: string) {
   const inputCodonArray = inputSequence.match(/.{3}/g) || []
   const outputCodonArray = outputSequence.match(/.{3}/g) || []
 
-  return [
-    inputCodonArray
-      .map((item, i) => {
-        if (item != outputCodonArray[i]) {
-          return `<span class="in-seq">${item}</span>`
-        }
-        return item
-      })
-      .join(''),
-    outputCodonArray
-      .map((item, i) => {
-        if (item != inputCodonArray[i]) {
-          return `<span class="out-seq">${item}</span>`
-        }
-        return item
-      })
-      .join(''),
-  ]
+  return {
+    input: compareAndMapToArrayOfSpan(inputCodonArray, outputCodonArray).join(
+      '',
+    ),
+    output: compareAndMapToArrayOfSpan(outputCodonArray, inputCodonArray).join(
+      '',
+    ),
+  }
 }
 </script>
 
@@ -62,8 +67,11 @@ function colorSequences(inputSequence: string, outputSequence: string) {
       </div>
 
       <div class="sequence-group">
-        <div class="sequence" v-html="seqComparison[0]"></div>
-        <div class="sequence" v-html="seqComparison[1]"></div>
+        <div class="sequence input-sequence" v-html="seqComparison.input"></div>
+        <div
+          class="sequence output-sequence"
+          v-html="seqComparison.output"
+        ></div>
       </div>
     </div>
 
