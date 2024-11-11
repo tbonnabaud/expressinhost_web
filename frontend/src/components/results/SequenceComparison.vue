@@ -22,27 +22,28 @@ function toggleDetails() {
   openDetails.value = !openDetails.value
 }
 
+/**
+ * Compare two arrays and return a new one with the elements of the first array surrounded
+ * by span tags and "modified-codon" class if value different from the other table.
+ * @param arr1
+ * @param arr2
+ */
+function compareAndMapToArrayOfSpan(arr1: Array<string>, arr2: Array<string>) {
+  return arr1.map((item, i) => {
+    if (item != arr2[i]) {
+      return `<span class="modified-codon">${item}</span>`
+    }
+    return `<span>${item}</span>`
+  })
+}
+
 function colorSequences(inputSequence: string, outputSequence: string) {
   const inputCodonArray = inputSequence.match(/.{3}/g) || []
   const outputCodonArray = outputSequence.match(/.{3}/g) || []
 
   return [
-    inputCodonArray
-      .map((item, i) => {
-        if (item != outputCodonArray[i]) {
-          return `<span class="modified-codon">${item}</span>`
-        }
-        return item
-      })
-      .join(''),
-    outputCodonArray
-      .map((item, i) => {
-        if (item != inputCodonArray[i]) {
-          return `<span class="modified-codon">${item}</span>`
-        }
-        return item
-      })
-      .join(''),
+    compareAndMapToArrayOfSpan(inputCodonArray, outputCodonArray).join(''),
+    compareAndMapToArrayOfSpan(outputCodonArray, inputCodonArray).join(''),
   ]
 }
 </script>
