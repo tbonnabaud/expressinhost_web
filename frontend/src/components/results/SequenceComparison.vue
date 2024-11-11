@@ -30,7 +30,7 @@ function colorSequences(inputSequence: string, outputSequence: string) {
     inputCodonArray
       .map((item, i) => {
         if (item != outputCodonArray[i]) {
-          return `<span class="in-seq">${item}</span>`
+          return `<span class="modified-codon">${item}</span>`
         }
         return item
       })
@@ -38,7 +38,7 @@ function colorSequences(inputSequence: string, outputSequence: string) {
     outputCodonArray
       .map((item, i) => {
         if (item != inputCodonArray[i]) {
-          return `<span class="out-seq">${item}</span>`
+          return `<span class="modified-codon">${item}</span>`
         }
         return item
       })
@@ -62,8 +62,8 @@ function colorSequences(inputSequence: string, outputSequence: string) {
       </div>
 
       <div class="sequence-group">
-        <div class="sequence" v-html="seqComparison[0]"></div>
-        <div class="sequence" v-html="seqComparison[1]"></div>
+        <div class="sequence input-sequence" v-html="seqComparison[0]"></div>
+        <div class="sequence output-sequence" v-html="seqComparison[1]"></div>
       </div>
     </div>
 

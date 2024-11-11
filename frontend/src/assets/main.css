@@ -14,20 +14,20 @@
   align-items: center;
 }
 
-.in-seq {
+.input-sequence > .modified-codon {
   background-color: #db5050;
 }
 
-.out-seq {
+.output-sequence > .modified-codon {
   background-color: #41a741;
 }
 
 @media (prefers-color-scheme: dark) {
-  .in-seq {
+  .input-sequence > .modified-codon {
     background-color: #a52a2a;
   }
 
-  .out-seq {
+  .output-sequence > .modified-codon {
     background-color: #008000;
   }
 }
