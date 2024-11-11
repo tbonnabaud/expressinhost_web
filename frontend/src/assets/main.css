@@ -16,6 +16,7 @@
 
 .input-sequence > .modified-codon {
   background-color: #db5050;
+  z-index: 1;
 }
 
 .output-sequence > .modified-codon {
@@ -25,9 +26,14 @@
 @media (prefers-color-scheme: dark) {
   .input-sequence > .modified-codon {
     background-color: #a52a2a;
+    z-index: 1;
   }
 
   .output-sequence > .modified-codon {
     background-color: #008000;
   }
+}
+
+.codon:hover {
+  opacity: 0.8;
 }
