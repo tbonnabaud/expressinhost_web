@@ -37,3 +37,8 @@
 .codon:hover {
   opacity: 0.8;
 }
+
+span[data-tooltip] {
+  cursor: default;
+  border-bottom: none;
+}
