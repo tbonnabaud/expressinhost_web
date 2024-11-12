@@ -112,6 +112,8 @@ export const BASE_CODON_TABLE = [
   { aminoAcid: 'Val', anticodon: 'UAC', codon: 'GUA' },
 ]
 
+export const CODON_LIST = BASE_CODON_TABLE.map(e => e.codon)
+
 export const CODON_MAPPING = Object.fromEntries(
   BASE_CODON_TABLE.map(e => [e.codon, e]),
 )
