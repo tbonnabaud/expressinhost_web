@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
-import LoginForm from '@/components/LoginForm.vue'
 import { ref, onMounted } from 'vue'
+import { RouterLink, RouterView } from 'vue-router'
 import { store } from './lib/store'
 import { API, setCurrentUserInStore } from './lib/api'
+import LoginForm from '@/components/LoginForm.vue'
 
 const openLoginForm = ref(false)
 const user = store.currentUser
