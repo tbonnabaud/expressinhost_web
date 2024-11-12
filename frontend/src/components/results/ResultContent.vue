@@ -2,20 +2,15 @@
 import { computed } from 'vue'
 import type { TuningOutput } from '@/lib/interfaces'
 import { formatToLocaleDateString } from '@/lib/helpers'
+import { MODE_LABEL_MAPPING } from '@/lib/constants'
 import SequenceComparison from '@/components/results/SequenceComparison.vue'
 import DownloadResult from './DownloadResult.vue'
 import SimilarityChart from './SimilarityChart.vue'
 
 const props = defineProps<TuningOutput>()
 
-const modeLabelMapping: Record<string, string> = {
-  direct_mapping: 'Direct mapping',
-  optimisation_and_conservation_1: 'Optimisation and conservation 1',
-  optimisation_and_conservation_2: 'Optimisation and conservation 2',
-}
-
 const mode = computed(
-  () => modeLabelMapping[props.result.mode] || 'Unknown mode',
+  () => MODE_LABEL_MAPPING[props.result.mode] || 'Unknown mode',
 )
 const percentageLabels = computed(() => props.tuned_sequences.map(e => e.name))
 const percentageValues = computed(() =>

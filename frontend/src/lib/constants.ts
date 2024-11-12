@@ -41,3 +41,9 @@ export const CODON_TABLE_LIST = [
   },
   { name: 'Xenopus_laevis', organism: 'Xenopus_laevis', custom: false },
 ]
+
+export const MODE_LABEL_MAPPING: Record<string, string> = {
+  direct_mapping: 'Direct mapping',
+  optimisation_and_conservation_1: 'Optimisation and conservation 1',
+  optimisation_and_conservation_2: 'Optimisation and conservation 2',
+}

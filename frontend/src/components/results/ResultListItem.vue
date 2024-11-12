@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Result } from '@/lib/interfaces'
+import { MODE_LABEL_MAPPING } from '@/lib/constants'
 
 defineProps<{ result: Result }>()
 </script>
@@ -14,7 +15,7 @@ defineProps<{ result: Result }>()
       <p>
         <strong>Host codon table:</strong> {{ result.host_codon_table_name }}
         <br />
-        <strong>Mode:</strong> {{ result.mode }}
+        <strong>Mode:</strong> {{ MODE_LABEL_MAPPING[result.mode] }}
       </p>
     </article>
   </RouterLink>
