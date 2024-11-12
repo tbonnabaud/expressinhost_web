@@ -23,11 +23,11 @@ function logout() {
         <li><img id="logo" src="./assets/logo.png" alt="Logo" /></li>
         <li><strong>ExpressInHost</strong></li>
         <li><RouterLink to="/" class="secondary">Home</RouterLink></li>
-        <!-- <li>
-          <RouterLink to="/codon-tables" class="secondary"
-            >Codon tables</RouterLink
-          >
-        </li> -->
+        <li v-if="user">
+          <RouterLink to="/codon-tables" class="secondary">
+            Codon tables
+          </RouterLink>
+        </li>
         <li><RouterLink to="/tuning" class="secondary">Tuning</RouterLink></li>
         <li v-if="user">
           <RouterLink to="/results" class="secondary">Results</RouterLink>
