@@ -38,6 +38,16 @@ export interface CodonTable {
   custom: boolean
 }
 
+export interface CodonTranslation {
+  codon_table_name: string
+  codon: string
+  anticodon: string
+  amino_acid: string
+  trna_gcn: number
+  corresp_codon: string
+  wobble_rate: number
+}
+
 export interface Result {
   id: string | null
   user_id: string | null
