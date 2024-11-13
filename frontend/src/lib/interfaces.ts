@@ -33,9 +33,10 @@ export interface RunTrainingForm {
 }
 
 export interface CodonTable {
+  user_id: string | null
+  creation_date: string
   name: string
   organism: string
-  custom: boolean
 }
 
 export interface CodonTranslation {
