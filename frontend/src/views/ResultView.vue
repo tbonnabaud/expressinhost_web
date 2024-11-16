@@ -48,12 +48,3 @@ async function fetchTunedSequences(resultId: string) {
     <RequiredAuth v-else />
   </main>
 </template>
-
-<style scoped>
-@media (min-width: 1024px) {
-  .container {
-    padding-left: 15em;
-    padding-right: 15em;
-  }
-}
-</style>

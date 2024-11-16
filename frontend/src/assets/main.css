@@ -5,6 +5,13 @@
   --pico-font-size: 100%;
 }
 
+@media (min-width: 1024px) {
+  .container {
+    padding-left: 12em;
+    padding-right: 12em;
+  }
+}
+
 .flex-container {
   display: flex;
 }

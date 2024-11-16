@@ -118,7 +118,7 @@ async function runTuning() {
         }
       },
     )
-    
+
     const [data, error] = await API.runTraining(form)
 
     if (!error) {

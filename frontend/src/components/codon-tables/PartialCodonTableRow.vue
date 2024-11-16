@@ -40,12 +40,7 @@ watch(wobbleRate, value => {
     <td>{{ anticodon }}</td>
     <td>{{ codon }}</td>
     <td>
-      <input
-        type="number"
-        v-model.number="trnaGcn"
-        min="0"
-        required
-      />
+      <input type="number" v-model.number="trnaGcn" min="0" required />
     </td>
     <td>
       <select v-model="correspCodon" required>
