@@ -27,7 +27,9 @@ class User(Base):
 class CodonTable(Base):
     __tablename__ = "codon_tables"
 
-    name: Mapped[str] = mapped_column(sa.String, primary_key=True)
+    id: Mapped[UUID] = mapped_column(
+        sa.UUID(as_uuid=True), primary_key=True, default=uuid4
+    )
     user_id: Mapped[UUID | None] = mapped_column(
         sa.UUID(as_uuid=True),
         sa.ForeignKey("users.id", onupdate="CASCADE", ondelete="CASCADE"),
@@ -36,25 +38,26 @@ class CodonTable(Base):
     creation_date: Mapped[datetime] = mapped_column(
         sa.DateTime(timezone=True), default=lambda: datetime.now(UTC)
     )
+    name: Mapped[str] = mapped_column(sa.String)
     organism: Mapped[str] = mapped_column(sa.String)
+
+    __table_args__ = (sa.UniqueConstraint("user_id", "name", "organism"),)
 
 
 class CodonTranslation(Base):
     __tablename__ = "codon_translations"
 
-    codon_table_name: Mapped[str] = mapped_column(sa.String)
-    codon: Mapped[str] = mapped_column(sa.String(length=3))
+    codon_table_id: Mapped[UUID] = mapped_column(
+        sa.UUID(as_uuid=True),
+        sa.ForeignKey("codon_tables.id", onupdate="CASCADE", ondelete="CASCADE"),
+        primary_key=True,
+    )
+    codon: Mapped[str] = mapped_column(sa.String(length=3), primary_key=True)
     anticodon: Mapped[str] = mapped_column(sa.String(length=3))
     amino_acid: Mapped[str] = mapped_column(sa.String(length=3))
     trna_gcn: Mapped[float] = mapped_column(sa.Float)
     corresp_codon: Mapped[str] = mapped_column(sa.String(length=3))
     wobble_rate: Mapped[float] = mapped_column(sa.Float)
-
-    __table_args__ = (
-        sa.PrimaryKeyConstraint(
-            "codon_table_name", "codon", name="pk_codon_translations"
-        ),
-    )
 
 
 class Result(Base):
@@ -71,7 +74,10 @@ class Result(Base):
     creation_date: Mapped[datetime] = mapped_column(
         sa.DateTime(timezone=True), default=lambda: datetime.now(UTC)
     )
-    host_codon_table_name: Mapped[str] = mapped_column(sa.String)
+    host_codon_table_id: Mapped[UUID] = mapped_column(
+        sa.UUID(as_uuid=True),
+        sa.ForeignKey("codon_tables.id", onupdate="CASCADE", ondelete="CASCADE"),
+    )
     sequences_native_codon_tables: Mapped[dict] = mapped_column(sa.JSON)
     mode: Mapped[str] = mapped_column(sa.String)
     slow_speed_threshold: Mapped[float] = mapped_column(sa.Float)

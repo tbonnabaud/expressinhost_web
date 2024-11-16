@@ -26,13 +26,39 @@ class CodonTableRepository(BaseRepository):
 
         return self.session.execute(stmt).scalars().all()
 
-    def get(self, name: str):
-        stmt = sa.select(CodonTable).where(CodonTable.name == name)
+    def count_all(self):
+        stmt = sa.select(sa.func.count()).select_from(CodonTable)
+
+        return self.session.execute(stmt).scalar_one()
+
+    def count_defaults(self):
+        stmt = (
+            sa.select(sa.func.count())
+            .select_from(CodonTable)
+            .where(CodonTable.user_id is None)
+        )
+
+        return self.session.execute(stmt).scalar_one()
+
+    def count_from_user(self, user_id: UUID):
+        stmt = (
+            sa.select(sa.func.count())
+            .select_from(CodonTable)
+            .where(CodonTable.user_id == user_id)
+        )
+
+        return self.session.execute(stmt).scalar_one()
+
+    def get(self, user_id: UUID, name: str):
+        stmt = sa.select(CodonTable).where(
+            (CodonTable.user_id == user_id) | (CodonTable.user_id == sa.null()),
+            CodonTable.name == name,
+        )
 
         return self.session.execute(stmt).scalar_one_or_none()
 
     def add(self, data: dict) -> str | None:
-        stmt = sa.insert(CodonTable).values(data).returning(CodonTable.name)
+        stmt = sa.insert(CodonTable).values(data).returning(CodonTable.id)
         result = self.execute_with_commit(stmt)
 
         return result.scalar_one_or_none()
@@ -41,6 +67,8 @@ class CodonTableRepository(BaseRepository):
         stmt = sa.update(CodonTable).where(CodonTable.name == name).values(data)
         self.execute_with_commit(stmt)
 
-    def delete(self, name: str):
-        stmt = sa.delete(CodonTable).where(CodonTable.name == name)
+    def delete(self, user_id: UUID, name: str):
+        stmt = sa.delete(CodonTable).where(
+            CodonTable.user_id == user_id, CodonTable.name == name
+        )
         self.execute_with_commit(stmt)
