@@ -11,8 +11,6 @@ from ..crud.codon_translations import CodonTranslationRepository
 from ..crud.results import ResultRepository
 from ..crud.tuned_sequences import TunedSequenceRepository
 from ..database import SessionDependency
-
-# from ..models import CodonTranslation, Result
 from ..schemas import RunTuningForm, TuningOutput
 
 router = APIRouter(tags=["Tuning"])
