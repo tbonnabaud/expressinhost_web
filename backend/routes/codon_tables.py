@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from ..authentication import TokenDependency, OptionalTokenDependency, get_current_user
+from ..authentication import OptionalTokenDependency, TokenDependency, get_current_user
 from ..crud.codon_tables import CodonTableRepository
 from ..database import SessionDependency
 from ..schemas import CodonTable, CodonTableForm
@@ -9,13 +9,17 @@ router = APIRouter(tags=["Codon tables"])
 
 
 @router.get("/codon-tables", response_model=list[CodonTable])
-def list_codon_tables(session: SessionDependency, token: OptionalTokenDependency, organism: str | None = None):
+def list_codon_tables(
+    session: SessionDependency,
+    token: OptionalTokenDependency,
+    organism: str | None = None,
+):
     current_user = get_current_user(session, token) if token else None
 
     if current_user:
         return CodonTableRepository(session).list_defaults_and_from_user(
-        current_user.id, organism
-    )
+            current_user.id, organism
+        )
     else:
         return CodonTableRepository(session).list_defaults(organism)
 
