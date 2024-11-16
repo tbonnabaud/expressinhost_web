@@ -13,8 +13,8 @@ defineProps<{ result: Result }>()
       </header>
 
       <p>
-        <strong>Host codon table:</strong> {{ result.host_codon_table_name }}
-        <br />
+        <!-- <strong>Host codon table:</strong> {{ result.host_codon_table_id }}
+        <br /> -->
         <strong>Mode:</strong> {{ MODE_LABEL_MAPPING[result.mode] }}
       </p>
     </article>
