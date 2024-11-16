@@ -97,6 +97,10 @@ const users = {
   me: async () => await REQUESTS.get('/users/me'),
 }
 
+const codonTables = {
+  list: async () => await REQUESTS.get('/codon-tables'),
+}
+
 const results = {
   list: async () => await REQUESTS.get(`/users/me/results`),
   count: async () => await REQUESTS.get(`/users/me/results/count`),
@@ -112,6 +116,7 @@ export const API = {
   runTraining: async (form: RunTrainingForm) =>
     (await REQUESTS.post('/run-tuning', form)) as ApiResponse<TuningOutput>,
   users: users,
+  codonTables: codonTables,
   results: results,
   tunedSequences: tunedSequences,
 }
