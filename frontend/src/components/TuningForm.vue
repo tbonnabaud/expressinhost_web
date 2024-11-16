@@ -267,6 +267,10 @@ async function runTuning() {
 </template>
 
 <style scoped>
+section {
+  margin-top: 2em;
+}
+
 .input-file {
   width: 100%;
 }
