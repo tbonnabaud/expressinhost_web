@@ -7,13 +7,6 @@ from .crud.codon_translations import CodonTranslationRepository
 from .database import LocalSession
 from .schemas import CodonTableForm, CodonTranslation
 
-# import re
-
-
-# def format_to_binomial(value: str):
-#     """Return value with binomial nomenclature."""
-#     return re.sub(r"[\s_\-]+", " ", value).capitalize()
-
 
 def get_csv_file_list(dir_path: Path):
     for path in dir_path.iterdir():
@@ -38,9 +31,7 @@ def main():
             for path in get_csv_file_list(TABLE_BASE_PATH):
                 with path.open() as file:
                     organism_name = path.name.removesuffix(".csv")
-                    codon_table = create_codon_table(
-                        organism_name, organism_name + "_example"
-                    )
+                    codon_table = create_codon_table(organism_name, "Example")
                     codon_table_id = codon_table_repo.add(codon_table)
 
                     reader = csv.DictReader(file, delimiter="\t")
