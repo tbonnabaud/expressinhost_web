@@ -66,10 +66,15 @@ def launch_tuning(
         form.conservation_threshold,
     )
 
+    # Stringify UUIDs to make the dictionary serializable
+    serializable_sequences_native_codon_tables = {
+        key: str(value) for key, value in form.sequences_native_codon_tables.items()
+    }
+
     result = {
         "creation_date": datetime.now(UTC),
         "host_codon_table_id": form.host_codon_table_id,
-        "sequences_native_codon_tables": form.sequences_native_codon_tables,
+        "sequences_native_codon_tables": serializable_sequences_native_codon_tables,
         "mode": form.mode,
         "slow_speed_threshold": form.slow_speed_threshold,
         "conservation_threshold": form.conservation_threshold,
