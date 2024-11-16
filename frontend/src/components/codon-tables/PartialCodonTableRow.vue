@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { watch } from 'vue'
 import { CODON_LIST } from '@/lib/constants'
 
 defineProps<{
@@ -6,9 +7,32 @@ defineProps<{
   codon: string
 }>()
 
-const trnaGcn = defineModel('trnaGcn', { default: 0 })
+const trnaGcn = defineModel('trnaGcn', { default: 1 })
 const correspCodon = defineModel('correspCodon', { default: 'OOO' })
-const wobbleRate = defineModel('wobbleRate', { default: 0.35 })
+const wobbleRate = defineModel('wobbleRate', { default: 0 })
+
+watch(trnaGcn, value => {
+  if (value == 0) {
+    correspCodon.value = 'GCU'
+    wobbleRate.value = 0.35
+  }
+})
+
+watch(correspCodon, value => {
+  if (value == 'OOO') {
+    wobbleRate.value = 0
+  } else {
+    trnaGcn.value = 0
+  }
+})
+
+watch(wobbleRate, value => {
+  if (value == 0) {
+    correspCodon.value = 'OOO'
+  } else {
+    trnaGcn.value = 0
+  }
+})
 </script>
 
 <template>
@@ -20,7 +44,6 @@ const wobbleRate = defineModel('wobbleRate', { default: 0.35 })
         type="number"
         v-model.number="trnaGcn"
         min="0"
-        step="0.01"
         required
       />
     </td>
