@@ -53,7 +53,7 @@ export interface Result {
   id: string | null
   user_id: string | null
   creation_date: string
-  host_codon_table_name: string
+  host_codon_table_id: string
   sequences_native_codon_tables: Record<string, string>
   mode: string
   slow_speed_threshold: number
