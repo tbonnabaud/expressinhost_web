@@ -70,7 +70,7 @@ async function fetchCodonTableTranslations(codonTableId: string) {
     </div>
   </div>
 
-  <div class="row">
+  <div class="grid">
     <div class="column">
       <PartialCodonTable
         title="Alanine (Ala)"
@@ -163,12 +163,6 @@ async function fetchCodonTableTranslations(codonTableId: string) {
 </template>
 
 <style scoped>
-.row {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-gap: 20px;
-}
-
 #codonTableSelect {
   width: 100%;
 }
