@@ -156,7 +156,7 @@ async function deleteCodonTable() {
 
     <footer>
       <button class="secondary" @click="openDeleteModal = false">Cancel</button>
-      <button @click="deleteCodonTable">Delete</button>
+      <button class="danger" @click="deleteCodonTable">Delete</button>
     </footer>
   </BaseModal>
 
@@ -206,7 +206,7 @@ async function deleteCodonTable() {
           </button>
           <button @click="addNewCodonTable">Save as new</button>
           <button
-            class="secondary"
+            class="danger"
             :disabled="!isEditable"
             @click="openDeleteModal = true"
           >
