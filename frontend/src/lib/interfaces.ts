@@ -50,6 +50,12 @@ export interface CodonTranslation {
   wobble_rate: number
 }
 
+export interface CodonTableForm {
+  name: string
+  organism: string
+  translations: Array<CodonTranslation>
+}
+
 export interface Result {
   id: string | null
   user_id: string | null
