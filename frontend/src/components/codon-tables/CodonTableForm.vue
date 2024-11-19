@@ -56,11 +56,19 @@ async function fetchCodonTableTranslations(codonTableId: string) {
 </script>
 
 <template>
-  <CodonTableSearchSelect
-    id="codonTableSelect"
-    :options="codonTableList"
-    v-model="selectedCodonTable"
-  />
+  <div class="flex-container actions">
+    <CodonTableSearchSelect
+      id="codonTableSelect"
+      :options="codonTableList"
+      v-model="selectedCodonTable"
+    />
+
+    <div role="group" class="action-buttons">
+      <button>Save</button>
+      <button>Save as...</button>
+      <button class="secondary">Delete</button>
+    </div>
+  </div>
 
   <div class="row">
     <div class="column">
@@ -162,7 +170,14 @@ async function fetchCodonTableTranslations(codonTableId: string) {
 }
 
 #codonTableSelect {
-  width: 50%;
-  margin-bottom: 2em;
+  width: 100%;
+}
+
+.action-buttons {
+  margin-left: 1em;
+}
+
+.actions {
+  margin-bottom: 1em;
 }
 </style>
