@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, reactive, ref, watch } from 'vue'
 import { API } from '@/lib/api'
-import type { CodonTable } from '@/lib/interfaces'
+import type { CodonTable, CodonTranslation } from '@/lib/interfaces'
 import { AMINO_ACID_MAPPING } from '@/lib/referentials'
 import { groupByAminoAcid } from '@/lib/helpers'
 import PartialCodonTable from './PartialCodonTable.vue'
@@ -10,19 +10,29 @@ import CodonTableSearchSelect from './CodonTableSearchSelect.vue'
 const codonTableList = ref([] as Array<CodonTable>)
 const selectedCodonTable = ref(null as CodonTable | null)
 
-const translationMapping = reactive(AMINO_ACID_MAPPING)
+// Make a deep copy to avoid referential modification
+const translationMapping = reactive(
+  JSON.parse(JSON.stringify(AMINO_ACID_MAPPING)),
+)
 
-onMounted(async () => await fetchCodonTableList())
+onMounted(async () => {
+  selectedCodonTable.value = null
+  fetchCodonTableList()
+})
 
 watch(selectedCodonTable, async value => {
   if (value) {
     await fetchCodonTableTranslations(value.id)
   } else {
-    for (const [key, value] of Object.entries(AMINO_ACID_MAPPING)) {
-      translationMapping[key] = value
-    }
+    fillTranslationMapping(AMINO_ACID_MAPPING)
   }
 })
+
+function fillTranslationMapping(mapping: Record<string, CodonTranslation[]>) {
+  for (const [key, value] of Object.entries(mapping)) {
+    translationMapping[key] = value
+  }
+}
 
 async function fetchCodonTableList() {
   const [data, error] = await API.codonTables.list()
@@ -37,10 +47,10 @@ async function fetchCodonTableTranslations(codonTableId: string) {
 
   if (!error) {
     const newMapping = groupByAminoAcid(data)
-
-    for (const [key, value] of Object.entries(newMapping)) {
-      translationMapping[key] = value
-    }
+    fillTranslationMapping(newMapping)
+  } else {
+    // Reset
+    fillTranslationMapping(AMINO_ACID_MAPPING)
   }
 }
 </script>
