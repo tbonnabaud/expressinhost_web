@@ -105,6 +105,10 @@ const codonTables = {
     await REQUESTS.get(`/users/me/codon-tables/${id}/translations`),
   add: async (form: CodonTableForm) =>
     await REQUESTS.post('/users/me/codon-tables', form),
+  update: async (id: string, form: CodonTableForm) =>
+    await REQUESTS.put(`/users/me/codon-tables/${id}`, form),
+  delete: async (id: string) =>
+    await REQUESTS.delete(`/users/me/codon-tables/${id}`),
 }
 
 const results = {
