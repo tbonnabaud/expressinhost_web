@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { watch } from 'vue'
-import { CODON_LIST } from '@/lib/constants'
+import { CODON_LIST } from '@/lib/referentials'
 import type { CodonTranslation } from '@/lib/interfaces'
 
 const model = defineModel<CodonTranslation>({

@@ -2,7 +2,7 @@
 import { computed } from 'vue'
 import type { TuningOutput } from '@/lib/interfaces'
 import { formatToLocaleDateString } from '@/lib/helpers'
-import { MODE_LABEL_MAPPING } from '@/lib/constants'
+import { MODE_LABEL_MAPPING } from '@/lib/referentials'
 import SequenceComparison from '@/components/results/SequenceComparison.vue'
 import DownloadResult from './DownloadResult.vue'
 import SimilarityChart from './SimilarityChart.vue'

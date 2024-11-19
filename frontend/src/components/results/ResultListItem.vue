@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Result } from '@/lib/interfaces'
-import { MODE_LABEL_MAPPING } from '@/lib/constants'
+import { MODE_LABEL_MAPPING } from '@/lib/referentials'
 
 defineProps<{ result: Result }>()
 </script>

@@ -2,7 +2,7 @@
 import { onMounted, reactive, ref, watch } from 'vue'
 import { API } from '@/lib/api'
 import type { CodonTable } from '@/lib/interfaces'
-import { AMINO_ACID_MAPPING } from '@/lib/constants'
+import { AMINO_ACID_MAPPING } from '@/lib/referentials'
 import { groupByAminoAcid } from '@/lib/helpers'
 import PartialCodonTable from './PartialCodonTable.vue'
 import CodonTableSearchSelect from './CodonTableSearchSelect.vue'
