@@ -15,10 +15,7 @@ const translationMapping = reactive(
   JSON.parse(JSON.stringify(AMINO_ACID_MAPPING)),
 )
 
-onMounted(async () => {
-  selectedCodonTable.value = null
-  fetchCodonTableList()
-})
+onMounted(async () => fetchCodonTableList())
 
 watch(selectedCodonTable, async value => {
   if (value) {
@@ -37,7 +34,7 @@ function fillTranslationMapping(mapping: Record<string, CodonTranslation[]>) {
 async function fetchCodonTableList() {
   const [data, error] = await API.codonTables.list()
 
-  if (!error) {
+  if (!error && data) {
     codonTableList.value = data
   }
 }
@@ -49,7 +46,7 @@ async function fetchCodonTableTranslations(codonTableId: string) {
     const newMapping = groupByAminoAcid(data)
     fillTranslationMapping(newMapping)
   } else {
-    // Reset
+    // Reset with default values
     fillTranslationMapping(AMINO_ACID_MAPPING)
   }
 }
@@ -63,7 +60,8 @@ async function fetchCodonTableTranslations(codonTableId: string) {
       v-model="selectedCodonTable"
     />
 
-    <div role="group" class="action-buttons">
+    <div class="action-button-group">
+      <button>New</button>
       <button>Save</button>
       <button>Save as...</button>
       <button class="secondary">Delete</button>
@@ -164,11 +162,18 @@ async function fetchCodonTableTranslations(codonTableId: string) {
 
 <style scoped>
 #codonTableSelect {
-  width: 100%;
+  width: 50%;
 }
 
-.action-buttons {
+.action-button-group {
+  width: 50%;
+  display: inline-flex;
+  margin-bottom: 2em;
+}
+
+.action-button-group > button {
   margin-left: 1em;
+  flex: 1 1 auto;
 }
 
 .actions {
