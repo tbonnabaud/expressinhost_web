@@ -49,26 +49,26 @@ class CodonTableRepository(BaseRepository):
 
         return self.session.execute(stmt).scalar_one()
 
-    def get(self, user_id: UUID, name: str):
+    def get(self, user_id: UUID, id: UUID):
         stmt = sa.select(CodonTable).where(
             (CodonTable.user_id == user_id) | (CodonTable.user_id == sa.null()),
-            CodonTable.name == name,
+            CodonTable.id == id,
         )
 
         return self.session.execute(stmt).scalar_one_or_none()
 
-    def add(self, data: dict) -> str | None:
+    def add(self, data: dict) -> UUID | None:
         stmt = sa.insert(CodonTable).values(data).returning(CodonTable.id)
         result = self.execute_with_commit(stmt)
 
         return result.scalar_one_or_none()
 
-    def update(self, name: str, data: dict):
-        stmt = sa.update(CodonTable).where(CodonTable.name == name).values(data)
+    def update(self, id: UUID, data: dict):
+        stmt = sa.update(CodonTable).where(CodonTable.id == id).values(data)
         self.execute_with_commit(stmt)
 
-    def delete(self, user_id: UUID, name: str):
+    def delete(self, user_id: UUID, id: UUID):
         stmt = sa.delete(CodonTable).where(
-            CodonTable.user_id == user_id, CodonTable.name == name
+            CodonTable.user_id == user_id, CodonTable.id == id
         )
         self.execute_with_commit(stmt)

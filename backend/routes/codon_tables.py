@@ -1,11 +1,30 @@
+from uuid import UUID
+
 from fastapi import APIRouter
 
 from ..authentication import OptionalTokenDependency, TokenDependency, get_current_user
 from ..crud.codon_tables import CodonTableRepository
+from ..crud.codon_translations import CodonTranslationRepository
 from ..database import SessionDependency
-from ..schemas import CodonTable, CodonTableForm
+from ..schemas import (
+    CodonTable,
+    CodonTableForm,
+    CodonTableWithTranslations,
+    CodonTranslation,
+)
 
 router = APIRouter(tags=["Codon tables"])
+
+
+def assign_codon_table_id(codon_table_id: UUID, tr: CodonTranslation) -> dict:
+    """
+    The function `assign_codon_table_id` assigns a UUID codon table ID to a CodonTranslation object and
+    returns the updated dictionary representation of the object.
+    """
+    tr_dict = tr.model_dump()
+    tr_dict["codon_table_id"] = codon_table_id
+
+    return tr_dict
 
 
 @router.get("/codon-tables", response_model=list[CodonTable])
@@ -24,30 +43,41 @@ def list_codon_tables(
         return CodonTableRepository(session).list_defaults(organism)
 
 
-# @router.get("/users/me/codon-tables", response_model=list[CodonTable])
-# def list_default_and_user_codon_tables(
-#     session: SessionDependency,
-#     token: TokenDependency,
-#     organism: str | None = None,
-# ):
-#     current_user = get_current_user(session, token)
-
-#     return CodonTableRepository(session).list_defaults_and_from_user(
-#         current_user.id, organism
-#     )
-
-
-@router.get("/users/me/codon-tables/{codon_table_name}", response_model=CodonTable)
-def get_codon_table(
-    session: SessionDependency, token: TokenDependency, codon_table_name: str
+@router.get(
+    "/users/me/codon-tables/{codon_table_id}", response_model=CodonTableWithTranslations
+)
+def get_user_codon_table(
+    session: SessionDependency, token: TokenDependency, codon_table_id: UUID
 ):
     current_user = get_current_user(session, token)
+    codon_table = CodonTableRepository(session).get(current_user.id, codon_table_id)
+    rows = CodonTranslationRepository(session).list_from_table(codon_table.id)
 
-    return CodonTableRepository(session).get(current_user.id, codon_table_name)
+    return CodonTableWithTranslations(
+        id=codon_table.id,
+        creation_date=codon_table.creation_date,
+        name=codon_table.name,
+        organism=codon_table.organism,
+        rows=rows,
+    )
+
+
+@router.get(
+    "/users/me/codon-tables/{codon_table_id}/translations",
+    response_model=list[CodonTranslation],
+)
+def get_user_codon_table_translations(
+    session: SessionDependency, token: TokenDependency, codon_table_id: UUID
+):
+    current_user = get_current_user(session, token)
+    codon_table = CodonTableRepository(session).get(current_user.id, codon_table_id)
+
+    if codon_table:
+        return CodonTranslationRepository(session).list_from_table(codon_table.id)
 
 
 @router.post("/users/me/codon-tables")
-def add_codon_table(
+def add_user_codon_table(
     session: SessionDependency, token: TokenDependency, data: CodonTableForm
 ):
     current_user = get_current_user(session, token)
@@ -55,13 +85,38 @@ def add_codon_table(
     table = data.model_dump()
     table["user_id"] = current_user.id
 
-    return CodonTableRepository(session).add(data)
+    codon_table_id = CodonTableRepository(session).add(data)
+
+    CodonTranslationRepository(session).add_batch(
+        list(map(lambda x: assign_codon_table_id(codon_table_id, x), data.rows))
+    )
+
+    return codon_table_id
 
 
-@router.delete("/users/me/codon-tables/{codon_table_name}")
-def delete_codon_table(
-    session: SessionDependency, token: TokenDependency, codon_table_name: str
+@router.put("/users/me/codon-tables/{codon_table_id}/translations")
+def update_user_table_codon_translations(
+    session: SessionDependency,
+    token: TokenDependency,
+    codon_table_id: UUID,
+    data_batch: list[CodonTranslation],
+):
+    current_user = get_current_user(session, token)
+    codon_table = CodonTableRepository(session).get(current_user.id, codon_table_id)
+
+    if codon_table:
+        codon_translation_repo = CodonTranslationRepository(session)
+        # We replace all old rows by the new ones
+        codon_translation_repo.delete_batch(codon_table_id)
+        codon_translation_repo.add_batch(
+            list(map(lambda x: assign_codon_table_id(codon_table_id, x), data_batch))
+        )
+
+
+@router.delete("/users/me/codon-tables/{codon_table_id}")
+def delete_user_codon_table(
+    session: SessionDependency, token: TokenDependency, codon_table_id: UUID
 ):
     current_user = get_current_user(session, token)
 
-    return CodonTableRepository(session).delete(current_user.id, codon_table_name)
+    return CodonTableRepository(session).delete(current_user.id, codon_table_id)
