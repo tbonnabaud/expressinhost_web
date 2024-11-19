@@ -72,6 +72,7 @@ class CodonTable(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     id: UUID
+    user_id: UUID | None
     creation_date: datetime
     name: str
     organism: str
@@ -79,6 +80,7 @@ class CodonTable(BaseModel):
 
 class CodonTableWithTranslations(BaseModel):
     id: UUID
+    user_id: UUID | None
     creation_date: datetime
     name: str
     organism: str
