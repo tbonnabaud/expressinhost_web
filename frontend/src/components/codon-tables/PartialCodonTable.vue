@@ -31,7 +31,9 @@ const model = defineModel<Array<CodonTranslation>>()
           :codon="row.codon"
           :anticodon="row.anticodon"
           :value="row"
-          v-model="model[index]"
+          v-model:trna-gcn="model[index].trna_gcn"
+          v-model:corresp-codon="model[index].corresp_codon"
+          v-model:wobble-rate="model[index].wobble_rate"
         />
       </tbody>
     </table>
