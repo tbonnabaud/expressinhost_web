@@ -94,22 +94,34 @@ def add_user_codon_table(
     return codon_table_id
 
 
-@router.put("/users/me/codon-tables/{codon_table_id}/translations")
+@router.put("/users/me/codon-tables/{codon_table_id}")
 def update_user_table_codon_translations(
     session: SessionDependency,
     token: TokenDependency,
     codon_table_id: UUID,
-    data_batch: list[CodonTranslation],
+    data: CodonTableForm,
 ):
     current_user = get_current_user(session, token)
-    codon_table = CodonTableRepository(session).get(current_user.id, codon_table_id)
+
+    table = data.model_dump(exclude={"translations"})
+
+    codon_table_repo = CodonTableRepository(session)
+    codon_table = codon_table_repo.get(current_user.id, codon_table_id)
 
     if codon_table:
-        codon_translation_repo = CodonTranslationRepository(session)
+        # Update metadata
+        codon_table_repo.update(codon_table.id, table)
+
         # We replace all old rows by the new ones
+        codon_translation_repo = CodonTranslationRepository(session)
         codon_translation_repo.delete_batch(codon_table_id)
         codon_translation_repo.add_batch(
-            list(map(lambda x: assign_codon_table_id(codon_table_id, x), data_batch))
+            list(
+                map(
+                    lambda x: assign_codon_table_id(codon_table_id, x),
+                    data.translations,
+                )
+            )
         )
 
 
