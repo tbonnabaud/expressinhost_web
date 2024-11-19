@@ -13,6 +13,8 @@ const selectedCodonTable = ref(null as CodonTable | null)
 const codonTableOrganism = ref('')
 const codonTableName = ref('')
 
+const isEditable = ref(false)
+
 // Make a deep copy to avoid referential modification
 const translationMapping = reactive(
   JSON.parse(JSON.stringify(AMINO_ACID_MAPPING)),
@@ -26,10 +28,12 @@ const existingOrganisms = computed(() => [
 
 watch(selectedCodonTable, async value => {
   if (value) {
+    isEditable.value = value.user_id ? true : false
     codonTableOrganism.value = value.organism
     codonTableName.value = value.name
     await fetchCodonTableTranslations(value.id)
   } else {
+    isEditable.value = false
     resetToDefault()
   }
 })
@@ -102,9 +106,9 @@ async function fetchCodonTableTranslations(codonTableId: string) {
 
       <div class="action-button-group">
         <button @click="resetToDefault">New</button>
-        <button>Save</button>
+        <button :disabled="!isEditable">Save</button>
         <button>Save as...</button>
-        <button class="secondary">Delete</button>
+        <button class="secondary" :disabled="!isEditable">Delete</button>
       </div>
     </fieldset>
   </div>
