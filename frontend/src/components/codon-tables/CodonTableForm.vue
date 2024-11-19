@@ -91,14 +91,51 @@ function prepareForm(): CodonTableForm | null {
   return null
 }
 
-async function submitNewCodonTable() {
+async function addNewCodonTable() {
   const form = prepareForm()
-  console.log(JSON.parse(JSON.stringify(form)))
+
+  if (form) {
+    const [data, error] = await API.codonTables.add(form)
+
+    if (!error && data) {
+      console.log('Codon table added succesfully.')
+      // Refresh list
+      await fetchCodonTableList()
+    }
+  }
+}
+
+async function updateExistingCodonTable() {
+  const form = prepareForm()
+
+  if (form && selectedCodonTable.value) {
+    const [, error] = await API.codonTables.update(
+      selectedCodonTable.value.id,
+      form,
+    )
+
+    if (!error) {
+      console.log('Codon table updated succesfully.')
+    }
+  }
+}
+
+async function deleteCodonTable() {
+  if (selectedCodonTable.value) {
+    const [, error] = await API.codonTables.delete(selectedCodonTable.value.id)
+
+    if (!error) {
+      console.log('Codon table deleted succesfully.')
+      // Refresh list
+      selectedCodonTable.value = null
+      await fetchCodonTableList()
+    }
+  }
 }
 </script>
 
 <template>
-  <form @keydown.enter.prevent ref="table-form">
+  <form @submit.prevent @keydown.enter.prevent ref="table-form">
     <div id="actions" class="flex-container">
       <label id="codonTableSelect">
         Existing codon table
@@ -139,9 +176,17 @@ async function submitNewCodonTable() {
 
         <div class="action-button-group">
           <button @click="resetToDefault">New</button>
-          <button :disabled="!isEditable">Update</button>
-          <button @click="submitNewCodonTable">Save as new</button>
-          <button class="secondary" :disabled="!isEditable">Delete</button>
+          <button :disabled="!isEditable" @click="updateExistingCodonTable">
+            Update
+          </button>
+          <button @click="addNewCodonTable">Save as new</button>
+          <button
+            class="secondary"
+            :disabled="!isEditable"
+            @click="deleteCodonTable"
+          >
+            Delete
+          </button>
         </div>
       </fieldset>
     </div>
