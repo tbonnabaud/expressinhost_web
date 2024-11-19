@@ -1,12 +1,18 @@
 <script setup lang="ts">
 import { watch } from 'vue'
 import { CODON_LIST } from '@/lib/constants'
+import type { CodonTranslation } from '@/lib/interfaces'
 
-defineProps<{
-  anticodon: string
-  codon: string
-}>()
-
+const model = defineModel<CodonTranslation>({
+  default: {
+    codon: '',
+    anticodon: '',
+    amino_acid: '',
+    trna_gcn: 1,
+    corresp_codon: 'OOO',
+    wobble_rate: 0,
+  },
+})
 const trnaGcn = defineModel('trnaGcn', { default: 1 })
 const correspCodon = defineModel('correspCodon', { default: 'OOO' })
 const wobbleRate = defineModel('wobbleRate', { default: 0 })
@@ -37,13 +43,13 @@ watch(wobbleRate, value => {
 
 <template>
   <tr>
-    <td>{{ anticodon }}</td>
-    <td>{{ codon }}</td>
+    <td>{{ model.anticodon }}</td>
+    <td>{{ model.codon }}</td>
     <td>
-      <input type="number" v-model.number="trnaGcn" min="0" required />
+      <input type="number" v-model.number="model.trna_gcn" min="0" required />
     </td>
     <td>
-      <select v-model="correspCodon" required>
+      <select v-model="model.corresp_codon" required>
         <option value="OOO">OOO</option>
         <option v-for="codon in CODON_LIST" :value="codon" :key="codon">
           {{ codon }}
@@ -53,7 +59,7 @@ watch(wobbleRate, value => {
     <td>
       <input
         type="number"
-        v-model.number="wobbleRate"
+        v-model.number="model.wobble_rate"
         min="0"
         max="1"
         step="0.01"

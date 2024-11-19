@@ -1,16 +1,12 @@
 <script setup lang="ts">
-import { computed } from 'vue'
 import PartialCodonTableRow from './PartialCodonTableRow.vue'
-import { BASE_CODON_TABLE } from '@/lib/constants'
+import type { CodonTranslation } from '@/lib/interfaces'
 
-const props = defineProps<{
+defineProps<{
   title: string
-  aminoAcid: string
 }>()
 
-const rowList = computed(() =>
-  BASE_CODON_TABLE.filter(e => e.aminoAcid === props.aminoAcid),
-)
+const model = defineModel<Array<CodonTranslation>>()
 </script>
 
 <template>
@@ -28,12 +24,14 @@ const rowList = computed(() =>
         </tr>
       </thead>
 
-      <tbody>
+      <tbody v-if="model">
         <PartialCodonTableRow
-          v-for="row in rowList"
-          :anticodon="row.anticodon"
-          :codon="row.codon"
+          v-for="(row, index) in model"
           :key="row.codon"
+          :codon="row.codon"
+          :anticodon="row.anticodon"
+          :value="row"
+          v-model="model[index]"
         />
       </tbody>
     </table>
