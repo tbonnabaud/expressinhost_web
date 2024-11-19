@@ -51,14 +51,14 @@ def get_user_codon_table(
 ):
     current_user = get_current_user(session, token)
     codon_table = CodonTableRepository(session).get(current_user.id, codon_table_id)
-    rows = CodonTranslationRepository(session).list_from_table(codon_table.id)
+    translations = CodonTranslationRepository(session).list_from_table(codon_table.id)
 
     return CodonTableWithTranslations(
         id=codon_table.id,
         creation_date=codon_table.creation_date,
         name=codon_table.name,
         organism=codon_table.organism,
-        rows=rows,
+        translations=translations,
     )
 
 
@@ -82,13 +82,13 @@ def add_user_codon_table(
 ):
     current_user = get_current_user(session, token)
 
-    table = data.model_dump()
+    table = data.model_dump(exclude={"translations"})
     table["user_id"] = current_user.id
 
-    codon_table_id = CodonTableRepository(session).add(data)
+    codon_table_id = CodonTableRepository(session).add(table)
 
     CodonTranslationRepository(session).add_batch(
-        list(map(lambda x: assign_codon_table_id(codon_table_id, x), data.rows))
+        list(map(lambda x: assign_codon_table_id(codon_table_id, x), data.translations))
     )
 
     return codon_table_id
