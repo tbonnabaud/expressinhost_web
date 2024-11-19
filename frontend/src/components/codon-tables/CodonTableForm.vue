@@ -10,6 +10,7 @@ import { AMINO_ACID_MAPPING } from '@/lib/referentials'
 import { groupByAminoAcid } from '@/lib/helpers'
 import PartialCodonTable from './PartialCodonTable.vue'
 import CodonTableSearchSelect from './CodonTableSearchSelect.vue'
+import BaseModal from '../BaseModal.vue'
 
 const codonTableList = ref([] as Array<CodonTable>)
 const selectedCodonTable = ref(null as CodonTable | null)
@@ -18,6 +19,7 @@ const codonTableOrganism = ref('')
 const codonTableName = ref('')
 
 const isEditable = ref(false)
+const openDeleteModal = ref(false)
 
 const formRef = useTemplateRef('table-form')
 
@@ -131,10 +133,33 @@ async function deleteCodonTable() {
       await fetchCodonTableList()
     }
   }
+
+  openDeleteModal.value = false
 }
 </script>
 
 <template>
+  <BaseModal
+    :open="openDeleteModal"
+    title="Confirm the deletion"
+    @close="openDeleteModal = false"
+  >
+    <p v-if="selectedCodonTable">
+      Do you really want to delete the codon table
+      <strong>
+        <i>{{ selectedCodonTable.organism }}</i> -
+        {{ selectedCodonTable.name }} </strong
+      >?
+    </p>
+
+    <p v-else>No codon table selected.</p>
+
+    <footer>
+      <button class="secondary" @click="openDeleteModal = false">Cancel</button>
+      <button @click="deleteCodonTable">Delete</button>
+    </footer>
+  </BaseModal>
+
   <form @submit.prevent @keydown.enter.prevent ref="table-form">
     <div id="actions" class="flex-container">
       <label id="codonTableSelect">
@@ -183,7 +208,7 @@ async function deleteCodonTable() {
           <button
             class="secondary"
             :disabled="!isEditable"
-            @click="deleteCodonTable"
+            @click="openDeleteModal = true"
           >
             Delete
           </button>
