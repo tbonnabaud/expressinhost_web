@@ -99,6 +99,8 @@ const users = {
 
 const codonTables = {
   list: async () => await REQUESTS.get('/codon-tables'),
+  get: async (id: string) => await REQUESTS.get(`/users/me/codon-tables/${id}`),
+  getTranslations: async (id: string) => await REQUESTS.get(`/users/me/codon-tables/${id}/translations`),
 }
 
 const results = {
