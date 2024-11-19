@@ -46,6 +46,12 @@ function closeDropdown() {
         />
       </li>
       <div class="option-list">
+        <li>
+          <label @click="closeDropdown">
+            <input type="radio" v-model="model" :value="null" />
+            (None)
+          </label>
+        </li>
         <li v-for="option in filteredOptions" :key="option.id">
           <label @click="closeDropdown">
             <input type="radio" v-model="model" :value="option" />
