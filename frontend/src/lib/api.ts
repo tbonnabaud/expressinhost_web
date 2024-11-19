@@ -5,6 +5,7 @@ import type {
   UserForm,
   UserLogin,
   Token,
+  CodonTableForm,
 } from './interfaces'
 import { store } from './store'
 
@@ -102,6 +103,8 @@ const codonTables = {
   get: async (id: string) => await REQUESTS.get(`/users/me/codon-tables/${id}`),
   getTranslations: async (id: string) =>
     await REQUESTS.get(`/users/me/codon-tables/${id}/translations`),
+  add: async (form: CodonTableForm) =>
+    await REQUESTS.post('/users/me/codon-tables', form),
 }
 
 const results = {
