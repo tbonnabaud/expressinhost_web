@@ -106,8 +106,8 @@ async function fetchCodonTableTranslations(codonTableId: string) {
 
       <div class="action-button-group">
         <button @click="resetToDefault">New</button>
-        <button :disabled="!isEditable">Save</button>
-        <button>Save as...</button>
+        <button :disabled="!isEditable">Update</button>
+        <button>Save as new</button>
         <button class="secondary" :disabled="!isEditable">Delete</button>
       </div>
     </fieldset>
@@ -217,7 +217,7 @@ async function fetchCodonTableTranslations(codonTableId: string) {
 .action-button-group {
   display: inline-flex;
   /* Same value as for input tag */
-  height: calc(
+  min-height: calc(
     1rem * var(--pico-line-height) + var(--pico-form-element-spacing-vertical) *
       2 + var(--pico-border-width) * 2
   );
