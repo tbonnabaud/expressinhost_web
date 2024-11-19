@@ -3,7 +3,7 @@ from datetime import UTC, datetime
 from typing import Literal
 from uuid import UUID
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 
 class BadSequence(BaseModel):
@@ -56,16 +56,39 @@ class UserForm(BaseModel):
         return value.strip()
 
 
+class CodonTranslation(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    # codon_table_id: UUID
+    codon: str
+    anticodon: str
+    amino_acid: str
+    trna_gcn: float
+    corresp_codon: str
+    wobble_rate: float
+
+
 class CodonTable(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     id: UUID
     creation_date: datetime
     name: str
     organism: str
 
 
+class CodonTableWithTranslations(BaseModel):
+    id: UUID
+    creation_date: datetime
+    name: str
+    organism: str
+    translations: list[CodonTranslation]
+
+
 class CodonTableForm(BaseModel):
     name: str
     organism: str
+    translations: list[CodonTranslation]
 
     @field_validator("name", "organism")
     @staticmethod
@@ -77,16 +100,6 @@ class CodonTableForm(BaseModel):
     def normalize(value: str):
         # Return value with binomial nomenclature
         return re.sub(r"[\s_\-]+", " ", value).capitalize()
-
-
-class CodonTranslation(BaseModel):
-    codon_table_id: UUID
-    codon: str
-    anticodon: str
-    amino_acid: str
-    trna_gcn: float
-    corresp_codon: str
-    wobble_rate: float
 
 
 class Result(BaseModel):
