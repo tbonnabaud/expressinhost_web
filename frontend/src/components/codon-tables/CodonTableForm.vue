@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, reactive, ref, watch } from 'vue'
+import { computed, onMounted, reactive, ref, watch } from 'vue'
 import { API } from '@/lib/api'
 import type { CodonTable, CodonTranslation } from '@/lib/interfaces'
 import { AMINO_ACID_MAPPING } from '@/lib/referentials'
@@ -10,6 +10,9 @@ import CodonTableSearchSelect from './CodonTableSearchSelect.vue'
 const codonTableList = ref([] as Array<CodonTable>)
 const selectedCodonTable = ref(null as CodonTable | null)
 
+const codonTableOrganism = ref('')
+const codonTableName = ref('')
+
 // Make a deep copy to avoid referential modification
 const translationMapping = reactive(
   JSON.parse(JSON.stringify(AMINO_ACID_MAPPING)),
@@ -17,11 +20,17 @@ const translationMapping = reactive(
 
 onMounted(async () => fetchCodonTableList())
 
+const existingOrganisms = computed(() => [
+  ...new Set(codonTableList.value.map(e => e.organism)),
+])
+
 watch(selectedCodonTable, async value => {
   if (value) {
+    codonTableOrganism.value = value.organism
+    codonTableName.value = value.name
     await fetchCodonTableTranslations(value.id)
   } else {
-    fillTranslationMapping(AMINO_ACID_MAPPING)
+    resetToDefault()
   }
 })
 
@@ -29,6 +38,12 @@ function fillTranslationMapping(mapping: Record<string, CodonTranslation[]>) {
   for (const [key, value] of Object.entries(mapping)) {
     translationMapping[key] = value
   }
+}
+
+function resetToDefault() {
+  codonTableOrganism.value = ''
+  codonTableName.value = ''
+  fillTranslationMapping(AMINO_ACID_MAPPING)
 }
 
 async function fetchCodonTableList() {
@@ -47,25 +62,51 @@ async function fetchCodonTableTranslations(codonTableId: string) {
     fillTranslationMapping(newMapping)
   } else {
     // Reset with default values
-    fillTranslationMapping(AMINO_ACID_MAPPING)
+    resetToDefault()
   }
 }
 </script>
 
 <template>
-  <div class="flex-container actions">
-    <CodonTableSearchSelect
-      id="codonTableSelect"
-      :options="codonTableList"
-      v-model="selectedCodonTable"
-    />
+  <div id="actions" class="flex-container">
+    <label id="codonTableSelect">
+      Existing codon table
+      <CodonTableSearchSelect
+        :options="codonTableList"
+        v-model="selectedCodonTable"
+      />
+    </label>
 
-    <div class="action-button-group">
-      <button>New</button>
-      <button>Save</button>
-      <button>Save as...</button>
-      <button class="secondary">Delete</button>
-    </div>
+    <fieldset class="grid table-infos">
+      <label>
+        Organism
+        <input
+          type="text"
+          placeholder="Organism"
+          v-model="codonTableOrganism"
+          list="existingOrganisms"
+        />
+      </label>
+      <datalist id="existingOrganisms">
+        <option
+          v-for="org in existingOrganisms"
+          :value="org"
+          :key="org"
+        ></option>
+      </datalist>
+
+      <label>
+        Table name
+        <input type="text" placeholder="Table name" v-model="codonTableName" />
+      </label>
+
+      <div class="action-button-group">
+        <button @click="resetToDefault">New</button>
+        <button>Save</button>
+        <button>Save as...</button>
+        <button class="secondary">Delete</button>
+      </div>
+    </fieldset>
   </div>
 
   <div class="grid">
@@ -165,18 +206,34 @@ async function fetchCodonTableTranslations(codonTableId: string) {
   width: 50%;
 }
 
-.action-button-group {
-  width: 50%;
-  display: inline-flex;
-  margin-bottom: 2em;
+.table-infos {
+  margin-left: 1em;
 }
 
-.action-button-group > button {
+.action-button-group {
+  display: inline-flex;
+  /* Same value as for input tag */
+  height: calc(
+    1rem * var(--pico-line-height) + var(--pico-form-element-spacing-vertical) *
+      2 + var(--pico-border-width) * 2
+  );
+  margin-top: auto;
+}
+
+.action-button-group > button:not(:first-child) {
   margin-left: 1em;
   flex: 1 1 auto;
 }
 
-.actions {
+#actions {
   margin-bottom: 1em;
+}
+
+#actions input {
+  margin-bottom: 0;
+}
+
+#actions label {
+  margin-bottom: 0;
 }
 </style>
