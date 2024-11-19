@@ -40,7 +40,7 @@ export interface CodonTable {
 }
 
 export interface CodonTranslation {
-  codon_table_id: string
+  // codon_table_id: string
   codon: string
   anticodon: string
   amino_acid: string
