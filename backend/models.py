@@ -2,6 +2,7 @@ from datetime import UTC, datetime
 from uuid import UUID, uuid4
 
 import sqlalchemy as sa
+from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 
@@ -78,7 +79,7 @@ class Result(Base):
         sa.UUID(as_uuid=True),
         sa.ForeignKey("codon_tables.id", onupdate="CASCADE", ondelete="CASCADE"),
     )
-    sequences_native_codon_tables: Mapped[dict] = mapped_column(sa.JSON)
+    sequences_native_codon_tables: Mapped[dict] = mapped_column(JSONB)
     mode: Mapped[str] = mapped_column(sa.String)
     slow_speed_threshold: Mapped[float] = mapped_column(sa.Float)
     conservation_threshold: Mapped[float | None] = mapped_column(
@@ -100,5 +101,5 @@ class TunedSequence(Base):
     input: Mapped[str] = mapped_column(sa.Text)
     output: Mapped[str] = mapped_column(sa.Text)
     identity_percentage: Mapped[float] = mapped_column(sa.Float)
-    input_profiles: Mapped[dict] = mapped_column(sa.JSON, default=lambda: {})
-    output_profiles: Mapped[dict] = mapped_column(sa.JSON, default=lambda: {})
+    input_profiles: Mapped[dict] = mapped_column(JSONB, default=lambda: {})
+    output_profiles: Mapped[dict] = mapped_column(JSONB, default=lambda: {})
