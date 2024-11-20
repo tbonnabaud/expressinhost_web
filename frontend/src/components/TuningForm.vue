@@ -1,43 +1,55 @@
 <script setup lang="ts">
 import { ref, onMounted, reactive, watch, computed } from 'vue'
 import { readTextFile } from '@/lib/helpers'
-import { CODON_TABLE_LIST } from '@/lib/constants'
-import type { CodonTable, RunTrainingForm } from '@/lib/interfaces'
+import type { CodonTable } from '@/lib/interfaces'
 import { API } from '@/lib/api'
-import SearchSelect from '@/components/SearchSelect.vue'
+import CodonTableSearchSelect from '@/components/codon-tables/CodonTableSearchSelect.vue'
 
 const emit = defineEmits(['submit'])
 
-const form = reactive({
+const baseForm = reactive({
   nucleotide_file_content: '',
   clustal_file_content: '',
-  host_codon_table_name: '',
-  sequences_native_codon_tables: {},
+  host_codon_table_id: '',
+  sequences_native_codon_tables: {} as Record<string, string>,
   mode: 'direct_mapping',
   slow_speed_threshold: 0.5,
   conservation_threshold: 0.75,
-} as RunTrainingForm)
+})
+
+const selectedHostCodonTable = ref(null as CodonTable | null)
+const selectedSequencesNativeCodonTables = ref(
+  {} as Record<string, CodonTable | null>,
+)
 
 const codonTableList = ref([] as Array<CodonTable>)
 const tuningLoading = ref(false)
 
-const clustalIsRequired = computed(() => form.mode != 'direct_mapping')
-const codonTableNameList = computed(() => codonTableList.value.map(e => e.name))
+const clustalIsRequired = computed(() => baseForm.mode != 'direct_mapping')
 
-onMounted(() => (codonTableList.value = CODON_TABLE_LIST))
+onMounted(async () => await fetchCodonTables())
 
 watch(
-  () => form.nucleotide_file_content,
+  () => baseForm.nucleotide_file_content,
   content => {
     // Reset object
-    form.sequences_native_codon_tables = {}
+    selectedSequencesNativeCodonTables.value = {}
     const sequenceNames = parseFastaSequenceNames(content)
 
     for (const seq of sequenceNames) {
-      form.sequences_native_codon_tables[seq] = selectTableName(seq)
+      const table = findCorrespondingTable(seq)
+      selectedSequencesNativeCodonTables.value[seq] = table
     }
   },
 )
+
+async function fetchCodonTables() {
+  const [data, error] = await API.codonTables.list()
+
+  if (!error) {
+    codonTableList.value = data
+  }
+}
 
 function parseFastaSequenceNames(content: string) {
   // Match the group after ">" symbol
@@ -46,11 +58,11 @@ function parseFastaSequenceNames(content: string) {
 }
 
 async function setFastaContent(event: Event) {
-  form.nucleotide_file_content = await readTextFile(event)
+  baseForm.nucleotide_file_content = await readTextFile(event)
 }
 
 async function setClustalContent(event: Event) {
-  form.clustal_file_content = await readTextFile(event)
+  baseForm.clustal_file_content = await readTextFile(event)
 }
 
 /**
@@ -58,29 +70,31 @@ async function setClustalContent(event: Event) {
  * @param {string} sequenceName - Name of the sequence
  * @returns First corresponding codon table name or empty string if not found.
  */
-function selectTableName(sequenceName: string) {
-  const lowerCaseSequenceName = sequenceName.toLowerCase()
+function findCorrespondingTable(sequenceName: string) {
+  const lowerCaseSequenceName = sequenceName
+    .toLowerCase()
+    .replace(/[\s_-]+/g, ' ')
 
   for (const tableName of codonTableList.value) {
     if (lowerCaseSequenceName.includes(tableName.organism.toLowerCase())) {
-      return tableName.name
+      return tableName
     }
   }
 
-  return ''
+  return null
 }
 
 function formIsValid() {
   for (const [key, value] of Object.entries(
-    form.sequences_native_codon_tables,
+    selectedSequencesNativeCodonTables.value,
   )) {
-    if (value == '') {
+    if (value === null) {
       alert(`Missing table for sequence ${key}`)
       return false
     }
   }
 
-  if (form.host_codon_table_name == '') {
+  if (selectedHostCodonTable.value === null) {
     alert('Missing table for host organism')
     return false
   }
@@ -92,6 +106,19 @@ async function runTuning() {
   tuningLoading.value = true
 
   if (formIsValid()) {
+    const form = { ...baseForm }
+    if (selectedHostCodonTable.value) {
+      form.host_codon_table_id = selectedHostCodonTable.value.id
+    }
+
+    Object.entries(selectedSequencesNativeCodonTables.value).forEach(
+      ([key, value]) => {
+        if (value) {
+          form.sequences_native_codon_tables[key] = value.id
+        }
+      },
+    )
+
     const [data, error] = await API.runTraining(form)
 
     if (!error) {
@@ -137,7 +164,7 @@ async function runTuning() {
     <section>
       <h2>Sequences</h2>
 
-      <table v-if="Object.keys(form.sequences_native_codon_tables).length">
+      <table v-if="Object.keys(selectedSequencesNativeCodonTables).length">
         <thead>
           <tr>
             <th>Sequence name</th>
@@ -147,28 +174,15 @@ async function runTuning() {
 
         <tbody>
           <tr
-            v-for="seq in Object.keys(form.sequences_native_codon_tables)"
+            v-for="seq in Object.keys(selectedSequencesNativeCodonTables)"
             :key="seq"
           >
             <td>{{ seq }}</td>
             <td class="select-cell">
-              <SearchSelect
-                v-model="form.sequences_native_codon_tables[seq]"
-                :options="codonTableNameList"
+              <CodonTableSearchSelect
+                v-model="selectedSequencesNativeCodonTables[seq]"
+                :options="codonTableList"
               />
-              <!-- <select
-                required
-                v-model="form.sequences_native_codon_tables[seq]"
-              >
-                <option value=""></option>
-                <option
-                  v-for="codonTableName in codonTableList"
-                  :key="codonTableName.name"
-                  :value="codonTableName.name"
-                >
-                  {{ codonTableName.name }}
-                </option>
-              </select> -->
             </td>
           </tr>
         </tbody>
@@ -179,27 +193,10 @@ async function runTuning() {
 
     <section>
       <h2>Host organism</h2>
-      <SearchSelect
-        v-model="form.host_codon_table_name"
-        :options="codonTableNameList"
+      <CodonTableSearchSelect
+        v-model="selectedHostCodonTable"
+        :options="codonTableList"
       />
-      <!-- <div id="hostCodonTable">
-        <label>Table name</label>
-        <select
-          id="hostCodonTableName"
-          v-model="form.host_codon_table_name"
-          required
-        >
-          <option value=""><input type="text" placeholder="coucou" /></option>
-          <option
-            v-for="codonTableName in codonTableList"
-            :key="codonTableName.name"
-            :value="codonTableName.name"
-          >
-            {{ codonTableName.name }}
-          </option>
-        </select>
-      </div> -->
     </section>
 
     <section>
@@ -209,20 +206,20 @@ async function runTuning() {
         <input
           type="radio"
           value="direct_mapping"
-          v-model="form.mode"
+          v-model="baseForm.mode"
           required
         />
         <label>Direct mapping </label>
         <input
           type="radio"
           value="optimisation_and_conservation_1"
-          v-model="form.mode"
+          v-model="baseForm.mode"
         />
         <label>Optimisation and conservation 1 </label>
         <input
           type="radio"
           value="optimisation_and_conservation_2"
-          v-model="form.mode"
+          v-model="baseForm.mode"
         />
         <label>Optimisation and conservation 2 </label>
       </div>
@@ -233,26 +230,29 @@ async function runTuning() {
 
       <div class="flex-container">
         <div class="input-range">
-          <label>Slow speed threshold = {{ form.slow_speed_threshold }}</label>
-          <input
-            type="range"
-            min="0"
-            max="1"
-            step="0.01"
-            v-model="form.slow_speed_threshold"
-          />
-        </div>
-
-        <div class="input-range">
           <label
-            >Conservation threshold = {{ form.conservation_threshold }}</label
+            >Slow speed threshold = {{ baseForm.slow_speed_threshold }}</label
           >
           <input
             type="range"
             min="0"
             max="1"
             step="0.01"
-            v-model="form.conservation_threshold"
+            v-model="baseForm.slow_speed_threshold"
+          />
+        </div>
+
+        <div class="input-range">
+          <label
+            >Conservation threshold =
+            {{ baseForm.conservation_threshold }}</label
+          >
+          <input
+            type="range"
+            min="0"
+            max="1"
+            step="0.01"
+            v-model="baseForm.conservation_threshold"
           />
         </div>
       </div>
@@ -267,6 +267,10 @@ async function runTuning() {
 </template>
 
 <style scoped>
+section {
+  margin-top: 2em;
+}
+
 .input-file {
   width: 100%;
 }
@@ -281,7 +285,7 @@ async function runTuning() {
   text-align: center;
 }
 
-.select-cell select {
+.select-cell details {
   width: 100%;
   margin: 0;
 }

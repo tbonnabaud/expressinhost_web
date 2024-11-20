@@ -1,20 +1,31 @@
 import re
 from datetime import UTC, datetime
+from uuid import UUID
 
 from fastapi import APIRouter
 
 from ..authentication import OptionalTokenDependency, get_current_user
-from ..core.codon_tables import process_codon_table_from_file
+from ..core.codon_tables import process_raw_codon_table
 from ..core.sequence_tuning import run_tuning
-from ..core.utils import find_organism_from_nucleotide_name
+from ..crud.codon_translations import CodonTranslationRepository
 from ..crud.results import ResultRepository
 from ..crud.tuned_sequences import TunedSequenceRepository
 from ..database import SessionDependency
-
-# from ..models import CodonTranslation, Result
 from ..schemas import RunTuningForm, TuningOutput
 
 router = APIRouter(tags=["Tuning"])
+
+
+def process_codon_table_from_db(
+    codon_translation_repo: CodonTranslationRepository,
+    codon_table_id: UUID,
+    slow_speed_threshold: float,
+):
+    condon_translations = codon_translation_repo.list_from_table(codon_table_id)
+
+    return process_raw_codon_table(
+        [tr.__dict__ for tr in condon_translations], slow_speed_threshold
+    )
 
 
 @router.post("/run-tuning", response_model=TuningOutput)
@@ -27,17 +38,22 @@ def launch_tuning(
         r"^\> *(.*\w)", form.nucleotide_file_content, re.MULTILINE
     )
 
-    native_codon_table_names = [
-        find_organism_from_nucleotide_name(name) for name in sequence_names
+    codon_translation_repo = CodonTranslationRepository(session)
+
+    native_codon_table_ids = [
+        form.sequences_native_codon_tables[name] for name in sequence_names
     ]
 
     native_codon_tables = [
-        process_codon_table_from_file(name, form.slow_speed_threshold)
-        for name in native_codon_table_names
+        process_codon_table_from_db(
+            codon_translation_repo, codon_table_id, form.slow_speed_threshold
+        )
+        for codon_table_id in native_codon_table_ids
     ]
 
-    host_codon_table = process_codon_table_from_file(
-        form.host_codon_table_name,
+    host_codon_table = process_codon_table_from_db(
+        codon_translation_repo,
+        form.host_codon_table_id,
         form.slow_speed_threshold,
     )
 
@@ -50,10 +66,15 @@ def launch_tuning(
         form.conservation_threshold,
     )
 
+    # Stringify UUIDs to make the dictionary serializable
+    serializable_sequences_native_codon_tables = {
+        key: str(value) for key, value in form.sequences_native_codon_tables.items()
+    }
+
     result = {
         "creation_date": datetime.now(UTC),
-        "host_codon_table_name": form.host_codon_table_name,
-        "sequences_native_codon_tables": form.sequences_native_codon_tables,
+        "host_codon_table_id": form.host_codon_table_id,
+        "sequences_native_codon_tables": serializable_sequences_native_codon_tables,
         "mode": form.mode,
         "slow_speed_threshold": form.slow_speed_threshold,
         "conservation_threshold": form.conservation_threshold,

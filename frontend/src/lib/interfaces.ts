@@ -25,7 +25,7 @@ export interface Token {
 export interface RunTrainingForm {
   nucleotide_file_content: string
   clustal_file_content: string | null
-  host_codon_table_name: string
+  host_codon_table_id: string
   sequences_native_codon_tables: Record<string, string>
   mode: string
   slow_speed_threshold: number
@@ -33,16 +33,34 @@ export interface RunTrainingForm {
 }
 
 export interface CodonTable {
+  id: string
+  user_id: string | null
+  creation_date: string
   name: string
   organism: string
-  custom: boolean
+}
+
+export interface CodonTranslation {
+  // codon_table_id: string
+  codon: string
+  anticodon: string
+  amino_acid: string
+  trna_gcn: number
+  corresp_codon: string
+  wobble_rate: number
+}
+
+export interface CodonTableForm {
+  name: string
+  organism: string
+  translations: Array<CodonTranslation>
 }
 
 export interface Result {
   id: string | null
   user_id: string | null
   creation_date: string
-  host_codon_table_name: string
+  host_codon_table_id: string
   sequences_native_codon_tables: Record<string, string>
   mode: string
   slow_speed_threshold: number

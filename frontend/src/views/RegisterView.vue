@@ -15,13 +15,6 @@ import RegisterForm from '@/components/RegisterForm.vue'
 </template>
 
 <style scoped>
-@media (min-width: 1024px) {
-  .container {
-    padding-left: 15em;
-    padding-right: 15em;
-  }
-}
-
 #register {
   width: 50%;
 }

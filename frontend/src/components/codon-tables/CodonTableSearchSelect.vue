@@ -1,16 +1,21 @@
 <script setup lang="ts">
 import { computed, ref, useTemplateRef } from 'vue'
+import type { CodonTable } from '@/lib/interfaces'
 
 const props = defineProps<{
-  options: Array<string>
+  options: Array<CodonTable>
 }>()
-const model = defineModel()
+const model = defineModel<CodonTable | null>()
 const filter = ref('')
 const dropdownRef = useTemplateRef('dropdown')
 
 const filteredOptions = computed(() => {
   const lowerCaseFilter = filter.value.toLowerCase()
-  return props.options.filter(e => e.toLowerCase().includes(lowerCaseFilter))
+  return props.options.filter(
+    e =>
+      e.name.toLowerCase().includes(lowerCaseFilter) ||
+      e.organism.toLowerCase().includes(lowerCaseFilter),
+  )
 })
 
 function closeDropdown() {
@@ -23,8 +28,12 @@ function closeDropdown() {
 
 <template>
   <details class="dropdown" ref="dropdown">
-    <summary>
-      {{ model || 'Select one...' }}
+    <summary class="summary-select">
+      <template v-if="model">
+        <i>{{ model.organism }}</i> - {{ model.name }}
+      </template>
+
+      <template v-else>Select one...</template>
     </summary>
 
     <ul>
@@ -37,10 +46,16 @@ function closeDropdown() {
         />
       </li>
       <div class="option-list">
-        <li v-for="option in filteredOptions" :key="option">
+        <li>
+          <label @click="closeDropdown">
+            <input type="radio" v-model="model" :value="null" />
+            (None)
+          </label>
+        </li>
+        <li v-for="option in filteredOptions" :key="option.id">
           <label @click="closeDropdown">
             <input type="radio" v-model="model" :value="option" />
-            {{ option }}
+            <i>{{ option.organism }}</i> - {{ option.name }}
           </label>
         </li>
       </div>
@@ -60,5 +75,9 @@ input[type='search'] {
 
 input[type='radio'] {
   display: none;
+}
+
+.dropdown .summary-select {
+  height: fit-content;
 }
 </style>

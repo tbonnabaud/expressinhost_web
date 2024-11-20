@@ -5,6 +5,13 @@
   --pico-font-size: 100%;
 }
 
+@media (min-width: 1024px) {
+  .container {
+    padding-left: 12em;
+    padding-right: 12em;
+  }
+}
+
 .flex-container {
   display: flex;
 }
@@ -13,4 +20,9 @@
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.danger {
+  background-color: #ad1f1f;
+  border-color: #ad1f1f;
 }

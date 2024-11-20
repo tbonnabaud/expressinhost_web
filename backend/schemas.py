@@ -3,7 +3,7 @@ from datetime import UTC, datetime
 from typing import Literal
 from uuid import UUID
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 
 class BadSequence(BaseModel):
@@ -56,49 +56,10 @@ class UserForm(BaseModel):
         return value.strip()
 
 
-class CodonTable(BaseModel):
-    name: str
-    user_id: UUID | None
-    creation_date: datetime
-    organism: str
-
-
-class DefaultCodonTableForm(BaseModel):
-    name: str
-    user_id: None = None
-    organism: str
-
-    @field_validator("name", "organism")
-    @staticmethod
-    def clean(value: str):
-        return value.strip()
-
-    @field_validator("organism")
-    @staticmethod
-    def normalize(value: str):
-        # Return value with binomial nomenclature
-        return re.sub(r"[\s_\-]+", " ", value).capitalize()
-
-
-class UserCodonTableForm(BaseModel):
-    name: str
-    user_id: UUID
-    organism: str
-
-    @field_validator("name", "organism")
-    @staticmethod
-    def clean(value: str):
-        return value.strip()
-
-    @field_validator("organism")
-    @staticmethod
-    def normalize(value: str):
-        # Return value with binomial nomenclature
-        return re.sub(r"[\s_\-]+", " ", value).capitalize()
-
-
 class CodonTranslation(BaseModel):
-    codon_table_name: str
+    model_config = ConfigDict(from_attributes=True)
+
+    # codon_table_id: UUID
     codon: str
     anticodon: str
     amino_acid: str
@@ -107,12 +68,48 @@ class CodonTranslation(BaseModel):
     wobble_rate: float
 
 
+class CodonTable(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: UUID
+    user_id: UUID | None
+    creation_date: datetime
+    name: str
+    organism: str
+
+
+class CodonTableWithTranslations(BaseModel):
+    id: UUID
+    user_id: UUID | None
+    creation_date: datetime
+    name: str
+    organism: str
+    translations: list[CodonTranslation]
+
+
+class CodonTableFormWithTranslations(BaseModel):
+    name: str
+    organism: str
+    translations: list[CodonTranslation]
+
+    @field_validator("name", "organism")
+    @staticmethod
+    def clean(value: str):
+        return value.strip()
+
+    @field_validator("organism")
+    @staticmethod
+    def normalize(value: str):
+        # Return value with binomial nomenclature
+        return re.sub(r"[\s_\-]+", " ", value).capitalize()
+
+
 class Result(BaseModel):
     id: UUID | None = None
     user_id: UUID | None = None
     creation_date: datetime = datetime.now(UTC)
-    host_codon_table_name: str
-    sequences_native_codon_tables: dict[str, str]
+    host_codon_table_id: UUID
+    sequences_native_codon_tables: dict[str, UUID]
     mode: str
     slow_speed_threshold: float
     conservation_threshold: float | None
@@ -137,8 +134,8 @@ class TunedSequence(BaseModel):
 class RunTuningForm(BaseModel):
     nucleotide_file_content: str
     clustal_file_content: str | None
-    host_codon_table_name: str
-    sequences_native_codon_tables: dict[str, str]
+    host_codon_table_id: UUID
+    sequences_native_codon_tables: dict[str, UUID]
     mode: Literal[
         "direct_mapping",
         "optimisation_and_conservation_1",

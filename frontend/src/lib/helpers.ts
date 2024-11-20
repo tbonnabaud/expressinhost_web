@@ -1,3 +1,5 @@
+import type { CodonTranslation } from './interfaces'
+
 /**
  * The function `readTextFile` reads the text content of a file selected by the user through an HTML
  * input element.
@@ -40,4 +42,24 @@ export function sleep(ms: number) {
  */
 export function formatToLocaleDateString(utcDateString: string) {
   return new Date(utcDateString).toLocaleString()
+}
+
+/**
+ * The `groupByAminoAcid` function takes an array of `CodonTranslation` objects and groups them by
+ * their `amino_acid` property.
+ * @param {CodonTranslation[]} array - The `array` parameter in the `groupByAminoAcid` function is an
+ * array of `CodonTranslation` objects. Each `CodonTranslation` object likely represents a codon and
+ * its corresponding amino acid.
+ * @returns The `groupByAminoAcid` function is returning an object where the keys are amino acids and
+ * the values are arrays of `CodonTranslation` objects that correspond to that amino acid.
+ */
+export function groupByAminoAcid(array: CodonTranslation[]) {
+  return array.reduce(
+    (acc, e) => {
+      const aminoAcid = e.amino_acid
+      acc[aminoAcid] = acc[aminoAcid] ? [...acc[aminoAcid], e] : [e]
+      return acc
+    },
+    {} as Record<string, CodonTranslation[]>,
+  )
 }

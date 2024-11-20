@@ -5,6 +5,7 @@ import type {
   UserForm,
   UserLogin,
   Token,
+  CodonTableForm,
 } from './interfaces'
 import { store } from './store'
 
@@ -97,6 +98,19 @@ const users = {
   me: async () => await REQUESTS.get('/users/me'),
 }
 
+const codonTables = {
+  list: async () => await REQUESTS.get('/codon-tables'),
+  get: async (id: string) => await REQUESTS.get(`/users/me/codon-tables/${id}`),
+  getTranslations: async (id: string) =>
+    await REQUESTS.get(`/users/me/codon-tables/${id}/translations`),
+  add: async (form: CodonTableForm) =>
+    await REQUESTS.post('/users/me/codon-tables', form),
+  update: async (id: string, form: CodonTableForm) =>
+    await REQUESTS.put(`/users/me/codon-tables/${id}`, form),
+  delete: async (id: string) =>
+    await REQUESTS.delete(`/users/me/codon-tables/${id}`),
+}
+
 const results = {
   list: async () => await REQUESTS.get(`/users/me/results`),
   count: async () => await REQUESTS.get(`/users/me/results/count`),
@@ -112,6 +126,7 @@ export const API = {
   runTraining: async (form: RunTrainingForm) =>
     (await REQUESTS.post('/run-tuning', form)) as ApiResponse<TuningOutput>,
   users: users,
+  codonTables: codonTables,
   results: results,
   tunedSequences: tunedSequences,
 }
