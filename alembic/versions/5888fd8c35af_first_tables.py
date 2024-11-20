@@ -1,18 +1,18 @@
 """First tables
 
-Revision ID: d379139ee5cf
+Revision ID: 5888fd8c35af
 Revises: 
-Create Date: 2024-11-16 11:11:44.498640
+Create Date: 2024-11-20 09:04:59.099343
 
 """
 from typing import Sequence, Union
 
 from alembic import op
 import sqlalchemy as sa
-
+from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
-revision: str = 'd379139ee5cf'
+revision: str = '5888fd8c35af'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -56,7 +56,7 @@ def upgrade() -> None:
     sa.Column('user_id', sa.UUID(), nullable=True),
     sa.Column('creation_date', sa.DateTime(timezone=True), nullable=False),
     sa.Column('host_codon_table_id', sa.UUID(), nullable=False),
-    sa.Column('sequences_native_codon_tables', sa.JSON(), nullable=False),
+    sa.Column('sequences_native_codon_tables', postgresql.JSONB(astext_type=sa.Text()), nullable=False),
     sa.Column('mode', sa.String(), nullable=False),
     sa.Column('slow_speed_threshold', sa.Float(), nullable=False),
     sa.Column('conservation_threshold', sa.Float(), nullable=True),
@@ -71,8 +71,8 @@ def upgrade() -> None:
     sa.Column('input', sa.Text(), nullable=False),
     sa.Column('output', sa.Text(), nullable=False),
     sa.Column('identity_percentage', sa.Float(), nullable=False),
-    sa.Column('input_profiles', sa.JSON(), nullable=False),
-    sa.Column('output_profiles', sa.JSON(), nullable=False),
+    sa.Column('input_profiles', postgresql.JSONB(astext_type=sa.Text()), nullable=False),
+    sa.Column('output_profiles', postgresql.JSONB(astext_type=sa.Text()), nullable=False),
     sa.ForeignKeyConstraint(['result_id'], ['results.id'], onupdate='CASCADE', ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id')
     )
