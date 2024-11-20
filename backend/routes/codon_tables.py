@@ -8,7 +8,7 @@ from ..crud.codon_translations import CodonTranslationRepository
 from ..database import SessionDependency
 from ..schemas import (
     CodonTable,
-    CodonTableForm,
+    CodonTableFormWithTranslations,
     CodonTableWithTranslations,
     CodonTranslation,
 )
@@ -78,7 +78,9 @@ def get_user_codon_table_translations(
 
 @router.post("/users/me/codon-tables")
 def add_user_codon_table(
-    session: SessionDependency, token: TokenDependency, data: CodonTableForm
+    session: SessionDependency,
+    token: TokenDependency,
+    data: CodonTableFormWithTranslations,
 ):
     current_user = get_current_user(session, token)
 
@@ -99,7 +101,7 @@ def update_user_table_codon_translations(
     session: SessionDependency,
     token: TokenDependency,
     codon_table_id: UUID,
-    data: CodonTableForm,
+    data: CodonTableFormWithTranslations,
 ):
     current_user = get_current_user(session, token)
 

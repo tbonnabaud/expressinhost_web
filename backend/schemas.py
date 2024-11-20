@@ -87,7 +87,7 @@ class CodonTableWithTranslations(BaseModel):
     translations: list[CodonTranslation]
 
 
-class CodonTableForm(BaseModel):
+class CodonTableFormWithTranslations(BaseModel):
     name: str
     organism: str
     translations: list[CodonTranslation]

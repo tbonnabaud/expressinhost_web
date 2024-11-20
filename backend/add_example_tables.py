@@ -6,7 +6,7 @@ from .crud.codon_tables import CodonTableRepository
 from .crud.codon_translations import CodonTranslationRepository
 from .database import LocalSession
 from .routes.codon_tables import assign_codon_table_id
-from .schemas import CodonTableForm, CodonTranslation
+from .schemas import CodonTableFormWithTranslations, CodonTranslation
 
 
 def get_csv_file_list(dir_path: Path):
@@ -34,7 +34,7 @@ def main():
                 translations = [CodonTranslation(**row) for row in csv_rows]
 
                 organism_name = path.name.removesuffix(".csv")
-                codon_table_form = CodonTableForm(
+                codon_table_form = CodonTableFormWithTranslations(
                     organism=organism_name, name="Example", translations=translations
                 )
                 meta_dict = codon_table_form.model_dump(exclude={"translations"})
