@@ -2,8 +2,6 @@ import re
 
 from Bio.SeqRecord import SeqRecord
 
-from .utils import write_text_to_file
-
 
 def clear_nucleotide_sequences(nucleotide_sequences: list[SeqRecord]) -> list[str]:
     stop_codon_pattern = re.compile(r"(UAA|UAG|UGA)$", re.IGNORECASE)
@@ -46,8 +44,8 @@ def align_nucleotide_sequences(
 
         aligned_nucleotide_sequences.append(new_line + "UAA")
 
-    write_text_to_file(
-        "\n".join(aligned_nucleotide_sequences), "tmp/modif_sequences_5.txt"
-    )
+    # write_text_to_file(
+    #     "\n".join(aligned_nucleotide_sequences), "tmp/modif_sequences_5.txt"
+    # )
 
     return aligned_nucleotide_sequences
