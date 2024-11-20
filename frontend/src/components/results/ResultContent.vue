@@ -1,13 +1,16 @@
 <script setup lang="ts">
-import { computed } from 'vue'
-import type { TuningOutput } from '@/lib/interfaces'
+import { computed, onMounted, ref } from 'vue'
+import type { TuningOutput, CodonTable } from '@/lib/interfaces'
 import { formatToLocaleDateString } from '@/lib/helpers'
 import { MODE_LABEL_MAPPING } from '@/lib/referentials'
+import { API } from '@/lib/api'
 import SequenceComparison from '@/components/results/SequenceComparison.vue'
 import DownloadResult from './DownloadResult.vue'
 import SimilarityChart from './SimilarityChart.vue'
 
 const props = defineProps<TuningOutput>()
+
+const hostCodonTable = ref(null as CodonTable | null)
 
 const mode = computed(
   () => MODE_LABEL_MAPPING[props.result.mode] || 'Unknown mode',
@@ -16,11 +19,26 @@ const percentageLabels = computed(() => props.tuned_sequences.map(e => e.name))
 const percentageValues = computed(() =>
   props.tuned_sequences.map(e => e.identity_percentage),
 )
+
+onMounted(async () => await fetchHostCodonTable())
+
+async function fetchHostCodonTable() {
+  const [data, error] = await API.codonTables.get(
+    props.result.host_codon_table_id,
+  )
+
+  if (!error) {
+    hostCodonTable.value = data
+  }
+}
 </script>
 
 <template>
   <br />
-  <h2>Expression in {{ result.host_codon_table_name }}</h2>
+  <h2>
+    Expression in <i>{{ hostCodonTable?.organism }}</i> -
+    {{ hostCodonTable?.name }}
+  </h2>
 
   <i>Created on {{ formatToLocaleDateString(result.creation_date) }}.</i>
 
