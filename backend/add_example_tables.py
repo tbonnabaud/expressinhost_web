@@ -5,6 +5,7 @@ from .core.constantes import TABLE_BASE_PATH
 from .crud.codon_tables import CodonTableRepository
 from .crud.codon_translations import CodonTranslationRepository
 from .database import LocalSession
+from .routes.codon_tables import assign_codon_table_id
 from .schemas import CodonTableForm, CodonTranslation
 
 
@@ -14,11 +15,11 @@ def get_csv_file_list(dir_path: Path):
             yield path
 
 
-def create_codon_table(organism: str, name: str):
-    data = CodonTableForm(organism=organism, name=name).model_dump()
-    data["user_id"] = None
+def read_rows_from_csv(path: Path) -> list[dict]:
+    with path.open() as file:
+        reader = csv.DictReader(file, delimiter="\t")
 
-    return data
+        return list(reader)
 
 
 def main():
@@ -29,21 +30,25 @@ def main():
             codon_translation_repo = CodonTranslationRepository(session)
 
             for path in get_csv_file_list(TABLE_BASE_PATH):
-                with path.open() as file:
-                    organism_name = path.name.removesuffix(".csv")
-                    codon_table = create_codon_table(organism_name, "Example")
-                    codon_table_id = codon_table_repo.add(codon_table)
+                csv_rows = read_rows_from_csv(path)
+                translations = [CodonTranslation(**row) for row in csv_rows]
 
-                    reader = csv.DictReader(file, delimiter="\t")
+                organism_name = path.name.removesuffix(".csv")
+                codon_table_form = CodonTableForm(
+                    organism=organism_name, name="Example", translations=translations
+                )
+                meta_dict = codon_table_form.model_dump(exclude={"translations"})
+                meta_dict["user_id"] = None
+                codon_table_id = codon_table_repo.add(meta_dict)
 
-                    row_list = [
-                        CodonTranslation(
-                            codon_table_id=codon_table_id, **row
-                        ).model_dump()
-                        for row in reader
-                    ]
-
-                    codon_translation_repo.add_batch(row_list)
+                codon_translation_repo.add_batch(
+                    list(
+                        map(
+                            lambda x: assign_codon_table_id(codon_table_id, x),
+                            translations,
+                        )
+                    )
+                )
 
 
 if __name__ == "__main__":
