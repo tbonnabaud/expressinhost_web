@@ -6,12 +6,7 @@ from ..authentication import OptionalTokenDependency, TokenDependency, get_curre
 from ..crud.codon_tables import CodonTableRepository
 from ..crud.codon_translations import CodonTranslationRepository
 from ..database import SessionDependency
-from ..schemas import (
-    CodonTable,
-    CodonTableFormWithTranslations,
-    CodonTableWithTranslations,
-    CodonTranslation,
-)
+from ..schemas import CodonTable, CodonTableFormWithTranslations, CodonTranslation
 
 router = APIRouter(tags=["Codon tables"])
 
@@ -43,23 +38,13 @@ def list_codon_tables(
         return CodonTableRepository(session).list_defaults(organism)
 
 
-@router.get(
-    "/users/me/codon-tables/{codon_table_id}", response_model=CodonTableWithTranslations
-)
+@router.get("/users/me/codon-tables/{codon_table_id}", response_model=CodonTable)
 def get_user_codon_table(
     session: SessionDependency, token: TokenDependency, codon_table_id: UUID
 ):
     current_user = get_current_user(session, token)
-    codon_table = CodonTableRepository(session).get(current_user.id, codon_table_id)
-    translations = CodonTranslationRepository(session).list_from_table(codon_table.id)
 
-    return CodonTableWithTranslations(
-        id=codon_table.id,
-        creation_date=codon_table.creation_date,
-        name=codon_table.name,
-        organism=codon_table.organism,
-        translations=translations,
-    )
+    return CodonTableRepository(session).get(current_user.id, codon_table_id)
 
 
 @router.get(
