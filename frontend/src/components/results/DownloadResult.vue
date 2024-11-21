@@ -36,7 +36,7 @@ function downloadFile() {
 </script>
 
 <template>
-  <button @click="downloadFile">Download result</button>
+  <button @click="downloadFile">Download output FASTA file</button>
 </template>
 
 <style scoped>
