@@ -69,6 +69,15 @@ async function fetchCodonTableList() {
   }
 }
 
+async function pushCodonTableToList(id: string) {
+  const [data, error] = await API.codonTables.get(id)
+
+  if (!error && data) {
+    codonTableList.value.push(data)
+    selectedCodonTable.value = data
+  }
+}
+
 async function fetchCodonTableTranslations(codonTableId: string) {
   const [data, error] = await API.codonTables.getTranslations(codonTableId)
 
@@ -102,8 +111,8 @@ async function addNewCodonTable() {
     if (!error && data) {
       console.log('Codon table added succesfully.')
       alert('Codon table added succesfully.')
-      // Refresh list
-      await fetchCodonTableList()
+      // Add the new item to the list
+      await pushCodonTableToList(data)
     }
   }
 }
@@ -120,7 +129,11 @@ async function updateExistingCodonTable() {
     if (!error) {
       console.log('Codon table updated succesfully.')
       alert('Codon table updated succesfully.')
-      await fetchCodonTableList()
+      // Refresh selected table with new values
+      selectedCodonTable.value = Object.assign(selectedCodonTable.value, {
+        organism: codonTableOrganism.value,
+        name: codonTableName.value,
+      })
     }
   }
 }
