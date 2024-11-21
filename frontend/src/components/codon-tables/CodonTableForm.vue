@@ -327,7 +327,7 @@ async function deleteCodonTable() {
 
 <style scoped>
 #codonTableSelect {
-  width: 50%;
+  width: 40%;
 }
 
 .table-infos {
@@ -335,18 +335,12 @@ async function deleteCodonTable() {
 }
 
 .action-button-group {
-  display: inline-flex;
-  /* Same value as for input tag */
-  min-height: calc(
-    1rem * var(--pico-line-height) + var(--pico-form-element-spacing-vertical) *
-      2 + var(--pico-border-width) * 2
-  );
   margin-top: auto;
+  white-space: nowrap;
 }
 
 .action-button-group > button:not(:first-child) {
   margin-left: 1em;
-  flex: 1 1 auto;
 }
 
 #actions {
