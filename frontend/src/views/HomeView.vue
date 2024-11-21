@@ -9,8 +9,8 @@ const user = store.currentUser
     <h1 v-if="user">Welcome {{ user.full_name }}</h1>
 
     <p>
-      ExpressInHost is an application for tuning the codon sequence of an mRNA
-      for recombinant protein expression in a host microorganism.
+      <strong>ExpressInHost</strong> tunes codon sequences for recombinant
+      protein expression in a host organism
     </p>
 
     <p>⚠ This web application is under development ⚠</p>
@@ -20,11 +20,11 @@ const user = store.currentUser
 <style scoped>
 h1,
 p {
-  margin-top: 5em;
+  margin-top: 3em;
   text-align: center;
 }
 
 p {
-  font-size: 1.5em;
+  font-size: 2.5em;
 }
 </style>
