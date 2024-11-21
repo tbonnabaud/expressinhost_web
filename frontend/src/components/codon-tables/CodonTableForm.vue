@@ -177,59 +177,63 @@ async function deleteCodonTable() {
   </BaseModal>
 
   <form @submit.prevent @keydown.enter.prevent ref="table-form">
-    <div id="actions" class="flex-container">
-      <label id="codonTableSelect">
-        Existing codon table
-        <CodonTableSearchSelect
-          :options="codonTableList"
-          v-model="selectedCodonTable"
-        />
-      </label>
-
-      <fieldset class="grid table-infos">
-        <label>
-          Organism
-          <input
-            type="text"
-            placeholder="Organism"
-            v-model="codonTableOrganism"
-            list="existingOrganisms"
-            required
+    <div id="actions" class="grid">
+      <div class="column">
+        <label id="codonTableSelect">
+          Existing codon table
+          <CodonTableSearchSelect
+            :options="codonTableList"
+            v-model="selectedCodonTable"
           />
         </label>
-        <datalist id="existingOrganisms">
-          <option
-            v-for="org in existingOrganisms"
-            :value="org"
-            :key="org"
-          ></option>
-        </datalist>
+      </div>
 
-        <label>
-          Table name
-          <input
-            type="text"
-            placeholder="Table name"
-            v-model="codonTableName"
-            required
-          />
-        </label>
+      <div class="column">
+        <fieldset class="grid">
+          <label>
+            Organism
+            <input
+              type="text"
+              placeholder="Organism"
+              v-model="codonTableOrganism"
+              list="existingOrganisms"
+              required
+            />
+          </label>
+          <datalist id="existingOrganisms">
+            <option
+              v-for="org in existingOrganisms"
+              :value="org"
+              :key="org"
+            ></option>
+          </datalist>
 
-        <div class="action-button-group">
-          <button @click="resetToDefault">Reset</button>
-          <button :disabled="!isEditable" @click="updateExistingCodonTable">
-            Update
-          </button>
-          <button @click="addNewCodonTable">Save as new</button>
-          <button
-            class="danger"
-            :disabled="!isEditable"
-            @click="openDeleteModal = true"
-          >
-            Delete
-          </button>
-        </div>
-      </fieldset>
+          <label>
+            Table name
+            <input
+              type="text"
+              placeholder="Table name"
+              v-model="codonTableName"
+              required
+            />
+          </label>
+        </fieldset>
+      </div>
+
+      <div class="column action-button-group">
+        <button @click="resetToDefault">Reset</button>
+        <button :disabled="!isEditable" @click="updateExistingCodonTable">
+          Update
+        </button>
+        <button @click="addNewCodonTable">Save as new</button>
+        <button
+          class="danger"
+          :disabled="!isEditable"
+          @click="openDeleteModal = true"
+        >
+          Delete
+        </button>
+      </div>
     </div>
 
     <div class="grid">
@@ -326,16 +330,13 @@ async function deleteCodonTable() {
 </template>
 
 <style scoped>
-#codonTableSelect {
-  width: 40%;
-}
-
-.table-infos {
-  margin-left: 1em;
+.column > #codonTableSelect {
+  width: 100%;
 }
 
 .action-button-group {
   margin-top: auto;
+  margin-bottom: 1em;
   white-space: nowrap;
 }
 
@@ -344,7 +345,7 @@ async function deleteCodonTable() {
 }
 
 #actions {
-  margin-bottom: 1em;
+  margin-bottom: 1.5em;
 }
 
 #actions input {
