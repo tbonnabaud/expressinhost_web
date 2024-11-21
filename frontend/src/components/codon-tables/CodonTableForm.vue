@@ -216,7 +216,7 @@ async function deleteCodonTable() {
         </label>
 
         <div class="action-button-group">
-          <button @click="resetToDefault">New</button>
+          <button @click="resetToDefault">Reset</button>
           <button :disabled="!isEditable" @click="updateExistingCodonTable">
             Update
           </button>
