@@ -337,7 +337,6 @@ async function deleteCodonTable() {
 .action-button-group {
   margin-top: auto;
   margin-bottom: 1em;
-  white-space: nowrap;
 }
 
 .action-button-group > button:not(:first-child) {
