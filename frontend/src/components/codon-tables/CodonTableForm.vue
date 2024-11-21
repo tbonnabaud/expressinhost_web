@@ -101,6 +101,7 @@ async function addNewCodonTable() {
 
     if (!error && data) {
       console.log('Codon table added succesfully.')
+      alert('Codon table added succesfully.')
       // Refresh list
       await fetchCodonTableList()
     }
@@ -118,6 +119,8 @@ async function updateExistingCodonTable() {
 
     if (!error) {
       console.log('Codon table updated succesfully.')
+      alert('Codon table updated succesfully.')
+      await fetchCodonTableList()
     }
   }
 }
