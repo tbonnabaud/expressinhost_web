@@ -56,6 +56,7 @@ function fillTranslationMapping(mapping: Record<string, CodonTranslation[]>) {
 }
 
 function resetToDefault() {
+  selectedCodonTable.value = null
   codonTableOrganism.value = ''
   codonTableName.value = ''
   fillTranslationMapping(AMINO_ACID_MAPPING)
