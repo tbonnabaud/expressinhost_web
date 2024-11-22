@@ -103,6 +103,7 @@ function colorSequences(inputSequence: string, outputSequence: string) {
 
 .sequence-group {
   overflow-x: scroll;
+  overflow-y: visible;
   margin: 1em 0 0 1em;
 }
 
