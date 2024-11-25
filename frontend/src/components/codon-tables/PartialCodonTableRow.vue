@@ -8,18 +8,18 @@ defineProps<{
 }>()
 
 const trnaGcn = defineModel('trnaGcn', { default: 1 })
-const correspCodon = defineModel('correspCodon', { default: 'OOO' })
+const correspCodon = defineModel('correspCodon', { default: '---' })
 const wobbleRate = defineModel('wobbleRate', { default: 0 })
 
 watch(trnaGcn, value => {
   if (value > 0) {
-    correspCodon.value = 'OOO'
+    correspCodon.value = '---'
     wobbleRate.value = 0
   }
 })
 
 watch(correspCodon, value => {
-  if (value == 'OOO') {
+  if (value == '---') {
     wobbleRate.value = 0
   } else {
     trnaGcn.value = 0
@@ -28,7 +28,7 @@ watch(correspCodon, value => {
 
 watch(wobbleRate, value => {
   if (value == 0) {
-    correspCodon.value = 'OOO'
+    correspCodon.value = '---'
   } else {
     trnaGcn.value = 0
   }
@@ -44,7 +44,7 @@ watch(wobbleRate, value => {
     </td>
     <td>
       <select v-model="correspCodon" required>
-        <option value="OOO">OOO</option>
+        <option value="---">---</option>
         <option v-for="codon in CODON_LIST" :value="codon" :key="codon">
           {{ codon }}
         </option>
