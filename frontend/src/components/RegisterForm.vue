@@ -10,6 +10,7 @@ const form = reactive({
   full_name: '',
   email: '',
   password: '',
+  contact_consent: false,
 } as UserForm)
 
 async function handleSubmit() {
@@ -39,6 +40,11 @@ async function handleSubmit() {
       <label
         >Password
         <input type="password" v-model="form.password" required />
+      </label>
+
+      <label>
+        <input type="checkbox" role="switch" v-model="form.contact_consent" />
+        I consent to be contacted for news about the application.
       </label>
     </fieldset>
 

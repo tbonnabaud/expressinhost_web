@@ -33,12 +33,14 @@ class User(BaseModel):
     email: str
     role: str
     full_name: str
+    contact_consent: bool
 
 
 class UserForm(BaseModel):
     email: str
     password: str
     full_name: str
+    contact_consent: bool
 
     @field_validator("email")
     @staticmethod

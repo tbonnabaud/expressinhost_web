@@ -23,6 +23,7 @@ class User(Base):
     hashed_password: Mapped[str] = mapped_column(sa.String)
     role: Mapped[str] = mapped_column(sa.String, default="member")
     full_name: Mapped[str] = mapped_column(sa.String)
+    contact_consent: Mapped[bool] = mapped_column(sa.Boolean, server_default="false")
 
 
 class CodonTable(Base):

@@ -4,12 +4,14 @@ export interface User {
   email: string
   role: string
   full_name: string
+  contact_consent: boolean
 }
 
 export interface UserForm {
   email: string
   password: string
   full_name: string
+  contact_consent: boolean
 }
 
 export interface UserLogin {
