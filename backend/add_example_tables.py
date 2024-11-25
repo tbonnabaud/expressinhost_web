@@ -1,4 +1,5 @@
 import csv
+import re
 from pathlib import Path
 
 from .core.constantes import TABLE_BASE_PATH
@@ -33,7 +34,10 @@ def main():
                 csv_rows = read_rows_from_csv(path)
                 translations = [CodonTranslation(**row) for row in csv_rows]
 
-                organism_name = path.name.removesuffix(".csv")
+                # Use binomial convention
+                organism_name = re.sub(
+                    r"[\s_\-]+", " ", path.name.removesuffix(".csv")
+                ).capitalize()
                 codon_table_form = CodonTableFormWithTranslations(
                     organism=organism_name, name="Example", translations=translations
                 )
