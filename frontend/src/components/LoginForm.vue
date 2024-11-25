@@ -23,6 +23,8 @@ async function handleSubmit() {
       emit('close')
       // Redirect to home
       router.push('/')
+    } else if (error.code === 400) {
+      alert(error.detail)
     }
   } else {
     formRef.value?.reportValidity()

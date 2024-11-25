@@ -10,6 +10,7 @@ const form = reactive({
   full_name: '',
   email: '',
   password: '',
+  contact_consent: false,
 } as UserForm)
 
 async function handleSubmit() {
@@ -19,6 +20,8 @@ async function handleSubmit() {
     console.log(data)
     // Redirect to home
     router.push('/')
+  } else if (error.code == 409) {
+    alert('E-mail address already exists.')
   }
 }
 </script>
@@ -39,6 +42,11 @@ async function handleSubmit() {
       <label
         >Password
         <input type="password" v-model="form.password" required />
+      </label>
+
+      <label>
+        <input type="checkbox" role="switch" v-model="form.contact_consent" />
+        I consent to be contacted for news about the application.
       </label>
     </fieldset>
 

@@ -8,6 +8,7 @@ from Bio import AlignIO, SeqIO
 from Bio.Align import MultipleSeqAlignment
 from Bio.SeqRecord import SeqRecord
 
+from ..logger import logger
 from .constantes import TABLE_BASE_PATH
 from .exceptions import ClustalFormatError, FastaFormatError
 
@@ -18,7 +19,7 @@ def timeit(func):
         result = func(*args, **kwargs)
         end_time = time.time()
         elapsed_time = end_time - start_time
-        print(f"Elapsed time for '{func.__name__}': {elapsed_time:.4f} seconds")
+        logger.info(f"Elapsed time for '{func.__name__}': {elapsed_time:.4f} seconds")
 
         return result  # Return the result of the function
 

@@ -9,7 +9,12 @@ import type {
 } from './interfaces'
 import { store } from './store'
 
-type ApiResponse<T> = [T | null, string | null]
+interface ApiError {
+  code: number | null
+  detail: string
+}
+
+type ApiResponse<T> = [T | null, ApiError | null]
 
 const client = axios.create({
   baseURL: '/api',
@@ -28,11 +33,17 @@ client.interceptors.response.use(
         console.error(error.message, error.response.data)
       }
 
-      return Promise.reject(error.message)
+      return Promise.reject({
+        code: error.response.status,
+        detail: error.response.data.detail,
+      })
     } else {
       const message = 'Network error or request failed'
       console.error(message)
-      return Promise.reject(message)
+      return Promise.reject({
+        code: null,
+        detail: message,
+      })
     }
   },
 )
@@ -57,7 +68,7 @@ async function makeRequest(config: AxiosRequestConfig) {
     const response = await client.request(config)
     return [response.data, null]
   } catch (error) {
-    return [null, error]
+    return [null, error] as [null, ApiError]
   }
 }
 
@@ -66,7 +77,7 @@ async function postForm(url: string, form: UserLogin) {
     const response = await client.postForm(url, form)
     return [response.data, null] as [Token, null]
   } catch (error) {
-    return [null, error] as [null, string]
+    return [null, error] as [null, ApiError]
   }
 }
 
