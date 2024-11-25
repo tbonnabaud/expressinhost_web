@@ -1,5 +1,6 @@
 import random
 
+from ..logger import logger
 from .checks import check_amino_acido_conservation, check_nucleotides_clustal_identity
 from .codon_tables import ProcessedCodonTable
 from .exceptions import NoAminoAcidConservation, NoIdenticalSequencesError
@@ -321,7 +322,7 @@ def run_tuning(
             nucleotide_sequences, clustal_sequences
         ):
             case (False, errors):
-                print(errors)
+                logger.error(errors)
                 raise NoIdenticalSequencesError(
                     "Sequences are not identical. Check their value in the two files and check their order."
                 )
@@ -372,7 +373,7 @@ def run_tuning(
         nucleotide_sequences, cleared_output_sequences
     ):
         case (False, errors):
-            print(errors)
+            logger.error(errors)
             raise NoAminoAcidConservation(
                 "Amino acid sequences from input and output are supposed to be the same."
             )
@@ -388,7 +389,7 @@ def run_tuning(
         identity_percentages,
         native_codon_tables,
     ):
-        # print(name, len(input) == len(output), len(output) - len(input))
+        # logger.info(name, len(input) == len(output), len(output) - len(input))
         output_list.append(
             {
                 "name": name,
