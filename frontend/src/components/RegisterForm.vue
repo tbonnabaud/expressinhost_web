@@ -20,6 +20,8 @@ async function handleSubmit() {
     console.log(data)
     // Redirect to home
     router.push('/')
+  } else {
+    alert('E-mail address already exists.')
   }
 }
 </script>
