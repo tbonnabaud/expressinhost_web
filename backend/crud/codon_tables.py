@@ -8,7 +8,11 @@ from .base import BaseRepository
 
 class CodonTableRepository(BaseRepository):
     def list_defaults(self, organism: str | None):
-        stmt = sa.select(CodonTable).where(CodonTable.user_id == sa.null())
+        stmt = (
+            sa.select(CodonTable)
+            .where(CodonTable.user_id == sa.null())
+            .order_by(CodonTable.organism, CodonTable.name)
+        )
 
         if organism:
             stmt = stmt.where(CodonTable.organism == organism)
@@ -17,8 +21,10 @@ class CodonTableRepository(BaseRepository):
 
     def list_defaults_and_from_user(self, user_id: UUID, organism: str | None):
         """List both user and default tables."""
-        stmt = sa.select(CodonTable).where(
-            (CodonTable.user_id == user_id) | (CodonTable.user_id == sa.null())
+        stmt = (
+            sa.select(CodonTable)
+            .where((CodonTable.user_id == user_id) | (CodonTable.user_id == sa.null()))
+            .order_by(CodonTable.organism, CodonTable.name)
         )
 
         if organism:
