@@ -13,7 +13,7 @@ const data = computed(() => {
     labels: props.labels,
     datasets: [
       {
-        label: 'Similarity percentages',
+        label: 'Input versus output codon similarity percentages',
         data: props.values,
         borderWidth: 2,
       },
