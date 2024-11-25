@@ -8,8 +8,10 @@ from .base import BaseRepository
 
 class CodonTranslationRepository(BaseRepository):
     def list_from_table(self, codon_table_id: UUID):
-        stmt = sa.select(CodonTranslation).where(
-            CodonTranslation.codon_table_id == codon_table_id
+        stmt = (
+            sa.select(CodonTranslation)
+            .where(CodonTranslation.codon_table_id == codon_table_id)
+            .order_by(CodonTranslation.amino_acid, CodonTranslation.anticodon)
         )
 
         return self.session.execute(stmt).scalars().all()
