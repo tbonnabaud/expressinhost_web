@@ -21,6 +21,8 @@ watch(trnaGcn, value => {
 watch(correspCodon, value => {
   if (value == '---') {
     wobbleRate.value = 0
+  } else if (value != '---' && wobbleRate.value == 0) {
+    wobbleRate.value = 0.35
   } else {
     trnaGcn.value = 0
   }
