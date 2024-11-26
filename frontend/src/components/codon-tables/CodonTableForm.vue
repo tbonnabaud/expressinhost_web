@@ -244,12 +244,12 @@ async function deleteCodonTable() {
           v-model="translationMapping.Ala"
         />
         <PartialCodonTable
-          title="Asparagine (Asn)"
-          v-model="translationMapping.Asn"
-        />
-        <PartialCodonTable
           title="Arginine (Arg)"
           v-model="translationMapping.Arg"
+        />
+        <PartialCodonTable
+          title="Asparagine (Asn)"
+          v-model="translationMapping.Asn"
         />
         <PartialCodonTable
           title="Aspartic acid (Asp)"
