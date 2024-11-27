@@ -40,10 +40,12 @@ async function fetchHostCodonTable() {
 
 <template>
   <br />
-  <h2>
-    Expression in <i>{{ hostCodonTable?.organism }}</i> -
-    {{ hostCodonTable?.name }}
+  <h2 v-if="hostCodonTable">
+    Expression in <i>{{ hostCodonTable.organism }}</i> -
+    {{ hostCodonTable.name }}
   </h2>
+
+  <h2 v-else>Result</h2>
 
   <i>Created on {{ formatToLocaleDateString(result.creation_date) }}.</i>
 
