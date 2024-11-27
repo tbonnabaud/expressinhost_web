@@ -1,25 +1,8 @@
-import re
-
 from Bio.SeqRecord import SeqRecord
 
 
-def clear_nucleotide_sequences(nucleotide_sequences: list[SeqRecord]) -> list[str]:
-    stop_codon_pattern = re.compile(r"(UAA|UAG|UGA)$", re.IGNORECASE)
-    cleared_nucleotide_sequences = []
-
-    for record in nucleotide_sequences:
-        # Transcribe DNA to RNA (replace T by U)
-        seq = record.seq.transcribe()
-        # Remove UAA|UAG|UGA stop codons
-        str_seq = stop_codon_pattern.sub("", str(seq))
-
-        cleared_nucleotide_sequences.append(str_seq)
-
-    # write_text_to_file(
-    #     "\n".join(cleared_nucleotide_sequences), "tmp/modif_sequences_4.txt"
-    # )
-
-    return cleared_nucleotide_sequences
+def dna_to_rna_sequences(nucleotide_sequences: list[SeqRecord]) -> list[str]:
+    return [str(record.seq.transcribe()) for record in nucleotide_sequences]
 
 
 def align_nucleotide_sequences(
@@ -42,7 +25,8 @@ def align_nucleotide_sequences(
                 new_line += nucleo_seq[3 * m : 3 * m + 3]
                 m += 1
 
-        aligned_nucleotide_sequences.append(new_line + "UAA")
+        # Keep the pre-tuned stop codon
+        aligned_nucleotide_sequences.append(new_line + nucleo_seq[-3:])
 
     # write_text_to_file(
     #     "\n".join(aligned_nucleotide_sequences), "tmp/modif_sequences_5.txt"
