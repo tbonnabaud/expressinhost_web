@@ -390,7 +390,6 @@ def run_tuning(
         identity_percentages,
         native_codon_tables,
     ):
-        # logger.info(name, len(input) == len(output), len(output) - len(input))
         output_list.append(
             {
                 "name": name,
