@@ -11,7 +11,7 @@ class ProcessedCodonTableRow:
     amino_acid: str
     anticodon: str
     codon: str
-    trna_gcn: str
+    trna_gcn: float
     corresp_codon: str
     wobble_rate: float
     rank: float
