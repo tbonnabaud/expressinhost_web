@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import type { TuningOutput, CodonTable } from '@/lib/interfaces'
 import { formatToLocaleDateString } from '@/lib/helpers'
 import { MODE_LABEL_MAPPING } from '@/lib/referentials'
@@ -20,11 +20,13 @@ const percentageValues = computed(() =>
   props.tuned_sequences.map(e => e.identity_percentage),
 )
 
-onMounted(async () => props.result && (await fetchHostCodonTable()))
+// onMounted(
+//   async () => props.result.host_codon_table_id && (await fetchHostCodonTable()),
+// )
 
 watch(
   () => props.result,
-  async () => await fetchHostCodonTable(),
+  async () => props.result.host_codon_table_id && (await fetchHostCodonTable()),
 )
 
 async function fetchHostCodonTable() {
