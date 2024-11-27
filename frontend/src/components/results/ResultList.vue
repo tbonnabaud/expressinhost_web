@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref, watch } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import type { Result } from '@/lib/interfaces'
 import { API } from '@/lib/api'
 import { store } from '@/lib/store'
@@ -8,17 +8,43 @@ import ResultListItem from './ResultListItem.vue'
 const currentUser = store.currentUser
 const resultList = ref([] as Array<Result>)
 
-onMounted(async () => await fetchResultList())
+// Pagination
+const totalResultCount = ref(0)
+const limitPerPage = ref(8)
+const currentPageNumber = ref(1)
+
+const numberOfPages = computed(() =>
+  Math.ceil(totalResultCount.value / limitPerPage.value),
+)
+
+onMounted(async () => {
+  await fetchTotalResultCount()
+  await fetchResultList()
+})
 
 // Watch needed because query depends on a value in the store
 watch(currentUser, async () => await fetchResultList())
+watch(currentPageNumber, async () => await fetchResultList())
 
 async function fetchResultList() {
   if (currentUser.value) {
-    const [data, error] = await API.results.list()
+    const [data, error] = await API.results.list(
+      limitPerPage.value,
+      (currentPageNumber.value - 1) * limitPerPage.value,
+    )
 
     if (!error) {
       resultList.value = data
+    }
+  }
+}
+
+async function fetchTotalResultCount() {
+  if (currentUser.value) {
+    const [data, error] = await API.results.count()
+
+    if (!error) {
+      totalResultCount.value = data
     }
   }
 }
@@ -32,6 +58,21 @@ async function fetchResultList() {
       :key="index"
     />
   </div>
+
+  <div id="resultPagination">
+    <button
+      v-for="pageNumber in numberOfPages"
+      :key="pageNumber"
+      :class="{
+        outline: true,
+        secondary: true,
+        contrast: currentPageNumber == pageNumber,
+      }"
+      @click="currentPageNumber = pageNumber"
+    >
+      {{ pageNumber }}
+    </button>
+  </div>
 </template>
 
 <style scoped>
@@ -40,5 +81,14 @@ async function fetchResultList() {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+}
+
+#resultPagination {
+  margin: 2em auto 0;
+  text-align: center;
+}
+
+#resultPagination > button {
+  margin: 5px;
 }
 </style>
