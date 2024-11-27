@@ -24,7 +24,7 @@ def list_user_results(
     )
 
 
-@router.get("/users/me/results/count", response_model=list[Result])
+@router.get("/users/me/results/count", response_model=int)
 def count_user_results(session: SessionDependency, token: TokenDependency):
     current_user = get_current_user(session, token)
 
