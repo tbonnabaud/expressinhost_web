@@ -5,14 +5,12 @@ from .checks import check_amino_acido_conservation, check_nucleotides_clustal_id
 from .codon_tables import ProcessedCodonTable
 from .exceptions import NoAminoAcidConservation, NoIdenticalSequencesError
 from .postprocessing import clear_output_sequences, compare_sequences
-from .preprocessing import align_nucleotide_sequences, clear_nucleotide_sequences
+from .preprocessing import align_nucleotide_sequences, dna_to_rna_sequences
 from .utils import (  # write_text_to_file,
     get_clustal_symbol_sequence,
     parse_sequences,
     timeit,
 )
-
-STOP_CODON = "UAA"
 
 
 def find_amino_acid_and_rank(
@@ -92,7 +90,8 @@ def direct_mapping(
                 )
 
                 if amino_acid is None:
-                    new_line += STOP_CODON
+                    # Add stop codon
+                    new_line += input_codon
 
                 else:
                     potential_codons = []
@@ -145,7 +144,8 @@ def optimisation_and_conservation_1(
                 )
 
                 if amino_acid is None:
-                    new_line += STOP_CODON
+                    # Add stop codon
+                    new_line += input_codon
 
                 else:
                     potential_codons = []
@@ -243,7 +243,8 @@ def optimisation_and_conservation_2(
                 )
 
                 if amino_acid is None:
-                    new_line += STOP_CODON
+                    # Add stop codon
+                    new_line += input_codon
 
                 else:
                     potential_codons = []
@@ -304,7 +305,7 @@ def run_tuning(
     conservation_threshold: float | None,
 ) -> list[dict]:
     nucleotide_sequences = parse_sequences(nucleotide_file_content, "fasta")
-    cleared_nucleotide_sequences = clear_nucleotide_sequences(nucleotide_sequences)
+    cleared_nucleotide_sequences = dna_to_rna_sequences(nucleotide_sequences)
 
     if mode == "direct_mapping":
         output_sequences = direct_mapping(
@@ -389,7 +390,6 @@ def run_tuning(
         identity_percentages,
         native_codon_tables,
     ):
-        # logger.info(name, len(input) == len(output), len(output) - len(input))
         output_list.append(
             {
                 "name": name,
