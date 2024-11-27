@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
+import { useRouter } from 'vue-router'
 import type { TuningOutput, CodonTable } from '@/lib/interfaces'
 import { formatToLocaleDateString } from '@/lib/helpers'
 import { MODE_LABEL_MAPPING } from '@/lib/referentials'
@@ -7,10 +8,13 @@ import { API } from '@/lib/api'
 import SequenceComparison from '@/components/results/SequenceComparison.vue'
 import DownloadResult from './DownloadResult.vue'
 import SimilarityChart from './SimilarityChart.vue'
+import BaseModal from '../BaseModal.vue'
 
+const router = useRouter()
 const props = defineProps<TuningOutput>()
 
 const hostCodonTable = ref(null as CodonTable | null)
+const openDeleteModal = ref(false)
 
 const mode = computed(
   () => MODE_LABEL_MAPPING[props.result.mode] || 'Unknown mode',
@@ -19,10 +23,6 @@ const percentageLabels = computed(() => props.tuned_sequences.map(e => e.name))
 const percentageValues = computed(() =>
   props.tuned_sequences.map(e => e.identity_percentage),
 )
-
-// onMounted(
-//   async () => props.result.host_codon_table_id && (await fetchHostCodonTable()),
-// )
 
 watch(
   () => props.result,
@@ -38,16 +38,53 @@ async function fetchHostCodonTable() {
     hostCodonTable.value = data
   }
 }
+
+async function deleteResult() {
+  if (props.result.id) {
+    const [, error] = await API.results.delete(props.result.id)
+
+    if (!error) {
+      console.log('Result deleted successfully.')
+      // Redirect to results
+      router.push('/results')
+    }
+  }
+
+  openDeleteModal.value = false
+}
 </script>
 
 <template>
-  <br />
-  <h2 v-if="hostCodonTable">
-    Expression in <i>{{ hostCodonTable.organism }}</i> -
-    {{ hostCodonTable.name }}
-  </h2>
+  <BaseModal
+    :open="openDeleteModal"
+    title="Confirm the deletion"
+    @close="openDeleteModal = false"
+  >
+    <p>Do you really want to delete this result?</p>
 
-  <h2 v-else>Result</h2>
+    <footer>
+      <button class="secondary" @click="openDeleteModal = false">Cancel</button>
+      <button class="danger" @click="deleteResult">Delete</button>
+    </footer>
+  </BaseModal>
+
+  <div class="flex-container">
+    <h2 v-if="hostCodonTable">
+      Expression in <i>{{ hostCodonTable.organism }}</i> -
+      {{ hostCodonTable.name }}
+    </h2>
+
+    <h2 v-else>Result</h2>
+
+    <button
+      v-if="result.id"
+      id="deleteButton"
+      class="danger"
+      @click="openDeleteModal = true"
+    >
+      Delete
+    </button>
+  </div>
 
   <i>Created on {{ formatToLocaleDateString(result.creation_date) }}.</i>
 
@@ -88,3 +125,9 @@ async function fetchHostCodonTable() {
 
   <DownloadResult :result="result" :tuned_sequences="tuned_sequences" />
 </template>
+
+<style scoped>
+#deleteButton {
+  margin-left: auto;
+}
+</style>
