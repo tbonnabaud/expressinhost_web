@@ -110,8 +110,8 @@ async function addNewCodonTable() {
     const [data, error] = await API.codonTables.add(form)
 
     if (!error && data) {
-      console.log('Codon table added succesfully.')
-      alert('Codon table added succesfully.')
+      console.log('Codon table added successfully.')
+      alert('Codon table added successfully.')
       // Add the new item to the list
       await pushCodonTableToList(data)
     }
@@ -128,8 +128,8 @@ async function updateExistingCodonTable() {
     )
 
     if (!error) {
-      console.log('Codon table updated succesfully.')
-      alert('Codon table updated succesfully.')
+      console.log('Codon table updated successfully.')
+      alert('Codon table updated successfully.')
       // Refresh selected table with new values
       selectedCodonTable.value = Object.assign(selectedCodonTable.value, {
         organism: codonTableOrganism.value,
@@ -144,7 +144,7 @@ async function deleteCodonTable() {
     const [, error] = await API.codonTables.delete(selectedCodonTable.value.id)
 
     if (!error) {
-      console.log('Codon table deleted succesfully.')
+      console.log('Codon table deleted successfully.')
       // Refresh list
       selectedCodonTable.value = null
       await fetchCodonTableList()

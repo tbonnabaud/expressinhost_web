@@ -126,6 +126,7 @@ const results = {
   list: async () => await REQUESTS.get(`/users/me/results`),
   count: async () => await REQUESTS.get(`/users/me/results/count`),
   get: async (id: string) => await REQUESTS.get(`/users/me/results/${id}`),
+  delete: async (id: string) => await REQUESTS.delete(`/users/me/results/${id}`),
 }
 
 const tunedSequences = {
