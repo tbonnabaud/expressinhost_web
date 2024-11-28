@@ -16,11 +16,11 @@ const model = defineModel<Array<CodonTranslation>>()
     <table>
       <thead>
         <tr>
-          <th>anticodon</th>
-          <th>codon</th>
-          <th>trna_gcn</th>
-          <th>corresp_codon</th>
-          <th>wobble_rate</th>
+          <th>Anticodon</th>
+          <th>Codon</th>
+          <th>tRNA GCN</th>
+          <th>Wobble codon</th>
+          <th>Wobble rate</th>
         </tr>
       </thead>
 
@@ -61,5 +61,9 @@ section:hover {
   section:hover {
     border: solid 2px #c2c7d0;
   }
+}
+
+th {
+  white-space: nowrap;
 }
 </style>
