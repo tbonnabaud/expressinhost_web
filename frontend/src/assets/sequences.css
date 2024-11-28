@@ -1,21 +1,25 @@
 .input-sequence > .modified-codon {
-  background-color: #db5050;
+  background-color: #e69f00;
   z-index: 1;
 }
 
 .output-sequence > .modified-codon {
-  background-color: #41a741;
+  background-color: #56b4e9;
 }
 
 @media (prefers-color-scheme: dark) {
   .input-sequence > .modified-codon {
-    background-color: #a52a2a;
+    background-color: #d55e00;
     z-index: 1;
   }
 
   .output-sequence > .modified-codon {
-    background-color: #008000;
+    background-color: #0072b2;
   }
+}
+
+.codon {
+  margin-right: 0.3em;
 }
 
 .codon:hover {
