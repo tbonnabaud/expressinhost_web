@@ -19,11 +19,7 @@ defineProps<{ result: Result }>()
         </h5>
       </header>
 
-      <p>
-        <!-- <strong>Host codon table:</strong> {{ result.host_codon_table_id }}
-        <br /> -->
-        <strong>Mode:</strong> {{ MODE_LABEL_MAPPING[result.mode] }}
-      </p>
+      <p><strong>Mode:</strong> {{ MODE_LABEL_MAPPING[result.mode] }}</p>
     </article>
   </RouterLink>
 </template>
