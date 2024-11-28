@@ -20,6 +20,16 @@ defineProps<{ result: Result }>()
       </header>
 
       <p><strong>Mode:</strong> {{ MODE_LABEL_MAPPING[result.mode] }}</p>
+      <div class="grid">
+        <p>
+          <strong>Slow speed thresold:</strong>
+          {{ result.slow_speed_threshold }}
+        </p>
+        <p>
+          <strong>Conservation thresold:</strong>
+          {{ result.conservation_threshold }}
+        </p>
+      </div>
     </article>
   </RouterLink>
 </template>
@@ -27,6 +37,7 @@ defineProps<{ result: Result }>()
 <style scoped>
 article {
   margin: 0.5em;
+  padding-bottom: 0.3em;
 }
 
 a {
@@ -49,5 +60,9 @@ h5 {
   border: 1px solid var(--pico-color);
   border-radius: 5px;
   padding: 3px 5px;
+}
+
+p {
+  text-align: center;
 }
 </style>
