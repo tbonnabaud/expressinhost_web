@@ -109,6 +109,7 @@ class Result(BaseModel):
     mode: str
     slow_speed_threshold: float
     conservation_threshold: float | None
+    host_codon_table: CodonTable
 
 
 class Profiles(BaseModel):

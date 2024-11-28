@@ -7,6 +7,7 @@ from fastapi import APIRouter
 from ..authentication import OptionalTokenDependency, get_current_user
 from ..core.codon_tables import process_raw_codon_table
 from ..core.sequence_tuning import run_tuning
+from ..crud.codon_tables import CodonTableRepository
 from ..crud.codon_translations import CodonTranslationRepository
 from ..crud.results import ResultRepository
 from ..crud.tuned_sequences import TunedSequenceRepository
@@ -91,6 +92,10 @@ def launch_tuning(
             seq["result_id"] = result_id
 
         TunedSequenceRepository(session).add_batch(tuned_sequences)
+
+    result["host_codon_table"] = CodonTableRepository(session).get(
+        user and user.id, form.host_codon_table_id
+    )
 
     return {
         "result": result,

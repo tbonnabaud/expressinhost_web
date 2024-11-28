@@ -67,6 +67,7 @@ export interface Result {
   mode: string
   slow_speed_threshold: number
   conservation_threshold: number | null
+  host_codon_table: CodonTable
 }
 
 export interface Profiles {

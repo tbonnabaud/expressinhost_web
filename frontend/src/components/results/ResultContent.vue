@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import type { TuningOutput, CodonTable } from '@/lib/interfaces'
+import type { TuningOutput } from '@/lib/interfaces'
 import { formatToLocaleDateString } from '@/lib/helpers'
 import { MODE_LABEL_MAPPING } from '@/lib/referentials'
 import { API } from '@/lib/api'
@@ -13,7 +13,6 @@ import BaseModal from '../BaseModal.vue'
 const router = useRouter()
 const props = defineProps<TuningOutput>()
 
-const hostCodonTable = ref(null as CodonTable | null)
 const openDeleteModal = ref(false)
 
 const mode = computed(
@@ -23,21 +22,6 @@ const percentageLabels = computed(() => props.tuned_sequences.map(e => e.name))
 const percentageValues = computed(() =>
   props.tuned_sequences.map(e => e.identity_percentage),
 )
-
-watch(
-  () => props.result,
-  async () => props.result.host_codon_table_id && (await fetchHostCodonTable()),
-)
-
-async function fetchHostCodonTable() {
-  const [data, error] = await API.codonTables.get(
-    props.result.host_codon_table_id,
-  )
-
-  if (!error) {
-    hostCodonTable.value = data
-  }
-}
 
 async function deleteResult() {
   if (props.result.id) {
@@ -69,12 +53,10 @@ async function deleteResult() {
   </BaseModal>
 
   <div class="flex-container">
-    <h2 v-if="hostCodonTable">
-      Expression in <i>{{ hostCodonTable.organism }}</i> -
-      {{ hostCodonTable.name }}
+    <h2 v-if="result.host_codon_table">
+      Expression in <i>{{ result.host_codon_table.organism }}</i> -
+      {{ result.host_codon_table.name }}
     </h2>
-
-    <h2 v-else>Result</h2>
 
     <button
       v-if="result.id"
