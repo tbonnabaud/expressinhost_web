@@ -66,7 +66,7 @@ class CodonTranslation(BaseModel):
     anticodon: str
     amino_acid: str
     trna_gcn: float
-    corresp_codon: str
+    wobble_codon: str
     wobble_rate: float
 
 

@@ -75,7 +75,7 @@ export const DEFAULT_CODON_TABLE: Array<CodonTranslation> =
   BASE_CODON_TABLE.map(e => ({
     ...e,
     trna_gcn: 1,
-    corresp_codon: '---',
+    wobble_codon: '---',
     wobble_rate: 0,
   }))
 
