@@ -20,6 +20,7 @@ defineProps<{ result: Result }>()
       </header>
 
       <p><strong>Mode:</strong> {{ MODE_LABEL_MAPPING[result.mode] }}</p>
+
       <div class="grid">
         <p>
           <strong>Slow speed thresold:</strong>
