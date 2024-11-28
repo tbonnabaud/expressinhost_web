@@ -12,7 +12,7 @@ class ProcessedCodonTableRow:
     anticodon: str
     codon: str
     trna_gcn: float
-    corresp_codon: str
+    wobble_codon: str
     wobble_rate: float
     rank: float
     speed: float
@@ -41,7 +41,7 @@ def process_raw_codon_table(
     - column 2: anti-codon (anticodon)
     - column 3: codon
     - column 4: tRNA GCN (trna_gcn)
-    - column 5: codon used in case of wobble (corresp_codon)
+    - column 5: codon used in case of wobble (wobble_codon)
     - column 6: wobble rate (wobble_rate)
 
     All input raw tables contain 61 lines (for 61 codons).
@@ -65,7 +65,7 @@ def process_raw_codon_table(
     # Column 4 of the input raw table
     gcn_col = np.array([float(row["trna_gcn"]) for row in raw_codon_table])
     # Column 5 of the input raw table
-    corresp_codon_col = [row["corresp_codon"] for row in raw_codon_table]
+    wobble_codon_col = [row["wobble_codon"] for row in raw_codon_table]
     # Column 6 of the input raw table
     wobble_rate_col = np.array([float(row["wobble_rate"]) for row in raw_codon_table])
 
@@ -96,7 +96,7 @@ def process_raw_codon_table(
                 # In all codons of the input raw table
                 for t in range(61):
                     # We search its corresponding codon
-                    if codon_col[t] == corresp_codon_col[k]:
+                    if codon_col[t] == wobble_codon_col[k]:
                         # And calculate its GCN using the GCN of the codon it wobbles with, and the wobbling rate
                         gcn_col[k] = gcn_col[t] - wobble_rate_col[k] * gcn_col[t]
                         break
@@ -186,7 +186,7 @@ def process_raw_codon_table(
                 anticodon_col,
                 codon_col,
                 gcn_col,
-                corresp_codon_col,
+                wobble_codon_col,
                 wobble_rate_col,
                 rank_col,
                 speed_col,

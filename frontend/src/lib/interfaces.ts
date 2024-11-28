@@ -48,7 +48,7 @@ export interface CodonTranslation {
   anticodon: string
   amino_acid: string
   trna_gcn: number
-  corresp_codon: string
+  wobble_codon: string
   wobble_rate: number
 }
 

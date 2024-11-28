@@ -1,4 +1,4 @@
-amino_acid	anticodon	codon	trna_gcn	corresp_codon	wobble_rate
+amino_acid	anticodon	codon	trna_gcn	wobble_codon	wobble_rate
 Ala	AGC	GCU	11	---	0.0
 Ala	GGC	GCC	0	GCU	0.35
 Ala	CGC	GCG	0	GCA	0.35

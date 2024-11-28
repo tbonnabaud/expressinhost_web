@@ -46,7 +46,7 @@ def upgrade() -> None:
     sa.Column('anticodon', sa.String(length=3), nullable=False),
     sa.Column('amino_acid', sa.String(length=3), nullable=False),
     sa.Column('trna_gcn', sa.Float(), nullable=False),
-    sa.Column('corresp_codon', sa.String(length=3), nullable=False),
+    sa.Column('wobble_codon', sa.String(length=3), nullable=False),
     sa.Column('wobble_rate', sa.Float(), nullable=False),
     sa.ForeignKeyConstraint(['codon_table_id'], ['codon_tables.id'], onupdate='CASCADE', ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('codon_table_id', 'codon')
