@@ -20,7 +20,7 @@ const user = store.currentUser
     <p id="warning">⚠ This web application is under development ⚠</p>
 
     <div id="description">
-      <!-- <p>
+      <p>
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod
         maximus libero, vel facilisis ipsum malesuada nec. Mauris molestie ipsum
         quis risus dignissim placerat. Phasellus at suscipit erat, sit amet
@@ -32,9 +32,13 @@ const user = store.currentUser
         Praesent viverra non eros sed commodo. Quisque arcu dolor, pellentesque
         sed velit sit amet, fermentum blandit sem. Fusce blandit urna dapibus,
         sodales erat ut, euismod nisl. Sed et placerat nulla.
-      </p> -->
+      </p>
     </div>
   </main>
+
+  <footer id="contact">
+    Contact: <a href="mailto:Adelaide.Raguin@hhu.de">Adélaïde Raguin</a>
+  </footer>
 </template>
 
 <style scoped>
@@ -80,5 +84,10 @@ const user = store.currentUser
   margin: 2em 5em;
   font-size: 1.5em;
   text-align: justify;
+}
+
+#contact {
+  text-align: center;
+  font-style: italic;
 }
 </style>
