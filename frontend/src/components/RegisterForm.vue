@@ -46,7 +46,7 @@ async function handleSubmit() {
 
       <label>
         <input type="checkbox" role="switch" v-model="form.contact_consent" />
-        I consent to be contacted for news about the application.
+        I consent to receive e-mails regarding the application
       </label>
     </fieldset>
 
