@@ -3,6 +3,7 @@ left to right direction
 skinparam dpi 200
 
 ' skinparam BackgroundColor #1b212c
+skinparam BackgroundColor transparent
 ' skinparam ActorBackgroundColor #fff
 ' skinparam ActorBorderColor #fff
 ' skinparam ActorFontColor #fff
@@ -11,21 +12,29 @@ skinparam dpi 200
 ' skinparam UsecaseFontColor #fff
 
 actor LoggedUser
+actor Admin
+actor Member
 actor GuestUser
 
-usecase "Add/Edit codon table" as u1
+usecase "Add/edit/remove codon tables" as u1
 usecase "Run tuning" as u2
 usecase "Read result" as u3
 usecase "Download result" as u4
 usecase "Access to previous results" as u5
+usecase "Edit/remove users" as u6
 
-GuestUser --> u2 #line:DodgerBlue
-GuestUser --> u3 #line:DodgerBlue
-GuestUser --> u4 #line:DodgerBlue
+Admin --> LoggedUser #line:MediumPurple
+Member --> LoggedUser #line:MediumPurple
 
-LoggedUser --> u1 #line:crimson
-LoggedUser --> u2 #line:crimson
-LoggedUser --> u3 #line:crimson
-LoggedUser --> u4 #line:crimson
-LoggedUser --> u5 #line:crimson
+GuestUser --> u2 #line:LimeGreen
+GuestUser --> u3 #line:LimeGreen
+GuestUser --> u4 #line:LimeGreen
+
+LoggedUser --> u1 #line:DodgerBlue
+LoggedUser --> u2 #line:DodgerBlue
+LoggedUser --> u3 #line:DodgerBlue
+LoggedUser --> u4 #line:DodgerBlue
+LoggedUser --> u5 #line:DodgerBlue
+
+Admin --> u6 #line:Crimson
 @enduml
