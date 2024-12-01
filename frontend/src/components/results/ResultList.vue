@@ -84,7 +84,7 @@ async function fetchTotalResultCount() {
 }
 
 #resultPagination {
-  margin: 2em auto 0;
+  margin: 1em auto 0;
   text-align: center;
 }
 
