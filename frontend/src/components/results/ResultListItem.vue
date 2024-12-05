@@ -61,6 +61,8 @@ h5 {
   border: 1px solid var(--pico-color);
   border-radius: 5px;
   padding: 3px 5px;
+  margin: 0;
+  font-size: 80%;
 }
 
 p {
