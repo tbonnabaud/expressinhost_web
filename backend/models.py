@@ -76,6 +76,7 @@ class Result(Base):
     creation_date: Mapped[datetime] = mapped_column(
         sa.DateTime(timezone=True), default=lambda: datetime.now(UTC)
     )
+    name: Mapped[str] = mapped_column(sa.String, server_default="Unnamed")
     host_codon_table_id: Mapped[UUID] = mapped_column(
         sa.UUID(as_uuid=True),
         sa.ForeignKey("codon_tables.id", onupdate="CASCADE", ondelete="CASCADE"),

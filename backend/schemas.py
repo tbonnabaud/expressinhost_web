@@ -104,6 +104,7 @@ class Result(BaseModel):
     id: UUID | None = None
     user_id: UUID | None = None
     creation_date: datetime = datetime.now(UTC)
+    name: str
     host_codon_table_id: UUID
     sequences_native_codon_tables: dict[str, UUID]
     mode: str
@@ -129,6 +130,7 @@ class TunedSequence(BaseModel):
 
 
 class RunTuningForm(BaseModel):
+    name: str = "Unnamed"
     nucleotide_file_content: str
     clustal_file_content: str | None
     host_codon_table_id: UUID
@@ -140,6 +142,11 @@ class RunTuningForm(BaseModel):
     ]
     slow_speed_threshold: float
     conservation_threshold: float | None
+
+    @field_validator("name")
+    @staticmethod
+    def clean(value: str):
+        return value.strip() if value else "Unnamed"
 
 
 class TuningOutput(BaseModel):

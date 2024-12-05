@@ -14,12 +14,18 @@ defineProps<{ result: Result }>()
           <span class="creation-date">
             {{ formatToLocaleDateString(result.creation_date) }}
           </span>
-          &nbsp; <i>{{ result.host_codon_table.organism }}</i> -
-          {{ result.host_codon_table.name }}
+          &nbsp;{{ result.name }}
         </h5>
       </header>
 
-      <p><strong>Mode:</strong> {{ MODE_LABEL_MAPPING[result.mode] }}</p>
+      <div class="grid">
+        <p>
+          <strong>Codon table:</strong>
+          &nbsp;<i>{{ result.host_codon_table.organism }}</i> -
+          {{ result.host_codon_table.name }}
+        </p>
+        <p><strong>Mode:</strong> {{ MODE_LABEL_MAPPING[result.mode] }}</p>
+      </div>
 
       <div class="grid">
         <p>

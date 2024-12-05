@@ -53,9 +53,8 @@ async function deleteResult() {
   </BaseModal>
 
   <div class="flex-container">
-    <h2 v-if="result.host_codon_table">
-      Expression in <i>{{ result.host_codon_table.organism }}</i> -
-      {{ result.host_codon_table.name }}
+    <h2>
+      {{ result.name }}
     </h2>
 
     <button
@@ -68,9 +67,18 @@ async function deleteResult() {
     </button>
   </div>
 
-  <i>Created on {{ formatToLocaleDateString(result.creation_date) }}.</i>
+  <p id="createdOn">
+    Created on {{ formatToLocaleDateString(result.creation_date) }}.
+  </p>
 
   <hr />
+
+  <h3>Host codon table</h3>
+  <hr />
+  <p v-if="result.host_codon_table">
+    <i>{{ result.host_codon_table.organism }}</i> -
+    {{ result.host_codon_table.name }}
+  </p>
 
   <h3>Parameters</h3>
   <hr />
@@ -111,5 +119,9 @@ async function deleteResult() {
 <style scoped>
 #deleteButton {
   margin-left: auto;
+}
+
+#createdOn {
+  font-style: italic;
 }
 </style>

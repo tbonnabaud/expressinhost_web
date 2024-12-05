@@ -74,6 +74,7 @@ def launch_tuning(
 
     result = {
         "creation_date": datetime.now(UTC),
+        "name": form.name,
         "host_codon_table_id": form.host_codon_table_id,
         "sequences_native_codon_tables": serializable_sequences_native_codon_tables,
         "mode": form.mode,
