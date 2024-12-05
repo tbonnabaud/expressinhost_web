@@ -21,17 +21,34 @@ const user = store.currentUser
 
     <div id="description">
       <p>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod
-        maximus libero, vel facilisis ipsum malesuada nec. Mauris molestie ipsum
-        quis risus dignissim placerat. Phasellus at suscipit erat, sit amet
-        congue odio. Vivamus sed lorem vehicula, consectetur urna a, tempor
-        erat. Aenean convallis gravida orci, at pharetra elit tincidunt vel.
-        Integer vulputate viverra nisl sit amet facilisis. Aenean condimentum
-        dapibus metus non viverra. Maecenas sagittis sem ac sollicitudin
-        sollicitudin. Praesent iaculis varius sagittis. Etiam a accumsan risus.
-        Praesent viverra non eros sed commodo. Quisque arcu dolor, pellentesque
-        sed velit sit amet, fermentum blandit sem. Fusce blandit urna dapibus,
-        sodales erat ut, euismod nisl. Sed et placerat nulla.
+        In the rapidly evolving field of recombinant protein expression,
+        ExpressInHost offers novel innovative solutions for codon optimisation.
+        ExpressInHost tunes mRNA sequences to enhance their expression while
+        considering the challenge of proper protein folding in a host organism.
+        For thousands of different organisms, and customisable ones, leveraging
+        tRNA gene copy number data, it analyses and compares translation speed
+        properties in native and host organisms, possibly also incorporating
+        evolutionary insights and optimising mRNA structural properties for
+        ribosome binding.
+      </p>
+
+      <p>
+        ExpressInHost is a free, user-friendly, and fully open source web
+        application that builds on our
+        <a
+          href="https://openresearchsoftware.metajnl.com/articles/10.5334/jors.385"
+          target="_blank"
+          >previous work</a
+        >
+        as well as on open source work from other groups for
+        <a href="https://gtrnadb.ucsc.edu/" target="_blank">tRNA data</a>
+        collection and
+        <a
+          href="https://joss.theoj.org/papers/10.21105/joss.03362"
+          target="_blank"
+          >ribosome binding</a
+        >
+        properties.
       </p>
     </div>
   </main>
