@@ -32,7 +32,7 @@ watch(wobbleCodon, value => {
 })
 
 watch(wobbleRate, value => {
-  activity.value = (1 - value) * 100
+  activity.value = toFixedFloat((1 - value) * 100, 0)
 
   if (value == 0) {
     wobbleCodon.value = '---'
@@ -45,8 +45,8 @@ watch(wobbleRate, value => {
  * Synchronize activity with wobble rate.
  */
 function updateWobbleRate() {
-  // Round the number with a maximum of three decimals
-  wobbleRate.value = toFixedFloat(1 - activity.value / 100, 3)
+  // Round the number with a maximum of two decimals
+  wobbleRate.value = toFixedFloat(1 - activity.value / 100, 2)
 }
 </script>
 
