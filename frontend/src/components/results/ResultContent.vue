@@ -95,8 +95,13 @@ async function deleteResult() {
     <tbody>
       <tr>
         <td>{{ mode }}</td>
-        <td>{{ result.slow_speed_threshold }}</td>
-        <td>{{ result.conservation_threshold }}</td>
+        <td>{{ result.slow_speed_threshold * 100 }}%</td>
+        <td>
+          {{
+            result.conservation_threshold &&
+            result.conservation_threshold * 100
+          }}%
+        </td>
       </tr>
     </tbody>
   </table>
