@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { CODON_LIST } from '@/lib/referentials'
+import { toFixedFloat } from '@/lib/helpers'
 
 defineProps<{
   codon: string
@@ -45,7 +46,7 @@ watch(wobbleRate, value => {
  */
 function updateWobbleRate() {
   // Round the number with a maximum of three decimals
-  wobbleRate.value = parseFloat((1 - activity.value / 100).toFixed(3))
+  wobbleRate.value = toFixedFloat(1 - activity.value / 100, 3)
 }
 </script>
 
