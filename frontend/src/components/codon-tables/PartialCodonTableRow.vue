@@ -10,20 +10,21 @@ defineProps<{
 const trnaGcn = defineModel('trnaGcn', { default: 1 })
 const wobbleCodon = defineModel('wobbleCodon', { default: '---' })
 const wobbleRate = defineModel('wobbleRate', { default: 0 })
+
 const activity = ref(100)
 
 watch(trnaGcn, value => {
   if (value > 0) {
     wobbleCodon.value = '---'
-    activity.value = 100
+    wobbleRate.value = 0
   }
 })
 
 watch(wobbleCodon, value => {
   if (value == '---') {
-    activity.value = 100
-  } else if (value != '---' && activity.value == 100) {
-    activity.value = 75
+    wobbleRate.value = 0
+  } else if (value != '---' && wobbleRate.value == 0) {
+    wobbleRate.value = 0.35
   } else {
     trnaGcn.value = 0
   }
@@ -31,12 +32,8 @@ watch(wobbleCodon, value => {
 
 watch(wobbleRate, value => {
   activity.value = (1 - value) * 100
-})
 
-watch(activity, value => {
-  updateWobbleRate()
-
-  if (value == 100) {
+  if (value == 0) {
     wobbleCodon.value = '---'
   } else {
     trnaGcn.value = 0
@@ -71,6 +68,7 @@ function updateWobbleRate() {
         min="0"
         max="100"
         step="1"
+        @change="updateWobbleRate"
         required
       />
     </td>
