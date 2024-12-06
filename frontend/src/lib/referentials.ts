@@ -36,7 +36,7 @@ const BASE_CODON_TABLE = [
   { amino_acid: 'His', anticodon: 'GUG', codon: 'CAC' },
   { amino_acid: 'Ile', anticodon: 'AAU', codon: 'AUU' },
   { amino_acid: 'Ile', anticodon: 'GAU', codon: 'AUC' },
-  { amino_acid: 'Ile', anticodon: 'CAU', codon: 'AUA' },
+  { amino_acid: 'Ile', anticodon: 'UAU', codon: 'AUA' },
   { amino_acid: 'Leu', anticodon: 'AAG', codon: 'CUU' },
   { amino_acid: 'Leu', anticodon: 'GAG', codon: 'CUC' },
   { amino_acid: 'Leu', anticodon: 'CAG', codon: 'CUG' },
