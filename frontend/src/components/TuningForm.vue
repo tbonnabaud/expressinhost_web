@@ -294,6 +294,7 @@ section {
 .input-range {
   flex: auto;
   text-align: center;
+  width: 100%;
 }
 
 .select-cell details {
