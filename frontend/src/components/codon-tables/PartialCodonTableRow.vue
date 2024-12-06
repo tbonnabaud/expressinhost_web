@@ -40,6 +40,9 @@ watch(wobbleRate, value => {
   }
 })
 
+/**
+ * Synchronize activity with wobble rate.
+ */
 function updateWobbleRate() {
   // Round the number with a maximum of three decimals
   wobbleRate.value = parseFloat((1 - activity.value / 100).toFixed(3))
