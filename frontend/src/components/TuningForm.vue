@@ -139,7 +139,9 @@ async function runTuning() {
         placeholder="Name of the run (optional)"
         v-model="baseForm.name"
       />
+    </section>
 
+    <section>
       <h2>Data files</h2>
 
       <div class="flex-container">
