@@ -20,7 +20,7 @@ const model = defineModel<Array<CodonTranslation>>()
           <th>Codon</th>
           <th>tRNA GCN</th>
           <th>Wobble codon</th>
-          <th>Wobble rate</th>
+          <th>Activity (%)</th>
         </tr>
       </thead>
 

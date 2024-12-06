@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { watch } from 'vue'
+import { ref, watch } from 'vue'
 import { CODON_LIST } from '@/lib/referentials'
 
 defineProps<{
@@ -10,6 +10,8 @@ defineProps<{
 const trnaGcn = defineModel('trnaGcn', { default: 1 })
 const wobbleCodon = defineModel('wobbleCodon', { default: '---' })
 const wobbleRate = defineModel('wobbleRate', { default: 0 })
+
+const activity = ref(100)
 
 watch(trnaGcn, value => {
   if (value > 0) {
@@ -29,12 +31,22 @@ watch(wobbleCodon, value => {
 })
 
 watch(wobbleRate, value => {
+  activity.value = (1 - value) * 100
+
   if (value == 0) {
     wobbleCodon.value = '---'
   } else {
     trnaGcn.value = 0
   }
 })
+
+/**
+ * Synchronize activity with wobble rate.
+ */
+function updateWobbleRate() {
+  // Round the number with a maximum of three decimals
+  wobbleRate.value = parseFloat((1 - activity.value / 100).toFixed(3))
+}
 </script>
 
 <template>
@@ -55,10 +67,11 @@ watch(wobbleRate, value => {
     <td>
       <input
         type="number"
-        v-model.number="wobbleRate"
+        v-model="activity"
         min="0"
-        max="1"
-        step="0.01"
+        max="100"
+        step="1"
+        @change="updateWobbleRate"
         required
       />
     </td>
