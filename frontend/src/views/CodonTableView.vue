@@ -10,6 +10,7 @@ const user = store.currentUser
   <main class="container-fluid">
     <template v-if="user">
       <h1>Codon tables</h1>
+      <hr />
 
       <CodonTableForm />
     </template>

@@ -3,7 +3,7 @@ from uuid import UUID, uuid4
 
 import sqlalchemy as sa
 from sqlalchemy.dialects.postgresql import JSONB
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
 
 class Base(DeclarativeBase):
@@ -76,6 +76,7 @@ class Result(Base):
     creation_date: Mapped[datetime] = mapped_column(
         sa.DateTime(timezone=True), default=lambda: datetime.now(UTC)
     )
+    name: Mapped[str] = mapped_column(sa.String, server_default="Unnamed")
     host_codon_table_id: Mapped[UUID] = mapped_column(
         sa.UUID(as_uuid=True),
         sa.ForeignKey("codon_tables.id", onupdate="CASCADE", ondelete="CASCADE"),
@@ -85,6 +86,10 @@ class Result(Base):
     slow_speed_threshold: Mapped[float] = mapped_column(sa.Float)
     conservation_threshold: Mapped[float | None] = mapped_column(
         sa.Float, nullable=True
+    )
+
+    host_codon_table: Mapped["CodonTable"] = relationship(
+        "CodonTable", foreign_keys=[host_codon_table_id]
     )
 
 

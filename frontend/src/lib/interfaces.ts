@@ -25,6 +25,7 @@ export interface Token {
 }
 
 export interface RunTrainingForm {
+  name: string
   nucleotide_file_content: string
   clustal_file_content: string | null
   host_codon_table_id: string
@@ -62,11 +63,13 @@ export interface Result {
   id: string | null
   user_id: string | null
   creation_date: string
+  name: string
   host_codon_table_id: string
   sequences_native_codon_tables: Record<string, string>
   mode: string
   slow_speed_threshold: number
   conservation_threshold: number | null
+  host_codon_table: CodonTable
 }
 
 export interface Profiles {

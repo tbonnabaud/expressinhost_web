@@ -8,6 +8,7 @@ import CodonTableSearchSelect from '@/components/codon-tables/CodonTableSearchSe
 const emit = defineEmits(['submit'])
 
 const baseForm = reactive({
+  name: '',
   nucleotide_file_content: '',
   clustal_file_content: '',
   host_codon_table_id: '',
@@ -132,6 +133,14 @@ async function runTuning() {
 
 <template>
   <form id="runTuningForm" @submit.prevent="runTuning">
+    <section>
+      <input
+        type="text"
+        placeholder="Name of the run (optional)"
+        v-model="baseForm.name"
+      />
+    </section>
+
     <section>
       <h2>Data files</h2>
 
