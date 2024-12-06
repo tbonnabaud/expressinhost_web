@@ -79,7 +79,7 @@ export const DEFAULT_CODON_TABLE: Array<CodonTranslation> =
     wobble_rate: 0,
   }))
 
-export const CODON_LIST = BASE_CODON_TABLE.map(e => e.codon)
+export const CODON_LIST = BASE_CODON_TABLE.map(e => e.codon).sort()
 
 export const CODON_MAPPING = Object.fromEntries(
   BASE_CODON_TABLE.map(e => [e.codon, e]),
