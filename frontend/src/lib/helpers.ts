@@ -63,3 +63,11 @@ export function groupByAminoAcid(array: CodonTranslation[]) {
     {} as Record<string, CodonTranslation[]>,
   )
 }
+
+/**
+ * The `toFixedFloat` function rounds a number to a specified number of decimal places
+ * and returns it as a floating-point number.
+ */
+export function toFixedFloat(value: number, fractionDigits: number = 0) {
+  return parseFloat(value.toFixed(fractionDigits))
+}
