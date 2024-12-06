@@ -108,6 +108,7 @@ async function runTuning() {
 
   if (formIsValid()) {
     const form = { ...baseForm }
+
     if (selectedHostCodonTable.value) {
       form.host_codon_table_id = selectedHostCodonTable.value.id
     }
