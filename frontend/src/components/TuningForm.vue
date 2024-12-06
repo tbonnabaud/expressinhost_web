@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted, reactive, watch, computed } from 'vue'
-import { readTextFile } from '@/lib/helpers'
+import { readTextFile, toFixedFloat } from '@/lib/helpers'
 import type { CodonTable } from '@/lib/interfaces'
 import { API } from '@/lib/api'
 import CodonTableSearchSelect from '@/components/codon-tables/CodonTableSearchSelect.vue'
@@ -241,7 +241,8 @@ async function runTuning() {
       <div class="flex-container">
         <div class="input-range">
           <label
-            >Slow speed threshold = {{ baseForm.slow_speed_threshold }}</label
+            >Slow speed threshold =
+            {{ toFixedFloat(baseForm.slow_speed_threshold * 100, 1) }}%</label
           >
           <input
             type="range"
@@ -255,7 +256,7 @@ async function runTuning() {
         <div class="input-range">
           <label
             >Conservation threshold =
-            {{ baseForm.conservation_threshold }}</label
+            {{ toFixedFloat(baseForm.conservation_threshold * 100, 1) }}%</label
           >
           <input
             type="range"
