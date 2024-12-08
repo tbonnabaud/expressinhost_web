@@ -24,6 +24,7 @@ entity codon_tables {
     * creation_date: datetime
     * name: varchar
     * organism: varchar
+    source: varchar
 }
 
 entity codon_translations {
