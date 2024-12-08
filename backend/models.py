@@ -42,6 +42,7 @@ class CodonTable(Base):
     )
     name: Mapped[str] = mapped_column(sa.String)
     organism: Mapped[str] = mapped_column(sa.String)
+    source: Mapped[str] = mapped_column(sa.String, nullable=True)
 
     __table_args__ = (sa.UniqueConstraint("user_id", "name", "organism"),)
 

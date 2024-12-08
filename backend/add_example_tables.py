@@ -39,7 +39,10 @@ def main():
                     r"[\s_\-]+", " ", path.name.removesuffix(".csv")
                 ).capitalize()
                 codon_table_form = CodonTableFormWithTranslations(
-                    organism=organism_name, name="Example", translations=translations
+                    organism=organism_name,
+                    name="Example",
+                    translations=translations,
+                    source="built-in",
                 )
                 meta_dict = codon_table_form.model_dump(exclude={"translations"})
                 meta_dict["user_id"] = None

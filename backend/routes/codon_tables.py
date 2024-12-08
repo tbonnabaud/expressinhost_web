@@ -6,7 +6,7 @@ from ..authentication import OptionalTokenDependency, TokenDependency, get_curre
 from ..crud.codon_tables import CodonTableRepository
 from ..crud.codon_translations import CodonTranslationRepository
 from ..database import SessionDependency
-from ..schemas import CodonTable, CodonTableFormWithTranslations, CodonTranslation
+from ..schemas import CodonTable, UserCodonTableFormWithTranslations, CodonTranslation
 
 router = APIRouter(tags=["Codon tables"])
 
@@ -65,7 +65,7 @@ def get_user_codon_table_translations(
 def add_user_codon_table(
     session: SessionDependency,
     token: TokenDependency,
-    data: CodonTableFormWithTranslations,
+    data: UserCodonTableFormWithTranslations,
 ):
     current_user = get_current_user(session, token)
 
@@ -86,7 +86,7 @@ def update_user_table_codon_translations(
     session: SessionDependency,
     token: TokenDependency,
     codon_table_id: UUID,
-    data: CodonTableFormWithTranslations,
+    data: UserCodonTableFormWithTranslations,
 ):
     current_user = get_current_user(session, token)
 

@@ -3,7 +3,7 @@ from datetime import UTC, datetime
 from typing import Literal
 from uuid import UUID
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, computed_field, field_validator
 
 
 class BadSequence(BaseModel):
@@ -78,6 +78,7 @@ class CodonTable(BaseModel):
     creation_date: datetime
     name: str
     organism: str
+    source: str | None
 
 
 class CodonTableWithTranslations(BaseModel):
@@ -86,10 +87,23 @@ class CodonTableWithTranslations(BaseModel):
     creation_date: datetime
     name: str
     organism: str
+    source: str | None
     translations: list[CodonTranslation]
 
 
 class CodonTableFormWithTranslations(BaseModel):
+    name: str
+    organism: str
+    source: str | None
+    translations: list[CodonTranslation]
+
+    @field_validator("name", "organism")
+    @staticmethod
+    def clean(value: str):
+        return value.strip()
+
+
+class UserCodonTableFormWithTranslations(BaseModel):
     name: str
     organism: str
     translations: list[CodonTranslation]
@@ -98,6 +112,11 @@ class CodonTableFormWithTranslations(BaseModel):
     @staticmethod
     def clean(value: str):
         return value.strip()
+
+    @computed_field
+    @property
+    def source(self) -> str:
+        return "user"
 
 
 class Result(BaseModel):
