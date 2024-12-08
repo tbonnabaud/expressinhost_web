@@ -94,7 +94,7 @@ class CodonTableWithTranslations(BaseModel):
 class CodonTableFormWithTranslations(BaseModel):
     name: str
     organism: str
-    source: str | None
+    source: Literal["built-in", "user", "Lowe Lab"]
     translations: list[CodonTranslation]
 
     @field_validator("name", "organism")
