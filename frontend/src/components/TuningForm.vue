@@ -121,6 +121,9 @@ async function runTuning() {
       },
     )
 
+    // To remove
+    console.log(JSON.stringify(form))
+
     const [data, error] = await API.runTraining(form)
 
     if (!error) {
