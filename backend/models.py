@@ -44,7 +44,31 @@ class CodonTable(Base):
     organism: Mapped[str] = mapped_column(sa.String)
     source: Mapped[str] = mapped_column(sa.String, nullable=True)
 
-    __table_args__ = (sa.UniqueConstraint("user_id", "name", "organism"),)
+    __table_args__ = (
+        sa.UniqueConstraint(
+            "user_id",
+            "name",
+            "organism",
+            name="uq_codon_table_with_nulls_not_distinct",
+            postgresql_nulls_not_distinct=True,
+        ),
+        # sa.Index(
+        #     "idx_partial_codon_table_user_not_none",
+        #     "user_id",
+        #     "name",
+        #     "organism",
+        #     unique=True,
+        #     postgresql_where=(user_id.is_not(None)),
+        # ),
+        # sa.Index(
+        #     "idx_partial_codon_table_user_none",
+        #     "user_id",
+        #     "name",
+        #     "organism",
+        #     unique=True,
+        #     postgresql_where=(user_id.is_(None)),
+        # ),
+    )
 
 
 class CodonTranslation(Base):
