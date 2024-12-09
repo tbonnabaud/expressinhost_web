@@ -195,6 +195,7 @@ async def task(session: ClientSession, genome_page: GenomePageMetadata):
 
 async def run_scraping():
     start_time = time.time()
+    logger.info("Fetching and parsing HTML data...")
 
     async with ClientSession() as session:
         genome_list_page = await get_url_content(session, GENOME_LIST_URL)
