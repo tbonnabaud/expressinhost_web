@@ -72,7 +72,7 @@ def potential_wobble_codon_has_trna(
     return False
 
 
-def get_translations(amino_acid: str, trna_sublist: list[TRNACell]):
+def get_amino_acid_translations(amino_acid: str, trna_sublist: list[TRNACell]):
     for tnra_count in trna_sublist:
         anticodon = tnra_count.anticodon
         default_codon = get_codon_from_anticodon(amino_acid, anticodon)
@@ -117,13 +117,13 @@ def get_translations(amino_acid: str, trna_sublist: list[TRNACell]):
             )
 
 
-def extract_table(table_node: Node) -> dict[str, list[CodonTranslation]]:
+def extract_amino_acid_table(table_node: Node) -> list[CodonTranslation]:
     """Nodes of tbody tag inside tRNA-box class."""
     node_iter = table_node.iter()
     # Skip the first node (table header)
     next(node_iter)
 
-    amino_acid_trna = {}
+    translations = []
 
     for row_node in node_iter:
         row_iter = row_node.iter()
@@ -140,27 +140,24 @@ def extract_table(table_node: Node) -> dict[str, list[CodonTranslation]]:
                 # We ignore CAU anticodon for isoleucine
                 if count and not (amino_acid == "Ile" and count.anticodon == "CAU")
             ]
-            amino_acid_trna[amino_acid] = sorted(
-                get_translations(amino_acid, trna_sublist),
-                key=lambda x: x.anticodon,
-            )
+            translations.extend(get_amino_acid_translations(amino_acid, trna_sublist))
 
-    return amino_acid_trna
+    return translations
 
 
-def parse_trna_gene_summary(html_content: str) -> dict[str, list[CodonTranslation]]:
+def parse_trna_gene_summary(html_content: str) -> list[CodonTranslation]:
     tree = HTMLParser(html_content)
     # organism = tree.css_first("#page-header h5").text()
     # print(organism)
-    gene_table = {}
+    translations = []
 
     tables = tree.css(".tRNA-box tbody")
 
     for table_node in tables:
-        trna_dict = extract_table(table_node)
-        gene_table.update(trna_dict)
+        amino_acid_translations = extract_amino_acid_table(table_node)
+        translations.extend(amino_acid_translations)
 
-    return gene_table
+    return translations
 
 
 def parse_genome_list(html_content: str):
@@ -188,12 +185,12 @@ async def task(session: ClientSession, genome_page: GenomePageMetadata):
     summary_page = await get_url_content(session, genome_page.link)
 
     if summary_page:
-        gene_table = parse_trna_gene_summary(summary_page)
+        translations = parse_trna_gene_summary(summary_page)
         codon_table = CodonTableFormWithTranslations(
             organism=genome_page.organism,
             name="Default",
             source="Lowe Lab",
-            translations=[item for gr in gene_table.values() for item in gr],
+            translations=sorted(translations, key=lambda t: t.amino_acid),
         )
 
         return codon_table
