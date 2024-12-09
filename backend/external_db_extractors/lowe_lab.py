@@ -6,12 +6,12 @@ from dataclasses import dataclass
 from aiohttp import ClientSession
 from selectolax.parser import HTMLParser, Node
 
+from ..crud.codon_tables import CodonTableRepository
+from ..crud.codon_translations import CodonTranslationRepository
+from ..database import IntegrityError, LocalSession
+from ..routes.codon_tables import assign_codon_table_id
 from ..schemas import CodonTableFormWithTranslations, CodonTranslation
 from .mappings import AMINO_ACID_MAPPING, WOBBLE_MAPPING
-
-# from ..crud.codon_tables import CodonTableRepository
-# from ..crud.codon_translations import CodonTranslationRepository
-# from ..database import LocalSession, Session
 
 BASE_URL = "https://gtrnadb.ucsc.edu"
 GENOME_LIST_URL = f"{BASE_URL}/cgi-bin/trna_chooseorg?org="
@@ -202,9 +202,6 @@ async def run_scraping():
             *[task(session, genome_page) for genome_page in genome_list]
         )
 
-        print(len(results))
-        print(results[0])
-
         # gene_summary_page = await get_url_content(
         #     session,
         #     "https://gtrnadb.ucsc.edu/GtRNAdb2/genomes/bacteria/Esch_coli/",
@@ -213,6 +210,39 @@ async def run_scraping():
         # if gene_summary_page:
         #     result = parse_trna_gene_summary(gene_summary_page)
         #     pprint(result)
+
+    print("Insertion of the extracted codon tables in the database...")
+
+    with LocalSession() as session:
+        codon_table_repo = CodonTableRepository(session)
+        codon_translation_repo = CodonTranslationRepository(session)
+
+        # To avoid to try to insert duplicates
+        inserted_organisms = set()
+
+        for result in results:
+            if result is not None and result.organism not in inserted_organisms:
+                try:
+                    meta_dict = result.model_dump(exclude={"translations"})
+                    meta_dict["user_id"] = None
+                    codon_table_id = codon_table_repo.add(meta_dict)
+                    codon_translation_repo.add_batch(
+                        [
+                            assign_codon_table_id(codon_table_id, x)
+                            for x in result.translations
+                        ]
+                    )
+
+                    session.commit()
+                    inserted_organisms.add(result.organism)
+
+                except IntegrityError:
+                    print(result.organism, result.name, "already exists")
+                    session.rollback()
+
+                except Exception as exc:
+                    print(exc)
+                    session.rollback()
 
     end_time = time.time()
     elapsed_time = end_time - start_time
