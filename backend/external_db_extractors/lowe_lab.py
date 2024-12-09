@@ -217,7 +217,7 @@ async def run_scraping():
         codon_table_repo = CodonTableRepository(session)
         codon_translation_repo = CodonTranslationRepository(session)
 
-        # To avoid to try to insert duplicates
+        # To avoid to try to insert duplicates from the page listing available genomes
         inserted_organisms = set()
 
         for result in results:
