@@ -117,13 +117,11 @@ def get_amino_acid_translations(amino_acid: str, trna_sublist: list[TRNACell]):
             )
 
 
-def extract_amino_acid_table(table_node: Node) -> list[CodonTranslation]:
+def extract_amino_acid_table(table_node: Node):
     """Nodes of tbody tag inside tRNA-box class."""
     node_iter = table_node.iter()
     # Skip the first node (table header)
     next(node_iter)
-
-    translations = []
 
     for row_node in node_iter:
         row_iter = row_node.iter()
@@ -140,24 +138,20 @@ def extract_amino_acid_table(table_node: Node) -> list[CodonTranslation]:
                 # We ignore CAU anticodon for isoleucine
                 if count and not (amino_acid == "Ile" and count.anticodon == "CAU")
             ]
-            translations.extend(get_amino_acid_translations(amino_acid, trna_sublist))
 
-    return translations
+            for translation in get_amino_acid_translations(amino_acid, trna_sublist):
+                yield translation
 
 
-def parse_trna_gene_summary(html_content: str) -> list[CodonTranslation]:
+def parse_trna_gene_summary(html_content: str):
     tree = HTMLParser(html_content)
     # organism = tree.css_first("#page-header h5").text()
     # print(organism)
-    translations = []
-
     tables = tree.css(".tRNA-box tbody")
 
     for table_node in tables:
-        amino_acid_translations = extract_amino_acid_table(table_node)
-        translations.extend(amino_acid_translations)
-
-    return translations
+        for translation in extract_amino_acid_table(table_node):
+            yield translation
 
 
 def parse_genome_list(html_content: str):
