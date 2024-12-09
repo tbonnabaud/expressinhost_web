@@ -35,6 +35,9 @@ function logout() {
       </ul>
 
       <ul>
+        <li v-if="user && user.role == 'admin'">
+          <RouterLink to="/admin" class="secondary">Administration</RouterLink>
+        </li>
         <li><RouterLink to="/about" class="secondary">About</RouterLink></li>
         <li v-if="user" @click="logout">
           <button class="outline secondary">Logout</button>

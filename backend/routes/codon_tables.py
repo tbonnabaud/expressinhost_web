@@ -6,7 +6,7 @@ from ..authentication import OptionalTokenDependency, TokenDependency, get_curre
 from ..crud.codon_tables import CodonTableRepository
 from ..crud.codon_translations import CodonTranslationRepository
 from ..database import SessionDependency
-from ..schemas import CodonTable, UserCodonTableFormWithTranslations, CodonTranslation
+from ..schemas import CodonTable, CodonTranslation, UserCodonTableFormWithTranslations
 
 router = APIRouter(tags=["Codon tables"])
 

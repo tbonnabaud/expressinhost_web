@@ -41,6 +41,7 @@ export interface CodonTable {
   creation_date: string
   name: string
   organism: string
+  source: string | null
 }
 
 export interface CodonTranslation {

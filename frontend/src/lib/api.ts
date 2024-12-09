@@ -101,6 +101,13 @@ const REQUESTS = {
   delete: async (url: string) => await makeRequest({ method: 'delete', url }),
 }
 
+const admin = {
+  runWebScraping: async () =>
+    await REQUESTS.post('/admin/external-db/web-scraping/run'),
+  getWebScrapingState: async () =>
+    await REQUESTS.get('/admin/external-db/web-scraping/state'),
+}
+
 const users = {
   register: async (form: UserForm) => await REQUESTS.post('/users', form),
   login: async (form: UserLogin) => await login(form),
@@ -143,6 +150,7 @@ export const API = {
   codonTables: codonTables,
   results: results,
   tunedSequences: tunedSequences,
+  admin: admin,
 }
 
 export async function setCurrentUserInStore() {

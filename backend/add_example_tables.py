@@ -49,12 +49,7 @@ def main():
                 codon_table_id = codon_table_repo.add(meta_dict)
 
                 codon_translation_repo.add_batch(
-                    list(
-                        map(
-                            lambda x: assign_codon_table_id(codon_table_id, x),
-                            translations,
-                        )
-                    )
+                    [assign_codon_table_id(codon_table_id, x) for x in translations]
                 )
 
 
