@@ -6,10 +6,12 @@ from dataclasses import dataclass
 from aiohttp import ClientSession
 from selectolax.parser import HTMLParser, Node
 
-from ..schemas import CodonTranslation
+from ..schemas import CodonTableFormWithTranslations, CodonTranslation
 from .mappings import AMINO_ACID_MAPPING, WOBBLE_MAPPING
+
 # from ..crud.codon_tables import CodonTableRepository
 # from ..crud.codon_translations import CodonTranslationRepository
+# from ..database import LocalSession, Session
 
 BASE_URL = "https://gtrnadb.ucsc.edu"
 GENOME_LIST_URL = f"{BASE_URL}/cgi-bin/trna_chooseorg?org="
@@ -25,8 +27,8 @@ class TRNACell:
 
 
 @dataclass(slots=True)
-class GenomePage:
-    name: str
+class GenomePageMetadata:
+    organism: str
     link: str
 
 
@@ -148,8 +150,8 @@ def extract_table(table_node: Node) -> dict[str, list[CodonTranslation]]:
 
 def parse_trna_gene_summary(html_content: str) -> dict[str, list[CodonTranslation]]:
     tree = HTMLParser(html_content)
-    organism = tree.css_first("#page-header h5").text()
-    print(organism)
+    # organism = tree.css_first("#page-header h5").text()
+    # print(organism)
     gene_table = {}
 
     tables = tree.css(".tRNA-box tbody")
@@ -170,9 +172,7 @@ def parse_genome_list(html_content: str):
         # Remove the first part containing ".."
         page_link = f"{BASE_URL}{href[2:]}"
 
-        yield GenomePage(link_node.text(), page_link)
-
-    print(len(link_list), "links")
+        yield GenomePageMetadata(link_node.text(), page_link)
 
 
 async def get_url_content(session: ClientSession, url: str):
@@ -184,11 +184,19 @@ async def get_url_content(session: ClientSession, url: str):
             print("Error:", response.url, response.status, response.reason)
 
 
-async def task(session: ClientSession, link: str):
-    summary_page = await get_url_content(session, link)
+async def task(session: ClientSession, genome_page: GenomePageMetadata):
+    summary_page = await get_url_content(session, genome_page.link)
 
     if summary_page:
-        parse_trna_gene_summary(summary_page)
+        gene_table = parse_trna_gene_summary(summary_page)
+        codon_table = CodonTableFormWithTranslations(
+            organism=genome_page.organism,
+            name="Default",
+            source="Lowe Lab",
+            translations=[item for gr in gene_table.values() for item in gr],
+        )
+
+        return codon_table
 
 
 async def run_scraping():
@@ -199,9 +207,12 @@ async def run_scraping():
 
         genome_list = parse_genome_list(genome_list_page)
 
-        await asyncio.gather(
-            *[task(session, genome_page.link) for genome_page in genome_list]
+        results = await asyncio.gather(
+            *[task(session, genome_page) for genome_page in genome_list]
         )
+
+        print(len(results))
+        print(results[0])
 
         # gene_summary_page = await get_url_content(
         #     session,
