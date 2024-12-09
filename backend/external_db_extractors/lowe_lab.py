@@ -12,6 +12,7 @@ from ..database import IntegrityError, LocalSession
 from ..routes.codon_tables import assign_codon_table_id
 from ..schemas import CodonTableFormWithTranslations, CodonTranslation
 from .mappings import AMINO_ACID_MAPPING, WOBBLE_MAPPING
+from ..logger import logger
 
 BASE_URL = "https://gtrnadb.ucsc.edu"
 GENOME_LIST_URL = f"{BASE_URL}/cgi-bin/trna_chooseorg?org="
@@ -104,7 +105,9 @@ def get_amino_acid_translations(amino_acid: str, trna_sublist: list[TRNACell]):
                 )
 
             else:
-                print(f"ERROR: {amino_acid=}, {anticodon=}, {default_codon=}")
+                logger.error(
+                    f"No potential wobble codons for: {amino_acid=}, {anticodon=}, {default_codon=}"
+                )
 
         else:
             yield CodonTranslation(
@@ -146,7 +149,7 @@ def extract_amino_acid_table(table_node: Node):
 def parse_trna_gene_summary(html_content: str):
     tree = HTMLParser(html_content)
     # organism = tree.css_first("#page-header h5").text()
-    # print(organism)
+    # logger.debug(organism)
     tables = tree.css(".tRNA-box tbody")
 
     for table_node in tables:
@@ -172,7 +175,7 @@ async def get_url_content(session: ClientSession, url: str):
             return await response.text()
 
         else:
-            print("Error:", response.url, response.status, response.reason)
+            logger.error(f"{response.status} {response.reason}: {response.url}")
 
 
 async def task(session: ClientSession, genome_page: GenomePageMetadata):
@@ -209,9 +212,9 @@ async def run_scraping():
 
         # if gene_summary_page:
         #     result = parse_trna_gene_summary(gene_summary_page)
-        #     pprint(result)
+        #     logger.debug(result)
 
-    print("Insertion of the extracted codon tables in the database...")
+    logger.info("Insertion of the extracted codon tables in the database...")
 
     with LocalSession() as session:
         codon_table_repo = CodonTableRepository(session)
@@ -237,16 +240,16 @@ async def run_scraping():
                     inserted_organisms.add(result.organism)
 
                 except IntegrityError:
-                    print(result.organism, result.name, "already exists")
+                    logger.warning(f"{result.organism} - {result.name} already exists.")
                     session.rollback()
 
                 except Exception as exc:
-                    print(exc)
+                    logger.error(exc)
                     session.rollback()
 
     end_time = time.time()
     elapsed_time = end_time - start_time
-    print(f"Elapsed time: {elapsed_time:.4f} seconds")
+    logger.info(f"Elapsed time for the web scraping: {elapsed_time:.4f} seconds.")
 
 
 if __name__ == "__main__":
