@@ -5,6 +5,7 @@ import TuningView from '@/views/TuningView.vue'
 import ResultListView from '@/views/ResultListView.vue'
 import ResultView from '@/views/ResultView.vue'
 import RegisterView from '@/views/RegisterView.vue'
+import AdminView from '@/views/AdminView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -19,6 +20,11 @@ const router = createRouter({
       path: '/register',
       name: 'register',
       component: RegisterView,
+    },
+    {
+      path: '/admin',
+      name: 'admin',
+      component: AdminView,
     },
     {
       path: '/codon-tables',
