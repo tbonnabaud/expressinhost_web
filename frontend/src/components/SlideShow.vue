@@ -33,8 +33,8 @@ function prevImage() {
       />
     </TransitionGroup>
 
-    <a class="selector prev" @click="prevImage">&#10094;</a>
-    <a class="selector next" @click="nextImage">&#10095;</a>
+    <a class="prev" @click="prevImage">&#10094;</a>
+    <a class="next" @click="nextImage">&#10095;</a>
   </div>
 </template>
 
@@ -61,15 +61,8 @@ function prevImage() {
   object-fit: cover;
 }
 
-.selector,
-.selector:link,
-.selector:visited,
-.selector:hover,
-.selector:active {
-  text-decoration: none;
-}
-
-.selector {
+.prev,
+.next {
   cursor: pointer;
   position: absolute;
   top: 50%;
@@ -80,6 +73,7 @@ function prevImage() {
   font-weight: bold;
   font-size: 20px;
   border-radius: 0 3px 3px 0;
+  text-decoration: none;
   user-select: none;
   -webkit-user-select: none;
 }
