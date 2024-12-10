@@ -47,7 +47,37 @@ async function getWebScrapingState() {
     Run scraping of Lowe Lab database
   </button>
 
-  <div v-if="scrapingState && scrapingState.done && scrapingState.total">
-    <progress :value="scrapingState.done" :max="scrapingState.total" />
+  <div
+    id="scrapingProgressDiv"
+    v-if="scrapingState && scrapingState.done && scrapingState.total"
+  >
+    <span
+      >{{
+        ((scrapingState.done / scrapingState.total) * 100).toFixed(0)
+      }}%</span
+    >
+    <progress :value="scrapingState.done" :max="scrapingState.total"></progress>
   </div>
 </template>
+
+<style scoped>
+progress {
+  height: 1.5em;
+  background-color: #727a8d;
+}
+
+#scrapingProgressDiv span {
+  position: absolute;
+  display: inline-block;
+  text-align: center;
+  margin-left: 50%;
+  font-weight: bold;
+  color: #fff;
+}
+
+#scrapingProgressDiv {
+  display: block;
+  position: relative;
+  width: 100%;
+}
+</style>
