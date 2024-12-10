@@ -52,12 +52,12 @@ function prevImage() {
 .slider {
   position: relative;
   overflow: hidden;
-  height: 300px;
+  height: 320px;
 }
 
 .slider img {
   width: 100%;
-  height: 300px;
+  height: 320px;
   object-fit: cover;
 }
 
