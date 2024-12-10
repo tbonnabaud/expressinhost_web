@@ -1,8 +1,7 @@
-from fastapi import APIRouter, Depends, BackgroundTasks
+from fastapi import APIRouter, BackgroundTasks, Depends
 
 from ..authentication import check_is_admin
-from ..external_db_extractors.lowe_lab import run_scraping
-
+from ..external_db_extractors.lowe_lab import lowe_state_monitor, run_scraping
 
 router = APIRouter(
     tags=["Admin"], prefix="/admin", dependencies=[Depends(check_is_admin)]
@@ -16,6 +15,6 @@ async def run_web_scraping(background_tasks: BackgroundTasks):
     return {"msg": "Web scraping is running"}
 
 
-@router.get("external-db/web-scraping/state")
+@router.get("/external-db/web-scraping/state")
 def get_web_scraping_state():
-    return {}
+    return lowe_state_monitor
