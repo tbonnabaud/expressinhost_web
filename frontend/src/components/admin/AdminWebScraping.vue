@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { API } from '@/lib/api'
-import { onMounted, onUnmounted, ref } from 'vue'
+import { onMounted, onUnmounted, ref, watch } from 'vue'
 
 interface ScrapingState {
   state: string
@@ -11,9 +11,17 @@ interface ScrapingState {
 const scrapingState = ref(null as ScrapingState | null)
 const requestInterval = ref(0)
 
-onMounted(() => {
+const isLoading = ref(false)
+
+watch(scrapingState, value => {
+  if (value && value.done && value.total) {
+    isLoading.value = value.done !== value.total
+  }
+})
+
+onMounted(async () => {
+  await getWebScrapingState()
   requestInterval.value = setInterval(async () => {
-    // console.log('test')
     await getWebScrapingState()
   }, 2000)
 })
@@ -21,6 +29,7 @@ onMounted(() => {
 onUnmounted(() => clearInterval(requestInterval.value))
 
 async function runWebScraping() {
+  isLoading.value = true
   await API.admin.runWebScraping()
 }
 
@@ -34,7 +43,7 @@ async function getWebScrapingState() {
 </script>
 
 <template>
-  <button type="button" @click="runWebScraping">
+  <button :aria-busy="isLoading" type="button" @click="runWebScraping">
     Run scraping of Lowe Lab database
   </button>
 
