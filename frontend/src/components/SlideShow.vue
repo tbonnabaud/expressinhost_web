@@ -6,7 +6,7 @@ const currentIndex = ref(0)
 const slideshowInterval = ref(0)
 
 onMounted(() => {
-  slideshowInterval.value = setInterval(nextImage, 5000)
+  slideshowInterval.value = setInterval(nextImage, 7000)
 })
 
 onUnmounted(() => clearInterval(slideshowInterval.value))
