@@ -23,7 +23,15 @@ function prevImage() {
 
 <template>
   <div class="slider">
-    <img :src="images[currentIndex]" alt="Slideshow Image" />
+    <TransitionGroup name="slide" tag="div">
+      <img
+        v-for="(image, index) in images"
+        :key="index"
+        :src="image"
+        :alt="'Slideshow Image ' + index"
+        v-show="currentIndex == index"
+      />
+    </TransitionGroup>
 
     <a class="selector prev" @click="prevImage">&#10094;</a>
     <a class="selector next" @click="nextImage">&#10095;</a>
@@ -31,14 +39,25 @@ function prevImage() {
 </template>
 
 <style scoped>
+.slide-enter-active,
+.slide-leave-active {
+  transition: all 0.5s ease;
+}
+
+.slide-enter-from,
+.slide-leave-to {
+  opacity: 0;
+}
+
 .slider {
   position: relative;
   overflow: hidden;
+  height: 320px;
 }
 
 .slider img {
   width: 100%;
-  height: auto;
+  height: 320px;
 }
 
 .selector,
