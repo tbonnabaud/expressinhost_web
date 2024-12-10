@@ -49,8 +49,6 @@ sast:
 container_scanning:   
   stage: test
   interruptible: true
-  variables:     
-    CI_APPLICATION_REPOSITORY: $CI_REGISTRY_IMAGE    
 
 include:
   - template: Security/SAST.gitlab-ci.yml
