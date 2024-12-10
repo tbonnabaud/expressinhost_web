@@ -146,6 +146,14 @@ async function runTuning() {
     </section>
 
     <section>
+      <h2>Host organism</h2>
+      <CodonTableSearchSelect
+        v-model="selectedHostCodonTable"
+        :options="codonTableList"
+      />
+    </section>
+
+    <section>
       <h2>Data files</h2>
 
       <div class="flex-container">
@@ -202,14 +210,6 @@ async function runTuning() {
       </table>
 
       <p v-else>No sequence. Please provide a valid FASTA file.</p>
-    </section>
-
-    <section>
-      <h2>Host organism</h2>
-      <CodonTableSearchSelect
-        v-model="selectedHostCodonTable"
-        :options="codonTableList"
-      />
     </section>
 
     <section>
