@@ -9,16 +9,19 @@ from selectolax.parser import HTMLParser, Node
 from ..crud.codon_tables import CodonTableRepository
 from ..crud.codon_translations import CodonTranslationRepository
 from ..database import IntegrityError, LocalSession
+from ..logger import logger
 from ..routes.codon_tables import assign_codon_table_id
 from ..schemas import CodonTableFormWithTranslations, CodonTranslation
 from .mappings import AMINO_ACID_MAPPING, WOBBLE_MAPPING
-from ..logger import logger
+from .state_monitor import State, StateMonitor
 
 BASE_URL = "https://gtrnadb.ucsc.edu"
 GENOME_LIST_URL = f"{BASE_URL}/cgi-bin/trna_chooseorg?org="
 
 # Third group to handle cell containing X/Y
 CELL_REGEX = re.compile(r"([A-Z]+)\s+(\d*)/?(\d*)")
+
+lowe_state_monitor = StateMonitor()
 
 
 @dataclass(slots=True)
@@ -180,6 +183,7 @@ async def get_url_content(session: ClientSession, url: str):
 
 async def task(session: ClientSession, genome_page: GenomePageMetadata):
     summary_page = await get_url_content(session, genome_page.link)
+    codon_table = None
 
     if summary_page:
         translations = parse_trna_gene_summary(summary_page)
@@ -190,31 +194,28 @@ async def task(session: ClientSession, genome_page: GenomePageMetadata):
             translations=sorted(translations, key=lambda t: t.amino_acid),
         )
 
-        return codon_table
+    lowe_state_monitor.progress()
+
+    return codon_table
 
 
 async def run_scraping():
+    lowe_state_monitor.reset()
     start_time = time.time()
     logger.info("Fetching and parsing HTML data...")
 
     async with ClientSession() as session:
+        lowe_state_monitor.state = State.fetching_genome_list
         genome_list_page = await get_url_content(session, GENOME_LIST_URL)
+        genome_list = list(parse_genome_list(genome_list_page))
 
-        genome_list = parse_genome_list(genome_list_page)
+        lowe_state_monitor.start_with_total(2 * len(genome_list))
 
         results = await asyncio.gather(
             *[task(session, genome_page) for genome_page in genome_list]
         )
 
-        # gene_summary_page = await get_url_content(
-        #     session,
-        #     "https://gtrnadb.ucsc.edu/GtRNAdb2/genomes/bacteria/Esch_coli/",
-        # )
-
-        # if gene_summary_page:
-        #     result = parse_trna_gene_summary(gene_summary_page)
-        #     logger.debug(result)
-
+    lowe_state_monitor.state = State.database_insertion
     logger.info("Insertion of the extracted codon tables in the database...")
 
     with LocalSession() as session:
@@ -225,6 +226,8 @@ async def run_scraping():
         inserted_organisms = set()
 
         for result in results:
+            lowe_state_monitor.progress()
+
             if result is not None and result.organism not in inserted_organisms:
                 try:
                     meta_dict = result.model_dump(exclude={"translations"})
@@ -251,6 +254,7 @@ async def run_scraping():
     end_time = time.time()
     elapsed_time = end_time - start_time
     logger.info(f"Elapsed time for the web scraping: {elapsed_time:.4f} seconds.")
+    print(lowe_state_monitor)
 
 
 if __name__ == "__main__":
