@@ -114,6 +114,7 @@ const users = {
   logout: () => localStorage.removeItem('accessToken'),
   isLoggedIn: () => localStorage.getItem('accessToken') !== null,
   me: async () => await REQUESTS.get('/users/me'),
+  list: async () => await REQUESTS.get('/users'),
 }
 
 const codonTables = {

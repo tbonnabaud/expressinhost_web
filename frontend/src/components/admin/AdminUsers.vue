@@ -1,0 +1,19 @@
+<script setup lang="ts">
+import { API } from '@/lib/api'
+import type { User } from '@/lib/interfaces'
+import { onMounted, ref } from 'vue'
+
+const userList = ref([] as Array<User>)
+
+onMounted(async () => await fetchUserList())
+
+async function fetchUserList() {
+  const [data, error] = await API.users.list()
+
+  if (!error && data !== null) {
+    userList.value = data
+  }
+}
+</script>
+
+<template>Number of registered users: {{ userList.length }}</template>

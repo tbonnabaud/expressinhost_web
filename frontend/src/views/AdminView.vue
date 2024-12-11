@@ -1,8 +1,9 @@
 <script setup lang="ts">
+import { store } from '@/lib/store'
 import RequiredAdmin from '@/components/RequiredAdmin.vue'
 import RequiredAuth from '@/components/RequiredAuth.vue'
 import AdminWebScraping from '@/components/admin/AdminWebScraping.vue'
-import { store } from '@/lib/store'
+import AdminUsers from '@/components/admin/AdminUsers.vue'
 
 const user = store.currentUser
 </script>
@@ -13,7 +14,14 @@ const user = store.currentUser
       <h1>Administration</h1>
       <hr />
 
-      <AdminWebScraping />
+      <section>
+        <AdminWebScraping />
+      </section>
+
+      <section>
+        <h2>Users</h2>
+        <AdminUsers />
+      </section>
     </template>
 
     <RequiredAdmin v-else-if="user && user.role != 'admin'" />
