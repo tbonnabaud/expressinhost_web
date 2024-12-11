@@ -7,7 +7,7 @@ import ChartWrapper from '@/components/ChartWrapper.vue'
 
 const props = defineProps<{ userList: Array<User> }>()
 
-const registrationsPerDay = computed(() => {
+const dailyRegistrations = computed(() => {
   return props.userList
     .map(e => {
       const date = new Date(e.creation_date)
@@ -21,11 +21,11 @@ const registrationsPerDay = computed(() => {
 
 const data = computed(() => {
   return {
-    labels: Object.keys(registrationsPerDay.value),
+    labels: Object.keys(dailyRegistrations.value),
     datasets: [
       {
         label: 'Registrations',
-        data: Object.values(registrationsPerDay.value),
+        data: Object.values(dailyRegistrations.value),
       },
     ],
   }

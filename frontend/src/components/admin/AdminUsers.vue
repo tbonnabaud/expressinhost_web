@@ -2,7 +2,7 @@
 import { API } from '@/lib/api'
 import type { User } from '@/lib/interfaces'
 import { onMounted, ref } from 'vue'
-import ChartRegistrationPerDay from './ChartRegistrationPerDay.vue'
+import ChartDailyRegistrations from './ChartDailyRegistrations.vue'
 
 const userList = ref([] as Array<User>)
 
@@ -19,5 +19,5 @@ async function fetchUserList() {
 
 <template>
   <h3>Number of registered users: {{ userList.length }}</h3>
-  <ChartRegistrationPerDay :user-list="userList" />
+  <ChartDailyRegistrations :user-list="userList" />
 </template>
