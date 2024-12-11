@@ -1,4 +1,4 @@
-@import './pico.css';
+@import '@picocss/pico/css/pico.css';
 @import './sequences.css';
 
 :root {
