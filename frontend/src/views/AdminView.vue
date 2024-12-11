@@ -18,6 +18,8 @@ const user = store.currentUser
         <AdminWebScraping />
       </section>
 
+      <hr />
+
       <section>
         <h2>Users</h2>
         <AdminUsers />
