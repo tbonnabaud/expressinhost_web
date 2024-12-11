@@ -7,7 +7,7 @@ import ChartWrapper from '@/components/ChartWrapper.vue'
 
 const props = defineProps<{ userList: Array<User> }>()
 
-const registrationsByDate = computed(() => {
+const registrationsByMonth = computed(() => {
   return props.userList
     .map(e => getYearMonthFromDateString(e.creation_date))
     .reduce((acc: Record<string, number>, e) => {
@@ -18,11 +18,11 @@ const registrationsByDate = computed(() => {
 
 const data = computed(() => {
   return {
-    labels: Object.keys(registrationsByDate.value),
+    labels: Object.keys(registrationsByMonth.value),
     datasets: [
       {
         label: 'Registrations',
-        data: Object.values(registrationsByDate.value),
+        data: Object.values(registrationsByMonth.value),
       },
     ],
   }
