@@ -53,6 +53,7 @@ function prevImage() {
   position: relative;
   overflow: hidden;
   height: 320px;
+  background-color: #000;
 }
 
 .slider img {
