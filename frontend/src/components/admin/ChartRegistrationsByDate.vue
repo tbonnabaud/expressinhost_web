@@ -9,10 +9,7 @@ const props = defineProps<{ userList: Array<User> }>()
 
 const registrationsByDate = computed(() => {
   return props.userList
-    .map(e => {
-      const [year, month] = e.creation_date.split('-')
-      return `${year}-${month}`
-    })
+    .map(e => getYearMonthFromDateString(e.creation_date))
     .reduce((acc: Record<string, number>, e) => {
       acc[e] = acc[e] ? (acc[e] += 1) : (acc[e] = 1)
       return acc
@@ -42,10 +39,7 @@ const options: ChartOptions = {
         unit: 'month',
         tooltipFormat: 'MMMM yyyy',
       },
-      max: (() => {
-        const [year, month] = new Date().toISOString().split('-')
-        return `${year}-${month}`
-      })(),
+      max: getYearMonthFromDateString(new Date().toISOString()),
     },
     y: {
       ticks: {
@@ -63,6 +57,11 @@ const options: ChartOptions = {
       text: 'Registrations per day',
     },
   },
+}
+
+function getYearMonthFromDateString(dateISOString: string): string {
+  const [year, month] = dateISOString.split('-')
+  return `${year}-${month}`
 }
 </script>
 
