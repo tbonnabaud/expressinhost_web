@@ -16,4 +16,6 @@ async function fetchUserList() {
 }
 </script>
 
-<template>Number of registered users: {{ userList.length }}</template>
+<template>
+  <h3>Number of registered users: {{ userList.length }}</h3>
+</template>
