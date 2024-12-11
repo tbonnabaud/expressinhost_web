@@ -7,10 +7,11 @@ import ChartWrapper from '@/components/ChartWrapper.vue'
 
 const props = defineProps<{ userList: Array<User> }>()
 
-const dailyRegistrations = computed(() => {
+const registrationsByDate = computed(() => {
   return props.userList
     .map(e => {
-      return e.creation_date.split('T')[0]
+      const [year, month] = e.creation_date.split('-')
+      return `${year}-${month}`
     })
     .reduce((acc: Record<string, number>, e) => {
       acc[e] = acc[e] ? (acc[e] += 1) : (acc[e] = 1)
@@ -20,11 +21,11 @@ const dailyRegistrations = computed(() => {
 
 const data = computed(() => {
   return {
-    labels: Object.keys(dailyRegistrations.value),
+    labels: Object.keys(registrationsByDate.value),
     datasets: [
       {
         label: 'Registrations',
-        data: Object.values(dailyRegistrations.value),
+        data: Object.values(registrationsByDate.value),
       },
     ],
   }
@@ -36,9 +37,11 @@ const options: ChartOptions = {
   scales: {
     x: {
       type: 'time',
-      // time: {
-      //   parser: 'yyyy-MM-dd',
-      // },
+      time: {
+        parser: 'yyyy-MM',
+        unit: 'month',
+        tooltipFormat: 'MMMM yyyy',
+      },
     },
     y: {
       ticks: {
