@@ -23,6 +23,7 @@ const data = computed(() => {
       {
         label: 'Registrations',
         data: Object.values(registrationsByMonth.value),
+        borderWidth: 2,
       },
     ],
   }
