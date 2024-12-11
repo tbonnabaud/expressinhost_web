@@ -62,7 +62,7 @@ const options: ChartOptions = {
 
 <template>
   <div class="chart-wrapper">
-    <ChartWrapper type="line" :data="data" :options="options" />
+    <ChartWrapper type="bar" :data="data" :options="options" />
   </div>
 </template>
 
