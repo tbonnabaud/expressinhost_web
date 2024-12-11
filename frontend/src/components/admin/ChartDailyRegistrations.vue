@@ -39,6 +39,7 @@ const options: ChartOptions = {
       type: 'time',
       time: {
         parser: 'yyyy-MM-dd',
+        unit: 'month',
       },
     },
     y: {
