@@ -11,7 +11,7 @@ const registrationsByMonth = computed(() => {
   return props.userList
     .map(e => getYearMonthFromDateString(e.creation_date))
     .reduce((acc: Record<string, number>, e) => {
-      acc[e] = acc[e] ? (acc[e] += 1) : (acc[e] = 1)
+      acc[e] = acc[e] ? acc[e] + 1 : 1
       return acc
     }, {})
 })
