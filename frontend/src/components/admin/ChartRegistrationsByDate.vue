@@ -42,6 +42,10 @@ const options: ChartOptions = {
         unit: 'month',
         tooltipFormat: 'MMMM yyyy',
       },
+      max: (() => {
+        const [year, month] = new Date().toISOString().split('-')
+        return `${year}-${month}`
+      })(),
     },
     y: {
       ticks: {
