@@ -18,6 +18,8 @@ async function fetchUserList() {
 </script>
 
 <template>
-  <h3>Number of registered users: {{ userList.length }}</h3>
+  <h3>
+    Number of registered users: <ins>{{ userList.length }}</ins>
+  </h3>
   <ChartDailyRegistrations :user-list="userList" />
 </template>
