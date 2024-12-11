@@ -4,6 +4,7 @@ import { readTextFile, toFixedFloat } from '@/lib/helpers'
 import type { CodonTable } from '@/lib/interfaces'
 import { API } from '@/lib/api'
 import CodonTableSearchSelect from '@/components/codon-tables/CodonTableSearchSelect.vue'
+import ToolTip from '@/components/ToolTip.vue'
 
 const emit = defineEmits(['submit'])
 
@@ -146,7 +147,16 @@ async function runTuning() {
     </section>
 
     <section>
-      <h2>Host organism</h2>
+      <ToolTip>
+        <h2>Host organism 🯄</h2>
+        <template #tooltip>
+          The organism in which the mRNA is to be expressed.<br />The tRNA-GCN
+          codon table of the host organism is utilised for codon tuning.<br />For
+          custom codon tables, head to "Codon tables" section in the navigation
+          bar.
+        </template>
+      </ToolTip>
+
       <CodonTableSearchSelect
         v-model="selectedHostCodonTable"
         :options="codonTableList"
@@ -158,7 +168,14 @@ async function runTuning() {
 
       <div class="flex-container">
         <div class="input-file">
-          <label for="fasta">Sequence file (FASTA)</label>
+          <ToolTip>
+            <label for="fasta">Sequence file (FASTA) 🯄</label>
+            <template #tooltip>
+              A text-based file containing the mRNA coding sequence(s), with
+              each sequence preceded by a carat (">"), followed by an unique
+              sequence identifier.
+            </template>
+          </ToolTip>
           <input type="file" id="fasta" @change="setFastaContent" required />
           <i>
             You can download an example sequence file
@@ -167,7 +184,16 @@ async function runTuning() {
         </div>
 
         <div class="input-file">
-          <label for="clustal">Alignment file (CLUSTAL, optional)</label>
+          <ToolTip>
+            <label for="clustal">Alignment file (CLUSTAL, optional) 🯄</label>
+            <template #tooltip>
+              A text-based file containing multiple sequence alignment data of
+              orthologous proteins from different organisms. The alignment must
+              include the amino acid sequence corresponding to the uploaded
+              FASTA sequence, and must strictly follow the same order.
+            </template>
+          </ToolTip>
+
           <input
             type="file"
             id="clustal"
@@ -222,19 +248,51 @@ async function runTuning() {
           v-model="baseForm.mode"
           required
         />
-        <label>Direct mapping </label>
+        <label>
+          <ToolTip>
+            Direct mapping 🯄
+            <template #tooltip>
+              Tuning mode, mimics the translation speed profile from the native
+              organism into the host organism.
+            </template>
+          </ToolTip>
+        </label>
+
         <input
           type="radio"
           value="optimisation_and_conservation_1"
           v-model="baseForm.mode"
         />
-        <label>Optimisation and conservation 1 </label>
+        <label>
+          <ToolTip>
+            Optimisation and conservation 1 🯄
+            <template #tooltip>
+              Tuning mode, performs a protein sequence similarity analysis to
+              identify conserved amino acids across a set of orthologous
+              proteins from different organisms. The translation speed profile
+              is maximised excepted at the conserved positions. Requirement:
+              CLUSTAL alignment file.
+            </template>
+          </ToolTip>
+        </label>
+
         <input
           type="radio"
           value="optimisation_and_conservation_2"
           v-model="baseForm.mode"
         />
-        <label>Optimisation and conservation 2 </label>
+        <label>
+          <ToolTip>
+            Optimisation and conservation 2 🯄
+            <template #tooltip>
+              Tuning mode, individually analyses the translation speed profile
+              of each sequence in the set of orthologous proteins from different
+              organisms, and identifies conserved slow translation codons. The
+              translation speed profile is maximised excepted at the conserved
+              positions. Requirement: CLUSTAL alignment file.
+            </template>
+          </ToolTip>
+        </label>
       </div>
     </section>
 
@@ -243,10 +301,18 @@ async function runTuning() {
 
       <div class="flex-container">
         <div class="input-range">
-          <label
-            >Slow speed threshold =
-            {{ toFixedFloat(baseForm.slow_speed_threshold * 100, 1) }}%</label
-          >
+          <ToolTip>
+            <label>
+              Slow speed threshold =
+              {{ toFixedFloat(baseForm.slow_speed_threshold * 100, 1) }}% 🯄
+            </label>
+            <template #tooltip>
+              Applies to the mode Optimisation and Conservation 2. The speed
+              index range spans from the slowest codon to the median translation
+              speed for the native mRNA sequence. A threshold of 0.5 selects
+              codons within the slowest 50% of this range.
+            </template>
+          </ToolTip>
           <input
             type="range"
             min="0"
@@ -257,10 +323,18 @@ async function runTuning() {
         </div>
 
         <div class="input-range">
-          <label
-            >Conservation threshold =
-            {{ toFixedFloat(baseForm.conservation_threshold * 100, 1) }}%</label
-          >
+          <ToolTip>
+            <label>
+              Conservation threshold =
+              {{ toFixedFloat(baseForm.conservation_threshold * 100, 1) }}% 🯄
+            </label>
+            <template #tooltip>
+              Applies to the mode Optimisation and Conservation 2. A threshold
+              of 0.75 identifies a codon as conserved if 75% of the sequences in
+              the set of orthologous proteins share a slow codon at the same
+              position.
+            </template>
+          </ToolTip>
           <input
             type="range"
             min="0"
