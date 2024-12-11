@@ -10,8 +10,7 @@ const props = defineProps<{ userList: Array<User> }>()
 const dailyRegistrations = computed(() => {
   return props.userList
     .map(e => {
-      const date = new Date(e.creation_date)
-      return date.toISOString().split('T')[0]
+      return e.creation_date.split('T')[0]
     })
     .reduce((acc: Record<string, number>, e) => {
       acc[e] = acc[e] ? (acc[e] += 1) : (acc[e] = 1)
@@ -37,9 +36,9 @@ const options: ChartOptions = {
   scales: {
     x: {
       type: 'time',
-      time: {
-        parser: 'yyyy-MM-dd',
-      },
+      // time: {
+      //   parser: 'yyyy-MM-dd',
+      // },
     },
     y: {
       ticks: {
