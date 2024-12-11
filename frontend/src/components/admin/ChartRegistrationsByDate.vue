@@ -55,7 +55,7 @@ const options: ChartOptions = {
     },
     title: {
       display: true,
-      text: 'Registrations per day',
+      text: 'Registrations per month',
     },
   },
 }
