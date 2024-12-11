@@ -28,7 +28,7 @@
 
   position: absolute;
   z-index: 1;
-  top: -10px;
+  top: -150%;
   left: 105%;
 }
 
