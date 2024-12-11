@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { store } from '@/lib/store'
-import SlideShow from '@/components/SlideShow.vue'
+import BannerSlideshow from '@/components/BannerSlideshow.vue'
 
 const user = store.currentUser
 </script>
@@ -9,10 +9,8 @@ const user = store.currentUser
   <main class="container-fluid">
     <h1 v-if="user" id="welcome">Welcome {{ user.full_name }}</h1>
 
-
     <div class="image-container">
-      <!-- <img id="banner" src="/banners/banner0.png" alt="Banner" /> -->
-      <SlideShow id="banner" />
+      <BannerSlideshow id="banner" />
 
       <p id="summary">
         <strong>ExpressInHost</strong> tunes codon sequences for recombinant
