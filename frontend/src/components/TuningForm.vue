@@ -5,6 +5,8 @@ import type { CodonTable } from '@/lib/interfaces'
 import { API } from '@/lib/api'
 import CodonTableSearchSelect from '@/components/codon-tables/CodonTableSearchSelect.vue'
 import ToolTip from '@/components/ToolTip.vue'
+import WithAlertError from './WithAlertError.vue'
+import { checkClustal, checkFasta } from '@/lib/checkers'
 
 const emit = defineEmits(['submit'])
 
@@ -17,6 +19,11 @@ const baseForm = reactive({
   mode: 'direct_mapping',
   slow_speed_threshold: 0.5,
   conservation_threshold: 0.75,
+})
+
+const baseFormErrors = reactive({
+  nucleotide_file_content: [] as string[],
+  clustal_file_content: [] as string[],
 })
 
 const selectedHostCodonTable = ref(null as CodonTable | null)
@@ -36,11 +43,14 @@ watch(
   content => {
     // Reset object
     selectedSequencesNativeCodonTables.value = {}
-    const sequenceNames = parseFastaSequenceNames(content)
 
-    for (const seq of sequenceNames) {
-      const table = findCorrespondingTable(seq)
-      selectedSequencesNativeCodonTables.value[seq] = table
+    if (content && baseFormErrors.nucleotide_file_content.length == 0) {
+      const sequenceNames = parseFastaSequenceNames(content)
+
+      for (const seq of sequenceNames) {
+        const table = findCorrespondingTable(seq)
+        selectedSequencesNativeCodonTables.value[seq] = table
+      }
     }
   },
 )
@@ -60,11 +70,29 @@ function parseFastaSequenceNames(content: string) {
 }
 
 async function setFastaContent(event: Event) {
-  baseForm.nucleotide_file_content = await readTextFile(event)
+  // Reset error list
+  baseFormErrors.nucleotide_file_content = []
+  const content = await readTextFile(event)
+  const errors = checkFasta(content)
+
+  if (errors.length) {
+    baseFormErrors.nucleotide_file_content = errors
+  } else {
+    baseForm.nucleotide_file_content = content
+  }
 }
 
 async function setClustalContent(event: Event) {
-  baseForm.clustal_file_content = await readTextFile(event)
+  // Reset error list
+  baseFormErrors.clustal_file_content = []
+  const content = await readTextFile(event)
+  const errors = checkClustal(content)
+
+  if (errors.length) {
+    baseFormErrors.clustal_file_content = errors
+  } else {
+    baseForm.clustal_file_content = content
+  }
 }
 
 /**
@@ -176,7 +204,11 @@ async function runTuning() {
               sequence identifier.
             </template>
           </ToolTip>
-          <input type="file" id="fasta" @change="setFastaContent" required />
+
+          <WithAlertError :errors="baseFormErrors.nucleotide_file_content">
+            <input type="file" id="fasta" @change="setFastaContent" required />
+          </WithAlertError>
+
           <i>
             You can download an example sequence file
             <a href="/examples/Rad51_nucleotide.txt" download>here</a>.
