@@ -69,5 +69,6 @@ watch([() => props.error, () => props.errors], value => {
   text-decoration: none;
   cursor: pointer;
   color: #721c24;
+  margin-left: 1em;
 }
 </style>
