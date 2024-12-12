@@ -6,14 +6,8 @@ export function checkFasta(content: string) {
   } else {
     const sequenceBlocks = content.trim().split(/\n{2,}/)
 
-    if (
-      sequenceBlocks.length !== content.match(/^\>([^\s]+) ?(.+)/gm)?.length
-    ) {
-      errors.push('The number of headers and sequences does not match.')
-    }
-
     for (const block of sequenceBlocks) {
-      const parsedBlock = block.match(/^\>(.+?)\n(.+)/s)
+      const parsedBlock = block.match(/^\>(\S+) ?.*?\n(.+)/s)
 
       const header = parsedBlock?.[1]
       const sequence = parsedBlock?.[2]
@@ -29,8 +23,8 @@ export function checkFasta(content: string) {
       } else if (header && !sequence) {
         errors.push(`Missing sequence for ${header}.`)
       } else {
-        errors.push('Invalid format')
-        // If a block is not correctly formatted return directly the result
+        errors.push('Invalid format.')
+        // If one block is not correctly formatted return directly the result
         return errors
       }
     }
