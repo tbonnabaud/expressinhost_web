@@ -1,12 +1,16 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 
-defineProps<{
+const props = defineProps<{
   error?: string
   errors?: Array<string>
 }>()
 
 const show = ref(true)
+
+watch([() => props.error, () => props.errors], value => {
+  show.value = value ? true : false
+})
 </script>
 
 <template>
@@ -14,11 +18,7 @@ const show = ref(true)
     <slot></slot>
 
     <Transition name="fade">
-      <div
-        v-if="error || errors"
-        class="alert alert-danger"
-        :class="{ 'alert-hidden': !show }"
-      >
+      <div v-if="(error || errors) && show" class="alert alert-danger">
         <a class="close" aria-label="Close" @click="show = false">
           <span aria-hidden="true">&times;</span>
         </a>
@@ -69,9 +69,5 @@ const show = ref(true)
   text-decoration: none;
   cursor: pointer;
   color: #721c24;
-}
-
-.alert-hidden {
-  display: none;
 }
 </style>
