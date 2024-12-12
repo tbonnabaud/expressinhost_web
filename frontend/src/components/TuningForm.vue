@@ -243,12 +243,13 @@ async function runTuning() {
 
       <div id="mode-selector">
         <input
+          id="direct_mapping"
           type="radio"
           value="direct_mapping"
           v-model="baseForm.mode"
           required
         />
-        <label>
+        <label htmlFor="direct_mapping">
           <ToolTip>
             Direct mapping 🯄
             <template #tooltip>
@@ -259,11 +260,12 @@ async function runTuning() {
         </label>
 
         <input
+          id="optimisation_and_conservation_1"
           type="radio"
           value="optimisation_and_conservation_1"
           v-model="baseForm.mode"
         />
-        <label>
+        <label htmlFor="optimisation_and_conservation_1">
           <ToolTip>
             Optimisation and conservation 1 🯄
             <template #tooltip>
@@ -277,11 +279,12 @@ async function runTuning() {
         </label>
 
         <input
+          id="optimisation_and_conservation_2"
           type="radio"
           value="optimisation_and_conservation_2"
           v-model="baseForm.mode"
         />
-        <label>
+        <label htmlFor="optimisation_and_conservation_2">
           <ToolTip>
             Optimisation and conservation 2 🯄
             <template #tooltip>
