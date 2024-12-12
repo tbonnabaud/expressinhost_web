@@ -8,8 +8,8 @@ const props = defineProps<{
 
 const show = ref(true)
 
-watch([() => props.error, () => props.errors], value => {
-  show.value = value ? true : false
+watch([() => props.error, () => props.errors], ([error, errors]) => {
+  show.value = Boolean(error || errors?.length)
 })
 </script>
 
