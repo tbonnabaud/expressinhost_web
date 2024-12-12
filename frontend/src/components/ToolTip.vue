@@ -24,7 +24,8 @@
   text-align: center;
   border-radius: 6px;
   padding: 10px;
-  opacity: 0.9;
+  opacity: 0;
+  transition: opacity 0.5s;
 
   position: absolute;
   z-index: 1;
@@ -34,5 +35,6 @@
 
 .tooltip:hover .tooltiptext {
   visibility: visible;
+  opacity: 0.9;
 }
 </style>
