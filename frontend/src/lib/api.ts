@@ -14,7 +14,7 @@ interface ApiError {
   detail: string
 }
 
-type ApiResponse<T> = [T | null, ApiError | null]
+type ApiResponse<T> = [T, null] | [null, ApiError]
 
 const client = axios.create({
   baseURL: '/api',
