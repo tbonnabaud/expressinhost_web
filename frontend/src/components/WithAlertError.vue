@@ -60,6 +60,11 @@ watch([() => props.error, () => props.errors], value => {
   border-color: #721c24;
 }
 
+.alert-danger ul {
+  margin: 0;
+  padding-left: 1em;
+}
+
 .alert-danger li {
   color: #721c24;
 }
