@@ -226,12 +226,14 @@ async function runTuning() {
             </template>
           </ToolTip>
 
-          <input
-            type="file"
-            id="clustal"
-            @change="setClustalContent"
-            :required="clustalIsRequired"
-          />
+          <WithAlertError :errors="baseFormErrors.clustal_file_content">
+            <input
+              type="file"
+              id="clustal"
+              @change="setClustalContent"
+              :required="clustalIsRequired"
+            />
+          </WithAlertError>
           <i>
             You can download an example alignment file
             <a href="/examples/Rad51_CLUSTAL.txt" download>here</a>.
