@@ -28,6 +28,10 @@ export function checkFasta(content: string) {
         }
       } else if (header && !sequence) {
         errors.push(`Missing sequence for ${header}.`)
+      } else {
+        errors.push('Invalid format')
+        // If a block is not correctly formatted return directly the result
+        return errors
       }
     }
   }
