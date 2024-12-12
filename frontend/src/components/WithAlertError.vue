@@ -2,8 +2,8 @@
 import { ref, watch } from 'vue'
 
 const props = defineProps<{
-  error?: string
-  errors?: Array<string>
+  error?: string | null
+  errors?: Array<string> | null
 }>()
 
 const show = ref(true)
@@ -18,10 +18,11 @@ watch([() => props.error, () => props.errors], value => {
     <slot></slot>
 
     <Transition name="fade">
-      <div v-if="(error || errors) && show" class="alert alert-danger">
+      <div v-if="(error || errors?.length) && show" class="alert alert-danger">
         <a class="close" aria-label="Close" @click="show = false">
           <span aria-hidden="true">&times;</span>
         </a>
+
         <span v-if="error">
           {{ error }}
         </span>
