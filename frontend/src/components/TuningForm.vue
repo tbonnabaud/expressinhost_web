@@ -65,8 +65,9 @@ async function fetchCodonTables() {
 
 function parseFastaSequenceNames(content: string) {
   // Match the group after ">" symbol
-  const fastaSeqNameRegex = /^\>\s*(.*\w)/gm
-  return Array.from(content.matchAll(fastaSeqNameRegex), m => m[1])
+  const fastaSeqIdentifierRegex = /^\>([^\s]+)/gm
+
+  return Array.from(content.matchAll(fastaSeqIdentifierRegex), m => m[1])
 }
 
 async function setFastaContent(event: Event) {
