@@ -21,7 +21,7 @@
   background-color: #56637f;
   border: 2px solid #40454e;
   color: #fff;
-  text-align: center;
+  text-align: left;
   border-radius: 6px;
   padding: 10px;
   opacity: 0;
