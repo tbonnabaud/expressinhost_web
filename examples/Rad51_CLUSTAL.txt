@@ -1,7 +1,7 @@
 CLUSTAL
 
 Staphylococcus_aureus_recA             ------------------------------------------------------------	0
-Methanocaldococcus_jannaschii_DSM      --------------MITFIYFFG----NIIYYLPIYSYINNY------------------	24
+Methanocaldococcus_jannaschii_radA      --------------MITFIYFFG----NIIYYLPIYSYINNY------------------	24
 Caenorhabditis_elegans_Rad51           MGQSWGYEGIAKRSLCTHKWLYNLNLHSINLFLPIESKMSAQASRQKKS----------D	50
 Drosophila_melanogaster_Rad51          ------------------------------------------------------------	0
 Saccharomyces_cerevisiae_Rad51         ------MSQVQEQHISESQLQYGNG--SLMSTVPADLSQSVVDGNGNGSSEDIEATNGSG	52
@@ -13,7 +13,7 @@ Gallus_gallus_Rad51                    -----------------------------------------
                                                                                                    
 
 Staphylococcus_aureus_recA             ------------------------------------------------------------	0
-Methanocaldococcus_jannaschii_DSM      ---KF----M--------------LMVIIMDDLTQLPGVGPTTAEKLKEAGYTDFMKIAT	63
+Methanocaldococcus_jannaschii_radA      ---KF----M--------------LMVIIMDDLTQLPGVGPTTAEKLKEAGYTDFMKIAT	63
 Caenorhabditis_elegans_Rad51           QEQRAADQALLNAAIE--DNAMEQDENFTVIDKLESSGISSGDISKLKEAGYYTYESLAF	108
 Drosophila_melanogaster_Rad51          -----MEKLT---NVQAQ-QEEEEEEGPLSVTKLIGGSITAKDIKLLQQASLHTVESVAN	51
 Saccharomyces_cerevisiae_Rad51         DGGGLQEQAEAQGEMEDEAYDEAALGSFVPIEKLQVNGITMADVKKLRESGLHTAEAVAY	112
@@ -25,7 +25,7 @@ Gallus_gallus_Rad51                    --MAM--QVQFEA-STDTSAEEESF-GPEPISRLEQCGINA
                                                                                                    
 
 Staphylococcus_aureus_recA             --------MDNDRQKALDTVIK----NMEKSFGKGAVMKLGDNIGRRVSTTSTGSVTLDN	48
-Methanocaldococcus_jannaschii_DSM      ASIGELTEIDGISEKAAARIIEAARELCNLGFKSGTEVL---SQRKNIWKLSTGSKNLDE	120
+Methanocaldococcus_jannaschii_radA      ASIGELTEIDGISEKAAARIIEAARELCNLGFKSGTEVL---SQRKNIWKLSTGSKNLDE	120
 Caenorhabditis_elegans_Rad51           TTRRELRNVKGISDQKAEKIMKEAMKFVQMGFTTGAEVH---VKRSQLVQIRTGSASLDR	165
 Drosophila_melanogaster_Rad51          ATKKQLMAIPGLGGGKVEQIITEANKLVPLGFLSARTFY---QMRADVVQLSTGSKELDK	108
 Saccharomyces_cerevisiae_Rad51         APRKDLLEIKGISEAKADKLLNEAARLVPMGFVTAADFH---MRRSELICLTTGSKNLDT	169
@@ -37,7 +37,7 @@ Gallus_gallus_Rad51                    APKKELLNIKGISEAKADKILAEAAKLVPMGFTTATEFH--
                                                : .        ::         .* ..  .         :    :**  ** 
 
 Staphylococcus_aureus_recA             ALGVGGYPKGRIIEIYGPESSGKTTVALHAIAEVQ---------------SNGGVAAFID	93
-Methanocaldococcus_jannaschii_DSM      ILG-GGLESQSVTEFAGMFGSGKTQIAHQACVNLQCPERIVADDAIKDEILNEPKAVYID	179
+Methanocaldococcus_jannaschii_radA      ILG-GGLESQSVTEFAGMFGSGKTQIAHQACVNLQCPERIVADDAIKDEILNEPKAVYID	179
 Caenorhabditis_elegans_Rad51           LLG-GGIETGSITEVYGEYRTGKTQLCHSLAVLCQLPIDMG---------GGEGKCMYID	215
 Drosophila_melanogaster_Rad51          LLG-GGIETGSITEIFGEFRCGKTQLCHTLAVTCQLPISQK---------GGEGKCMYID	158
 Saccharomyces_cerevisiae_Rad51         LLG-GGVETGSITELFGEFRTGKSQLCHTLAVTCQIPLDIG---------GGEGKCLYID	219
@@ -49,7 +49,7 @@ Gallus_gallus_Rad51                    LLQ-GGIETGSITELFGEFRTGKTQLCHTLAVTCQLPIDRG
                                         *  **  .  : *. *    **: :.    .  *                .   . :**
 
 Staphylococcus_aureus_recA             AEHALDPEYAQA----LGVDI----DNLYLSQ---PDHGEQGLEIAEAFVRS-GAVDIVV	141
-Methanocaldococcus_jannaschii_DSM      TEGTFRPERIVQMAEALGLDGNEVLNNIFVARAYNSDMQMLYAENVENLIREGHNIKLVI	239
+Methanocaldococcus_jannaschii_radA      TEGTFRPERIVQMAEALGLDGNEVLNNIFVARAYNSDMQMLYAENVENLIREGHNIKLVI	239
 Caenorhabditis_elegans_Rad51           TNATFRPERIIAIAQRYNMDSAHVLENIAVARAYNSEHLMALIIRAGAMMSE-SRYAVVI	274
 Drosophila_melanogaster_Rad51          TENTFRPERLAAIAQRYKLNESEVLDNVAFTRAHNSDQQTKLIQMAAGMLFE-SRYALLI	217
 Saccharomyces_cerevisiae_Rad51         TEGTFRPVRLVSIAQRFGLDPDDALNNVAYARAYNADHQLRLLDAAAQMMSE-SRFSLIV	278
@@ -61,7 +61,7 @@ Gallus_gallus_Rad51                    TEGTFRPERLLAVAERYGLSGSDVLDNVAYARGFNTDHQTQ
                                        :: :: *           :      :*:  ::    :        .  :: .     :::
 
 Staphylococcus_aureus_recA             VDSVAALTPKAEI-EGEMGDTHVGLQARLMSQALRKLSGAISKSNTTAIFINQIREKV--	198
-Methanocaldococcus_jannaschii_DSM      VDSLTSTFRTEYIGRGKLAERQQK-----LGRHMATLNKLADIYNCVVIVTNQVAARPDA	294
+Methanocaldococcus_jannaschii_radA      VDSLTSTFRTEYIGRGKLAERQQK-----LGRHMATLNKLADIYNCVVIVTNQVAARPDA	294
 Caenorhabditis_elegans_Rad51           VDCATAHFRNEYTGRGDLAERQMK-----LSAFLKCLAKLADEYGVAVIITNQVVAQVDG	329
 Drosophila_melanogaster_Rad51          VDSAMALYRSDYIGRGELAARQNH-----LGLFLRMLQRLADEFGVAVVITNQVTASLDG	272
 Saccharomyces_cerevisiae_Rad51         VDSVMALYRTDFSGRGELSARQMH-----LAKFMRALQRLADQFGVAVVVTNQVVAQVDG	333
@@ -73,7 +73,7 @@ Gallus_gallus_Rad51                    VDSATALYRTDYSGRGELSARQMH-----LARFLRMLLRLA
                                        **.  :   .    .*.:.  :       :.  :  *    .  . ..:. **:      
 
 Staphylococcus_aureus_recA             --GVMFGNPETTPGGRALKFYSSVRLEVRRAEQLKQGQEIVGNRTKIKVVKNKVAPPFRV	256
-Methanocaldococcus_jannaschii_DSM      L----FGPSEQAIGGHIVGHAATFRIFLRKAKGDKRVAK---------LYDS---PHLP-	337
+Methanocaldococcus_jannaschii_radA      L----FGPSEQAIGGHIVGHAATFRIFLRKAKGDKRVAK---------LYDS---PHLP-	337
 Caenorhabditis_elegans_Rad51           GASMFQADAKKPIGGHIIAHMSTTRLYLRKGKGENRVAK---------MVQS---PNLP-	376
 Drosophila_melanogaster_Rad51          A-PGM-FDAKKPIGGHIMAHSSTTRLYLRKGKGETRICK---------IYDS---PCLP-	317
 Saccharomyces_cerevisiae_Rad51         G-MAFNPDPKKPIGGNIMAHSSTTRLGFKKGKGCQRLCK---------VVDS---PCLP-	379
@@ -85,7 +85,7 @@ Gallus_gallus_Rad51                    A-AMFAADPKKPIGGNIIAHASTTRLYLRKGRGETRICK--
                                                     **. : . :: *: .::..   :  :         : ..   * :  
 
 Staphylococcus_aureus_recA             AEVDIMY---GQGISKEGELIDLGVENDIVDKSGAWYSYNGERMGQGKENVKMYLKENPQ	313
-Methanocaldococcus_jannaschii_DSM      -DAEAMFRITEKGIHD--------------------------------------------	352
+Methanocaldococcus_jannaschii_radA      -DAEAMFRITEKGIHD--------------------------------------------	352
 Caenorhabditis_elegans_Rad51           -EAEATYSITNHGIEDARED----------------------------------------	395
 Drosophila_melanogaster_Rad51          -ESEAMFAILPDGIGDARES----------------------------------------	336
 Saccharomyces_cerevisiae_Rad51         -EAECVFAIYEDGVGDPREEDE--------------------------------------	400
@@ -97,7 +97,7 @@ Gallus_gallus_Rad51                    -EAEAMFAINADGVGDAKE----------------------
                                         : :  :    .*: .                                            
 
 Staphylococcus_aureus_recA             IKEEIDRKLREKLGISDGDVEETEDAPKSLFDEE	347
-Methanocaldococcus_jannaschii_DSM      ----------------------------------	352
+Methanocaldococcus_jannaschii_radA      ----------------------------------	352
 Caenorhabditis_elegans_Rad51           ----------------------------------	395
 Drosophila_melanogaster_Rad51          ----------------------------------	336
 Saccharomyces_cerevisiae_Rad51         ----------------------------------	400

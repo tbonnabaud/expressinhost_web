@@ -21,10 +21,11 @@
   background-color: #56637f;
   border: 2px solid #40454e;
   color: #fff;
-  text-align: center;
+  text-align: left;
   border-radius: 6px;
   padding: 10px;
-  opacity: 0.9;
+  opacity: 0;
+  transition: opacity 0.5s;
 
   position: absolute;
   z-index: 1;
@@ -34,5 +35,6 @@
 
 .tooltip:hover .tooltiptext {
   visibility: visible;
+  opacity: 0.9;
 }
 </style>

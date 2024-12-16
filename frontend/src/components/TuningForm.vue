@@ -5,6 +5,12 @@ import type { CodonTable } from '@/lib/interfaces'
 import { API } from '@/lib/api'
 import CodonTableSearchSelect from '@/components/codon-tables/CodonTableSearchSelect.vue'
 import ToolTip from '@/components/ToolTip.vue'
+import WithAlertError from './WithAlertError.vue'
+import {
+  checkClustal,
+  checkClustalMatchingFasta,
+  checkFasta,
+} from '@/lib/checkers'
 
 const emit = defineEmits(['submit'])
 
@@ -17,6 +23,11 @@ const baseForm = reactive({
   mode: 'direct_mapping',
   slow_speed_threshold: 0.5,
   conservation_threshold: 0.75,
+})
+
+const baseFormErrors = reactive({
+  nucleotide_file_content: [] as string[],
+  clustal_file_content: [] as string[],
 })
 
 const selectedHostCodonTable = ref(null as CodonTable | null)
@@ -36,11 +47,28 @@ watch(
   content => {
     // Reset object
     selectedSequencesNativeCodonTables.value = {}
-    const sequenceNames = parseFastaSequenceNames(content)
 
-    for (const seq of sequenceNames) {
-      const table = findCorrespondingTable(seq)
-      selectedSequencesNativeCodonTables.value[seq] = table
+    if (content && baseFormErrors.nucleotide_file_content.length == 0) {
+      const sequenceNames = parseFastaSequenceNames(content)
+
+      for (const seq of sequenceNames) {
+        const table = findCorrespondingTable(seq)
+        selectedSequencesNativeCodonTables.value[seq] = table
+      }
+    }
+  },
+)
+
+watch(
+  [() => baseForm.nucleotide_file_content, () => baseForm.clustal_file_content],
+  ([fastaContent, clustalContent]) => {
+    if (fastaContent && clustalContent) {
+      const errors = checkClustalMatchingFasta(clustalContent, fastaContent)
+
+      if (errors.length) {
+        baseFormErrors.clustal_file_content =
+          baseFormErrors.clustal_file_content.concat(errors)
+      }
     }
   },
 )
@@ -55,16 +83,35 @@ async function fetchCodonTables() {
 
 function parseFastaSequenceNames(content: string) {
   // Match the group after ">" symbol
-  const fastaSeqNameRegex = /^\>\s*(.*\w)/gm
-  return Array.from(content.matchAll(fastaSeqNameRegex), m => m[1])
+  const fastaSeqIdentifierRegex = /^\>([^\s]+)/gm
+
+  return Array.from(content.matchAll(fastaSeqIdentifierRegex), m => m[1])
 }
 
 async function setFastaContent(event: Event) {
-  baseForm.nucleotide_file_content = await readTextFile(event)
+  // Reset error list
+  baseFormErrors.nucleotide_file_content = []
+  const content = await readTextFile(event)
+  const errors = checkFasta(content)
+
+  if (errors.length) {
+    baseFormErrors.nucleotide_file_content = errors
+  } else {
+    baseForm.nucleotide_file_content = content
+  }
 }
 
 async function setClustalContent(event: Event) {
-  baseForm.clustal_file_content = await readTextFile(event)
+  // Reset error list
+  baseFormErrors.clustal_file_content = []
+  const content = await readTextFile(event)
+  const errors = checkClustal(content)
+
+  if (errors.length) {
+    baseFormErrors.clustal_file_content = errors
+  } else {
+    baseForm.clustal_file_content = content
+  }
 }
 
 /**
@@ -150,10 +197,9 @@ async function runTuning() {
       <ToolTip>
         <h2>Host organism 🯄</h2>
         <template #tooltip>
-          The organism in which the mRNA is to be expressed.<br />The tRNA-GCN
-          codon table of the host organism is utilised for codon tuning.<br />For
-          custom codon tables, head to "Codon tables" section in the navigation
-          bar.
+          The organism in which the mRNA is to be expressed. The tRNA-GCN codon
+          table of the host organism is utilised for codon tuning. For custom
+          codon tables, head to "Codon tables" section in the navigation bar.
         </template>
       </ToolTip>
 
@@ -176,7 +222,11 @@ async function runTuning() {
               sequence identifier.
             </template>
           </ToolTip>
-          <input type="file" id="fasta" @change="setFastaContent" required />
+
+          <WithAlertError :errors="baseFormErrors.nucleotide_file_content">
+            <input type="file" id="fasta" @change="setFastaContent" required />
+          </WithAlertError>
+
           <i>
             You can download an example sequence file
             <a href="/examples/Rad51_nucleotide.txt" download>here</a>.
@@ -194,12 +244,14 @@ async function runTuning() {
             </template>
           </ToolTip>
 
-          <input
-            type="file"
-            id="clustal"
-            @change="setClustalContent"
-            :required="clustalIsRequired"
-          />
+          <WithAlertError :errors="baseFormErrors.clustal_file_content">
+            <input
+              type="file"
+              id="clustal"
+              @change="setClustalContent"
+              :required="clustalIsRequired"
+            />
+          </WithAlertError>
           <i>
             You can download an example alignment file
             <a href="/examples/Rad51_CLUSTAL.txt" download>here</a>.
@@ -243,12 +295,13 @@ async function runTuning() {
 
       <div id="mode-selector">
         <input
+          id="direct_mapping"
           type="radio"
           value="direct_mapping"
           v-model="baseForm.mode"
           required
         />
-        <label>
+        <label htmlFor="direct_mapping">
           <ToolTip>
             Direct mapping 🯄
             <template #tooltip>
@@ -259,11 +312,12 @@ async function runTuning() {
         </label>
 
         <input
+          id="optimisation_and_conservation_1"
           type="radio"
           value="optimisation_and_conservation_1"
           v-model="baseForm.mode"
         />
-        <label>
+        <label htmlFor="optimisation_and_conservation_1">
           <ToolTip>
             Optimisation and conservation 1 🯄
             <template #tooltip>
@@ -277,11 +331,12 @@ async function runTuning() {
         </label>
 
         <input
+          id="optimisation_and_conservation_2"
           type="radio"
           value="optimisation_and_conservation_2"
           v-model="baseForm.mode"
         />
-        <label>
+        <label htmlFor="optimisation_and_conservation_2">
           <ToolTip>
             Optimisation and conservation 2 🯄
             <template #tooltip>
