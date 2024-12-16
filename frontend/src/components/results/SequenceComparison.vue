@@ -60,7 +60,7 @@ function colorSequences(inputSequence: string, outputSequence: string) {
       &rarr; Similarity: {{ tunedSequence.identity_percentage.toFixed(2) }}%
     </p>
 
-    <div class="flex-container">
+    <div class="flex-container sequence-comparison">
       <div class="sequence-group-label">
         <label>Input: </label>
         <label>Output: </label>
@@ -103,7 +103,7 @@ function colorSequences(inputSequence: string, outputSequence: string) {
 
 .sequence-group {
   overflow-x: scroll;
-  overflow-y: visible;
+  /* overflow-y: visible; */
   margin: 1em 0 0 1em;
 }
 
@@ -115,6 +115,10 @@ function colorSequences(inputSequence: string, outputSequence: string) {
   height: 2.5em;
   font-weight: bold;
   text-decoration: underline;
+}
+
+.sequence-comparison {
+  height: 145px;
 }
 
 details summary {
