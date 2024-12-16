@@ -6,7 +6,11 @@ import { API } from '@/lib/api'
 import CodonTableSearchSelect from '@/components/codon-tables/CodonTableSearchSelect.vue'
 import ToolTip from '@/components/ToolTip.vue'
 import WithAlertError from './WithAlertError.vue'
-import { checkClustal, checkFasta } from '@/lib/checkers'
+import {
+  checkClustal,
+  checkClustalMatchingFasta,
+  checkFasta,
+} from '@/lib/checkers'
 
 const emit = defineEmits(['submit'])
 
@@ -50,6 +54,20 @@ watch(
       for (const seq of sequenceNames) {
         const table = findCorrespondingTable(seq)
         selectedSequencesNativeCodonTables.value[seq] = table
+      }
+    }
+  },
+)
+
+watch(
+  [() => baseForm.nucleotide_file_content, () => baseForm.clustal_file_content],
+  ([fastaContent, clustalContent]) => {
+    if (fastaContent && clustalContent) {
+      const errors = checkClustalMatchingFasta(clustalContent, fastaContent)
+
+      if (errors.length) {
+        baseFormErrors.clustal_file_content =
+          baseFormErrors.clustal_file_content.concat(errors)
       }
     }
   },

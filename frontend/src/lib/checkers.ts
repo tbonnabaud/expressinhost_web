@@ -46,3 +46,40 @@ export function checkClustal(content: string) {
 
   return errors
 }
+
+export function checkClustalMatchingFasta(
+  clustalContent: string,
+  fastaContent: string,
+) {
+  const errors = []
+  const fastaIDs = Array.from(fastaContent.matchAll(/^>(\S+)/gm), m => m[1])
+  const clustalBlocks = clustalContent
+    .trim()
+    .split(/\n{2,}/)
+    .slice(1) // Slice to ignore the block with "CLUSTAL" header
+
+  for (const [blockIndex, block] of clustalBlocks.entries()) {
+    const clustalLines = Array.from(
+      block.matchAll(/^(\S+)\s+([A-Z\-]+)\s+(\d+)/gm),
+    )
+    const blockNumber = blockIndex + 1
+
+    if (clustalLines.length !== fastaIDs.length) {
+      errors.push(
+        `Wrong number of lines in block ${blockNumber}, should be ${fastaIDs.length}.`,
+      )
+    } else {
+      for (const [lineIndex, line] of clustalLines.entries()) {
+        const clustalID = line[1]
+
+        if (fastaIDs[lineIndex] !== clustalID) {
+          errors.push(
+            `IDs matching error in block ${blockNumber}. FASTA: ${fastaIDs[lineIndex]}, CLUSTAL: ${clustalID}.`,
+          )
+        }
+      }
+    }
+  }
+
+  return errors
+}
