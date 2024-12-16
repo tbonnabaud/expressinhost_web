@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, useTemplateRef } from 'vue'
+import { computed, ref } from 'vue'
 import type { CodonTable } from '@/lib/interfaces'
 
 const props = defineProps<{
@@ -7,7 +7,7 @@ const props = defineProps<{
 }>()
 const model = defineModel<CodonTable | null>()
 const filter = ref('')
-const dropdownRef = useTemplateRef('dropdown')
+const collapseDropdown = ref(true)
 
 const filteredOptions = computed(() => {
   const lowerCaseFilter = filter.value.toLowerCase()
@@ -19,16 +19,17 @@ const filteredOptions = computed(() => {
 })
 
 function closeDropdown() {
-  if (dropdownRef.value) {
-    dropdownRef.value.open = false
-    filter.value = ''
-  }
+  collapseDropdown.value = true
+  filter.value = ''
 }
 </script>
 
 <template>
-  <details class="dropdown" ref="dropdown">
-    <summary class="summary-select">
+  <details class="dropdown" :open="!collapseDropdown">
+    <summary
+      class="summary-select"
+      @click.prevent="collapseDropdown = !collapseDropdown"
+    >
       <template v-if="model">
         <i>{{ model.organism }}</i> - {{ model.name }}
       </template>
@@ -36,25 +37,30 @@ function closeDropdown() {
       <template v-else>Select one...</template>
     </summary>
 
-    <ul>
+    <ul v-if="!collapseDropdown">
       <li>
-        <input
-          type="search"
-          placeholder="Filter..."
-          ref="filter-input"
-          v-model="filter"
-        />
+        <input type="search" placeholder="Filter..." v-model="filter" />
       </li>
       <div class="option-list">
         <li>
-          <label @click="closeDropdown">
-            <input type="radio" v-model="model" :value="null" />
+          <label>
+            <input
+              type="radio"
+              v-model="model"
+              :value="null"
+              @change="closeDropdown"
+            />
             (None)
           </label>
         </li>
         <li v-for="option in filteredOptions" :key="option.id">
-          <label @click="closeDropdown">
-            <input type="radio" v-model="model" :value="option" />
+          <label>
+            <input
+              type="radio"
+              v-model="model"
+              :value="option"
+              @change="closeDropdown"
+            />
             <i>{{ option.organism }}</i> - {{ option.name }}
           </label>
         </li>
