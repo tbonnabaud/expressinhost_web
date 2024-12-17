@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref } from 'vue'
 
-const images = ref(['/banners/banner0.png', '/banners/banner1.png'])
+const images = ref([...Array(6).keys()].map(i => `/banners/banner${i}.png`))
 const currentIndex = ref(0)
 const slideshowInterval = ref(0)
 
