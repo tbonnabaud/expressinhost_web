@@ -51,6 +51,10 @@ async function fetchTotalResultCount() {
 </script>
 
 <template>
+  <h3 id="resultTotal">
+    Total: <ins>{{ totalResultCount }}</ins>
+  </h3>
+
   <div class="grid-of-three">
     <ResultListItem
       v-for="(result, index) in resultList"
@@ -90,5 +94,9 @@ async function fetchTotalResultCount() {
 
 #resultPagination > button {
   margin: 5px;
+}
+
+#resultTotal {
+  text-align: center;
 }
 </style>
