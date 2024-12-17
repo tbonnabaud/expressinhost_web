@@ -5,9 +5,11 @@ import { API } from '@/lib/api'
 import { store } from '@/lib/store'
 import ResultListItem from './ResultListItem.vue'
 import ResultListPagination from './ResultListPagination.vue'
+import BaseModal from '../BaseModal.vue'
 
 const currentUser = store.currentUser
 const resultList = ref([] as Array<Result>)
+const openDeleteAllModal = ref(false)
 
 // Pagination
 const totalResultCount = ref(0)
@@ -49,18 +51,57 @@ async function fetchTotalResultCount() {
     }
   }
 }
+
+async function deleteAllResults() {
+  if (currentUser.value) {
+    const [, error] = await API.results.deleteAll()
+
+    if (!error) {
+      resultList.value = []
+      totalResultCount.value = 0
+    }
+  }
+
+  openDeleteAllModal.value = false
+}
 </script>
 
 <template>
-  <h3 id="resultTotal">
-    Total: <ins>{{ totalResultCount }}</ins>
-  </h3>
+  <BaseModal
+    :open="openDeleteAllModal"
+    title="Confirm the deletion"
+    @close="openDeleteAllModal = false"
+  >
+    <p>Do you really want to delete all your results?</p>
 
-  <ResultListPagination
-    id="resultPaginationTop"
-    v-model="currentPageNumber"
-    :total="numberOfPages"
-  />
+    <footer>
+      <button class="secondary" @click="openDeleteAllModal = false">
+        Cancel
+      </button>
+      <button class="danger" @click="deleteAllResults">Delete all</button>
+    </footer>
+  </BaseModal>
+
+  <div class="grid">
+    <h3 id="resultTotal">
+      Total: <ins>{{ totalResultCount }}</ins>
+    </h3>
+
+    <ResultListPagination
+      id="resultPaginationTop"
+      v-model="currentPageNumber"
+      :total="numberOfPages"
+    />
+
+    <button
+      id="deleteAllResults"
+      type="button"
+      class="danger"
+      @click="openDeleteAllModal = true"
+    >
+      Delete all results
+    </button>
+  </div>
 
   <div class="grid-of-three">
     <ResultListItem
@@ -85,7 +126,12 @@ async function fetchTotalResultCount() {
   }
 }
 
-#resultTotal {
-  text-align: center;
+#resultPaginationTop {
+  margin-top: auto;
+}
+
+#deleteAllResults {
+  margin-left: auto;
+  height: fit-content;
 }
 </style>

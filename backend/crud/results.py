@@ -45,3 +45,7 @@ class ResultRepository(BaseRepository):
     def delete(self, user_id: UUID, id: UUID):
         stmt = sa.delete(Result).where(Result.user_id == user_id, Result.id == id)
         self.execute_with_commit(stmt)
+
+    def delete_all(self, user_id: UUID):
+        stmt = sa.delete(Result).where(Result.user_id == user_id)
+        self.execute_with_commit(stmt)
