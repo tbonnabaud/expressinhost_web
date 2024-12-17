@@ -4,6 +4,7 @@ import type { Result } from '@/lib/interfaces'
 import { API } from '@/lib/api'
 import { store } from '@/lib/store'
 import ResultListItem from './ResultListItem.vue'
+import ResultListPagination from './ResultListPagination.vue'
 
 const currentUser = store.currentUser
 const resultList = ref([] as Array<Result>)
@@ -55,6 +56,12 @@ async function fetchTotalResultCount() {
     Total: <ins>{{ totalResultCount }}</ins>
   </h3>
 
+  <ResultListPagination
+    id="resultPaginationTop"
+    v-model="currentPageNumber"
+    :total="numberOfPages"
+  />
+
   <div class="grid-of-three">
     <ResultListItem
       v-for="(result, index) in resultList"
@@ -63,20 +70,11 @@ async function fetchTotalResultCount() {
     />
   </div>
 
-  <div id="resultPagination">
-    <button
-      v-for="pageNumber in numberOfPages"
-      :key="pageNumber"
-      :class="{
-        outline: true,
-        secondary: true,
-        contrast: currentPageNumber == pageNumber,
-      }"
-      @click="currentPageNumber = pageNumber"
-    >
-      {{ pageNumber }}
-    </button>
-  </div>
+  <ResultListPagination
+    id="resultPaginationBottom"
+    v-model="currentPageNumber"
+    :total="numberOfPages"
+  />
 </template>
 
 <style scoped>
@@ -85,15 +83,6 @@ async function fetchTotalResultCount() {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
-}
-
-#resultPagination {
-  margin: 1em auto 1em;
-  text-align: center;
-}
-
-#resultPagination > button {
-  margin: 5px;
 }
 
 #resultTotal {
