@@ -36,6 +36,7 @@ def get_user_result(
     session: SessionDependency, token: TokenDependency, result_id: UUID
 ):
     current_user = get_current_user(session, token)
+
     return ResultRepository(session).get(current_user.id, result_id)
 
 
@@ -44,4 +45,12 @@ def delete_user_result(
     session: SessionDependency, token: TokenDependency, result_id: UUID
 ):
     current_user = get_current_user(session, token)
+
     return ResultRepository(session).delete(current_user.id, result_id)
+
+
+@router.delete("/users/me/results")
+def delete_user_results(session: SessionDependency, token: TokenDependency):
+    current_user = get_current_user(session, token)
+
+    return ResultRepository(session).delete_all(current_user.id)
