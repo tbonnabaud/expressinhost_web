@@ -46,7 +46,6 @@ defineProps<{ result: Result }>()
 
 <style scoped>
 article {
-  margin: 0.5em;
   padding-bottom: 0.3em;
 }
 
