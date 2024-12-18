@@ -69,14 +69,17 @@ function colorSequences(inputSequence: string, outputSequence: string) {
     <summary @click="toggleDetails">
       <div>
         {{ tunedSequence.name }}
-      <span v-if="nativeCodonTable">
-        (<i>{{ nativeCodonTable.organism }}</i> - {{ nativeCodonTable.name }})
-      </span>
       </div>
     </summary>
 
+    <p v-if="nativeCodonTable">
+      <strong>&rarr; Native codon table: </strong>
+      <i>{{ nativeCodonTable.organism }}</i> - {{ nativeCodonTable.name }}
+    </p>
+
     <p>
-      &rarr; Similarity: {{ tunedSequence.identity_percentage.toFixed(2) }}%
+      <strong>&rarr; Similarity: </strong>
+      {{ tunedSequence.identity_percentage.toFixed(2) }}%
     </p>
 
     <div class="flex-container sequence-comparison">
