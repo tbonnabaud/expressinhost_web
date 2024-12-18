@@ -123,7 +123,7 @@ async function deleteAllResults() {
   .grid-of-three {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    column-gap: 1em;
+    gap: 1em;
   }
 }
 
