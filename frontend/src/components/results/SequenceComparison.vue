@@ -1,25 +1,37 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
-import type { TunedSequence } from '@/lib/interfaces'
+import type { CodonTable, TunedSequence } from '@/lib/interfaces'
+import { API } from '@/lib/api'
 import ProfileChart from './ProfileChart.vue'
 
 const props = defineProps<{
   tunedSequence: TunedSequence
+  nativeCodonTableId: string
   open?: boolean
 }>()
 
 const openDetails = ref(false)
+const nativeCodonTable = ref<CodonTable | null>(null)
 
 const seqComparison = computed(() =>
   colorSequences(props.tunedSequence.input, props.tunedSequence.output),
 )
 
-onMounted(() => {
+onMounted(async () => {
   openDetails.value = Boolean(props.open)
+  await fetchNativeCodonTable()
 })
 
 function toggleDetails() {
   openDetails.value = !openDetails.value
+}
+
+async function fetchNativeCodonTable() {
+  const [data, error] = await API.codonTables.get(props.nativeCodonTableId)
+
+  if (!error && data) {
+    nativeCodonTable.value = data
+  }
 }
 
 /**
@@ -54,7 +66,14 @@ function colorSequences(inputSequence: string, outputSequence: string) {
 
 <template>
   <details :open="openDetails" @click.prevent>
-    <summary @click="toggleDetails">{{ tunedSequence.name }}</summary>
+    <summary @click="toggleDetails">
+      <div>
+        {{ tunedSequence.name }}
+      <span v-if="nativeCodonTable">
+        (<i>{{ nativeCodonTable.organism }}</i> - {{ nativeCodonTable.name }})
+      </span>
+      </div>
+    </summary>
 
     <p>
       &rarr; Similarity: {{ tunedSequence.identity_percentage.toFixed(2) }}%
