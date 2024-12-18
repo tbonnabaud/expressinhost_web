@@ -18,27 +18,29 @@ defineProps<{ result: Result }>()
         </h5>
       </header>
 
-      <div class="grid">
-        <p>
-          <strong>Codon table:</strong>
-          &nbsp;<i>{{ result.host_codon_table.organism }}</i> -
-          {{ result.host_codon_table.name }}
-        </p>
-        <p><strong>Mode:</strong> {{ MODE_LABEL_MAPPING[result.mode] }}</p>
-      </div>
+      <div class="result-item-parameters">
+        <div class="grid">
+          <p>
+            <strong>Codon table:</strong>
+            &nbsp;<i>{{ result.host_codon_table.organism }}</i> -
+            {{ result.host_codon_table.name }}
+          </p>
+          <p><strong>Mode:</strong> {{ MODE_LABEL_MAPPING[result.mode] }}</p>
+        </div>
 
-      <div class="grid">
-        <p>
-          <strong>Slow speed thresold:</strong>
-          {{ result.slow_speed_threshold * 100 }}%
-        </p>
-        <p>
-          <strong>Conservation thresold:</strong>
-          {{
-            result.conservation_threshold &&
-            result.conservation_threshold * 100
-          }}%
-        </p>
+        <div class="grid">
+          <p>
+            <strong>Slow speed thresold:</strong>
+            {{ result.slow_speed_threshold * 100 }}%
+          </p>
+          <p>
+            <strong>Conservation thresold:</strong>
+            {{
+              result.conservation_threshold &&
+              result.conservation_threshold * 100
+            }}%
+          </p>
+        </div>
       </div>
     </article>
   </RouterLink>
