@@ -112,6 +112,7 @@ async function deleteResult() {
   <SequenceComparison
     v-for="(item, index) in tuned_sequences"
     :tuned-sequence="item"
+    :native-codon-table-id="result.sequences_native_codon_tables[item.name]"
     :open="index == 0"
     :key="index"
   />
