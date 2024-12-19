@@ -79,7 +79,7 @@ function colorSequences(inputSequence: string, outputSequence: string) {
 
     <p>
       <strong>&rarr; Similarity: </strong>
-      {{ tunedSequence.identity_percentage.toFixed(2) }}%
+      {{ tunedSequence.identity_percentage.toFixed() }}%
     </p>
 
     <div class="flex-container sequence-comparison">
