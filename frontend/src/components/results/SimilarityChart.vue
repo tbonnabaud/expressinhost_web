@@ -13,7 +13,7 @@ const data = computed(() => {
     labels: props.labels,
     datasets: [
       {
-        label: 'Input versus output codon similarity percentages',
+        label: 'Similarity percentage',
         data: props.values,
         borderWidth: 2,
       },
@@ -30,9 +30,30 @@ const options: ChartOptions = {
     },
   },
   plugins: {
+    title: {
+      display: true,
+      text: 'Input versus output codon similarity percentages',
+    },
     legend: {
       display: true,
       position: 'top',
+    },
+    tooltip: {
+      callbacks: {
+        label: context => {
+          let label = context.dataset.label || ''
+
+          if (label) {
+            label += ': '
+          }
+
+          if (context.parsed.y !== null) {
+            label += `${context.parsed.y.toFixed()}%`
+          }
+
+          return label
+        },
+      },
     },
   },
 }
