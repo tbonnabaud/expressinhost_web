@@ -30,11 +30,11 @@ defineProps<{ result: Result }>()
 
         <div class="grid">
           <p>
-            <strong>Slow speed thresold:</strong>
+            <strong>Slow speed threshold:</strong>
             {{ result.slow_speed_threshold * 100 }}%
           </p>
           <p>
-            <strong>Conservation thresold:</strong>
+            <strong>Conservation threshold:</strong>
             {{
               result.conservation_threshold &&
               result.conservation_threshold * 100
