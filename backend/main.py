@@ -2,7 +2,7 @@ from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import FileResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 
-from .routes import admin, codon_tables, results, tuned_sequences, tuning, users
+from .routes import admin, auth, codon_tables, results, tuned_sequences, tuning, users
 
 # from fastapi.middleware.cors import CORSMiddleware
 
@@ -22,6 +22,7 @@ app = FastAPI(title="ExpressInHost")
 
 api_app = FastAPI(title="ExpressInHost API", docs_url=None, redoc_url=None)
 
+api_app.include_router(auth.router)
 api_app.include_router(admin.router, include_in_schema=False)
 api_app.include_router(users.router)
 api_app.include_router(codon_tables.router)

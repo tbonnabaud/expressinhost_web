@@ -82,7 +82,7 @@ async function postForm(url: string, form: UserLogin) {
 }
 
 async function login(form: UserLogin) {
-  const [data, error] = await postForm('/token', form)
+  const [data, error] = await postForm('/auth/token', form)
 
   if (!error && data) {
     localStorage.setItem('accessToken', data.access_token)
@@ -101,6 +101,12 @@ const REQUESTS = {
   delete: async (url: string) => await makeRequest({ method: 'delete', url }),
 }
 
+const auth = {
+  login: async (form: UserLogin) => await login(form),
+  logout: () => localStorage.removeItem('accessToken'),
+  isLoggedIn: () => localStorage.getItem('accessToken') !== null,
+}
+
 const admin = {
   runWebScraping: async () =>
     await REQUESTS.post('/admin/external-db/web-scraping/run'),
@@ -110,9 +116,6 @@ const admin = {
 
 const users = {
   register: async (form: UserForm) => await REQUESTS.post('/users', form),
-  login: async (form: UserLogin) => await login(form),
-  logout: () => localStorage.removeItem('accessToken'),
-  isLoggedIn: () => localStorage.getItem('accessToken') !== null,
   me: async () => await REQUESTS.get('/users/me'),
   list: async () => await REQUESTS.get('/users'),
 }
@@ -148,6 +151,7 @@ const tunedSequences = {
 export const API = {
   runTraining: async (form: RunTrainingForm) =>
     (await REQUESTS.post('/run-tuning', form)) as ApiResponse<TuningOutput>,
+  auth: auth,
   users: users,
   codonTables: codonTables,
   results: results,

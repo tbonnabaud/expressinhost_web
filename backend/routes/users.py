@@ -1,22 +1,17 @@
-from typing import Annotated
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, status
 from fastapi.exceptions import HTTPException
-from fastapi.security import OAuth2PasswordRequestForm
 
 from ..authentication import (
-    ACCESS_TOKEN_EXPIRE_DELTA,
     TokenDependency,
     check_is_admin,
-    check_password,
-    create_access_token,
     get_current_user,
     hash_password,
 )
 from ..crud.users import UserRepository
 from ..database import SessionDependency
-from ..schemas import Token, User, UserForm
+from ..schemas import User, UserForm
 
 router = APIRouter(tags=["Users"])
 
@@ -46,23 +41,6 @@ def get_user(session: SessionDependency, user_id: UUID):
         raise HTTPException(status.HTTP_404_NOT_FOUND, "Not found.")
 
     return user
-
-
-@router.post("/token")
-def log_in_user(
-    session: SessionDependency,
-    form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
-):
-    user = UserRepository(session).get_by_email(form_data.username.lower())
-
-    if not user or not check_password(form_data.password, user.hashed_password):
-        raise HTTPException(status_code=400, detail="Incorrect username or password")
-
-    access_token = create_access_token(
-        data={"sub": user.email}, expires_delta=ACCESS_TOKEN_EXPIRE_DELTA
-    )
-
-    return Token(access_token=access_token, token_type="bearer")
 
 
 @router.post("/users", response_model=UUID)
