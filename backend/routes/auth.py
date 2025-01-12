@@ -8,6 +8,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 from ..authentication import check_password, create_token
 from ..crud.users import UserRepository
 from ..database import SessionDependency
+from ..email import send_email
 from ..schemas import Token
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
@@ -45,9 +46,13 @@ def send_reset_password_email(
             expires_delta=RESET_TOKEN_EXPIRE_DELTA,
         )
 
-        return {"reset_url": f"{request.base_url}reset-password/{reset_token}"}
+        reset_url = f"{request.base_url}reset-password/{reset_token}"
 
-    return {}
+        send_email(
+            user.email,
+            "Reset password link for ExpressInHost",
+            f"Reset password link for ExpressInHost:\n{reset_url}",
+        )
 
 
 @router.get("/reset-password")
