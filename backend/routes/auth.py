@@ -1,7 +1,7 @@
 from datetime import timedelta
 from typing import Annotated
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Request
 from fastapi.exceptions import HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
 
@@ -34,7 +34,9 @@ def get_access_token(
 
 
 @router.post("/password-forgotten")
-def send_reset_password_email(session: SessionDependency, user_email: str):
+def send_reset_password_email(
+    request: Request, session: SessionDependency, user_email: str
+):
     user = UserRepository(session).get_by_email(user_email.lower())
 
     if user:
@@ -43,7 +45,7 @@ def send_reset_password_email(session: SessionDependency, user_email: str):
             expires_delta=RESET_TOKEN_EXPIRE_DELTA,
         )
 
-        return {"reset_token": reset_token}
+        return {"reset_token": reset_token, "base_url": str(request.base_url)}
 
     return {}
 
