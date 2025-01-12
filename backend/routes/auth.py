@@ -13,6 +13,7 @@ from ..schemas import Token
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 
 ACCESS_TOKEN_EXPIRE_DELTA = timedelta(hours=12)
+RESET_TOKEN_EXPIRE_DELTA = timedelta(minutes=15)
 
 
 @router.post("/token")
@@ -30,3 +31,23 @@ def get_access_token(
     )
 
     return Token(access_token=access_token, token_type="bearer")
+
+
+@router.post("/password-forgotten")
+def send_reset_password_email(session: SessionDependency, user_email: str):
+    user = UserRepository(session).get_by_email(user_email.lower())
+
+    if user:
+        reset_token = create_token(
+            data={"sub": user.email, "for_reset": True},
+            expires_delta=RESET_TOKEN_EXPIRE_DELTA,
+        )
+
+        return {"reset_token": reset_token}
+
+    return {}
+
+
+@router.get("/reset-password")
+def get_reset_data(reset_token: str):
+    return {"reset_token": reset_token}

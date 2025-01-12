@@ -94,15 +94,18 @@ def decode_access_token(token: str) -> dict:
         )
 
 
-def get_current_user(session: Session, token: str) -> User:
+def get_current_user(
+    session: Session, token: str, check_for_reset: bool = False
+) -> User:
     """
     The function `get_current_user` retrieves the current user based on the provided access token and
     session, handling authentication errors if necessary.
     """
     payload = decode_access_token(token)
     email: str | None = payload.get("sub")
+    for_reset: bool | None = payload.get("for_reset")
 
-    if email:
+    if email and (check_for_reset and for_reset or not check_for_reset):
         user = UserRepository(session).get_by_email(email)
 
         if user:

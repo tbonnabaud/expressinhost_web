@@ -58,6 +58,32 @@ class UserForm(BaseModel):
         return value.strip()
 
 
+class UserProfileForm(BaseModel):
+    email: str
+    full_name: str
+    contact_consent: bool
+
+    @field_validator("email")
+    @staticmethod
+    def valid_email(value: str):
+        value = value.strip().lower()
+
+        if not re.match(r"^[\w\-\.]+@([\w\-]+\.)+\w{2,4}$", value):
+            raise ValueError("Invalid e-mail address.")
+
+        return value
+
+    @field_validator("full_name")
+    @staticmethod
+    def clean(value: str):
+        return value.strip()
+
+
+class UserPasswordForm(BaseModel):
+    reset_token: str
+    password: str
+
+
 class CodonTranslation(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 

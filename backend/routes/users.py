@@ -11,7 +11,7 @@ from ..authentication import (
 )
 from ..crud.users import UserRepository
 from ..database import SessionDependency
-from ..schemas import User, UserForm
+from ..schemas import User, UserForm, UserProfileForm, UserPasswordForm
 
 router = APIRouter(tags=["Users"])
 
@@ -52,17 +52,23 @@ def add_user(session: SessionDependency, data: UserForm):
     return UserRepository(session).add(user)
 
 
-@router.put("/users/me")
-def update_me(
+@router.put("/users/me/profile")
+def update_me_profile(
     session: SessionDependency,
     token: TokenDependency,
-    data: UserForm,
+    data: UserProfileForm,
 ):
     current_user = get_current_user(session, token)
-
     updated_user = data.model_dump()
+
+    return UserRepository(session).update(current_user.id, updated_user)
+
+
+@router.put("/users/me/password")
+def update_me_password(session: SessionDependency, data: UserPasswordForm):
+    current_user = get_current_user(session, data.reset_token, check_for_reset=True)
+    updated_user = {}
     updated_user["hashed_password"] = hash_password(data.password)
-    del updated_user["password"]
 
     return UserRepository(session).update(current_user.id, updated_user)
 
