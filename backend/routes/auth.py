@@ -45,7 +45,7 @@ def send_reset_password_email(
             expires_delta=RESET_TOKEN_EXPIRE_DELTA,
         )
 
-        return {"reset_token": reset_token, "base_url": str(request.base_url)}
+        return {"reset_url": str(request.base_url) + reset_token}
 
     return {}
 
