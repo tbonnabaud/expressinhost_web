@@ -6,6 +6,7 @@ import type {
   UserLogin,
   Token,
   CodonTableForm,
+  UserPasswordForm,
 } from './interfaces'
 import { store } from './store'
 
@@ -105,6 +106,8 @@ const auth = {
   login: async (form: UserLogin) => await login(form),
   logout: () => localStorage.removeItem('accessToken'),
   isLoggedIn: () => localStorage.getItem('accessToken') !== null,
+  sendResetPasswordLink: async (email: string) =>
+    await REQUESTS.get('/auth/password-forgotten', { user_email: email }),
 }
 
 const admin = {
@@ -118,6 +121,8 @@ const users = {
   register: async (form: UserForm) => await REQUESTS.post('/users', form),
   me: async () => await REQUESTS.get('/users/me'),
   list: async () => await REQUESTS.get('/users'),
+  updatePassword: async (form: UserPasswordForm) =>
+    await REQUESTS.put('/users/me/password', form),
 }
 
 const codonTables = {

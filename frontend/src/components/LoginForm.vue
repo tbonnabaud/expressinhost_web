@@ -66,6 +66,13 @@ async function handleSubmit() {
       <RouterLink to="/register" @click="$emit('close')">here</RouterLink>.
     </p>
 
+    <p>
+      Forgot your password? Please click
+      <RouterLink to="/forgotten-password" @click="$emit('close')">
+        here</RouterLink
+      >.
+    </p>
+
     <footer>
       <button @click="handleSubmit">Submit</button>
     </footer>
