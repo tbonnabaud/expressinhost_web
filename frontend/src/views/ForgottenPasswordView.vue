@@ -8,10 +8,9 @@ const router = useRouter()
 const email = ref('')
 
 async function handleSubmit() {
-  const [data, error] = await API.auth.sendResetPasswordLink(email.value)
+  const [, error] = await API.auth.sendResetPasswordLink(email.value)
 
   if (!error) {
-    console.log(data)
     // Redirect to home
     router.push('/')
   }

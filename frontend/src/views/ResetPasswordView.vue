@@ -11,13 +11,12 @@ const router = useRouter()
 const password = ref('')
 
 async function handleSubmit() {
-  const [data, error] = await API.users.updatePassword({
+  const [, error] = await API.users.updatePassword({
     reset_token: props.token,
     password: password.value,
   } as UserPasswordForm)
 
   if (!error) {
-    console.log(data)
     // Redirect to home
     router.push('/')
   }
