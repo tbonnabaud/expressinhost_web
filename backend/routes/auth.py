@@ -33,7 +33,7 @@ def get_access_token(
     return Token(access_token=access_token, token_type="bearer")
 
 
-@router.post("/password-forgotten")
+@router.get("/password-forgotten")
 def send_reset_password_email(
     request: Request, session: SessionDependency, user_email: str
 ):
@@ -45,7 +45,7 @@ def send_reset_password_email(
             expires_delta=RESET_TOKEN_EXPIRE_DELTA,
         )
 
-        return {"reset_url": str(request.base_url) + reset_token}
+        return {"reset_url": f"{request.base_url}reset-password/{reset_token}"}
 
     return {}
 
