@@ -53,6 +53,10 @@ async function handleSubmit() {
       <WithAlertError :error="passwordError">
         <label
           >Password
+          <i id="passwordIndications">
+            (between 8 and 20 characters, with at least one letter and one
+            number)
+          </i>
           <input type="password" v-model="form.password" required />
         </label>
       </WithAlertError>
@@ -66,3 +70,9 @@ async function handleSubmit() {
     <input type="submit" value="Submit" />
   </form>
 </template>
+
+<style scoped>
+#passwordIndications {
+  font-size: 80%;
+}
+</style>
