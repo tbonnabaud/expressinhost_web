@@ -14,6 +14,17 @@ export interface UserForm {
   contact_consent: boolean
 }
 
+export interface UserProfileForm {
+  email: string
+  full_name: string
+  contact_consent: boolean
+}
+
+export interface UserPasswordForm {
+  reset_token: string
+  password: string
+}
+
 export interface UserLogin {
   username: string
   password: string

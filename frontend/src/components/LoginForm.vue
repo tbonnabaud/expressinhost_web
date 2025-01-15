@@ -17,7 +17,7 @@ const formRef = useTemplateRef('login-form')
 
 async function handleSubmit() {
   if (formRef.value?.checkValidity()) {
-    const error = await API.users.login(form)
+    const error = await API.auth.login(form)
     if (error === null) {
       await setCurrentUserInStore()
       emit('close')
@@ -64,6 +64,13 @@ async function handleSubmit() {
     <p>
       Not registered? Please register
       <RouterLink to="/register" @click="$emit('close')">here</RouterLink>.
+    </p>
+
+    <p>
+      Forgot your password? Please click
+      <RouterLink to="/forgotten-password" @click="$emit('close')">
+        here</RouterLink
+      >.
     </p>
 
     <footer>

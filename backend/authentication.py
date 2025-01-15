@@ -11,8 +11,6 @@ from .crud.users import User, UserRepository
 from .database import Session, SessionDependency
 from .settings import settings
 
-ACCESS_TOKEN_EXPIRE_DELTA = timedelta(hours=12)
-
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 optional_oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token", auto_error=False)
 
@@ -36,21 +34,21 @@ def check_password(password: str, hashed_password: str) -> bool:
     return bcrypt.checkpw(password.encode(), hashed_password.encode())
 
 
-def create_access_token(data: dict, expires_delta: timedelta | None = None) -> str:
+def create_token(data: dict, expires_delta: timedelta | None = None) -> str:
     """
-    The `create_access_token` function generates a JWT access token with optional expiration time.
+    The `create_token` function generates a JWT token with optional expiration time.
 
     Args:
         data (dict): The `data` parameter is a dictionary containing the information that you want to
-            encode into the access token. This information could include user details, permissions, or any other
-            data that needs to be included in the token.
+        encode into the token. This information could include user details, permissions, or any other
+        data that needs to be included in the token.
 
         expires_delta (timedelta | None): The `expires_delta` parameter is used to specify the duration
-            for which the access token will be valid. If a value is provided for `expires_delta`, the access
-            token will expire after that duration. Default is 15 minutes.
+        for which the token will be valid. If a value is provided for `expires_delta`, the token
+        will expire after that duration. Default is 15 minutes.
 
     Returns:
-        str: The function `create_access_token` returns a string which is the encoded JSON Web Token (JWT)
+        str: The function `create_token` returns a string which is the encoded JSON Web Token (JWT)
         containing the data provided along with an expiration time.
     """
     to_encode = data.copy()
@@ -96,15 +94,18 @@ def decode_access_token(token: str) -> dict:
         )
 
 
-def get_current_user(session: Session, token: str) -> User:
+def get_current_user(
+    session: Session, token: str, check_for_reset: bool = False
+) -> User:
     """
     The function `get_current_user` retrieves the current user based on the provided access token and
     session, handling authentication errors if necessary.
     """
     payload = decode_access_token(token)
     email: str | None = payload.get("sub")
+    for_reset: bool | None = payload.get("for_reset")
 
-    if email:
+    if email and (check_for_reset and for_reset or not check_for_reset):
         user = UserRepository(session).get_by_email(email)
 
         if user:

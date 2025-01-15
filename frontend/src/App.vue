@@ -8,10 +8,10 @@ import LoginForm from '@/components/LoginForm.vue'
 const openLoginForm = ref(false)
 const user = store.currentUser
 
-onMounted(async () => API.users.isLoggedIn() && (await setCurrentUserInStore()))
+onMounted(async () => API.auth.isLoggedIn() && (await setCurrentUserInStore()))
 
 function logout() {
-  API.users.logout()
+  API.auth.logout()
   store.emptyCurrentUser()
 }
 </script>

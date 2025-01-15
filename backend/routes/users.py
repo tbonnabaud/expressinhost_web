@@ -1,22 +1,17 @@
-from typing import Annotated
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, status
 from fastapi.exceptions import HTTPException
-from fastapi.security import OAuth2PasswordRequestForm
 
 from ..authentication import (
-    ACCESS_TOKEN_EXPIRE_DELTA,
     TokenDependency,
     check_is_admin,
-    check_password,
-    create_access_token,
     get_current_user,
     hash_password,
 )
 from ..crud.users import UserRepository
 from ..database import SessionDependency
-from ..schemas import Token, User, UserForm
+from ..schemas import User, UserForm, UserPasswordForm, UserProfileForm
 
 router = APIRouter(tags=["Users"])
 
@@ -48,23 +43,6 @@ def get_user(session: SessionDependency, user_id: UUID):
     return user
 
 
-@router.post("/token")
-def log_in_user(
-    session: SessionDependency,
-    form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
-):
-    user = UserRepository(session).get_by_email(form_data.username.lower())
-
-    if not user or not check_password(form_data.password, user.hashed_password):
-        raise HTTPException(status_code=400, detail="Incorrect username or password")
-
-    access_token = create_access_token(
-        data={"sub": user.email}, expires_delta=ACCESS_TOKEN_EXPIRE_DELTA
-    )
-
-    return Token(access_token=access_token, token_type="bearer")
-
-
 @router.post("/users", response_model=UUID)
 def add_user(session: SessionDependency, data: UserForm):
     user = data.model_dump()
@@ -74,17 +52,23 @@ def add_user(session: SessionDependency, data: UserForm):
     return UserRepository(session).add(user)
 
 
-@router.put("/users/me")
-def update_me(
+@router.put("/users/me/profile")
+def update_me_profile(
     session: SessionDependency,
     token: TokenDependency,
-    data: UserForm,
+    data: UserProfileForm,
 ):
     current_user = get_current_user(session, token)
-
     updated_user = data.model_dump()
+
+    return UserRepository(session).update(current_user.id, updated_user)
+
+
+@router.put("/users/me/password")
+def update_me_password(session: SessionDependency, data: UserPasswordForm):
+    current_user = get_current_user(session, data.reset_token, check_for_reset=True)
+    updated_user = {}
     updated_user["hashed_password"] = hash_password(data.password)
-    del updated_user["password"]
 
     return UserRepository(session).update(current_user.id, updated_user)
 
