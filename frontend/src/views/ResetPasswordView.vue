@@ -1,14 +1,21 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { API } from '@/lib/api'
+import { checkPasswordConstraints } from '@/lib/checkers'
 import type { UserPasswordForm } from '@/lib/interfaces'
+import WithAlertError from '@/components/WithAlertError.vue'
 
 const props = defineProps<{ token: string }>()
 
 const router = useRouter()
 
 const password = ref('')
+const passwordError = ref('')
+
+watch(password, password => {
+  passwordError.value = checkPasswordConstraints(password)
+})
 
 async function handleSubmit() {
   const [, error] = await API.users.updatePassword({
@@ -32,10 +39,12 @@ async function handleSubmit() {
     <div class="centered">
       <form id="resetForm" @submit.prevent="handleSubmit">
         <fieldset>
-          <label>
-            New password
-            <input type="password" v-model="password" required />
-          </label>
+          <WithAlertError :error="passwordError">
+            <label>
+              New password
+              <input type="password" v-model="password" required />
+            </label>
+          </WithAlertError>
         </fieldset>
 
         <input type="submit" value="Submit" />

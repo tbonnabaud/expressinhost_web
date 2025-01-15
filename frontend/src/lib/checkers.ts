@@ -83,3 +83,13 @@ export function checkClustalMatchingFasta(
 
   return errors
 }
+
+export function checkPasswordConstraints(password: string) {
+  if (password.length < 8 || password.length > 20) {
+    return 'The password must be between 8 and 20 characters long.'
+  } else if (!password.match(/([a-z]\d)|(\d[a-z])/i)) {
+    return 'The password must contain at least one letter and one number.'
+  } else {
+    return ''
+  }
+}

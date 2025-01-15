@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import type { UserForm } from '@/lib/interfaces'
-import { reactive } from 'vue'
+import { reactive, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { API } from '@/lib/api'
+import { checkPasswordConstraints } from '@/lib/checkers'
+import WithAlertError from './WithAlertError.vue'
 
 const router = useRouter()
 
@@ -12,6 +14,15 @@ const form = reactive({
   password: '',
   contact_consent: false,
 } as UserForm)
+
+const passwordError = ref('')
+
+watch(
+  () => form.password,
+  password => {
+    passwordError.value = checkPasswordConstraints(password)
+  },
+)
 
 async function handleSubmit() {
   const [data, error] = await API.users.register(form)
@@ -39,10 +50,12 @@ async function handleSubmit() {
         <input type="email" v-model="form.email" required />
       </label>
 
-      <label
-        >Password
-        <input type="password" v-model="form.password" required />
-      </label>
+      <WithAlertError :error="passwordError">
+        <label
+          >Password
+          <input type="password" v-model="form.password" required />
+        </label>
+      </WithAlertError>
 
       <label>
         <input type="checkbox" role="switch" v-model="form.contact_consent" />
