@@ -2,7 +2,7 @@
 import { computed, ref, watch } from 'vue'
 import type { CodonTable } from '@/lib/interfaces'
 
-const DEFAULT_NUMBER_TO_SHOW = 20
+const DEFAULT_NUMBER_TO_SHOW = 100
 
 const props = defineProps<{
   options: Array<CodonTable>
@@ -37,7 +37,7 @@ function handleScroll(event: Event) {
   console.log(scrollTop)
 
   if (scrollTop + clientHeight >= scrollHeight) {
-    optionsToShow.value += 20
+    optionsToShow.value += DEFAULT_NUMBER_TO_SHOW
   }
 }
 
