@@ -1,6 +1,8 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import type { CodonTable } from '@/lib/interfaces'
+
+const DEFAULT_NUMBER_TO_SHOW = 20
 
 const props = defineProps<{
   options: Array<CodonTable>
@@ -8,7 +10,7 @@ const props = defineProps<{
 const model = defineModel<CodonTable | null>()
 const filter = ref('')
 const collapseDropdown = ref(true)
-const optionsToShow = ref(20)
+const optionsToShow = ref(DEFAULT_NUMBER_TO_SHOW)
 
 const filteredOptions = computed(() => {
   const lowerCaseFilter = filter.value.toLowerCase()
@@ -19,6 +21,10 @@ const filteredOptions = computed(() => {
         e.organism.toLowerCase().includes(lowerCaseFilter),
     )
     .slice(0, optionsToShow.value)
+})
+
+watch(filter, () => {
+  optionsToShow.value = DEFAULT_NUMBER_TO_SHOW
 })
 
 function handleScroll(event: Event) {
