@@ -27,6 +27,10 @@ watch(filter, () => {
   optionsToShow.value = DEFAULT_NUMBER_TO_SHOW
 })
 
+watch(collapseDropdown, () => {
+  optionsToShow.value = DEFAULT_NUMBER_TO_SHOW
+})
+
 function handleScroll(event: Event) {
   const target = event.target as HTMLElement
   const { scrollTop, scrollHeight, clientHeight } = target
