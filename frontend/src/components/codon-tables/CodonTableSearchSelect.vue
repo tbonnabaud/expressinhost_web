@@ -8,15 +8,28 @@ const props = defineProps<{
 const model = defineModel<CodonTable | null>()
 const filter = ref('')
 const collapseDropdown = ref(true)
+const optionsToShow = ref(20)
 
 const filteredOptions = computed(() => {
   const lowerCaseFilter = filter.value.toLowerCase()
-  return props.options.filter(
-    e =>
-      e.name.toLowerCase().includes(lowerCaseFilter) ||
-      e.organism.toLowerCase().includes(lowerCaseFilter),
-  )
+  return props.options
+    .filter(
+      e =>
+        e.name.toLowerCase().includes(lowerCaseFilter) ||
+        e.organism.toLowerCase().includes(lowerCaseFilter),
+    )
+    .slice(0, optionsToShow.value)
 })
+
+function handleScroll(event: Event) {
+  const target = event.target as HTMLElement
+  const { scrollTop, scrollHeight, clientHeight } = target
+  console.log(scrollTop)
+
+  if (scrollTop + clientHeight >= scrollHeight) {
+    optionsToShow.value += 20
+  }
+}
 
 function closeDropdown() {
   collapseDropdown.value = true
@@ -41,7 +54,7 @@ function closeDropdown() {
       <li>
         <input type="search" placeholder="Filter..." v-model="filter" />
       </li>
-      <div class="option-list">
+      <div class="option-list" @scroll="handleScroll">
         <li>
           <label>
             <input
