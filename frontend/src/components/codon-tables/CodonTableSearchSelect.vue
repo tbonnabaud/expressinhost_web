@@ -1,6 +1,8 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import type { CodonTable } from '@/lib/interfaces'
+
+const DEFAULT_NUMBER_TO_SHOW = 20
 
 const props = defineProps<{
   options: Array<CodonTable>
@@ -8,15 +10,36 @@ const props = defineProps<{
 const model = defineModel<CodonTable | null>()
 const filter = ref('')
 const collapseDropdown = ref(true)
+const optionsToShow = ref(DEFAULT_NUMBER_TO_SHOW)
 
 const filteredOptions = computed(() => {
   const lowerCaseFilter = filter.value.toLowerCase()
-  return props.options.filter(
-    e =>
-      e.name.toLowerCase().includes(lowerCaseFilter) ||
-      e.organism.toLowerCase().includes(lowerCaseFilter),
-  )
+  return props.options
+    .filter(
+      e =>
+        e.name.toLowerCase().includes(lowerCaseFilter) ||
+        e.organism.toLowerCase().includes(lowerCaseFilter),
+    )
+    .slice(0, optionsToShow.value)
 })
+
+watch(filter, () => {
+  optionsToShow.value = DEFAULT_NUMBER_TO_SHOW
+})
+
+watch(collapseDropdown, () => {
+  optionsToShow.value = DEFAULT_NUMBER_TO_SHOW
+})
+
+function handleScroll(event: Event) {
+  const target = event.target as HTMLElement
+  const { scrollTop, scrollHeight, clientHeight } = target
+  console.log(scrollTop)
+
+  if (scrollTop + clientHeight >= scrollHeight) {
+    optionsToShow.value += 20
+  }
+}
 
 function closeDropdown() {
   collapseDropdown.value = true
@@ -41,7 +64,7 @@ function closeDropdown() {
       <li>
         <input type="search" placeholder="Filter..." v-model="filter" />
       </li>
-      <div class="option-list">
+      <div class="option-list" @scroll="handleScroll">
         <li>
           <label>
             <input
