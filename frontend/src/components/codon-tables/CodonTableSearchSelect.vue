@@ -34,7 +34,6 @@ watch(collapseDropdown, () => {
 function handleScroll(event: Event) {
   const target = event.target as HTMLElement
   const { scrollTop, scrollHeight, clientHeight } = target
-  console.log(scrollTop)
 
   if (scrollTop + clientHeight >= scrollHeight * 0.9) {
     optionsToShow.value += DEFAULT_NUMBER_TO_SHOW
