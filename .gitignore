@@ -7,3 +7,5 @@ tmp
 dist
 .env
 *.pyc
+*.log
+*.log.*
