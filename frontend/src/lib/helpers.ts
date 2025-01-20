@@ -71,3 +71,34 @@ export function groupByAminoAcid(array: CodonTranslation[]) {
 export function toFixedFloat(value: number, fractionDigits: number = 0) {
   return parseFloat(value.toFixed(fractionDigits))
 }
+
+/**
+ * The `downloadFile` function in TypeScript creates a downloadable file from the provided content and
+ * filename.
+ * @param {string} content - The `content` parameter in the `downloadFile` function is the actual data
+ * that you want to download as a file. It should be a string containing the content that you want to
+ * save in the file.
+ * @param {string} filename - The `filename` parameter is a string that represents the name under which
+ * the file will be saved when downloaded. For example, if you are downloading a text file, the
+ * `filename` could be something like "example.txt".
+ */
+export function downloadFile(content: string, filename: string) {
+  // Creating a Blob from the data
+  const blob = new Blob([content], {
+    type: 'text/plain',
+  })
+  const url = URL.createObjectURL(blob)
+
+  // Creating a temporary link element
+  const link = document.createElement('a')
+  link.href = url
+  link.download = filename
+
+  // Append to the body, click and remove it
+  document.body.appendChild(link)
+  link.click()
+  document.body.removeChild(link)
+
+  // Revoke the object URL after the download
+  URL.revokeObjectURL(url)
+}

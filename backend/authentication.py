@@ -11,8 +11,8 @@ from .crud.users import User, UserRepository
 from .database import Session, SessionDependency
 from .settings import settings
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
-optional_oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token", auto_error=False)
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/token")
+optional_oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/token", auto_error=False)
 
 TokenDependency = Annotated[str, Depends(oauth2_scheme)]
 OptionalTokenDependency = Annotated[str | None, Depends(optional_oauth2_scheme)]

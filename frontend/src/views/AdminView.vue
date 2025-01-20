@@ -4,6 +4,7 @@ import RequiredAdmin from '@/components/RequiredAdmin.vue'
 import RequiredAuth from '@/components/RequiredAuth.vue'
 import AdminWebScraping from '@/components/admin/AdminWebScraping.vue'
 import AdminUsers from '@/components/admin/AdminUsers.vue'
+import AdminDowloadLogFile from '@/components/admin/AdminDowloadLogFile.vue'
 
 const user = store.currentUser
 </script>
@@ -23,6 +24,13 @@ const user = store.currentUser
       <section>
         <h2>Users</h2>
         <AdminUsers />
+      </section>
+
+      <hr />
+
+      <section>
+        <h2>Log files</h2>
+        <AdminDowloadLogFile />
       </section>
     </template>
 

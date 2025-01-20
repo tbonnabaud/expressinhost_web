@@ -9,6 +9,10 @@ venv/
 env/
 .venv/
 
+# Ignore log files
+*.log
+*.log.*
+
 # Ignore Node.js dependencies and build artifacts
 node_modules/
 npm-debug.log
