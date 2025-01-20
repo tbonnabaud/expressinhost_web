@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { TuningOutput, TunedSequence } from '@/lib/interfaces'
+import { downloadFile } from '@/lib/helpers'
 
 const props = defineProps<TuningOutput>()
 
@@ -13,30 +14,16 @@ function formatToFasta(tunedSequences: Array<TunedSequence>) {
     .join('\n\n')
 }
 
-function downloadFile() {
-  // Creating a Blob from the data
-  const blob = new Blob([formatToFasta(props.tuned_sequences)], {
-    type: 'text/plain',
-  })
-  const url = URL.createObjectURL(blob)
-
-  // Creating a temporary link element
-  const link = document.createElement('a')
-  link.href = url
-  link.download = `tuned_sequences_${props.result.mode}.fasta`
-
-  // Append to the body, click and remove it
-  document.body.appendChild(link)
-  link.click()
-  document.body.removeChild(link)
-
-  // Revoke the object URL after the download
-  URL.revokeObjectURL(url)
+function downloadFasta() {
+  downloadFile(
+    formatToFasta(props.tuned_sequences),
+    `tuned_sequences_${props.result.mode}.fasta`,
+  )
 }
 </script>
 
 <template>
-  <button @click="downloadFile">Download output FASTA file</button>
+  <button @click="downloadFasta">Download output FASTA file</button>
 </template>
 
 <style scoped>
