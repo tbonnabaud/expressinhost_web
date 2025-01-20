@@ -28,7 +28,7 @@ def get_log_file():
             return PlainTextResponse(f.read())
 
     except OSError:
-        return PlainTextResponse("Cannot open the log file")
+        return PlainTextResponse("Cannot open the log file", status_code=404)
 
 
 @router.get("/log/backup/{number}")
@@ -38,4 +38,6 @@ def get_backup_log_file(number: int):
             return PlainTextResponse(f.read())
 
     except OSError:
-        return PlainTextResponse(f"Cannot open the backup log file {number}")
+        return PlainTextResponse(
+            f"Cannot open the backup log file {number}", status_code=404
+        )
