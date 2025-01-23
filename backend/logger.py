@@ -1,6 +1,6 @@
 import logging
-from logging.handlers import RotatingFileHandler
 import sys
+from logging.handlers import RotatingFileHandler
 
 uvicorn_logger = logging.getLogger("uvicorn.error")
 logger = logging.getLogger("expressinhost")
