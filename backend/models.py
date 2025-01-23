@@ -26,6 +26,16 @@ class User(Base):
     contact_consent: Mapped[bool] = mapped_column(sa.Boolean, server_default="false")
 
 
+class LastWebScraping(Base):
+    __tablename__ = "last_web_scraping"
+
+    source: Mapped[str] = mapped_column(sa.String, primary_key=True)
+    release: Mapped[str] = mapped_column(sa.String, primary_key=True)
+    scraping_date: Mapped[datetime] = mapped_column(
+        sa.DateTime(timezone=True), default=lambda: datetime.now(UTC)
+    )
+
+
 class CodonTable(Base):
     __tablename__ = "codon_tables"
 
