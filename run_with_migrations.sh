@@ -1,4 +1,10 @@
 #!/bin/bash
 
-# Run migrations, then add example codon tables if none exists in database, finally run the server
-alembic upgrade head && python -m backend.add_example_tables && uvicorn backend.main:app --host 0.0.0.0 --workers $(nproc)
+# Run database migrations
+alembic upgrade head
+# Add example codon tables if none exists in database
+python -m backend.add_example_tables
+# Run the periodic web scraping script in background 
+python -m backend.external_db_extractors.lowe_lab &
+# Run the server
+uvicorn backend.main:app --host 0.0.0.0 --workers $(nproc)
