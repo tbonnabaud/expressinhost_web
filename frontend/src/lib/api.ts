@@ -7,6 +7,7 @@ import type {
   Token,
   CodonTableForm,
   UserPasswordForm,
+  UserProfileForm,
 } from './interfaces'
 import { store } from './store'
 
@@ -126,6 +127,8 @@ const users = {
   list: async () => await REQUESTS.get('/users'),
   updatePassword: async (form: UserPasswordForm) =>
     await REQUESTS.put('/users/me/password', form),
+  updateProfile: async (form: UserProfileForm) =>
+    await REQUESTS.put('/users/me/profile', form),
 }
 
 const codonTables = {
