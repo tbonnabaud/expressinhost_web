@@ -311,9 +311,4 @@ async def periodic_web_scraping():
 
 
 if __name__ == "__main__":
-    # asyncio.run(run_scraping())
-    async def fetch_release():
-        release = await get_last_release()
-        print(release)
-
-    asyncio.run(fetch_release())
+    asyncio.run(periodic_web_scraping())
