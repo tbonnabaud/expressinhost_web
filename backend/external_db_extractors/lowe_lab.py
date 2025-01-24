@@ -8,13 +8,15 @@ from selectolax.parser import HTMLParser, Node
 
 from ..crud.codon_tables import CodonTableRepository
 from ..crud.codon_translations import CodonTranslationRepository
+from ..crud.last_web_scraping import LastWebScrapingRepository
 from ..database import IntegrityError, LocalSession
-from ..logger import logger
+from ..logger import scraping_logger
 from ..routes.codon_tables import assign_codon_table_id
 from ..schemas import CodonTableFormWithTranslations, CodonTranslation
 from .mappings import AMINO_ACID_MAPPING, WOBBLE_MAPPING
 from .state_monitor import State, StateMonitor
 
+SOURCE = "Lowe Lab"
 BASE_URL = "https://gtrnadb.ucsc.edu"
 GENOME_LIST_URL = f"{BASE_URL}/cgi-bin/trna_chooseorg?org="
 
@@ -108,7 +110,7 @@ def get_amino_acid_translations(amino_acid: str, trna_sublist: list[TRNACell]):
                 )
 
             else:
-                logger.error(
+                scraping_logger.error(
                     f"No potential wobble codons for: {amino_acid=}, {anticodon=}, {default_codon=}"
                 )
 
@@ -152,7 +154,7 @@ def extract_amino_acid_table(table_node: Node):
 def parse_trna_gene_summary(html_content: str):
     tree = HTMLParser(html_content)
     # organism = tree.css_first("#page-header h5").text()
-    # logger.debug(organism)
+    # scraping_logger.debug(organism)
     tables = tree.css(".tRNA-box tbody")
 
     for table_node in tables:
@@ -178,7 +180,9 @@ async def get_url_content(session: ClientSession, url: str):
             return await response.text()
 
         else:
-            logger.error(f"{response.status} {response.reason}: {response.url}")
+            scraping_logger.error(
+                f"{response.status} {response.reason}: {response.url}"
+            )
 
 
 async def task(session: ClientSession, genome_page: GenomePageMetadata):
@@ -190,7 +194,7 @@ async def task(session: ClientSession, genome_page: GenomePageMetadata):
         codon_table = CodonTableFormWithTranslations(
             organism=genome_page.organism,
             name="Default",
-            source="Lowe Lab",
+            source=SOURCE,
             translations=sorted(translations, key=lambda t: t.amino_acid),
         )
 
@@ -199,10 +203,21 @@ async def task(session: ClientSession, genome_page: GenomePageMetadata):
     return codon_table
 
 
+async def get_last_release():
+    async with ClientSession() as session:
+        home_page = await get_url_content(session, BASE_URL)
+        tree = HTMLParser(home_page)
+        release = tree.css_first("#homepage-section h5").text()
+
+        return release.replace("Data ", "")
+
+
 async def run_scraping():
     lowe_state_monitor.reset()
     start_time = time.time()
-    logger.info("Fetching and parsing HTML data...")
+    scraping_logger.info("Fetching and parsing HTML data...")
+
+    last_release = await get_last_release()
 
     async with ClientSession() as session:
         lowe_state_monitor.state = State.fetching_genome_list
@@ -216,11 +231,11 @@ async def run_scraping():
         )
 
     lowe_state_monitor.state = State.database_insertion
-    logger.info("Insertion of the extracted codon tables in the database...")
+    scraping_logger.info("Insertion of the extracted codon tables in the database...")
 
-    with LocalSession() as session:
-        codon_table_repo = CodonTableRepository(session)
-        codon_translation_repo = CodonTranslationRepository(session)
+    with LocalSession() as db_session:
+        codon_table_repo = CodonTableRepository(db_session)
+        codon_translation_repo = CodonTranslationRepository(db_session)
 
         # To avoid to try to insert duplicates from the page listing available genomes
         inserted_organisms = set()
@@ -240,22 +255,65 @@ async def run_scraping():
                         ]
                     )
 
-                    session.commit()
+                    db_session.commit()
                     inserted_organisms.add(result.organism)
 
                 except IntegrityError:
-                    logger.warning(f"{result.organism} - {result.name} already exists.")
-                    session.rollback()
+                    scraping_logger.warning(
+                        f"{result.organism} - {result.name} already exists."
+                    )
+                    db_session.rollback()
 
                 except Exception as exc:
-                    logger.error(exc)
-                    session.rollback()
+                    scraping_logger.error(exc)
+                    db_session.rollback()
+
+            LastWebScrapingRepository(db_session).upsert(SOURCE, last_release)
 
     end_time = time.time()
     elapsed_time = end_time - start_time
-    logger.info(f"Elapsed time for the web scraping: {elapsed_time:.4f} seconds.")
+    scraping_logger.info(
+        f"Elapsed time for the web scraping: {elapsed_time:.4f} seconds."
+    )
     print(lowe_state_monitor)
 
 
+async def periodic_web_scraping():
+    """Example background task that runs every 60 seconds"""
+    while True:
+        try:
+            scraping_logger.info("Check if database is up to date.")
+            last_release = await get_last_release()
+            scraping_in_db = None
+            scraping_logger.info(f"Last release is {last_release}")
+
+            with LocalSession() as db_session:
+                scraping_in_db = LastWebScrapingRepository(db_session).get_last_from(
+                    SOURCE
+                )
+
+            if not scraping_in_db or scraping_in_db.release != last_release:
+                scraping_logger.info("Database is not up to date. Run web scraping...")
+                await run_scraping()
+
+            else:
+                scraping_logger.info("Database is up to date.")
+
+            await asyncio.sleep(60 * 60 * 24)
+
+        except asyncio.CancelledError:
+            scraping_logger.info("Periodic web scraping was cancelled.")
+            break
+
+        except Exception as e:
+            scraping_logger.error(f"Error in periodic web scraping: {str(e)}")
+            await asyncio.sleep(60 * 60)  # Wait before retrying
+
+
 if __name__ == "__main__":
-    asyncio.run(run_scraping())
+    # asyncio.run(run_scraping())
+    async def fetch_release():
+        release = await get_last_release()
+        print(release)
+
+    asyncio.run(fetch_release())
