@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { API } from '@/lib/api'
+import { store } from '@/lib/store'
 import { checkPasswordConstraints } from '@/lib/checkers'
 import type { UserPasswordForm } from '@/lib/interfaces'
 import WithAlertError from '@/components/WithAlertError.vue'
@@ -16,8 +17,12 @@ watch(password, password => {
 })
 
 async function handleSubmit() {
+  const token = store.currentUser
+    ? localStorage.getItem('accessToken')
+    : props.token
+
   const [, error] = await API.users.updatePassword({
-    reset_token: props.token,
+    reset_token: token,
     password: password.value,
   } as UserPasswordForm)
 
