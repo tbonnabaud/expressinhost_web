@@ -39,12 +39,21 @@ function logout() {
           <RouterLink to="/admin" class="secondary">Administration</RouterLink>
         </li>
         <li><RouterLink to="/about" class="secondary">About</RouterLink></li>
-        <li v-if="user" @click="logout">
-          <button class="outline secondary">Logout</button>
-        </li>
-        <li v-else>
-          <button class="outline" @click="openLoginForm = true">Log in</button>
-        </li>
+        <span class="user-buttons">
+          <li v-if="user">
+            <RouterLink to="/user-profile">
+              <button class="outline secondary">Your profile</button>
+            </RouterLink>
+          </li>
+          <li v-if="user">
+            <button class="outline secondary" @click="logout">Logout</button>
+          </li>
+          <li v-else>
+            <button class="outline" @click="openLoginForm = true">
+              Log in
+            </button>
+          </li>
+        </span>
       </ul>
     </nav>
   </header>
@@ -64,6 +73,10 @@ nav li {
   font-size: 1.5em;
 }
 
+nav a.router-link-exact-active button {
+  color: var(--color-text);
+}
+
 nav a.router-link-exact-active {
   color: var(--color-text);
   text-decoration: underline;
@@ -75,5 +88,9 @@ nav a.router-link-exact-active:hover {
 
 #logo {
   max-height: 1.5em;
+}
+
+.user-buttons {
+  margin-left: 1em;
 }
 </style>

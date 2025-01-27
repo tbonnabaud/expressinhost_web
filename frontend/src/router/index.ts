@@ -8,6 +8,7 @@ import RegisterView from '@/views/RegisterView.vue'
 import AdminView from '@/views/AdminView.vue'
 import ForgottenPasswordView from '@/views/ForgottenPasswordView.vue'
 import ResetPasswordView from '@/views/ResetPasswordView.vue'
+import UserView from '@/views/UserView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -38,6 +39,11 @@ const router = createRouter({
       path: '/admin',
       name: 'admin',
       component: AdminView,
+    },
+    {
+      path: '/user-profile',
+      name: 'user-profile',
+      component: UserView,
     },
     {
       path: '/codon-tables',
