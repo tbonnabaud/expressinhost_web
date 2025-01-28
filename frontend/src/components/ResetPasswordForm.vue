@@ -17,14 +17,16 @@ watch(password, password => {
 })
 
 async function handleSubmit() {
-  const token = store.currentUser
-    ? localStorage.getItem('accessToken')
-    : props.token
+  const isLoggedUser = Boolean(store.currentUser.value)
+  const token = isLoggedUser ? localStorage.getItem('accessToken') : props.token
 
-  const [, error] = await API.users.updatePassword({
-    reset_token: token,
-    password: password.value,
-  } as UserPasswordForm)
+  const [, error] = await API.users.updatePassword(
+    {
+      reset_token: token,
+      password: password.value,
+    } as UserPasswordForm,
+    !isLoggedUser, // If not logged user, use reset mode
+  )
 
   if (!error) {
     emit('update')

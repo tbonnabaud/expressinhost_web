@@ -65,8 +65,10 @@ def update_me_profile(
 
 
 @router.put("/users/me/password")
-def update_me_password(session: SessionDependency, data: UserPasswordForm):
-    current_user = get_current_user(session, data.reset_token, check_for_reset=True)
+def update_me_password(
+    session: SessionDependency, data: UserPasswordForm, reset: bool = False
+):
+    current_user = get_current_user(session, data.reset_token, check_for_reset=reset)
     updated_user = {}
     updated_user["hashed_password"] = hash_password(data.password)
 
