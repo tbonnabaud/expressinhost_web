@@ -26,7 +26,7 @@ const sectionMapping: Record<string, ComponentMeta> = {
     component: AdminSectionStats,
   },
   logfile: {
-    name: 'Log file',
+    name: 'Server log file',
     component: AdminSectionLogFile,
   },
 }
@@ -44,6 +44,7 @@ function setCurrentSection(key: string) {
   <main class="container">
     <template v-if="user && user.role == 'admin'">
       <h1>Administration</h1>
+
       <hr />
 
       <div class="grid">
