@@ -20,7 +20,7 @@ async function fetchUserList() {
 <template>
   <section>
     <h2>Statistics</h2>
-    
+
     <h3>
       Number of registered users: <ins>{{ userList.length }}</ins>
     </h3>
