@@ -43,25 +43,29 @@ async function getWebScrapingState() {
 </script>
 
 <template>
-  <button :aria-busy="isLoading" type="button" @click="runWebScraping">
-    Run scraping of Lowe Lab database
-  </button>
+  <section>
+    <h2>Web scraping of codon tables</h2>
 
-  <div id="scrapingProgressWrapper">
-    <div
-      id="scrapingProgress"
-      v-if="scrapingState && scrapingState.done && scrapingState.total"
-    >
-      <span>
-        {{ ((scrapingState.done / scrapingState.total) * 100).toFixed(0) }}%
-      </span>
-      <progress
-        id="progressBar"
-        :value="scrapingState.done"
-        :max="scrapingState.total"
-      ></progress>
+    <button :aria-busy="isLoading" type="button" @click="runWebScraping">
+      Run scraping of Lowe Lab database
+    </button>
+
+    <div id="scrapingProgressWrapper">
+      <div
+        id="scrapingProgress"
+        v-if="scrapingState && scrapingState.done && scrapingState.total"
+      >
+        <span>
+          {{ ((scrapingState.done / scrapingState.total) * 100).toFixed(0) }}%
+        </span>
+        <progress
+          id="progressBar"
+          :value="scrapingState.done"
+          :max="scrapingState.total"
+        ></progress>
+      </div>
     </div>
-  </div>
+  </section>
 </template>
 
 <style scoped>
