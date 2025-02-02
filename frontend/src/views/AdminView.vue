@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { ref, type Component } from 'vue'
+import { ref } from 'vue'
 import { store } from '@/lib/store'
+import type { ComponentMeta } from '@/lib/interfaces'
 import RequiredAdmin from '@/components/RequiredAdmin.vue'
 import RequiredAuth from '@/components/RequiredAuth.vue'
 import AdminSectionWebScraping from '@/components/admin/AdminSectionWebScraping.vue'
@@ -10,11 +11,24 @@ import AdminSectionLogFile from '@/components/admin/AdminSectionLogFile.vue'
 
 const user = store.currentUser
 const currentSection = ref(null as string | null)
-const sectionMapping: Record<string, Component> = {
-  scraping: AdminSectionWebScraping,
-  users: AdminSectionUsers,
-  stats: AdminSectionStats,
-  logfile: AdminSectionLogFile,
+
+const sectionMapping: Record<string, ComponentMeta> = {
+  scraping: {
+    name: 'Codon table web scraping',
+    component: AdminSectionWebScraping,
+  },
+  users: {
+    name: 'Management of users',
+    component: AdminSectionUsers,
+  },
+  stats: {
+    name: 'Statistics',
+    component: AdminSectionStats,
+  },
+  logfile: {
+    name: 'Log file',
+    component: AdminSectionLogFile,
+  },
 }
 </script>
 
@@ -26,38 +40,22 @@ const sectionMapping: Record<string, Component> = {
 
       <div class="grid">
         <button
+          v-for="(section, key) in sectionMapping"
           class="secondary"
-          :class="{ contrast: currentSection == 'scraping' }"
-          @click="currentSection = 'scraping'"
+          :class="{ contrast: currentSection == key }"
+          @click="currentSection = key"
+          :key="key"
         >
-          Codon table web scraping
-        </button>
-        <button
-          class="secondary"
-          :class="{ contrast: currentSection == 'users' }"
-          @click="currentSection = 'users'"
-        >
-          Management of users
-        </button>
-        <button
-          class="secondary"
-          :class="{ contrast: currentSection == 'stats' }"
-          @click="currentSection = 'stats'"
-        >
-          Statistics
-        </button>
-        <button
-          class="secondary"
-          :class="{ contrast: currentSection == 'logfile' }"
-          @click="currentSection = 'logfile'"
-        >
-          Log file
+          {{ section.name }}
         </button>
       </div>
 
       <hr />
 
-      <component v-if="currentSection" :is="sectionMapping[currentSection]" />
+      <component
+        v-if="currentSection"
+        :is="sectionMapping[currentSection].component"
+      />
       <p v-else>Select a section.</p>
     </template>
 
