@@ -30,6 +30,14 @@ const sectionMapping: Record<string, ComponentMeta> = {
     component: AdminSectionLogFile,
   },
 }
+
+function setCurrentSection(key: string) {
+  if (key == currentSection.value) {
+    currentSection.value = null
+  } else {
+    currentSection.value = key
+  }
+}
 </script>
 
 <template>
@@ -43,7 +51,7 @@ const sectionMapping: Record<string, ComponentMeta> = {
           v-for="(section, key) in sectionMapping"
           class="secondary"
           :class="{ contrast: currentSection == key }"
-          @click="currentSection = key"
+          @click="setCurrentSection(key)"
           :key="key"
         >
           {{ section.name }}
