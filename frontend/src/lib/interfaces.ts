@@ -1,3 +1,5 @@
+import type { Component } from 'vue'
+
 export interface User {
   id: string
   creation_date: string
@@ -103,4 +105,9 @@ export interface TunedSequence {
 export interface TuningOutput {
   result: Result
   tuned_sequences: Array<TunedSequence>
+}
+
+export interface ComponentMeta {
+  name: string
+  component: Component
 }
