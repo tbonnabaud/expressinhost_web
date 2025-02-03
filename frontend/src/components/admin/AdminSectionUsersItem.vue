@@ -47,9 +47,7 @@ async function handleUpdate() {
         <option value="admin">admin</option>
       </select>
 
-      <button class="danger" @click="$emit('askDelete', user)">
-        Delete
-      </button>
+      <button class="danger" @click="$emit('askDelete', user)">Delete</button>
     </div>
   </article>
 </template>
