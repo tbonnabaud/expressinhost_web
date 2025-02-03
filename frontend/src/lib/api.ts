@@ -124,7 +124,8 @@ const admin = {
 const users = {
   register: async (form: UserForm) => await REQUESTS.post('/users', form),
   me: async () => await REQUESTS.get('/users/me'),
-  list: async () => await REQUESTS.get('/users'),
+  list: async (limit: number = 10, offset: number = 0) =>
+    await REQUESTS.get('/users', { limit, offset }),
   updatePassword: async (form: UserPasswordForm, reset: boolean) => {
     return reset
       ? await REQUESTS.put('/users/me/password?reset=true', form)
