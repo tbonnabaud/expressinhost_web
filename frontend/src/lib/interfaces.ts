@@ -22,6 +22,10 @@ export interface UserProfileForm {
   contact_consent: boolean
 }
 
+export interface UserRoleForm {
+  role: string
+}
+
 export interface UserPasswordForm {
   reset_token: string
   password: string
