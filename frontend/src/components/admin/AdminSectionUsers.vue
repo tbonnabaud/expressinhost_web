@@ -1,12 +1,19 @@
 <script setup lang="ts">
 import { API } from '@/lib/api'
+import { store } from '@/lib/store'
 import type { User } from '@/lib/interfaces'
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import AdminSectionUsersItem from './AdminSectionUsersItem.vue'
+
+const currentUser = store.currentUser
 
 const userList = ref([] as Array<User>)
 
 onMounted(async () => await fetchUserList())
+
+const userListWithoutMe = computed(() =>
+  userList.value.filter(user => user.id !== currentUser.value?.id),
+)
 
 async function fetchUserList() {
   const [data, error] = await API.users.list()
@@ -23,7 +30,7 @@ async function fetchUserList() {
 
     <div id="userList">
       <AdminSectionUsersItem
-        v-for="user in userList"
+        v-for="user in userListWithoutMe"
         :user="user"
         :key="user.id"
       />
