@@ -39,7 +39,7 @@ async function handleUpdate(event: Event) {
       <select
         class="role-select"
         :value="user.role"
-        @change="handleUpdate"
+        @input="handleUpdate"
         :aria-invalid="ariaInvalid"
       >
         <option value="member">member</option>
