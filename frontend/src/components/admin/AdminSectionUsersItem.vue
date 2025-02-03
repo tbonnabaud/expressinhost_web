@@ -1,18 +1,16 @@
 <script setup lang="ts">
 import type { User } from '@/lib/interfaces'
 import { API } from '@/lib/api'
-import { ref, watch } from 'vue'
+import { ref } from 'vue'
 
 const props = defineProps<{ user: User }>()
 
 const userRole = ref(props.user.role)
 const ariaInvalid = ref(undefined as boolean | undefined)
 
-watch(userRole, async value => await handleUpdate(value))
-
-async function handleUpdate(role: string) {
+async function handleUpdate() {
   const [, error] = await API.users.updateUserRole(props.user.id, {
-    role: role,
+    role: userRole.value,
   })
 
   if (!error) {
@@ -39,6 +37,7 @@ async function handleUpdate(role: string) {
       <select
         class="role-select"
         v-model="userRole"
+        @change="handleUpdate"
         :aria-invalid="ariaInvalid"
       >
         <option value="member">member</option>
