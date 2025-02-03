@@ -136,6 +136,8 @@ const users = {
     await REQUESTS.put('/users/me/profile', form),
   updateUserRole: async (id: string, form: UserRoleForm) =>
     await REQUESTS.put(`/users/${id}/role`, form),
+  deleteMe: async () => await REQUESTS.delete('/users/me'),
+  deleteUser: async (id: string) => await REQUESTS.delete(`/users/${id}`),
 }
 
 const codonTables = {

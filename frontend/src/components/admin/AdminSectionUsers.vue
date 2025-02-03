@@ -4,16 +4,40 @@ import { store } from '@/lib/store'
 import type { User } from '@/lib/interfaces'
 import { computed, onMounted, ref } from 'vue'
 import AdminSectionUsersItem from './AdminSectionUsersItem.vue'
+import BaseModal from '../BaseModal.vue'
 
 const currentUser = store.currentUser
 
 const userList = ref([] as Array<User>)
+const openDeleteModal = ref(false)
+const userToRemove = ref(null as User | null)
 
 onMounted(async () => await fetchUserList())
 
 const userListWithoutMe = computed(() =>
   userList.value.filter(user => user.id !== currentUser.value?.id),
 )
+
+function askForDeletion(user: User) {
+  openDeleteModal.value = true
+  userToRemove.value = user
+}
+
+async function deleteUser() {
+  if (userToRemove.value) {
+    const [, error] = await API.users.deleteUser(userToRemove.value.id)
+
+    if (error) {
+      alert(
+        `Fail to delete user ${userToRemove.value.full_name} (${userToRemove.value.email}).`,
+      )
+    }
+  }
+
+  // We close the modal
+  openDeleteModal.value = false
+  await fetchUserList()
+}
 
 async function fetchUserList() {
   const [data, error] = await API.users.list()
@@ -25,6 +49,19 @@ async function fetchUserList() {
 </script>
 
 <template>
+  <BaseModal
+    :open="openDeleteModal"
+    title="Confirm the deletion"
+    @close="openDeleteModal = false"
+  >
+    <p>Do you really want to delete this result?</p>
+
+    <footer>
+      <button class="secondary" @click="openDeleteModal = false">Cancel</button>
+      <button class="danger" @click="deleteUser">Delete</button>
+    </footer>
+  </BaseModal>
+
   <section>
     <h2>Management of users</h2>
 
@@ -33,6 +70,7 @@ async function fetchUserList() {
         v-for="user in userListWithoutMe"
         :user="user"
         :key="user.id"
+        v-on:ask-delete="askForDeletion"
       />
     </div>
   </section>

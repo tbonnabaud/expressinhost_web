@@ -4,6 +4,9 @@ import { API } from '@/lib/api'
 import { ref } from 'vue'
 
 const props = defineProps<{ user: User }>()
+defineEmits<{
+  askDelete: [user: User]
+}>()
 
 const userRole = ref(props.user.role)
 const ariaInvalid = ref(undefined as boolean | undefined)
@@ -44,7 +47,9 @@ async function handleUpdate() {
         <option value="admin">admin</option>
       </select>
 
-      <button class="danger">Delete</button>
+      <button class="danger" @click="$emit('askDelete', user)">
+        Delete
+      </button>
     </div>
   </article>
 </template>
