@@ -11,14 +11,15 @@ from ..authentication import (
 )
 from ..crud.users import UserRepository
 from ..database import SessionDependency
-from ..schemas import User, UserForm, UserPasswordForm, UserProfileForm
+from ..schemas import User, UserForm, UserPasswordForm, UserProfileForm, UserRoleForm
+from .common import FilterParamDependency
 
 router = APIRouter(tags=["Users"])
 
 
 @router.get("/users", response_model=list[User], dependencies=[Depends(check_is_admin)])
-def list_users(session: SessionDependency):
-    return UserRepository(session).list()
+def list_users(session: SessionDependency, filter_params: FilterParamDependency):
+    return UserRepository(session).list(filter_params.offset, filter_params.limit)
 
 
 @router.get("/users/me", response_model=User)
@@ -82,11 +83,9 @@ def delete_me(session: SessionDependency, token: TokenDependency):
     return UserRepository(session).delete(current_user.id)
 
 
-@router.put("/users/{user_id}", dependencies=[Depends(check_is_admin)])
-def update_user(session: SessionDependency, user_id: UUID, data: UserForm):
+@router.put("/users/{user_id}/role", dependencies=[Depends(check_is_admin)])
+def update_user_role(session: SessionDependency, user_id: UUID, data: UserRoleForm):
     updated_user = data.model_dump()
-    updated_user["hashed_password"] = hash_password(data.password)
-    del updated_user["password"]
 
     return UserRepository(session).update(user_id, updated_user)
 

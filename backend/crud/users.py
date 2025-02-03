@@ -7,8 +7,8 @@ from .base import BaseRepository
 
 
 class UserRepository(BaseRepository):
-    def list(self):
-        stmt = sa.select(User)
+    def list(self, offset: int | None, limit: int | None):
+        stmt = sa.select(User).offset(offset).limit(limit).order_by(User.creation_date)
 
         return self.session.execute(stmt).scalars().all()
 
