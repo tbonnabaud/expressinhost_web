@@ -104,4 +104,25 @@ const user = store.currentUser
   text-align: center;
   font-style: italic;
 }
+
+@media (max-width: 1024px) {
+  #summary {
+    font-size: 2em;
+  }
+}
+
+@media (max-width: 768px) {
+  #summary {
+    font-size: 1.5em;
+  }
+
+  #warning {
+    font-size: 1.2em;
+  }
+
+  #description {
+    font-size: 1em;
+    text-align: center;
+  }
+}
 </style>
