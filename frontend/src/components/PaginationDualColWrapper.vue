@@ -29,26 +29,38 @@ const prevPage = () => {
 </script>
 
 <template>
-  <div>
-    <div id="content">
-      <div v-for="item in paginatedItems" :key="item.id">
-        <slot :item="item"></slot>
-      </div>
-    </div>
+  <div class="pagination">
+    <button class="secondary" @click="prevPage" :disabled="currentPage === 1">
+      Prev
+    </button>
+    <span>Page {{ currentPage }} of {{ totalPages }}</span>
+    <button
+      class="secondary"
+      @click="nextPage"
+      :disabled="currentPage === totalPages"
+    >
+      Next
+    </button>
+  </div>
 
-    <div class="pagination">
-      <button class="secondary" @click="prevPage" :disabled="currentPage === 1">
-        Prev
-      </button>
-      <span>Page {{ currentPage }} of {{ totalPages }}</span>
-      <button
-        class="secondary"
-        @click="nextPage"
-        :disabled="currentPage === totalPages"
-      >
-        Next
-      </button>
+  <div id="content">
+    <div v-for="item in paginatedItems" :key="item.id">
+      <slot :item="item"></slot>
     </div>
+  </div>
+
+  <div class="pagination">
+    <button class="secondary" @click="prevPage" :disabled="currentPage === 1">
+      Prev
+    </button>
+    <span>Page {{ currentPage }} of {{ totalPages }}</span>
+    <button
+      class="secondary"
+      @click="nextPage"
+      :disabled="currentPage === totalPages"
+    >
+      Next
+    </button>
   </div>
 </template>
 
@@ -61,11 +73,15 @@ const prevPage = () => {
   }
 }
 
+#content {
+  margin-bottom: 5px;
+}
+
 .pagination {
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 10px;
-  margin-top: 10px;
+  margin-bottom: 20px;
 }
 </style>
