@@ -67,7 +67,7 @@ async function fetchUserList() {
     <h2>Management of users</h2>
 
     <div>
-      <PaginationDualColWrapper :items="userListWithoutMe" :per-page="8">
+      <PaginationDualColWrapper :items="userListWithoutMe" :per-page="20">
         <template #default="{ item }">
           <AdminSectionUsersItem :user="item" :ask-delete="askForDeletion" />
         </template>
