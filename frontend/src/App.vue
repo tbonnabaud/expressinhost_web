@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onBeforeUnmount } from 'vue'
 import { RouterLink, RouterView } from 'vue-router'
 import { store } from './lib/store'
 import { API, setCurrentUserInStore } from './lib/api'
@@ -7,9 +7,21 @@ import LoginForm from '@/components/LoginForm.vue'
 
 const user = store.currentUser
 const openLoginForm = ref(false)
-const openMenu = ref(true)
+const openMenu = ref(window.innerWidth > 768)
 
-onMounted(async () => API.auth.isLoggedIn() && (await setCurrentUserInStore()))
+onMounted(async () => {
+  API.auth.isLoggedIn()
+  await setCurrentUserInStore()
+  window.addEventListener('resize', handleResize)
+})
+
+onBeforeUnmount(() => {
+  window.removeEventListener('resize', handleResize)
+})
+
+function handleResize() {
+  openMenu.value = window.innerWidth > 768
+}
 
 function logout() {
   API.auth.logout()
@@ -129,10 +141,6 @@ nav a.router-link-exact-active:hover {
   nav li {
     font-size: 1em;
   }
-
-  #navBrand li {
-    font-size: 1.5em;
-  }
 }
 
 @media (max-width: 768px) {
@@ -143,6 +151,10 @@ nav a.router-link-exact-active:hover {
 
   .burger-menu {
     display: block;
+  }
+
+  #navBrand li {
+    font-size: 1.5em;
   }
 }
 </style>
