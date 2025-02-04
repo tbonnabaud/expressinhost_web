@@ -5,7 +5,7 @@ import type { User } from '@/lib/interfaces'
 import { computed, onMounted, ref } from 'vue'
 import AdminSectionUsersItem from './AdminSectionUsersItem.vue'
 import BaseModal from '../BaseModal.vue'
-import PaginationWrapper from '../PaginationWrapper.vue'
+import PaginationDualColWrapper from '../PaginationDualColWrapper.vue'
 
 const currentUser = store.currentUser
 
@@ -67,11 +67,11 @@ async function fetchUserList() {
     <h2>Management of users</h2>
 
     <div>
-      <PaginationWrapper :items="userListWithoutMe" :per-page="8">
+      <PaginationDualColWrapper :items="userListWithoutMe" :per-page="8">
         <template #default="{ item }">
           <AdminSectionUsersItem :user="item" :ask-delete="askForDeletion" />
         </template>
-      </PaginationWrapper>
+      </PaginationDualColWrapper>
     </div>
   </section>
 </template>
