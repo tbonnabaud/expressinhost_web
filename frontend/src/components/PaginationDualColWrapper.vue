@@ -68,7 +68,7 @@ const prevPage = () => {
 @media (min-width: 768px) {
   #content {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(2, 1fr);
     gap: 15px;
   }
 }
