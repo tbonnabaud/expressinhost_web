@@ -5,6 +5,7 @@ import type { User } from '@/lib/interfaces'
 import { computed, onMounted, ref } from 'vue'
 import AdminSectionUsersItem from './AdminSectionUsersItem.vue'
 import BaseModal from '../BaseModal.vue'
+import PaginationWrapper from '../PaginationWrapper.vue'
 
 const currentUser = store.currentUser
 
@@ -12,11 +13,11 @@ const userList = ref([] as Array<User>)
 const openDeleteModal = ref(false)
 const userToRemove = ref(null as User | null)
 
-onMounted(async () => await fetchUserList())
-
 const userListWithoutMe = computed(() =>
   userList.value.filter(user => user.id !== currentUser.value?.id),
 )
+
+onMounted(async () => await fetchUserList())
 
 function askForDeletion(user: User) {
   openDeleteModal.value = true
@@ -65,13 +66,12 @@ async function fetchUserList() {
   <section>
     <h2>Management of users</h2>
 
-    <div id="userList">
-      <AdminSectionUsersItem
-        v-for="user in userListWithoutMe"
-        :user="user"
-        :key="user.id"
-        v-on:ask-delete="askForDeletion"
-      />
+    <div>
+      <PaginationWrapper :items="userListWithoutMe" :per-page="8">
+        <template #default="{ item }">
+          <AdminSectionUsersItem :user="item" :ask-delete="askForDeletion" />
+        </template>
+      </PaginationWrapper>
     </div>
   </section>
 </template>
