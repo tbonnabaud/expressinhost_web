@@ -1,3 +1,5 @@
+import type { Component } from 'vue'
+
 export interface User {
   id: string
   creation_date: string
@@ -18,6 +20,10 @@ export interface UserProfileForm {
   email: string
   full_name: string
   contact_consent: boolean
+}
+
+export interface UserRoleForm {
+  role: string
 }
 
 export interface UserPasswordForm {
@@ -84,6 +90,19 @@ export interface Result {
   host_codon_table: CodonTable
 }
 
+export interface ResultWithId {
+  id: string
+  user_id: string | null
+  creation_date: string
+  name: string
+  host_codon_table_id: string
+  sequences_native_codon_tables: Record<string, string>
+  mode: string
+  slow_speed_threshold: number
+  conservation_threshold: number | null
+  host_codon_table: CodonTable
+}
+
 export interface Profiles {
   speed: Array<number>
   rank: Array<number>
@@ -103,4 +122,9 @@ export interface TunedSequence {
 export interface TuningOutput {
   result: Result
   tuned_sequences: Array<TunedSequence>
+}
+
+export interface ComponentMeta {
+  name: string
+  component: Component
 }

@@ -84,6 +84,10 @@ class UserPasswordForm(BaseModel):
     password: str
 
 
+class UserRoleForm(BaseModel):
+    role: Literal["member", "admin"]
+
+
 class CodonTranslation(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
