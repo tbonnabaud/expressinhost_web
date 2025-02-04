@@ -22,38 +22,37 @@ function logout() {
       <ul>
         <li><img id="logo" src="./assets/logo.png" alt="Logo" /></li>
         <li><strong>ExpressInHost</strong></li>
+      </ul>
+
+      <ul class="nav-links">
         <li><RouterLink to="/" class="secondary">Home</RouterLink></li>
         <li v-if="user">
-          <RouterLink to="/codon-tables" class="secondary">
-            Codon tables
-          </RouterLink>
+          <RouterLink to="/codon-tables" class="secondary"
+            >Codon tables</RouterLink
+          >
         </li>
         <li><RouterLink to="/tuning" class="secondary">Tuning</RouterLink></li>
         <li v-if="user">
           <RouterLink to="/results" class="secondary">Results</RouterLink>
         </li>
-      </ul>
-
-      <ul>
         <li v-if="user && user.role == 'admin'">
           <RouterLink to="/admin" class="secondary">Administration</RouterLink>
         </li>
         <li><RouterLink to="/about" class="secondary">About</RouterLink></li>
-        <span class="user-buttons">
-          <li v-if="user">
-            <RouterLink to="/user-profile">
-              <button class="outline secondary">Your profile</button>
-            </RouterLink>
-          </li>
-          <li v-if="user">
-            <button class="outline secondary" @click="logout">Logout</button>
-          </li>
-          <li v-else>
-            <button class="outline" @click="openLoginForm = true">
-              Log in
-            </button>
-          </li>
-        </span>
+      </ul>
+
+      <ul class="user-buttons">
+        <li v-if="user">
+          <RouterLink to="/user-profile">
+            <button class="outline secondary">Your profile</button>
+          </RouterLink>
+        </li>
+        <li v-if="user">
+          <button class="outline secondary" @click="logout">Logout</button>
+        </li>
+        <li v-else>
+          <button class="outline" @click="openLoginForm = true">Log in</button>
+        </li>
       </ul>
     </nav>
   </header>
@@ -65,7 +64,19 @@ function logout() {
 
 <style scoped>
 nav {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
   padding: 0 2em;
+}
+
+nav ul {
+  display: flex;
+  align-items: center;
+  gap: 1em;
+  list-style: none;
+  padding: 0;
   margin: 0;
 }
 
@@ -86,11 +97,36 @@ nav a.router-link-exact-active:hover {
   background-color: transparent;
 }
 
+.nav-links {
+  flex-grow: 1;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.user-buttons {
+  display: flex;
+  gap: 0.5em;
+}
+
 #logo {
   max-height: 1.5em;
 }
 
-.user-buttons {
-  margin-left: 1em;
+@media (max-width: 1024px) {
+  nav ul {
+    gap: 0;
+  }
+
+  nav li {
+    font-size: 1em;
+  }
+}
+
+@media (max-width: 768px) {
+  nav {
+    flex-direction: column;
+    align-items: center;
+  }
 }
 </style>
