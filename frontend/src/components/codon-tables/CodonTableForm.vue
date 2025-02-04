@@ -178,50 +178,44 @@ async function deleteCodonTable() {
   </BaseModal>
 
   <form @submit.prevent @keydown.enter.prevent ref="table-form">
-    <div id="actions" class="grid">
-      <div class="column">
-        <label id="codonTableSelect">
-          Existing codon table
-          <CodonTableSearchSelect
-            :options="codonTableList"
-            v-model="selectedCodonTable"
-          />
-        </label>
-      </div>
+    <div id="actions">
+      <label id="codonTableSelect">
+        Existing codon table
+        <CodonTableSearchSelect
+          :options="codonTableList"
+          v-model="selectedCodonTable"
+        />
+      </label>
 
-      <div class="column">
-        <fieldset class="grid">
-          <label>
-            Organism
-            <input
-              type="text"
-              placeholder="Organism"
-              v-model="codonTableOrganism"
-              list="existingOrganisms"
-              required
-            />
-          </label>
-          <datalist id="existingOrganisms">
-            <option
-              v-for="org in existingOrganisms"
-              :value="org"
-              :key="org"
-            ></option>
-          </datalist>
+      <label>
+        Organism
+        <input
+          type="text"
+          placeholder="Organism"
+          v-model="codonTableOrganism"
+          list="existingOrganisms"
+          required
+        />
+      </label>
+      <datalist id="existingOrganisms">
+        <option
+          v-for="org in existingOrganisms"
+          :value="org"
+          :key="org"
+        ></option>
+      </datalist>
 
-          <label>
-            Table name
-            <input
-              type="text"
-              placeholder="Table name"
-              v-model="codonTableName"
-              required
-            />
-          </label>
-        </fieldset>
-      </div>
+      <label>
+        Table name
+        <input
+          type="text"
+          placeholder="Table name"
+          v-model="codonTableName"
+          required
+        />
+      </label>
 
-      <div class="column action-button-group">
+      <div class="action-button-group">
         <button @click="resetToDefault">Reset</button>
         <button :disabled="!isEditable" @click="updateExistingCodonTable">
           Update
@@ -331,29 +325,42 @@ async function deleteCodonTable() {
 </template>
 
 <style scoped>
-.column > #codonTableSelect {
-  width: 100%;
+#actions {
+  margin-bottom: 2em;
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 2fr;
+  gap: 1em;
 }
 
 .action-button-group {
-  margin-top: auto;
-  margin-bottom: 1em;
+  display: flex;
+  flex-direction: row;
+  gap: 1em;
+  margin-top: 0.4em;
 }
 
-.action-button-group > button:not(:first-child) {
-  margin-left: 1em;
+@media (min-width: 1024px) {
+  #actions {
+    align-items: center;
+  }
 }
 
-#actions {
-  margin-bottom: 1.5em;
+@media (max-width: 1024px) {
+  #actions {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .action-button-group button {
+    width: 100%;
+  }
 }
 
-#actions input {
-  margin-bottom: 0;
-}
-
-#actions label {
-  margin-bottom: 0;
+@media (max-width: 768px) {
+  .action-button-group {
+    display: flex;
+    flex-direction: column;
+  }
 }
 
 .codon-table-grid {
@@ -368,6 +375,13 @@ async function deleteCodonTable() {
     grid-template-columns: repeat(1, 1fr);
     gap: 15px;
     padding: 0 150px;
+  }
+}
+
+@media (max-width: 768px) {
+  .codon-table-grid {
+    padding: 0;
+    overflow-y: scroll;
   }
 }
 </style>
