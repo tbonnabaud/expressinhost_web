@@ -7,7 +7,7 @@ import LoginForm from '@/components/LoginForm.vue'
 
 const user = store.currentUser
 const openLoginForm = ref(false)
-const openMenu = ref(false)
+const openMenu = ref(true)
 
 onMounted(async () => API.auth.isLoggedIn() && (await setCurrentUserInStore()))
 
