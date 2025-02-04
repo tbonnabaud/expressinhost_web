@@ -237,7 +237,7 @@ async function deleteCodonTable() {
       </div>
     </div>
 
-    <div class="grid">
+    <div class="codon-table-grid">
       <div class="column">
         <PartialCodonTable
           title="Alanine (Ala)"
@@ -354,5 +354,20 @@ async function deleteCodonTable() {
 
 #actions label {
   margin-bottom: 0;
+}
+
+.codon-table-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+}
+
+@media (max-width: 1024px) {
+  .codon-table-grid {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: 15px;
+    padding: 0 150px;
+  }
 }
 </style>
