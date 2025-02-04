@@ -69,19 +69,9 @@ async function fetchUserList() {
     <div>
       <PaginationDualColWrapper :items="userListWithoutMe" :per-page="20">
         <template #default="{ item }">
-          <AdminSectionUsersItem :user="item" :ask-delete="askForDeletion" />
+          <AdminSectionUsersItem :user="item" @ask-delete="askForDeletion" />
         </template>
       </PaginationDualColWrapper>
     </div>
   </section>
 </template>
-
-<style scoped>
-@media (min-width: 768px) {
-  #userList {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 15px;
-  }
-}
-</style>
