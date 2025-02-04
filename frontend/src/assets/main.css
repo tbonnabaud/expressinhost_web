@@ -23,6 +23,13 @@
 }
 
 .danger {
-  background-color: #ad1f1f;
-  border-color: #ad1f1f;
+  background-color: #ce3838;
+  border-color: #ce3838;
+}
+
+@media (prefers-color-scheme: dark) {
+  .danger {
+    background-color: #ad1f1f;
+    border-color: #ad1f1f;
+  }
 }
