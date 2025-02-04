@@ -328,27 +328,32 @@ async function deleteCodonTable() {
 #actions {
   margin-bottom: 2em;
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr 2fr;
+  grid-template-columns: 2.5fr 2.5fr 2fr 2fr;
   gap: 1em;
+  padding-bottom: 0;
+}
+
+#actions label {
+  margin-bottom: 0;
+  padding-bottom: 0;
 }
 
 .action-button-group {
   display: flex;
   flex-direction: row;
   gap: 1em;
-  margin-top: 0.4em;
-}
-
-@media (min-width: 1024px) {
-  #actions {
-    align-items: center;
-  }
+  align-items: center;
+  margin-top: 0.7em;
 }
 
 @media (max-width: 1024px) {
   #actions {
     display: flex;
     flex-direction: column;
+  }
+
+  .action-button-group {
+    margin-top: 1em;
   }
 
   .action-button-group button {
@@ -360,6 +365,7 @@ async function deleteCodonTable() {
   .action-button-group {
     display: flex;
     flex-direction: column;
+    margin-top: 1em;
   }
 }
 
