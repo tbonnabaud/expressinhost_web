@@ -74,7 +74,7 @@ const prevPage = () => {
 }
 
 #content {
-  margin-bottom: 5px;
+  margin-bottom: 20px;
 }
 
 .pagination {
