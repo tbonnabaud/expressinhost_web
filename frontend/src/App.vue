@@ -114,7 +114,7 @@ nav a.router-link-exact-active:hover {
 .nav-links {
   flex-grow: 1;
   display: flex;
-  justify-content: center;
+  margin-left: 2em;
   flex-wrap: wrap;
 }
 
@@ -155,6 +155,11 @@ nav a.router-link-exact-active:hover {
 
   #navBrand li {
     font-size: 1.5em;
+  }
+
+  .nav-links {
+    margin-left: auto;
+    justify-content: center;
   }
 }
 </style>
