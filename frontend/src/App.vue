@@ -5,8 +5,9 @@ import { store } from './lib/store'
 import { API, setCurrentUserInStore } from './lib/api'
 import LoginForm from '@/components/LoginForm.vue'
 
-const openLoginForm = ref(false)
 const user = store.currentUser
+const openLoginForm = ref(false)
+const openMenu = ref(false)
 
 onMounted(async () => API.auth.isLoggedIn() && (await setCurrentUserInStore()))
 
@@ -19,12 +20,13 @@ function logout() {
 <template>
   <header>
     <nav>
-      <ul>
+      <ul id="navBrand">
         <li><img id="logo" src="./assets/logo.png" alt="Logo" /></li>
         <li><strong>ExpressInHost</strong></li>
+        <li class="burger-menu" @click="openMenu = !openMenu">☰</li>
       </ul>
 
-      <ul class="nav-links">
+      <ul v-show="openMenu" class="nav-links">
         <li><RouterLink to="/" class="secondary">Home</RouterLink></li>
         <li v-if="user">
           <RouterLink to="/codon-tables" class="secondary"
@@ -41,7 +43,7 @@ function logout() {
         <li><RouterLink to="/about" class="secondary">About</RouterLink></li>
       </ul>
 
-      <ul class="user-buttons">
+      <ul v-show="openMenu" class="user-buttons">
         <li v-if="user">
           <RouterLink to="/user-profile">
             <button class="outline secondary">Your profile</button>
@@ -113,6 +115,12 @@ nav a.router-link-exact-active:hover {
   max-height: 1.5em;
 }
 
+.burger-menu {
+  display: none;
+  cursor: pointer;
+  font-size: 1.5em;
+}
+
 @media (max-width: 1024px) {
   nav ul {
     gap: 0;
@@ -121,12 +129,20 @@ nav a.router-link-exact-active:hover {
   nav li {
     font-size: 1em;
   }
+
+  #navBrand li {
+    font-size: 1.5em;
+  }
 }
 
 @media (max-width: 768px) {
   nav {
     flex-direction: column;
     align-items: center;
+  }
+
+  .burger-menu {
+    display: block;
   }
 }
 </style>
