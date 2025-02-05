@@ -114,7 +114,7 @@ nav a.router-link-exact-active:hover {
 .nav-links {
   flex-grow: 1;
   display: flex;
-  margin-left: 2em;
+  margin-left: 1.5em;
   flex-wrap: wrap;
 }
 
@@ -134,12 +134,20 @@ nav a.router-link-exact-active:hover {
 }
 
 @media (max-width: 1024px) {
+  nav {
+    padding: 0 1em;
+  }
+
   nav ul {
     gap: 0;
   }
 
   nav li {
     font-size: 1em;
+  }
+
+  .nav-links {
+    margin-left: auto;
   }
 }
 
