@@ -26,7 +26,7 @@ class CodonTranslationRepository(BaseRepository):
 
     def add_batch(self, data_batch: list[dict]):
         stmt = sa.insert(CodonTranslation).values(data_batch)
-        self.execute_with_commit(stmt)
+        self.session.execute(stmt)
 
     def update(self, codon_table_id: UUID, codon: str, data: dict):
         stmt = (
@@ -37,10 +37,10 @@ class CodonTranslationRepository(BaseRepository):
             )
             .values(data)
         )
-        self.execute_with_commit(stmt)
+        self.session.execute(stmt)
 
     def delete_batch(self, codon_table_id: UUID):
         stmt = sa.delete(CodonTranslation).where(
             CodonTranslation.codon_table_id == codon_table_id
         )
-        self.execute_with_commit(stmt)
+        self.session.execute(stmt)

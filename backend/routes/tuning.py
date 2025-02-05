@@ -11,7 +11,7 @@ from ..crud.codon_tables import CodonTableRepository
 from ..crud.codon_translations import CodonTranslationRepository
 from ..crud.results import ResultRepository
 from ..crud.tuned_sequences import TunedSequenceRepository
-from ..database import SessionDependency
+from ..database import SessionWithCommitDependency
 from ..schemas import RunTuningForm, TuningOutput
 
 router = APIRouter(tags=["Tuning"])
@@ -31,7 +31,7 @@ def process_codon_table_from_db(
 
 @router.post("/run-tuning", response_model=TuningOutput)
 def launch_tuning(
-    session: SessionDependency,
+    session: SessionWithCommitDependency,
     token: OptionalTokenDependency,
     form: RunTuningForm,
 ):

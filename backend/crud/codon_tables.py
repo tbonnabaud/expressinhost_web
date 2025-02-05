@@ -65,16 +65,16 @@ class CodonTableRepository(BaseRepository):
 
     def add(self, data: dict) -> UUID | None:
         stmt = sa.insert(CodonTable).values(data).returning(CodonTable.id)
-        result = self.execute_with_commit(stmt)
+        result = self.session.execute(stmt)
 
         return result.scalar_one_or_none()
 
     def update(self, id: UUID, data: dict):
         stmt = sa.update(CodonTable).where(CodonTable.id == id).values(data)
-        self.execute_with_commit(stmt)
+        self.session.execute(stmt)
 
     def delete(self, user_id: UUID, id: UUID):
         stmt = sa.delete(CodonTable).where(
             CodonTable.user_id == user_id, CodonTable.id == id
         )
-        self.execute_with_commit(stmt)
+        self.session.execute(stmt)

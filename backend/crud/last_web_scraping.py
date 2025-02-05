@@ -42,4 +42,4 @@ class LastWebScrapingRepository(BaseRepository):
             )
         )
 
-        self.execute_with_commit(stmt)
+        self.session.execute(stmt)

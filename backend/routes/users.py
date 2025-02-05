@@ -10,7 +10,7 @@ from ..authentication import (
     hash_password,
 )
 from ..crud.users import UserRepository
-from ..database import SessionDependency
+from ..database import SessionDependency, SessionWithCommitDependency
 from ..schemas import User, UserForm, UserPasswordForm, UserProfileForm, UserRoleForm
 from .common import FilterParamDependency
 
@@ -45,7 +45,7 @@ def get_user(session: SessionDependency, user_id: UUID):
 
 
 @router.post("/users", response_model=UUID)
-def add_user(session: SessionDependency, data: UserForm):
+def add_user(session: SessionWithCommitDependency, data: UserForm):
     user = data.model_dump()
     user["hashed_password"] = hash_password(data.password)
     del user["password"]
@@ -55,7 +55,7 @@ def add_user(session: SessionDependency, data: UserForm):
 
 @router.put("/users/me/profile")
 def update_me_profile(
-    session: SessionDependency,
+    session: SessionWithCommitDependency,
     token: TokenDependency,
     data: UserProfileForm,
 ):
@@ -67,7 +67,7 @@ def update_me_profile(
 
 @router.put("/users/me/password")
 def update_me_password(
-    session: SessionDependency, data: UserPasswordForm, reset: bool = False
+    session: SessionWithCommitDependency, data: UserPasswordForm, reset: bool = False
 ):
     current_user = get_current_user(session, data.reset_token, check_for_reset=reset)
     updated_user = {}
@@ -77,19 +77,21 @@ def update_me_password(
 
 
 @router.delete("/users/me")
-def delete_me(session: SessionDependency, token: TokenDependency):
+def delete_me(session: SessionWithCommitDependency, token: TokenDependency):
     current_user = get_current_user(session, token)
 
     return UserRepository(session).delete(current_user.id)
 
 
 @router.put("/users/{user_id}/role", dependencies=[Depends(check_is_admin)])
-def update_user_role(session: SessionDependency, user_id: UUID, data: UserRoleForm):
+def update_user_role(
+    session: SessionWithCommitDependency, user_id: UUID, data: UserRoleForm
+):
     updated_user = data.model_dump()
 
     return UserRepository(session).update(user_id, updated_user)
 
 
 @router.delete("/users/{user_id}", dependencies=[Depends(check_is_admin)])
-def delete_user(session: SessionDependency, user_id: UUID):
+def delete_user(session: SessionWithCommitDependency, user_id: UUID):
     return UserRepository(session).delete(user_id)

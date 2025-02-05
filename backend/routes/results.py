@@ -4,7 +4,7 @@ from fastapi import APIRouter
 
 from ..authentication import TokenDependency, get_current_user
 from ..crud.results import ResultRepository
-from ..database import SessionDependency
+from ..database import SessionDependency, SessionWithCommitDependency
 from ..schemas import Result
 from .common import FilterParamDependency
 
@@ -42,7 +42,7 @@ def get_user_result(
 
 @router.delete("/users/me/results/{result_id}")
 def delete_user_result(
-    session: SessionDependency, token: TokenDependency, result_id: UUID
+    session: SessionWithCommitDependency, token: TokenDependency, result_id: UUID
 ):
     current_user = get_current_user(session, token)
 
@@ -50,7 +50,7 @@ def delete_user_result(
 
 
 @router.delete("/users/me/results")
-def delete_user_results(session: SessionDependency, token: TokenDependency):
+def delete_user_results(session: SessionWithCommitDependency, token: TokenDependency):
     current_user = get_current_user(session, token)
 
     return ResultRepository(session).delete_all(current_user.id)

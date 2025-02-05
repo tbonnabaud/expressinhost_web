@@ -24,14 +24,14 @@ class UserRepository(BaseRepository):
 
     def add(self, data: dict) -> UUID | None:
         stmt = sa.insert(User).values(data).returning(User.id)
-        result = self.execute_with_commit(stmt)
+        result = self.session.execute(stmt)
 
         return result.scalar_one_or_none()
 
     def update(self, id: UUID, data: dict):
         stmt = sa.update(User).where(User.id == id).values(data)
-        self.execute_with_commit(stmt)
+        self.session.execute(stmt)
 
     def delete(self, id: UUID):
         stmt = sa.delete(User).where(User.id == id)
-        self.execute_with_commit(stmt)
+        self.session.execute(stmt)
