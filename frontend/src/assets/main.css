@@ -25,6 +25,11 @@
 .danger {
   background-color: #ce3838;
   border-color: #ce3838;
+  transition: all 0.2s ease;
+}
+
+.danger:hover {
+  filter: brightness(120%);
 }
 
 @media (prefers-color-scheme: dark) {
