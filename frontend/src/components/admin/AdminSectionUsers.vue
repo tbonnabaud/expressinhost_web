@@ -55,7 +55,7 @@ async function fetchUserList() {
     title="Confirm the deletion"
     @close="openDeleteModal = false"
   >
-    <p>Do you really want to delete this result?</p>
+    <p>Do you really want to delete this user?</p>
 
     <footer>
       <button class="secondary" @click="openDeleteModal = false">Cancel</button>
