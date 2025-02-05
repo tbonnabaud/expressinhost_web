@@ -8,7 +8,7 @@ const props = defineProps<{
 
 const perPage = props.perPage ?? 5
 const currentPage = ref(1)
-const totalPages = computed(() => Math.ceil(props.items.length / perPage))
+const totalPages = computed(() => Math.ceil(props.items.length / perPage) || 1)
 
 const paginatedItems = computed(() => {
   const start = (currentPage.value - 1) * perPage

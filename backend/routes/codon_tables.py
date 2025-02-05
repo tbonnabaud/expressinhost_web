@@ -5,7 +5,7 @@ from fastapi import APIRouter
 from ..authentication import OptionalTokenDependency, TokenDependency, get_current_user
 from ..crud.codon_tables import CodonTableRepository
 from ..crud.codon_translations import CodonTranslationRepository
-from ..database import SessionDependency
+from ..database import SessionDependency, SessionWithCommitDependency
 from ..schemas import CodonTable, CodonTranslation, UserCodonTableFormWithTranslations
 
 router = APIRouter(tags=["Codon tables"])
@@ -63,7 +63,7 @@ def get_user_codon_table_translations(
 
 @router.post("/users/me/codon-tables")
 def add_user_codon_table(
-    session: SessionDependency,
+    session: SessionWithCommitDependency,
     token: TokenDependency,
     data: UserCodonTableFormWithTranslations,
 ):
@@ -83,7 +83,7 @@ def add_user_codon_table(
 
 @router.put("/users/me/codon-tables/{codon_table_id}")
 def update_user_table_codon_translations(
-    session: SessionDependency,
+    session: SessionWithCommitDependency,
     token: TokenDependency,
     codon_table_id: UUID,
     data: UserCodonTableFormWithTranslations,
@@ -114,7 +114,7 @@ def update_user_table_codon_translations(
 
 @router.delete("/users/me/codon-tables/{codon_table_id}")
 def delete_user_codon_table(
-    session: SessionDependency, token: TokenDependency, codon_table_id: UUID
+    session: SessionWithCommitDependency, token: TokenDependency, codon_table_id: UUID
 ):
     current_user = get_current_user(session, token)
 

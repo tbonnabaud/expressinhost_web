@@ -22,10 +22,6 @@ def get_session():
     try:
         yield session
 
-    except IntegrityError as integrity_error:
-        logger.error(integrity_error)
-        raise HTTPException(status.HTTP_409_CONFLICT, "Integrity error")
-
     except SQLAlchemyError as error:
         logger.error(error)
         raise HTTPException(status.HTTP_500_INTERNAL_SERVER_ERROR, "Database error")
@@ -34,4 +30,27 @@ def get_session():
         session.close()
 
 
+def get_session_with_commit():
+    """Get a SQLAlchemy session with commit at the end."""
+    session = LocalSession()
+
+    try:
+        yield session
+        session.commit()
+
+    except IntegrityError as integrity_error:
+        logger.error(integrity_error)
+        session.rollback()
+        raise HTTPException(status.HTTP_409_CONFLICT, "Integrity error")
+
+    except SQLAlchemyError as error:
+        logger.error(error)
+        session.rollback()
+        raise HTTPException(status.HTTP_500_INTERNAL_SERVER_ERROR, "Database error")
+
+    finally:
+        session.close()
+
+
 SessionDependency = Annotated[Session, Depends(get_session)]
+SessionWithCommitDependency = Annotated[Session, Depends(get_session_with_commit)]

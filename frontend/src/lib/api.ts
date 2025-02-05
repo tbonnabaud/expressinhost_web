@@ -125,7 +125,7 @@ const admin = {
 const users = {
   register: async (form: UserForm) => await REQUESTS.post('/users', form),
   me: async () => await REQUESTS.get('/users/me'),
-  list: async (limit: number = 10, offset: number = 0) =>
+  list: async (limit: number | null = null, offset: number | null = null) =>
     await REQUESTS.get('/users', { limit, offset }),
   updatePassword: async (form: UserPasswordForm, reset: boolean) => {
     return reset
@@ -154,7 +154,7 @@ const codonTables = {
 }
 
 const results = {
-  list: async (limit: number = 10, offset: number = 0) =>
+  list: async (limit: number | null = null, offset: number | null = null) =>
     await REQUESTS.get(`/users/me/results`, { limit, offset }),
   count: async () => await REQUESTS.get(`/users/me/results/count`),
   get: async (id: string) => await REQUESTS.get(`/users/me/results/${id}`),
