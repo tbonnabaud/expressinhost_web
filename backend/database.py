@@ -3,7 +3,7 @@ from typing import Annotated
 from fastapi import Depends, status
 from fastapi.exceptions import HTTPException
 from sqlalchemy import create_engine
-from sqlalchemy.exc import IntegrityError, SQLAlchemyError
+from sqlalchemy.exc import IntegrityError, NoResultFound, SQLAlchemyError
 from sqlalchemy.orm import Session, sessionmaker
 
 from .logger import logger
@@ -21,6 +21,10 @@ def get_session():
 
     try:
         yield session
+
+    except NoResultFound as not_found_error:
+        logger.error(not_found_error)
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Resource not found")
 
     except SQLAlchemyError as error:
         logger.error(error)
@@ -42,6 +46,10 @@ def get_session_with_commit():
         logger.error(integrity_error)
         session.rollback()
         raise HTTPException(status.HTTP_409_CONFLICT, "Integrity error")
+
+    except NoResultFound as not_found_error:
+        logger.error(not_found_error)
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Resource not found")
 
     except SQLAlchemyError as error:
         logger.error(error)
