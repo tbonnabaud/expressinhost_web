@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount } from 'vue'
-import { RouterLink, RouterView } from 'vue-router'
+import { RouterLink, RouterView, useRouter } from 'vue-router'
 import { store } from './lib/store'
 import { API, setCurrentUserInStore } from './lib/api'
 import LoginForm from '@/components/LoginForm.vue'
 
+const router = useRouter()
 const user = store.currentUser
 const openLoginForm = ref(false)
 const openMenu = ref(window.innerWidth > 768)
@@ -26,6 +27,7 @@ function handleResize() {
 function logout() {
   API.auth.logout()
   store.emptyCurrentUser()
+  router.push('/')
 }
 </script>
 
