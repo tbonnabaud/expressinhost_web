@@ -179,16 +179,16 @@ async function deleteCodonTable() {
 
   <form @submit.prevent @keydown.enter.prevent ref="table-form">
     <div id="actions">
-      <label id="codonTableSelect">
-        Existing codon table
+      <div class="codon-table-field">
+        <label id="codonTableSelect">Existing codon table</label>
         <CodonTableSearchSelect
           :options="codonTableList"
           v-model="selectedCodonTable"
         />
-      </label>
+      </div>
 
-      <label>
-        Organism
+      <div class="codon-table-field">
+        <label>Organism</label>
         <input
           type="text"
           placeholder="Organism"
@@ -196,24 +196,24 @@ async function deleteCodonTable() {
           list="existingOrganisms"
           required
         />
-      </label>
-      <datalist id="existingOrganisms">
-        <option
-          v-for="org in existingOrganisms"
-          :value="org"
-          :key="org"
-        ></option>
-      </datalist>
+        <datalist id="existingOrganisms">
+          <option
+            v-for="org in existingOrganisms"
+            :value="org"
+            :key="org"
+          ></option>
+        </datalist>
+      </div>
 
-      <label>
-        Table name
+      <div class="codon-table-field">
+        <label>Table name</label>
         <input
           type="text"
           placeholder="Table name"
           v-model="codonTableName"
           required
         />
-      </label>
+      </div>
 
       <div class="action-button-group">
         <button @click="resetToDefault">Reset</button>
@@ -343,7 +343,7 @@ async function deleteCodonTable() {
   flex-direction: row;
   gap: 1em;
   align-items: center;
-  margin-top: 0.7em;
+  margin-top: 0.5em;
 }
 
 @media (max-width: 1024px) {
