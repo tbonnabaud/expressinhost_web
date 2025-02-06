@@ -59,7 +59,7 @@ function closeDropdown() {
       <template v-else>Select one...</template>
     </summary>
 
-    <ul v-if="!collapseDropdown">
+    <ul v-if="!collapseDropdown" class="option-dropdown">
       <li>
         <input type="search" placeholder="Filter..." v-model="filter" />
       </li>
@@ -107,5 +107,11 @@ input[type='radio'] {
 
 .dropdown .summary-select {
   height: fit-content;
+}
+
+@media (max-width: 768px) {
+  .option-list {
+    width: 90vw;
+  }
 }
 </style>
