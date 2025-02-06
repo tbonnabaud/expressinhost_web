@@ -169,7 +169,7 @@ nav a.router-link-exact-active:hover {
   }
 
   .nav-links {
-    margin-left: auto;
+    margin-left: 0;
     justify-content: center;
   }
 }
