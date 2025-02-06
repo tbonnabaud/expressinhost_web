@@ -15,11 +15,13 @@ import RegisterForm from '@/components/RegisterForm.vue'
 </template>
 
 <style scoped>
-#register {
-  width: 50%;
-}
-
 .centered {
   min-height: 50vh;
+}
+
+@media (min-width: 1024px) {
+  #register {
+    width: 50%;
+  }
 }
 </style>
