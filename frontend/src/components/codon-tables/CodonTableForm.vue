@@ -179,7 +179,7 @@ async function deleteCodonTable() {
 
   <form @submit.prevent @keydown.enter.prevent ref="table-form">
     <div id="actions">
-      <div class="codon-table-field">
+      <div class="meta-table-field">
         <label id="codonTableSelect">Existing codon table</label>
         <CodonTableSearchSelect
           :options="codonTableList"
@@ -187,7 +187,7 @@ async function deleteCodonTable() {
         />
       </div>
 
-      <div class="codon-table-field">
+      <div class="meta-table-field">
         <label>Organism</label>
         <input
           type="text"
@@ -205,7 +205,7 @@ async function deleteCodonTable() {
         </datalist>
       </div>
 
-      <div class="codon-table-field">
+      <div class="meta-table-field">
         <label>Table name</label>
         <input
           type="text"
