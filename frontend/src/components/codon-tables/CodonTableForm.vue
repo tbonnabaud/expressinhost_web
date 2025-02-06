@@ -333,17 +333,12 @@ async function deleteCodonTable() {
   padding-bottom: 0;
 }
 
-#actions label {
-  margin-bottom: 0;
-  padding-bottom: 0;
-}
-
 .action-button-group {
   display: flex;
   flex-direction: row;
   gap: 1em;
   align-items: center;
-  margin-top: 0.5em;
+  margin-top: 0.7em;
 }
 
 .codon-table-grid {
