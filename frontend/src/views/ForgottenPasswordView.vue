@@ -39,11 +39,13 @@ async function handleSubmit() {
 </template>
 
 <style scoped>
-#forgotForm {
-  width: 50%;
-}
-
 .centered {
   min-height: 50vh;
+}
+
+@media (min-width: 1024px) {
+  #forgotForm {
+    width: 50%;
+  }
 }
 </style>

@@ -28,11 +28,13 @@ function redirectToHome() {
 </template>
 
 <style scoped>
-#resetForm {
-  width: 50%;
-}
-
 .centered {
   min-height: 50vh;
+}
+
+@media (min-width: 1024px) {
+  #resetForm {
+    width: 50%;
+  }
 }
 </style>
