@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from enum import Enum
 
 
-class State(str, Enum):
+class Status(str, Enum):
     idle = "Idle"
     fetching_genome_list = "Fetching list of genomes"
     parsing_codon_tables = "Parsing codon tables"
@@ -13,17 +13,17 @@ class State(str, Enum):
 
 @dataclass
 class StateMonitor:
-    state: State = State.idle
+    status: Status = Status.idle
     done: int | None = None
     total: int | None = None
 
     def reset(self):
-        self.state = State.idle
+        self.status = Status.idle
         self.done = None
         self.total = None
 
     def start_with_total(self, total: int):
-        self.state = State.fetching_genome_list
+        self.status = Status.fetching_genome_list
         self.done = 0
         self.total = total
 
@@ -31,7 +31,7 @@ class StateMonitor:
         self.done += 1
 
         if self.done == self.total:
-            self.state = State.success
+            self.status = Status.success
 
     def error(self):
-        self.state = State.error
+        self.status = Status.error

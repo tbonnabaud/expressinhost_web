@@ -14,7 +14,7 @@ from ..logger import scraping_logger
 from ..routes.codon_tables import assign_codon_table_id
 from ..schemas import CodonTableFormWithTranslations, CodonTranslation
 from .mappings import AMINO_ACID_MAPPING, WOBBLE_MAPPING
-from .state_monitor import State, StateMonitor
+from .state_monitor import Status, StateMonitor
 
 SOURCE = "Lowe Lab"
 BASE_URL = "https://gtrnadb.ucsc.edu"
@@ -220,7 +220,7 @@ async def run_scraping():
     last_release = await get_last_release()
 
     async with ClientSession() as session:
-        lowe_state_monitor.state = State.fetching_genome_list
+        lowe_state_monitor.status = Status.fetching_genome_list
         genome_list_page = await get_url_content(session, GENOME_LIST_URL)
         genome_list = list(parse_genome_list(genome_list_page))
 
@@ -230,7 +230,7 @@ async def run_scraping():
             *[task(session, genome_page) for genome_page in genome_list]
         )
 
-    lowe_state_monitor.state = State.database_insertion
+    lowe_state_monitor.status = Status.database_insertion
     scraping_logger.info("Insertion of the extracted codon tables in the database...")
 
     with LocalSession() as db_session:
