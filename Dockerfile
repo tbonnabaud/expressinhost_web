@@ -17,7 +17,7 @@ COPY frontend/ .
 RUN npm run build
 
 # Stage 2: Final stage to serve the application
-FROM python:3.12-slim
+FROM python:3.13-slim
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && apt-get -y dist-upgrade && \
