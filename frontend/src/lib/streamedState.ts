@@ -45,8 +45,6 @@ export function useStreamState(url: string, token?: string) {
         try {
           // Try to parse data
           const parsed: StreamState = JSON.parse(partialData)
-          console.log(parsed)
-
           state.value = parsed
           // Reset partial data after successful parsing
           partialData = ''
