@@ -9,7 +9,7 @@ from sqlalchemy.orm import Session, sessionmaker
 from .logger import logger
 from .settings import settings
 
-DATABASE_URL = f"postgresql://{settings.POSTGRES_USER}:{settings.POSTGRES_PASSWORD}@{settings.DB_HOST}/{settings.POSTGRES_DB}"
+DATABASE_URL = f"postgresql+psycopg://{settings.POSTGRES_USER}:{settings.POSTGRES_PASSWORD}@{settings.DB_HOST}/{settings.POSTGRES_DB}"
 
 engine = create_engine(DATABASE_URL, echo=False, pool_size=20)
 LocalSession = sessionmaker(engine)
