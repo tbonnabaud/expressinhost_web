@@ -1,29 +1,29 @@
-from dataclasses import dataclass
 from enum import Enum
+
+from pydantic import BaseModel
 
 
 class Status(str, Enum):
-    idle = "Idle"
-    fetching_genome_list = "Fetching list of genomes"
-    parsing_codon_tables = "Parsing codon tables"
-    database_insertion = "Insertion in the database"
-    error = "Error"
-    success = "Success"
+    IDLE = "Idle"
+    RUNNING = "Running"
+    ERROR = "Error"
+    SUCCESS = "Success"
 
 
-@dataclass
-class StateMonitor:
-    status: Status = Status.idle
+class StateMonitor(BaseModel):
+    status: Status = Status.IDLE
+    message: str = ""
     done: int | None = None
     total: int | None = None
 
     def reset(self):
-        self.status = Status.idle
+        self.status = Status.IDLE
         self.done = None
         self.total = None
+        self.message = ""
 
     def start_with_total(self, total: int):
-        self.status = Status.fetching_genome_list
+        self.status = Status.RUNNING
         self.done = 0
         self.total = total
 
@@ -31,7 +31,7 @@ class StateMonitor:
         self.done += 1
 
         if self.done == self.total:
-            self.status = Status.success
+            self.status = Status.SUCCESS
 
     def error(self):
-        self.status = Status.error
+        self.status = Status.ERROR

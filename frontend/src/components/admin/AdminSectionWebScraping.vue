@@ -1,44 +1,24 @@
 <script setup lang="ts">
 import { API } from '@/lib/api'
-import { onMounted, onUnmounted, ref, watch } from 'vue'
+import { Status, useStreamState } from '@/lib/streamedState'
+import { ref, watch } from 'vue'
 
-interface ScrapingState {
-  status: string
-  done: number
-  total: number
-}
-
-const scrapingState = ref(null as ScrapingState | null)
-const requestInterval = ref(0)
+const { state: scrapingState } = useStreamState(
+  '/api/admin/external-db/web-scraping/state',
+  localStorage.getItem('accessToken') || undefined,
+)
 
 const isLoading = ref(false)
 
 watch(scrapingState, value => {
-  if (value && value.done && value.total) {
-    isLoading.value = value.done !== value.total
+  if (value) {
+    isLoading.value = value.status == Status.RUNNING
   }
 })
-
-onMounted(async () => {
-  await getWebScrapingState()
-  requestInterval.value = setInterval(async () => {
-    await getWebScrapingState()
-  }, 2000)
-})
-
-onUnmounted(() => clearInterval(requestInterval.value))
 
 async function runWebScraping() {
   isLoading.value = true
   await API.admin.runWebScraping()
-}
-
-async function getWebScrapingState() {
-  const [data, error] = await API.admin.getWebScrapingState()
-
-  if (!error && data) {
-    scrapingState.value = data
-  }
 }
 </script>
 
@@ -46,9 +26,17 @@ async function getWebScrapingState() {
   <section>
     <h2>Web scraping of codon tables</h2>
 
-    <button :aria-busy="isLoading" type="button" @click="runWebScraping">
+    <button
+      type="button"
+      @click="runWebScraping"
+      :aria-busy="isLoading"
+      :disabled="isLoading"
+    >
       Run scraping of Lowe Lab database
     </button>
+
+    <p>{{ scrapingState?.status }}</p>
+    <p>{{ scrapingState?.message }}</p>
 
     <div id="scrapingProgressWrapper">
       <div

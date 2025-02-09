@@ -1,5 +1,7 @@
+import time
+
 from fastapi import APIRouter, BackgroundTasks, Depends
-from fastapi.responses import PlainTextResponse
+from fastapi.responses import PlainTextResponse, StreamingResponse
 
 from ..authentication import check_is_admin
 from ..external_db_extractors.lowe_lab import lowe_state_monitor, run_scraping
@@ -18,7 +20,12 @@ async def run_web_scraping(background_tasks: BackgroundTasks):
 
 @router.get("/external-db/web-scraping/state")
 def get_web_scraping_state():
-    return lowe_state_monitor
+    def stream():
+        while True:
+            yield lowe_state_monitor.model_dump_json()
+            time.sleep(2)
+
+    return StreamingResponse(stream(), media_type="text/event-stream")
 
 
 @router.get("/log")
