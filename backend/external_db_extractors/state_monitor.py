@@ -22,7 +22,13 @@ class StateMonitor(BaseModel):
         self.total = None
         self.message = ""
 
-    def start_with_total(self, total: int):
+    def start(self, message: str = ""):
+        self.status = Status.RUNNING
+        self.done = None
+        self.total = None
+        self.message = message
+
+    def set_total(self, total: int):
         self.status = Status.RUNNING
         self.done = 0
         self.total = total

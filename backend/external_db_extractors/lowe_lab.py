@@ -213,25 +213,25 @@ async def get_last_release():
 
 
 async def run_scraping():
-    lowe_state_monitor.reset()
+    lowe_state_monitor.start()
     start_time = time.time()
     scraping_logger.info("Fetching and parsing HTML data...")
-
     last_release = await get_last_release()
 
     async with ClientSession() as session:
-        lowe_state_monitor.message = "Fetching list of genomes"
+        lowe_state_monitor.message = "Fetching list of genomes..."
         genome_list_page = await get_url_content(session, GENOME_LIST_URL)
         genome_list = list(parse_genome_list(genome_list_page))
 
-        lowe_state_monitor.start_with_total(2 * len(genome_list))
+        lowe_state_monitor.set_total(2 * len(genome_list))
 
         results = await asyncio.gather(
             *[task(session, genome_page) for genome_page in genome_list]
         )
 
-    lowe_state_monitor.message = "Insertion in the database"
-    scraping_logger.info("Insertion of the extracted codon tables in the database...")
+    insert_message = "Insertion of the extracted codon tables in the database..."
+    lowe_state_monitor.message = insert_message
+    scraping_logger.info(insert_message)
 
     with LocalSession() as db_session:
         codon_table_repo = CodonTableRepository(db_session)
@@ -272,9 +272,9 @@ async def run_scraping():
 
     end_time = time.time()
     elapsed_time = end_time - start_time
-    message = f"Elapsed time for the web scraping: {elapsed_time:.4f} seconds."
-    scraping_logger.info(message)
-    lowe_state_monitor.message = message
+    end_message = f"Elapsed time for the web scraping: {elapsed_time:.0f} seconds. {len(inserted_organisms)} new table(s) inserted."
+    scraping_logger.info(end_message)
+    lowe_state_monitor.message = end_message
 
 
 async def periodic_web_scraping():

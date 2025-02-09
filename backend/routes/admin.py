@@ -23,7 +23,7 @@ def get_web_scraping_state():
     def stream():
         while True:
             yield lowe_state_monitor.model_dump_json()
-            time.sleep(2)
+            time.sleep(1)
 
     return StreamingResponse(stream(), media_type="text/event-stream")
 

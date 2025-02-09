@@ -52,6 +52,10 @@ async function runWebScraping() {
           :max="scrapingState.total"
         ></progress>
       </div>
+
+      <div v-else-if="scrapingState">
+        <progress id="progressBar"></progress>
+      </div>
     </div>
   </section>
 </template>
