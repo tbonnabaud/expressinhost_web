@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { API } from '@/lib/api'
 import { Status, useStreamState } from '@/lib/streamedState'
-import { ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 
 const { state: scrapingState } = useStreamState(
   '/api/admin/external-db/web-scraping/state',
@@ -9,6 +9,13 @@ const { state: scrapingState } = useStreamState(
 )
 
 const isLoading = ref(false)
+const percentage = computed(() => {
+  if (scrapingState.value?.done && scrapingState.value?.total) {
+    return (scrapingState.value.done / scrapingState.value.total) * 100
+  } else {
+    return 0
+  }
+})
 
 watch(scrapingState, value => {
   if (value) {
@@ -36,27 +43,19 @@ async function runWebScraping() {
     </button>
 
     <p>{{ scrapingState?.status }}</p>
-    <p>{{ scrapingState?.message }}</p>
 
-    <div id="scrapingProgressWrapper">
-      <div
-        id="scrapingProgress"
-        v-if="scrapingState && scrapingState.done && scrapingState.total"
-      >
-        <span>
-          {{ ((scrapingState.done / scrapingState.total) * 100).toFixed(0) }}%
-        </span>
+    <div id="scrapingProgressWrapper" v-if="scrapingState">
+      <div id="scrapingProgress">
+        <span> {{ percentage.toFixed(0) }}% </span>
         <progress
           id="progressBar"
-          :value="scrapingState.done"
-          :max="scrapingState.total"
+          :value="scrapingState.done || 0"
+          :max="scrapingState.total || 0"
         ></progress>
       </div>
-
-      <div v-else-if="scrapingState">
-        <progress id="progressBar"></progress>
-      </div>
     </div>
+
+    <p id="stateMessage">{{ scrapingState?.message }}</p>
   </section>
 </template>
 
@@ -83,5 +82,9 @@ async function runWebScraping() {
 
 #scrapingProgressWrapper {
   height: 1.5em;
+}
+
+#stateMessage {
+  margin-top: 1em;
 }
 </style>
