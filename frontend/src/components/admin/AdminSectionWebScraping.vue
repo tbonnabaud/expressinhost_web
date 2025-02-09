@@ -3,7 +3,7 @@ import { API } from '@/lib/api'
 import { onMounted, onUnmounted, ref, watch } from 'vue'
 
 interface ScrapingState {
-  state: string
+  status: string
   done: number
   total: number
 }
