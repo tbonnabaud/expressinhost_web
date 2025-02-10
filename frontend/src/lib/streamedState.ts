@@ -19,7 +19,7 @@ export function useStreamState(url: string, token?: string) {
   const isStreaming = ref(false)
   let controller: AbortController | null = null
 
-  const fetchStream = async () => {
+  const startStream = async () => {
     isStreaming.value = true
     controller = new AbortController()
     const signal = controller.signal
@@ -66,7 +66,7 @@ export function useStreamState(url: string, token?: string) {
   }
 
   onMounted(() => {
-    fetchStream()
+    startStream()
   })
 
   onUnmounted(() => {
