@@ -14,7 +14,12 @@ export interface StreamState {
   total: number | null
 }
 
-export function useStreamState(url: string, token?: string) {
+export function useStreamState(
+  url: string,
+  method: string,
+  token?: string,
+  data?: object,
+) {
   const state = ref<StreamState | null>(null)
   const isStreaming = ref(false)
   let controller: AbortController | null = null
@@ -26,8 +31,9 @@ export function useStreamState(url: string, token?: string) {
 
     try {
       const response = await fetch(url, {
-        method: 'GET',
-        headers: token ? { Authorization: `Bearer ${token}` } : {},
+        method: method,
+        headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+        body: data ? JSON.stringify(data) : undefined,
         signal,
       })
 

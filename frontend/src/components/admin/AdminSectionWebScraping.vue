@@ -6,6 +6,7 @@ import { computed, onMounted, ref, watch } from 'vue'
 const { state: scrapingState, startStream: startScrapingStream } =
   useStreamState(
     '/api/admin/external-db/web-scraping/state',
+    'GET',
     localStorage.getItem('accessToken') || undefined,
   )
 
