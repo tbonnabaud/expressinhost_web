@@ -1,4 +1,4 @@
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, onUnmounted } from 'vue'
 
 export enum Status {
   IDLE = 'Idle',
@@ -65,13 +65,15 @@ export function useStreamState(url: string, token?: string) {
     }
   }
 
-  onMounted(() => {
-    startStream()
-  })
+  const stopStream = () => controller?.abort()
+
+  // onMounted(() => {
+  //   startStream()
+  // })
 
   onUnmounted(() => {
-    controller?.abort()
+    stopStream()
   })
 
-  return { state, isStreaming }
+  return { state, isStreaming, startStream, stopStream }
 }
