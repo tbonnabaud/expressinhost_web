@@ -1,12 +1,14 @@
-def clear_output_sequences(output_sequences: list[str]) -> list[str]:
-    return [seq.replace("-", "").replace("U", "T") for seq in output_sequences]
+from typing import Iterable
+
+
+def clear_output_sequences(output_sequences: Iterable[str]):
+    for seq in output_sequences:
+        yield seq.replace("-", "").replace("U", "T")
 
 
 def compare_sequences(
-    cleared_nucleotide_sequences: list[str], cleared_output_sequences: list[str]
-) -> list:
-    results = []
-
+    cleared_nucleotide_sequences: Iterable[str], cleared_output_sequences: Iterable[str]
+):
     for input_seq, output_seq in zip(
         cleared_nucleotide_sequences, cleared_output_sequences
     ):
@@ -19,7 +21,4 @@ def compare_sequences(
             if input_codon == output_codon:
                 counter_similarity += 1
 
-        percentage = counter_similarity / (len(input_seq) / 3) * 100
-        results.append(percentage)
-
-    return results
+        yield counter_similarity / (len(input_seq) / 3) * 100

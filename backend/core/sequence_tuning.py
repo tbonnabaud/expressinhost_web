@@ -363,7 +363,7 @@ def run_tuning(
                 "Invalid mode. Should be direct_mapping, optimisation_and_conservation_1 or optimisation_and_conservation_2."
             )
 
-    cleared_output_sequences = clear_output_sequences(output_sequences)
+    cleared_output_sequences = list(clear_output_sequences(output_sequences))
 
     identity_percentages = compare_sequences(
         cleared_nucleotide_sequences, cleared_output_sequences
