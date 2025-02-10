@@ -328,7 +328,8 @@ def run_tuning(
                 nucleotide_record, clustal_record
             ):
                 raise NoIdenticalSequencesError(
-                    "Sequences are not identical. Check their value in the two files and check their order."
+                    f"Sequences {nucleotide_record.name} (FASTA) and {clustal_record.name} (CLUSTAL) are not identical."
+                    "Check their value in the two files and check their order."
                 )
 
         # write_text_to_file(
