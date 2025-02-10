@@ -318,11 +318,11 @@ def run_tuning(
         if clustal_file_content is None:
             raise Exception("Clustal file is required.")
 
-        clustal_sequences = parse_sequences(clustal_file_content, "clustal")
+        clustal_records = parse_sequences(clustal_file_content, "clustal")
 
         # Ensure sequences are the same in the two files
         for nucleotide_record, clustal_record in zip(
-            nucleotide_records, clustal_sequences
+            nucleotide_records, clustal_records
         ):
             if not check_nucleotides_clustal_identity(
                 nucleotide_record, clustal_record
@@ -337,7 +337,7 @@ def run_tuning(
         # )
 
         aligned_nucleotide_sequences = align_nucleotide_sequences(
-            clustal_sequences, cleared_nucleotide_sequences
+            clustal_records, cleared_nucleotide_sequences
         )
 
         symbol_sequence = get_clustal_symbol_sequence(clustal_file_content)
