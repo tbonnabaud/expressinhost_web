@@ -1,24 +1,22 @@
-from typing import Iterable
+def clear_output_sequence(sequence: str) -> str:
+    """
+    Remove dashes and replaces all occurrences of "U" with "T" in a given sequence.
+    """
+    return sequence.replace("-", "").replace("U", "T")
 
 
-def clear_output_sequences(output_sequences: Iterable[str]):
-    for seq in output_sequences:
-        yield seq.replace("-", "").replace("U", "T")
+def compute_similarity(input_sequence: str, output_sequence: str) -> float:
+    """
+    Compute the similarity between input and output sequences by comparing codons.
+    """
+    counter_similarity = 0
+    codon_nb = int(len(input_sequence) / 3)
 
+    for t in range(codon_nb):
+        input_codon = input_sequence[3 * t : 3 * t + 3].replace("U", "T")
+        output_codon = output_sequence[3 * t : 3 * t + 3]
 
-def compare_sequences(
-    cleared_nucleotide_sequences: Iterable[str], cleared_output_sequences: Iterable[str]
-):
-    for input_seq, output_seq in zip(
-        cleared_nucleotide_sequences, cleared_output_sequences
-    ):
-        counter_similarity = 0
+        if input_codon == output_codon:
+            counter_similarity += 1
 
-        for t in range(int(len(input_seq) / 3)):
-            input_codon = input_seq[3 * t : 3 * t + 3].replace("U", "T")
-            output_codon = output_seq[3 * t : 3 * t + 3]
-
-            if input_codon == output_codon:
-                counter_similarity += 1
-
-        yield counter_similarity / (len(input_seq) / 3) * 100
+    return counter_similarity / codon_nb * 100

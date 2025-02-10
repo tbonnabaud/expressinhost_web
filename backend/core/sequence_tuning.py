@@ -1,10 +1,12 @@
 import random
 
-from ..logger import logger
 from .checks import check_amino_acido_conservation, check_nucleotides_clustal_identity
 from .codon_tables import ProcessedCodonTable
 from .exceptions import NoAminoAcidConservation, NoIdenticalSequencesError
-from .postprocessing import clear_output_sequences, compare_sequences
+from .postprocessing import (
+    clear_output_sequence,
+    compute_similarity,
+)
 from .preprocessing import align_nucleotide_sequences, dna_to_rna_sequences
 from .utils import (  # write_text_to_file,
     get_clustal_symbol_sequence,
@@ -304,8 +306,8 @@ def run_tuning(
     mode: str,
     conservation_threshold: float | None,
 ) -> list[dict]:
-    nucleotide_sequences = parse_sequences(nucleotide_file_content, "fasta")
-    cleared_nucleotide_sequences = dna_to_rna_sequences(nucleotide_sequences)
+    nucleotide_records = parse_sequences(nucleotide_file_content, "fasta")
+    cleared_nucleotide_sequences = dna_to_rna_sequences(nucleotide_records)
 
     if mode == "direct_mapping":
         output_sequences = direct_mapping(
@@ -319,16 +321,15 @@ def run_tuning(
         clustal_sequences = parse_sequences(clustal_file_content, "clustal")
 
         # Ensure sequences are the same in the two files
-        match check_nucleotides_clustal_identity(
-            nucleotide_sequences, clustal_sequences
+        for nucleotide_record, clustal_record in zip(
+            nucleotide_records, clustal_sequences
         ):
-            case (False, errors):
-                logger.error(errors)
+            if not check_nucleotides_clustal_identity(
+                nucleotide_record, clustal_record
+            ):
                 raise NoIdenticalSequencesError(
                     "Sequences are not identical. Check their value in the two files and check their order."
                 )
-            case _:
-                pass
 
         # write_text_to_file(
         #     "\n".join([str(r.seq) for r in clustal_sequences]),
@@ -363,41 +364,37 @@ def run_tuning(
                 "Invalid mode. Should be direct_mapping, optimisation_and_conservation_1 or optimisation_and_conservation_2."
             )
 
-    cleared_output_sequences = list(clear_output_sequences(output_sequences))
+    output_list = []
 
-    identity_percentages = compare_sequences(
-        cleared_nucleotide_sequences, cleared_output_sequences
-    )
-
-    # Ensure input and ouput nucleotide sequences have the same amino-acid sequences
-    match check_amino_acido_conservation(
-        nucleotide_sequences, cleared_output_sequences
+    for input_record, output_sequence, native_codon_table in zip(
+        nucleotide_records,
+        output_sequences,
+        native_codon_tables,
     ):
-        case (False, errors):
-            logger.error(errors)
+        cleared_output_sequence = clear_output_sequence(output_sequence)
+
+        # Ensure input and ouput nucleotide sequence have the same amino-acid sequence
+        if not check_amino_acido_conservation(input_record, cleared_output_sequence):
             raise NoAminoAcidConservation(
                 "Amino acid sequences from input and output are supposed to be the same."
             )
-        case _:
-            pass
 
-    output_list = []
-
-    for name, input, output, identity_percentage, native_codon_table in zip(
-        map(lambda record: record.name, nucleotide_sequences),
-        map(lambda record: str(record.seq), nucleotide_sequences),
-        cleared_output_sequences,
-        identity_percentages,
-        native_codon_tables,
-    ):
+        input_sequence = str(input_record.seq)
+        identity_percentage = compute_similarity(
+            input_sequence, cleared_output_sequence
+        )
         output_list.append(
             {
-                "name": name,
-                "input": input,
-                "output": output,
+                "name": input_record.name,
+                "input": input_sequence,
+                "output": cleared_output_sequence,
                 "identity_percentage": identity_percentage,
-                "input_profiles": get_sequence_profiles(input, native_codon_table),
-                "output_profiles": get_sequence_profiles(output, host_codon_table),
+                "input_profiles": get_sequence_profiles(
+                    input_sequence, native_codon_table
+                ),
+                "output_profiles": get_sequence_profiles(
+                    cleared_output_sequence, host_codon_table
+                ),
             }
         )
 
