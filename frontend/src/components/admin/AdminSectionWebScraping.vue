@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { API } from '@/lib/api'
 import { Status, useStreamState } from '@/lib/streamedState'
-import { computed, ref, watch } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 
-const { state: scrapingState } = useStreamState(
-  '/api/admin/external-db/web-scraping/state',
-  localStorage.getItem('accessToken') || undefined,
-)
+const { state: scrapingState, startStream: startScrapingStream } =
+  useStreamState(
+    '/api/admin/external-db/web-scraping/state',
+    localStorage.getItem('accessToken') || undefined,
+  )
 
 const isLoading = ref(false)
 const percentage = computed(() => {
@@ -16,6 +17,8 @@ const percentage = computed(() => {
     return 0
   }
 })
+
+onMounted(startScrapingStream)
 
 watch(scrapingState, value => {
   if (value) {
