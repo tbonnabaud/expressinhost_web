@@ -306,9 +306,11 @@ def tune_sequences(
     mode: str,
     conservation_threshold: float | None,
 ) -> list[dict]:
+    # Preprocessing
     nucleotide_records = parse_sequences(nucleotide_file_content, "fasta")
     cleared_nucleotide_sequences = dna_to_rna_sequences(nucleotide_records)
 
+    # Processing
     if mode == "direct_mapping":
         output_sequences = direct_mapping(
             cleared_nucleotide_sequences, native_codon_tables, host_codon_table
@@ -367,6 +369,7 @@ def tune_sequences(
 
     output_list = []
 
+    # Postprocessing
     for input_record, output_sequence, native_codon_table in zip(
         nucleotide_records,
         output_sequences,
