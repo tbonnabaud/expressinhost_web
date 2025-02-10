@@ -1,3 +1,5 @@
+from typing import Iterable
+
 from Bio.Data.CodonTable import TranslationError
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
@@ -6,7 +8,7 @@ from ..schemas import BadSequence, MismatchingSequences
 
 
 def check_nucleotides_clustal_identity(
-    nucleotide_sequences: list[SeqRecord], clustal_sequences: list[SeqRecord]
+    nucleotide_sequences: Iterable[SeqRecord], clustal_sequences: Iterable[SeqRecord]
 ) -> tuple[bool, list[MismatchingSequences | BadSequence]]:
     """Ensure the translation of nucleotide sequences are matching the amino-acid sequences in the CLUSTAL file."""
     is_ok = True
@@ -44,7 +46,8 @@ def check_nucleotides_clustal_identity(
 
 
 def check_amino_acido_conservation(
-    nucleotide_sequences: list[SeqRecord], processed_nucleotide_sequences: list[str]
+    nucleotide_sequences: Iterable[SeqRecord],
+    processed_nucleotide_sequences: Iterable[str],
 ) -> tuple[bool, list[MismatchingSequences]]:
     is_ok = True
     errors = []
