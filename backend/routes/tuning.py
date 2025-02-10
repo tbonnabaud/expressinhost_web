@@ -6,7 +6,7 @@ from fastapi import APIRouter
 
 from ..authentication import OptionalTokenDependency, get_current_user
 from ..core.codon_tables import process_raw_codon_table
-from ..core.sequence_tuning import run_tuning
+from ..core.sequence_tuning import tune_sequences
 from ..crud.codon_tables import CodonTableRepository
 from ..crud.codon_translations import CodonTranslationRepository
 from ..crud.results import ResultRepository
@@ -30,7 +30,7 @@ def process_codon_table_from_db(
 
 
 @router.post("/run-tuning", response_model=TuningOutput)
-def launch_tuning(
+def run_tuning(
     session: SessionWithCommitDependency,
     token: OptionalTokenDependency,
     form: RunTuningForm,
@@ -58,7 +58,7 @@ def launch_tuning(
         form.slow_speed_threshold,
     )
 
-    tuned_sequences = run_tuning(
+    tuned_sequences = tune_sequences(
         form.nucleotide_file_content,
         form.clustal_file_content,
         native_codon_tables,

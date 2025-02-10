@@ -298,7 +298,7 @@ def get_sequence_profiles(sequence: str, codon_table: ProcessedCodonTable):
 
 
 @timeit
-def run_tuning(
+def tune_sequences(
     nucleotide_file_content: str,
     clustal_file_content: str | None,
     native_codon_tables: list[ProcessedCodonTable],
