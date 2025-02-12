@@ -6,17 +6,6 @@ from uuid import UUID
 from pydantic import BaseModel, ConfigDict, Field, computed_field, field_validator
 
 
-class BadSequence(BaseModel):
-    name: str
-    msg: str
-
-
-class MismatchingSequences(BaseModel):
-    name: str
-    sequence1: str
-    sequence2: str
-
-
 class FilterParams(BaseModel):
     limit: int = Field(100, gt=0, le=100)
     offset: int = Field(0, ge=0)
