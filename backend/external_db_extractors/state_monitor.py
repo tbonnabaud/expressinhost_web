@@ -1,21 +1,7 @@
-from enum import Enum
-
-from pydantic import BaseModel
+from ..schemas import ProgressState, Status
 
 
-class Status(str, Enum):
-    IDLE = "Idle"
-    RUNNING = "Running"
-    ERROR = "Error"
-    SUCCESS = "Success"
-
-
-class StateMonitor(BaseModel):
-    status: Status = Status.IDLE
-    message: str = ""
-    done: int | None = None
-    total: int | None = None
-
+class StateMonitor(ProgressState):
     def reset(self):
         self.status = Status.IDLE
         self.done = None

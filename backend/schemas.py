@@ -1,9 +1,24 @@
 import re
 from datetime import UTC, datetime
+from enum import Enum
 from typing import Literal
 from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field, computed_field, field_validator
+
+
+class Status(str, Enum):
+    IDLE = "Idle"
+    RUNNING = "Running"
+    ERROR = "Error"
+    SUCCESS = "Success"
+
+
+class ProgressState(BaseModel):
+    status: Status = Status.IDLE
+    message: str = ""
+    done: int | None = None
+    total: int | None = None
 
 
 class FilterParams(BaseModel):
