@@ -7,6 +7,7 @@ import { Status, useStreamState } from '@/lib/streamedState'
 import CodonTableSearchSelect from '@/components/codon-tables/CodonTableSearchSelect.vue'
 import ToolTip from '@/components/ToolTip.vue'
 import WithAlertError from './WithAlertError.vue'
+import ProgressBar from './ProgressBar.vue'
 import {
   checkClustal,
   checkClustalMatchingFasta,
@@ -83,14 +84,6 @@ watch(
 watch(tuningState, state => {
   if (state && state.status == Status.SUCCESS) {
     emit('submit', state.result)
-  }
-})
-
-const tuningPercentage = computed(() => {
-  if (tuningState.value?.step && tuningState.value?.total) {
-    return (tuningState.value.step / tuningState.value.total) * 100
-  } else {
-    return 0
   }
 })
 
@@ -426,16 +419,12 @@ async function runTuning() {
     <hr />
 
     <div id="tuningProgressWrapper">
-      <div id="tuningProgress" v-if="tuningLoading">
-        <span> {{ tuningPercentage.toFixed(0) }}% </span>
-        <progress
-          id="progressBar"
-          :value="tuningState?.step || 0"
-          :max="tuningState?.total || 0"
-        >
-          TEST
-        </progress>
-      </div>
+      <ProgressBar
+        v-if="tuningLoading"
+        id="tuningProgress"
+        :value="tuningState?.step || 0"
+        :max="tuningState?.total || 0"
+      />
 
       <button v-else id="runTuningButton" type="submit">Run tuning</button>
     </div>
@@ -471,35 +460,18 @@ td {
   width: 50%;
 }
 
-#runTuningButton {
-  width: 100%;
-  height: 3em;
-}
-
 #mode-selector {
   text-align: left;
 }
 
-#progressBar {
-  background-color: #727a8d;
-  height: 3em;
-}
-
-#tuningProgress span {
-  position: absolute;
-  display: inline-block;
-  text-align: center;
-  margin-left: 50%;
-  font-weight: bold;
-  color: #fff;
-  font-size: 1.5em;
-  line-height: 2em;
-}
-
-#tuningProgress {
-  display: block;
-  position: relative;
+#runTuningButton {
   width: 100%;
+  height: 100%;
+}
+
+#tuningProgressWrapper,
+#tuningProgress {
+  height: 100%;
 }
 
 #tuningProgressWrapper {
