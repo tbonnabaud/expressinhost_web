@@ -43,19 +43,15 @@ export function useStreamState(url: string, method: string, token?: string) {
 
       const reader = response.body.getReader()
       const decoder = new TextDecoder()
-      let partialData = ''
 
       while (true) {
         const { done, value } = await reader.read()
         if (done) break
-        partialData += decoder.decode(value, { stream: true })
+        const data = decoder.decode(value).trim()
 
         try {
           // Try to parse data
-          const parsed: StreamState = JSON.parse(partialData)
-          state.value = parsed
-          // Reset partial data after successful parsing
-          partialData = ''
+          state.value = JSON.parse(data)
         } catch (parseError) {
           console.error(parseError)
         }
