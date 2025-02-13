@@ -4,7 +4,8 @@ from fastapi import APIRouter, BackgroundTasks, Depends
 from fastapi.responses import PlainTextResponse, StreamingResponse
 
 from ..authentication import check_is_admin
-from ..external_db_extractors.lowe_lab import lowe_state_monitor, run_scraping
+from ..external_db_extractors.lowe_lab import run_scraping, scraping_state
+from ..schemas import Status
 
 router = APIRouter(
     tags=["Admin"], prefix="/admin", dependencies=[Depends(check_is_admin)]
@@ -21,9 +22,11 @@ async def run_web_scraping(background_tasks: BackgroundTasks):
 @router.get("/external-db/web-scraping/state")
 def get_web_scraping_state():
     def stream():
-        while True:
-            yield lowe_state_monitor.model_dump_json()
+        while scraping_state.status == Status.RUNNING:
+            yield scraping_state.model_dump_json()
             time.sleep(1)
+
+        yield scraping_state.model_dump_json()
 
     return StreamingResponse(stream(), media_type="text/event-stream")
 
