@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { API } from '@/lib/api'
 import { Status, useStreamState } from '@/lib/streamedState'
-import { computed, onMounted, ref, watch } from 'vue'
+import { onMounted, ref, watch } from 'vue'
+import ProgressBar from '../ProgressBar.vue'
 
 const { state: scrapingState, startStream: startScrapingStream } =
   useStreamState(
@@ -11,13 +12,6 @@ const { state: scrapingState, startStream: startScrapingStream } =
   )
 
 const isLoading = ref(false)
-const percentage = computed(() => {
-  if (scrapingState.value?.total) {
-    return (scrapingState.value.step / scrapingState.value.total) * 100
-  } else {
-    return 0
-  }
-})
 
 onMounted(startScrapingStream)
 
@@ -49,16 +43,12 @@ async function runWebScraping() {
 
     <p>{{ scrapingState?.status }}</p>
 
-    <div id="scrapingProgressWrapper" v-if="scrapingState">
-      <div id="scrapingProgress">
-        <span> {{ percentage.toFixed(0) }}% </span>
-        <progress
-          id="progressBar"
-          :value="scrapingState.step || 0"
-          :max="scrapingState.total || 0"
-        ></progress>
-      </div>
-    </div>
+    <ProgressBar
+      v-if="scrapingState"
+      id="progressBar"
+      :value="scrapingState.step || 0"
+      :max="scrapingState.total || 0"
+    />
 
     <p id="stateMessage">{{ scrapingState?.message }}</p>
   </section>
@@ -66,27 +56,7 @@ async function runWebScraping() {
 
 <style scoped>
 #progressBar {
-  background-color: #727a8d;
-  height: 1.5em;
-}
-
-#scrapingProgress span {
-  position: absolute;
-  display: inline-block;
-  text-align: center;
-  margin-left: 50%;
-  font-weight: bold;
-  color: #fff;
-}
-
-#scrapingProgress {
-  display: block;
-  position: relative;
-  width: 100%;
-}
-
-#scrapingProgressWrapper {
-  height: 1.5em;
+  height: 3em;
 }
 
 #stateMessage {
