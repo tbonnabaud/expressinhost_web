@@ -1,3 +1,4 @@
+from contextlib import contextmanager
 from typing import Annotated
 
 from fastapi import Depends, status
@@ -34,8 +35,55 @@ def get_session():
         session.close()
 
 
+@contextmanager
+def context_get_session():
+    """Get a SQLAlchemy session."""
+    session = LocalSession()
+
+    try:
+        yield session
+
+    except NoResultFound as not_found_error:
+        logger.error(not_found_error)
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Resource not found")
+
+    except SQLAlchemyError as error:
+        logger.error(error)
+        raise HTTPException(status.HTTP_500_INTERNAL_SERVER_ERROR, "Database error")
+
+    finally:
+        session.close()
+
+
 def get_session_with_commit():
     """Get a SQLAlchemy session with commit at the end."""
+    session = LocalSession()
+
+    try:
+        yield session
+        session.commit()
+
+    except IntegrityError as integrity_error:
+        logger.error(integrity_error)
+        session.rollback()
+        raise HTTPException(status.HTTP_409_CONFLICT, "Integrity error")
+
+    except NoResultFound as not_found_error:
+        logger.error(not_found_error)
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Resource not found")
+
+    except SQLAlchemyError as error:
+        logger.error(error)
+        session.rollback()
+        raise HTTPException(status.HTTP_500_INTERNAL_SERVER_ERROR, "Database error")
+
+    finally:
+        session.close()
+
+
+@contextmanager
+def context_get_session_with_commit():
+    """Get a SQLAlchemy session in context manager with commit at the end."""
     session = LocalSession()
 
     try:
