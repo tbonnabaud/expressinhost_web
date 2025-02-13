@@ -55,7 +55,8 @@ async function fetchLastRelease() {
       </button>
 
       <p v-if="lastWebScraping" id="scrapingInfos">
-        Last release: {{ lastWebScraping.release }}, scraped on
+        <strong>Last release in database:</strong>
+        {{ lastWebScraping.release }}, scraped on
         {{ formatToLocaleDateString(lastWebScraping.scraping_date) }}
       </p>
     </div>
@@ -88,7 +89,6 @@ async function fetchLastRelease() {
 
 #scrapingInfos {
   text-align: center;
-  line-height: 3em;
   border: 1px dashed grey;
   border-radius: 0.25rem;
 }
