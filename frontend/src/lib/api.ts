@@ -117,6 +117,8 @@ const admin = {
     await REQUESTS.post('/admin/external-db/web-scraping/run'),
   getWebScrapingState: async () =>
     await REQUESTS.get('/admin/external-db/web-scraping/state'),
+  getWebScrapingLastRelease: async () =>
+    await REQUESTS.get('/admin/external-db/web-scraping/last-release'),
   getLogFileContent: async () => await REQUESTS.get('/admin/log'),
   getBackupLogFileContent: async (backupNumber: number) =>
     await REQUESTS.get(`/admin/log/backup/${backupNumber}`),

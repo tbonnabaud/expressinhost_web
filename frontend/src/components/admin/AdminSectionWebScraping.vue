@@ -1,9 +1,13 @@
 <script setup lang="ts">
-import { API } from '@/lib/api'
-import { Status, useStreamState } from '@/lib/streamedState'
 import { onMounted, ref, watch } from 'vue'
 import ProgressBar from '../ProgressBar.vue'
+import { API } from '@/lib/api'
+import { Status, useStreamState } from '@/lib/streamedState'
+import type { LastWebScraping } from '@/lib/interfaces'
+import { formatToLocaleDateString } from '@/lib/helpers'
 
+const isLoading = ref(false)
+const lastWebScraping = ref<LastWebScraping | null>(null)
 const { state: scrapingState, startStream: startScrapingStream } =
   useStreamState(
     '/api/admin/external-db/web-scraping/state',
@@ -11,9 +15,8 @@ const { state: scrapingState, startStream: startScrapingStream } =
     localStorage.getItem('accessToken') || undefined,
   )
 
-const isLoading = ref(false)
-
 onMounted(startScrapingStream)
+onMounted(fetchLastRelease)
 
 watch(scrapingState, value => {
   if (value) {
@@ -26,20 +29,36 @@ async function runWebScraping() {
   await API.admin.runWebScraping()
   await startScrapingStream()
 }
+
+async function fetchLastRelease() {
+  const [data, error] = await API.admin.getWebScrapingLastRelease()
+
+  if (!error) {
+    lastWebScraping.value = data
+  }
+}
 </script>
 
 <template>
   <section>
     <h2>Web scraping of codon tables</h2>
 
-    <button
-      type="button"
-      @click="runWebScraping"
-      :aria-busy="isLoading"
-      :disabled="isLoading"
-    >
-      Run scraping of Lowe Lab database
-    </button>
+    <div class="grid">
+      <button
+        id="scrapingButton"
+        type="button"
+        @click="runWebScraping"
+        :aria-busy="isLoading"
+        :disabled="isLoading"
+      >
+        Run scraping of Lowe Lab database
+      </button>
+
+      <p v-if="lastWebScraping" id="scrapingInfos">
+        Last release: {{ lastWebScraping.release }}, scraped on
+        {{ formatToLocaleDateString(lastWebScraping.scraping_date) }}
+      </p>
+    </div>
 
     <p>{{ scrapingState?.status }}</p>
 
@@ -61,5 +80,16 @@ async function runWebScraping() {
 
 #stateMessage {
   margin-top: 1em;
+}
+
+#scrapingButton {
+  height: 3em;
+}
+
+#scrapingInfos {
+  text-align: center;
+  line-height: 3em;
+  border: 1px dashed grey;
+  border-radius: 0.25rem;
 }
 </style>

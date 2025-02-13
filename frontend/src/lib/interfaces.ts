@@ -128,3 +128,9 @@ export interface ComponentMeta {
   name: string
   component: Component
 }
+
+export interface LastWebScraping {
+  source: string
+  release: string
+  scraping_date: string
+}

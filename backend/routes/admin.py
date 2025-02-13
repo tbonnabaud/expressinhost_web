@@ -4,7 +4,9 @@ from fastapi import APIRouter, BackgroundTasks, Depends
 from fastapi.responses import PlainTextResponse, StreamingResponse
 
 from ..authentication import check_is_admin
-from ..external_db_extractors.lowe_lab import run_scraping, scraping_state
+from ..crud.last_web_scraping import LastWebScrapingRepository
+from ..database import SessionDependency
+from ..external_db_extractors.lowe_lab import SOURCE, run_scraping, scraping_state
 from ..schemas import Status
 
 router = APIRouter(
@@ -29,6 +31,11 @@ def get_web_scraping_state():
         yield scraping_state.model_dump_json()
 
     return StreamingResponse(stream(), media_type="text/event-stream")
+
+
+@router.get("/external-db/web-scraping/last-release")
+def get_web_scraping_last_release(session: SessionDependency):
+    return LastWebScrapingRepository(session).get_last_from(SOURCE)
 
 
 @router.get("/log")
