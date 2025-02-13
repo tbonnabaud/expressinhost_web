@@ -35,6 +35,15 @@ def process_codon_table_from_db(
     )
 
 
+def get_native_codon_table_ids(
+    nucleotide_file_content: str, sequences_native_codon_tables: dict[str, UUID]
+) -> list[UUID]:
+    """Get the IDs from the mapping of sequence names and ensure the order of FASTA file."""
+    sequence_names = re.findall(r"^\> *(.*\w)", nucleotide_file_content, re.MULTILINE)
+
+    return [sequences_native_codon_tables[name] for name in sequence_names]
+
+
 def stream_sequence_tuning(token: OptionalTokenDependency, form: RunTuningForm):
     TOTAL_STEPS = 2
     tuning_state = TuningState(
@@ -45,13 +54,9 @@ def stream_sequence_tuning(token: OptionalTokenDependency, form: RunTuningForm):
     )
     yield tuning_state.model_dump_json()
 
-    sequence_names = re.findall(
-        r"^\> *(.*\w)", form.nucleotide_file_content, re.MULTILINE
+    native_codon_table_ids = get_native_codon_table_ids(
+        form.nucleotide_file_content, form.sequences_native_codon_tables
     )
-    # Get the IDs from the mapping of sequence names and ensure the order of FASTA file
-    native_codon_table_ids = [
-        form.sequences_native_codon_tables[name] for name in sequence_names
-    ]
 
     with context_get_session() as session:
         codon_translation_repo = CodonTranslationRepository(session)
