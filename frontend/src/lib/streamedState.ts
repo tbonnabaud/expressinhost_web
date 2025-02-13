@@ -43,17 +43,21 @@ export function useStreamState(url: string, method: string, token?: string) {
 
       const reader = response.body.getReader()
       const decoder = new TextDecoder()
+      let partialData = ''
 
       while (true) {
         const { done, value } = await reader.read()
         if (done) break
-        const data = decoder.decode(value).trim()
+        const chunk = decoder.decode(value, { stream: true })
+        partialData += chunk
 
         try {
-          // Try to parse data
-          state.value = JSON.parse(data)
+          // Try to parse accumulated data
+          state.value = JSON.parse(partialData)
+          partialData = '' // Reset partial data after successful parse
         } catch (parseError) {
-          console.error(parseError)
+          // If parsing fails, it means we haven't received a complete JSON yet
+          console.warn('Partial data received:', (parseError as Error).message)
         }
       }
     } catch (error) {
@@ -70,10 +74,6 @@ export function useStreamState(url: string, method: string, token?: string) {
   }
 
   const stopStream = () => controller?.abort()
-
-  // onMounted(() => {
-  //   startStream()
-  // })
 
   onUnmounted(() => {
     stopStream()
