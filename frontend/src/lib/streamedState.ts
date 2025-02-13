@@ -10,8 +10,8 @@ export enum Status {
 export interface StreamState {
   status: Status
   message: string
-  done: number | null
-  total: number | null
+  step: number
+  total: number
   result?: object | null
 }
 
@@ -25,7 +25,7 @@ export function useStreamState(url: string, method: string, token?: string) {
     controller = new AbortController()
     const signal = controller.signal
     const headers = {
-      Accept: 'application/json',
+      Accept: 'text/event-stream',
       'Content-Type': 'application/json',
     }
 

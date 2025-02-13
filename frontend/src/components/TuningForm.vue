@@ -87,8 +87,8 @@ watch(tuningState, state => {
 })
 
 const tuningPercentage = computed(() => {
-  if (tuningState.value?.done && tuningState.value?.total) {
-    return (tuningState.value.done / tuningState.value.total) * 100
+  if (tuningState.value?.step && tuningState.value?.total) {
+    return (tuningState.value.step / tuningState.value.total) * 100
   } else {
     return 0
   }
@@ -430,9 +430,11 @@ async function runTuning() {
         <span> {{ tuningPercentage.toFixed(0) }}% </span>
         <progress
           id="progressBar"
-          :value="tuningState?.done || 0"
+          :value="tuningState?.step || 0"
           :max="tuningState?.total || 0"
-        ></progress>
+        >
+          TEST
+        </progress>
       </div>
 
       <button v-else id="runTuningButton" type="submit">Run tuning</button>

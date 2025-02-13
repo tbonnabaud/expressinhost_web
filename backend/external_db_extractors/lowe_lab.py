@@ -12,9 +12,8 @@ from ..crud.last_web_scraping import LastWebScrapingRepository
 from ..database import IntegrityError, LocalSession
 from ..logger import scraping_logger
 from ..routes.codon_tables import assign_codon_table_id
-from ..schemas import CodonTableFormWithTranslations, CodonTranslation
+from ..schemas import CodonTableFormWithTranslations, CodonTranslation, ProgressState
 from .mappings import AMINO_ACID_MAPPING, WOBBLE_MAPPING
-from .state_monitor import StateMonitor
 
 SOURCE = "Lowe Lab"
 BASE_URL = "https://gtrnadb.ucsc.edu"
@@ -23,7 +22,7 @@ GENOME_LIST_URL = f"{BASE_URL}/cgi-bin/trna_chooseorg?org="
 # Third group to handle cell containing X/Y
 CELL_REGEX = re.compile(r"([A-Z]+)\s+(\d*)/?(\d*)")
 
-lowe_state_monitor = StateMonitor()
+scraping_state = ProgressState()
 
 
 @dataclass(slots=True)
@@ -186,6 +185,7 @@ async def get_url_content(session: ClientSession, url: str):
 
 
 async def task(session: ClientSession, genome_page: GenomePageMetadata):
+    scraping_state.next_step()
     summary_page = await get_url_content(session, genome_page.link)
     codon_table = None
 
@@ -197,8 +197,6 @@ async def task(session: ClientSession, genome_page: GenomePageMetadata):
             source=SOURCE,
             translations=sorted(translations, key=lambda t: t.amino_acid),
         )
-
-    lowe_state_monitor.progress()
 
     return codon_table
 
@@ -213,25 +211,25 @@ async def get_last_release():
 
 
 async def run_scraping():
-    lowe_state_monitor.start()
+    scraping_state.start()
     start_time = time.time()
     scraping_logger.info("Fetching and parsing HTML data...")
     last_release = await get_last_release()
 
     async with ClientSession() as session:
-        lowe_state_monitor.message = "Fetching list of genomes..."
+        scraping_state.message = "Fetching list of genomes..."
         genome_list_page = await get_url_content(session, GENOME_LIST_URL)
         genome_list = list(parse_genome_list(genome_list_page))
 
-        lowe_state_monitor.set_total(2 * len(genome_list))
+        scraping_state.set_total(2 * len(genome_list))
 
         results = await asyncio.gather(
             *[task(session, genome_page) for genome_page in genome_list]
         )
 
     insert_message = "Insertion of the extracted codon tables in the database..."
-    lowe_state_monitor.message = insert_message
     scraping_logger.info(insert_message)
+    scraping_state.message = insert_message
 
     with LocalSession() as db_session:
         codon_table_repo = CodonTableRepository(db_session)
@@ -241,7 +239,7 @@ async def run_scraping():
         inserted_organisms = set()
 
         for result in results:
-            lowe_state_monitor.progress()
+            scraping_state.next_step()
 
             if result is not None and result.organism not in inserted_organisms:
                 try:
@@ -274,7 +272,7 @@ async def run_scraping():
     elapsed_time = end_time - start_time
     end_message = f"Elapsed time for the web scraping: {elapsed_time:.0f} seconds. {len(inserted_organisms)} new table(s) inserted."
     scraping_logger.info(end_message)
-    lowe_state_monitor.message = end_message
+    scraping_state.success(end_message)
 
 
 async def periodic_web_scraping():

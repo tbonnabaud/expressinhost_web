@@ -12,8 +12,8 @@ const { state: scrapingState, startStream: startScrapingStream } =
 
 const isLoading = ref(false)
 const percentage = computed(() => {
-  if (scrapingState.value?.done && scrapingState.value?.total) {
-    return (scrapingState.value.done / scrapingState.value.total) * 100
+  if (scrapingState.value?.total) {
+    return (scrapingState.value.step / scrapingState.value.total) * 100
   } else {
     return 0
   }
@@ -30,6 +30,7 @@ watch(scrapingState, value => {
 async function runWebScraping() {
   isLoading.value = true
   await API.admin.runWebScraping()
+  await startScrapingStream()
 }
 </script>
 
@@ -53,7 +54,7 @@ async function runWebScraping() {
         <span> {{ percentage.toFixed(0) }}% </span>
         <progress
           id="progressBar"
-          :value="scrapingState.done || 0"
+          :value="scrapingState.step || 0"
           :max="scrapingState.total || 0"
         ></progress>
       </div>

@@ -42,7 +42,7 @@ def stream_sequence_tuning(
     tuning_state = TuningState(
         status=Status.RUNNING,
         message="Process codon tables...",
-        done=0,
+        step=1,
         total=TOTAL_STEPS,
     )
     yield tuning_state.model_dump_json()
@@ -71,8 +71,7 @@ def stream_sequence_tuning(
     )
 
     time.sleep(1)
-    tuning_state.done += 1
-    tuning_state.message = "Tune sequences..."
+    tuning_state.next_step("Tune sequences...")
     yield tuning_state.model_dump_json()
 
     tuned_sequences = tune_sequences(
@@ -116,9 +115,7 @@ def stream_sequence_tuning(
     )
 
     time.sleep(1)
-    tuning_state.done += 1
-    tuning_state.status = Status.SUCCESS
-    tuning_state.message = "Success!"
+    tuning_state.success()
     tuning_state.result = TuningOutput.model_validate(
         {
             "result": result,

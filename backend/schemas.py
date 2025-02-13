@@ -17,8 +17,31 @@ class Status(str, Enum):
 class ProgressState(BaseModel):
     status: Status = Status.IDLE
     message: str = ""
-    done: int | None = None
-    total: int | None = None
+    step: int = 0
+    total: int = 0
+
+    def start(self, message: str = "Starting..."):
+        self.status = Status.RUNNING
+        self.step = 0
+        self.total = 0
+        self.message = message
+
+    def set_total(self, total: int):
+        self.total = total
+
+    def next_step(self, message: str | None = None):
+        self.step += 1
+
+        if message is not None:
+            self.message = message
+
+    def success(self, message: str = "Success."):
+        self.status = Status.SUCCESS
+        self.message = message
+
+    def error(self, message: str = "Error."):
+        self.status = Status.ERROR
+        self.message = message
 
 
 class FilterParams(BaseModel):
