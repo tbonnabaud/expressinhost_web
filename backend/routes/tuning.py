@@ -13,7 +13,7 @@ from ..crud.codon_tables import CodonTableRepository
 from ..crud.codon_translations import CodonTranslationRepository
 from ..crud.results import ResultRepository
 from ..crud.tuned_sequences import TunedSequenceRepository
-from ..database import Session, SessionWithCommitDependency
+from ..database import context_get_session, context_get_session_with_commit
 from ..schemas import ProgressState, RunTuningForm, Status, TuningOutput
 
 router = APIRouter(tags=["Tuning"])
@@ -35,9 +35,7 @@ def process_codon_table_from_db(
     )
 
 
-def stream_sequence_tuning(
-    session: Session, token: OptionalTokenDependency, form: RunTuningForm
-):
+def stream_sequence_tuning(token: OptionalTokenDependency, form: RunTuningForm):
     TOTAL_STEPS = 2
     tuning_state = TuningState(
         status=Status.RUNNING,
@@ -55,20 +53,21 @@ def stream_sequence_tuning(
         form.sequences_native_codon_tables[name] for name in sequence_names
     ]
 
-    codon_translation_repo = CodonTranslationRepository(session)
+    with context_get_session() as session:
+        codon_translation_repo = CodonTranslationRepository(session)
 
-    native_codon_tables = [
-        process_codon_table_from_db(
-            codon_translation_repo, codon_table_id, form.slow_speed_threshold
+        native_codon_tables = [
+            process_codon_table_from_db(
+                codon_translation_repo, codon_table_id, form.slow_speed_threshold
+            )
+            for codon_table_id in native_codon_table_ids
+        ]
+
+        host_codon_table = process_codon_table_from_db(
+            codon_translation_repo,
+            form.host_codon_table_id,
+            form.slow_speed_threshold,
         )
-        for codon_table_id in native_codon_table_ids
-    ]
-
-    host_codon_table = process_codon_table_from_db(
-        codon_translation_repo,
-        form.host_codon_table_id,
-        form.slow_speed_threshold,
-    )
 
     time.sleep(1)
     tuning_state.next_step("Tune sequences...")
@@ -98,40 +97,40 @@ def stream_sequence_tuning(
         "conservation_threshold": form.conservation_threshold,
     }
 
-    user = get_current_user(session, token) if token else None
+    with context_get_session_with_commit() as session:
+        user = get_current_user(session, token) if token else None
 
-    if user:
-        result["user_id"] = user.id
-        result_id = ResultRepository(session).add(result)
+        if user:
+            result["user_id"] = user.id
+            result_id = ResultRepository(session).add(result)
 
-        # Attach the tuned sequences to the result
-        for seq in tuned_sequences:
-            seq["result_id"] = result_id
+            # Attach the tuned sequences to the result
+            for seq in tuned_sequences:
+                seq["result_id"] = result_id
 
-        TunedSequenceRepository(session).add_batch(tuned_sequences)
+            TunedSequenceRepository(session).add_batch(tuned_sequences)
 
-    result["host_codon_table"] = CodonTableRepository(session).get(
-        user and user.id, form.host_codon_table_id
-    )
+        result["host_codon_table"] = CodonTableRepository(session).get(
+            user and user.id, form.host_codon_table_id
+        )
+        tuning_output = TuningOutput.model_validate(
+            {
+                "result": result,
+                "tuned_sequences": tuned_sequences,
+            }
+        )
 
     time.sleep(1)
     tuning_state.success()
-    tuning_state.result = TuningOutput.model_validate(
-        {
-            "result": result,
-            "tuned_sequences": tuned_sequences,
-        }
-    )
-
+    tuning_state.result = tuning_output
     yield tuning_state.model_dump_json()
 
 
 @router.post("/run-tuning")
 def run_tuning(
-    session: SessionWithCommitDependency,
     token: OptionalTokenDependency,
     form: RunTuningForm,
 ):
     return StreamingResponse(
-        stream_sequence_tuning(session, token, form), media_type="text/event-stream"
+        stream_sequence_tuning(token, form), media_type="text/event-stream"
     )
