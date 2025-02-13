@@ -12,27 +12,29 @@ export interface StreamState {
   message: string
   done: number | null
   total: number | null
+  result?: object | null
 }
 
-export function useStreamState(
-  url: string,
-  method: string,
-  token?: string,
-  data?: object,
-) {
+export function useStreamState(url: string, method: string, token?: string) {
   const state = ref<StreamState | null>(null)
   const isStreaming = ref(false)
   let controller: AbortController | null = null
 
-  const startStream = async () => {
+  const startStream = async (data?: object) => {
     isStreaming.value = true
     controller = new AbortController()
     const signal = controller.signal
+    const headers = {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    }
 
     try {
       const response = await fetch(url, {
         method: method,
-        headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+        headers: token
+          ? { ...headers, Authorization: `Bearer ${token}` }
+          : headers,
         body: data ? JSON.stringify(data) : undefined,
         signal,
       })
