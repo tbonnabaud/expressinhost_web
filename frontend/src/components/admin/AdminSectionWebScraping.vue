@@ -91,5 +91,6 @@ async function fetchLastRelease() {
   text-align: center;
   border: 1px dashed grey;
   border-radius: 0.25rem;
+  padding: 0 1em;
 }
 </style>
