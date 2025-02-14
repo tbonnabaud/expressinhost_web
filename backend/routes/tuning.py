@@ -23,6 +23,15 @@ class TuningState(ProgressState):
     result: TuningOutput | None = None
 
 
+def get_native_codon_table_ids(
+    nucleotide_file_content: str, sequences_native_codon_tables: dict[str, UUID]
+) -> list[UUID]:
+    """Get the IDs from the mapping of sequence names and ensure the order of FASTA file."""
+    sequence_names = re.findall(r"^\> *(.*\w)", nucleotide_file_content, re.MULTILINE)
+
+    return [sequences_native_codon_tables[name] for name in sequence_names]
+
+
 def process_codon_table_from_db(
     codon_translation_repo: CodonTranslationRepository,
     codon_table_id: UUID,
@@ -35,13 +44,28 @@ def process_codon_table_from_db(
     )
 
 
-def get_native_codon_table_ids(
-    nucleotide_file_content: str, sequences_native_codon_tables: dict[str, UUID]
-) -> list[UUID]:
-    """Get the IDs from the mapping of sequence names and ensure the order of FASTA file."""
-    sequence_names = re.findall(r"^\> *(.*\w)", nucleotide_file_content, re.MULTILINE)
+def get_processed_tables(
+    native_codon_table_ids: list[UUID],
+    host_codon_table_id: UUID,
+    slow_speed_threshold: float,
+):
+    with context_get_session() as session:
+        codon_translation_repo = CodonTranslationRepository(session)
 
-    return [sequences_native_codon_tables[name] for name in sequence_names]
+        native_codon_tables = [
+            process_codon_table_from_db(
+                codon_translation_repo, codon_table_id, slow_speed_threshold
+            )
+            for codon_table_id in native_codon_table_ids
+        ]
+
+        host_codon_table = process_codon_table_from_db(
+            codon_translation_repo,
+            host_codon_table_id,
+            slow_speed_threshold,
+        )
+
+        return native_codon_tables, host_codon_table
 
 
 def stream_sequence_tuning(token: OptionalTokenDependency, form: RunTuningForm):
@@ -58,21 +82,9 @@ def stream_sequence_tuning(token: OptionalTokenDependency, form: RunTuningForm):
         form.nucleotide_file_content, form.sequences_native_codon_tables
     )
 
-    with context_get_session() as session:
-        codon_translation_repo = CodonTranslationRepository(session)
-
-        native_codon_tables = [
-            process_codon_table_from_db(
-                codon_translation_repo, codon_table_id, form.slow_speed_threshold
-            )
-            for codon_table_id in native_codon_table_ids
-        ]
-
-        host_codon_table = process_codon_table_from_db(
-            codon_translation_repo,
-            form.host_codon_table_id,
-            form.slow_speed_threshold,
-        )
+    native_codon_tables, host_codon_table = get_processed_tables(
+        native_codon_table_ids, form.host_codon_table_id, form.slow_speed_threshold
+    )
 
     time.sleep(1)
     tuning_state.next_step("Tune sequences...")
