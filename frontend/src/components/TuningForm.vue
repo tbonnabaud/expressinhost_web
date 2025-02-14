@@ -3,9 +3,11 @@ import { ref, onMounted, reactive, watch, computed } from 'vue'
 import { readTextFile, toFixedFloat } from '@/lib/helpers'
 import type { CodonTable } from '@/lib/interfaces'
 import { API } from '@/lib/api'
+import { Status, useStreamState } from '@/lib/streamedState'
 import CodonTableSearchSelect from '@/components/codon-tables/CodonTableSearchSelect.vue'
 import ToolTip from '@/components/ToolTip.vue'
 import WithAlertError from './WithAlertError.vue'
+import ProgressBar from './ProgressBar.vue'
 import {
   checkClustal,
   checkClustalMatchingFasta,
@@ -37,6 +39,12 @@ const selectedSequencesNativeCodonTables = ref(
 
 const codonTableList = ref([] as Array<CodonTable>)
 const tuningLoading = ref(false)
+
+const { state: tuningState, startStream: startTuningStream } = useStreamState(
+  '/api/run-tuning',
+  'POST',
+  localStorage.getItem('accessToken') || undefined,
+)
 
 const clustalIsRequired = computed(() => baseForm.mode != 'direct_mapping')
 
@@ -72,6 +80,12 @@ watch(
     }
   },
 )
+
+watch(tuningState, state => {
+  if (state && state.status == Status.SUCCESS) {
+    emit('submit', state.result)
+  }
+})
 
 async function fetchCodonTables() {
   const [data, error] = await API.codonTables.list()
@@ -169,14 +183,15 @@ async function runTuning() {
       },
     )
 
-    // To remove
-    console.log(JSON.stringify(form))
+    // // To remove
+    // console.log(JSON.stringify(form))
 
-    const [data, error] = await API.runTraining(form)
+    // const [data, error] = await API.runTraining(form)
+    await startTuningStream(form)
 
-    if (!error) {
-      emit('submit', data)
-    }
+    // if (!error) {
+    //   emit('submit', data)
+    // }
   }
 
   tuningLoading.value = false
@@ -403,9 +418,16 @@ async function runTuning() {
 
     <hr />
 
-    <button :aria-busy="tuningLoading" id="runTuningButton" type="submit">
-      {{ tuningLoading ? 'Please wait...' : 'Run tuning' }}
-    </button>
+    <div id="tuningProgressWrapper">
+      <ProgressBar
+        v-if="tuningLoading"
+        id="tuningProgress"
+        :value="tuningState?.step || 0"
+        :max="tuningState?.total || 0"
+      />
+
+      <button v-else id="runTuningButton" type="submit">Run tuning</button>
+    </div>
   </form>
 </template>
 
@@ -438,11 +460,21 @@ td {
   width: 50%;
 }
 
-#runTuningButton {
-  width: 100%;
-}
-
 #mode-selector {
   text-align: left;
+}
+
+#runTuningButton {
+  width: 100%;
+  height: 100%;
+}
+
+#tuningProgressWrapper,
+#tuningProgress {
+  height: 100%;
+}
+
+#tuningProgressWrapper {
+  height: 3em;
 }
 </style>

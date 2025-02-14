@@ -1,3 +1,4 @@
+from contextlib import contextmanager
 from typing import Annotated
 
 from fastapi import Depends, status
@@ -9,7 +10,7 @@ from sqlalchemy.orm import Session, sessionmaker
 from .logger import logger
 from .settings import settings
 
-DATABASE_URL = f"postgresql://{settings.POSTGRES_USER}:{settings.POSTGRES_PASSWORD}@{settings.DB_HOST}/{settings.POSTGRES_DB}"
+DATABASE_URL = f"postgresql+psycopg://{settings.POSTGRES_USER}:{settings.POSTGRES_PASSWORD}@{settings.DB_HOST}/{settings.POSTGRES_DB}"
 
 engine = create_engine(DATABASE_URL, echo=False, pool_size=20)
 LocalSession = sessionmaker(engine)
@@ -32,6 +33,12 @@ def get_session():
 
     finally:
         session.close()
+
+
+@contextmanager
+def context_get_session():
+    """Get a SQLAlchemy session."""
+    return get_session()
 
 
 def get_session_with_commit():
@@ -58,6 +65,12 @@ def get_session_with_commit():
 
     finally:
         session.close()
+
+
+@contextmanager
+def context_get_session_with_commit():
+    """Get a SQLAlchemy session in context manager with commit at the end."""
+    return get_session_with_commit()
 
 
 SessionDependency = Annotated[Session, Depends(get_session)]

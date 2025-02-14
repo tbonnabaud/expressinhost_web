@@ -29,38 +29,40 @@ const prevPage = () => {
 </script>
 
 <template>
-  <div class="pagination">
-    <button class="secondary" @click="prevPage" :disabled="currentPage === 1">
-      Prev
-    </button>
-    <span>Page {{ currentPage }} of {{ totalPages }}</span>
-    <button
-      class="secondary"
-      @click="nextPage"
-      :disabled="currentPage === totalPages"
-    >
-      Next
-    </button>
-  </div>
-
-  <div id="content">
-    <div v-for="item in paginatedItems" :key="item.id">
-      <slot :item="item"></slot>
+  <div>
+    <div class="pagination">
+      <button class="secondary" @click="prevPage" :disabled="currentPage === 1">
+        Prev
+      </button>
+      <span>Page {{ currentPage }} of {{ totalPages }}</span>
+      <button
+        class="secondary"
+        @click="nextPage"
+        :disabled="currentPage === totalPages"
+      >
+        Next
+      </button>
     </div>
-  </div>
 
-  <div class="pagination">
-    <button class="secondary" @click="prevPage" :disabled="currentPage === 1">
-      Prev
-    </button>
-    <span>Page {{ currentPage }} of {{ totalPages }}</span>
-    <button
-      class="secondary"
-      @click="nextPage"
-      :disabled="currentPage === totalPages"
-    >
-      Next
-    </button>
+    <div id="content">
+      <div v-for="item in paginatedItems" :key="item.id">
+        <slot :item="item"></slot>
+      </div>
+    </div>
+
+    <div class="pagination">
+      <button class="secondary" @click="prevPage" :disabled="currentPage === 1">
+        Prev
+      </button>
+      <span>Page {{ currentPage }} of {{ totalPages }}</span>
+      <button
+        class="secondary"
+        @click="nextPage"
+        :disabled="currentPage === totalPages"
+      >
+        Next
+      </button>
+    </div>
   </div>
 </template>
 

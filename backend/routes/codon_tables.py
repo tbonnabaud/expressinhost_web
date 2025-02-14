@@ -40,11 +40,14 @@ def list_codon_tables(
 
 @router.get("/users/me/codon-tables/{codon_table_id}", response_model=CodonTable)
 def get_user_codon_table(
-    session: SessionDependency, token: TokenDependency, codon_table_id: UUID
+    session: SessionDependency, token: OptionalTokenDependency, codon_table_id: UUID
 ):
-    current_user = get_current_user(session, token)
+    current_user = get_current_user(session, token) if token else None
 
-    return CodonTableRepository(session).get(current_user.id, codon_table_id)
+    if current_user:
+        return CodonTableRepository(session).get(current_user.id, codon_table_id)
+    else:
+        return CodonTableRepository(session).get(None, codon_table_id)
 
 
 @router.get(

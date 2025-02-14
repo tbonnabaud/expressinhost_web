@@ -1,43 +1,40 @@
 <script setup lang="ts">
+import { onMounted, ref, watch } from 'vue'
+import ProgressBar from '../ProgressBar.vue'
 import { API } from '@/lib/api'
-import { onMounted, onUnmounted, ref, watch } from 'vue'
-
-interface ScrapingState {
-  state: string
-  done: number
-  total: number
-}
-
-const scrapingState = ref(null as ScrapingState | null)
-const requestInterval = ref(0)
+import { Status, useStreamState } from '@/lib/streamedState'
+import type { LastWebScraping } from '@/lib/interfaces'
+import { formatToLocaleDateString } from '@/lib/helpers'
 
 const isLoading = ref(false)
+const lastWebScraping = ref<LastWebScraping | null>(null)
+const { state: scrapingState, startStream: startScrapingStream } =
+  useStreamState(
+    '/api/admin/external-db/web-scraping/state',
+    'GET',
+    localStorage.getItem('accessToken') || undefined,
+  )
+
+onMounted(startScrapingStream)
+onMounted(fetchLastRelease)
 
 watch(scrapingState, value => {
-  if (value && value.done && value.total) {
-    isLoading.value = value.done !== value.total
+  if (value) {
+    isLoading.value = value.status == Status.RUNNING
   }
 })
-
-onMounted(async () => {
-  await getWebScrapingState()
-  requestInterval.value = setInterval(async () => {
-    await getWebScrapingState()
-  }, 2000)
-})
-
-onUnmounted(() => clearInterval(requestInterval.value))
 
 async function runWebScraping() {
   isLoading.value = true
   await API.admin.runWebScraping()
+  await startScrapingStream()
 }
 
-async function getWebScrapingState() {
-  const [data, error] = await API.admin.getWebScrapingState()
+async function fetchLastRelease() {
+  const [data, error] = await API.admin.getWebScrapingLastRelease()
 
-  if (!error && data) {
-    scrapingState.value = data
+  if (!error) {
+    lastWebScraping.value = data
   }
 }
 </script>
@@ -46,50 +43,54 @@ async function getWebScrapingState() {
   <section>
     <h2>Web scraping of codon tables</h2>
 
-    <button :aria-busy="isLoading" type="button" @click="runWebScraping">
-      Run scraping of Lowe Lab database
-    </button>
-
-    <div id="scrapingProgressWrapper">
-      <div
-        id="scrapingProgress"
-        v-if="scrapingState && scrapingState.done && scrapingState.total"
+    <div class="grid">
+      <button
+        id="scrapingButton"
+        type="button"
+        @click="runWebScraping"
+        :aria-busy="isLoading"
+        :disabled="isLoading"
       >
-        <span>
-          {{ ((scrapingState.done / scrapingState.total) * 100).toFixed(0) }}%
-        </span>
-        <progress
-          id="progressBar"
-          :value="scrapingState.done"
-          :max="scrapingState.total"
-        ></progress>
-      </div>
+        Run scraping of Lowe Lab database
+      </button>
+
+      <p v-if="lastWebScraping" id="scrapingInfos">
+        <strong>Last release in database:</strong>
+        {{ lastWebScraping.release }}, scraped on
+        {{ formatToLocaleDateString(lastWebScraping.scraping_date) }}
+      </p>
     </div>
+
+    <p>{{ scrapingState?.status }}</p>
+
+    <ProgressBar
+      v-if="scrapingState"
+      id="progressBar"
+      :value="scrapingState.step || 0"
+      :max="scrapingState.total || 0"
+    />
+
+    <p id="stateMessage">{{ scrapingState?.message }}</p>
   </section>
 </template>
 
 <style scoped>
 #progressBar {
-  background-color: #727a8d;
-  height: 1.5em;
+  height: 3em;
 }
 
-#scrapingProgress span {
-  position: absolute;
-  display: inline-block;
+#stateMessage {
+  margin-top: 1em;
+}
+
+#scrapingButton {
+  height: 3em;
+}
+
+#scrapingInfos {
   text-align: center;
-  margin-left: 50%;
-  font-weight: bold;
-  color: #fff;
-}
-
-#scrapingProgress {
-  display: block;
-  position: relative;
-  width: 100%;
-}
-
-#scrapingProgressWrapper {
-  height: 1.5em;
+  border: 1px dashed grey;
+  border-radius: 0.25rem;
+  padding: 0 1em;
 }
 </style>

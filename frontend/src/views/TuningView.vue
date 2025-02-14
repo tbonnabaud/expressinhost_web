@@ -11,6 +11,10 @@ function handleSubmit(output: TuningOutput) {
     tuningOutput.value = output
   }
 }
+
+function goBackToForm() {
+  tuningOutput.value = {} as TuningOutput
+}
 </script>
 
 <template>
@@ -19,12 +23,23 @@ function handleSubmit(output: TuningOutput) {
 
     <hr />
 
-    <ResultContent
-      v-if="tuningOutput.result"
-      :result="tuningOutput.result"
-      :tuned_sequences="tuningOutput.tuned_sequences"
-    />
+    <div v-if="tuningOutput.result">
+      <button id="goBackToFormButton" @click="goBackToForm">
+        Go back to form
+      </button>
+
+      <ResultContent
+        :result="tuningOutput.result"
+        :tuned_sequences="tuningOutput.tuned_sequences"
+      />
+    </div>
 
     <TuningForm v-else @submit="handleSubmit" />
   </main>
 </template>
+
+<style scoped>
+#goBackToFormButton {
+  float: right;
+}
+</style>

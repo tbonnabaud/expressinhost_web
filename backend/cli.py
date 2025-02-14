@@ -4,7 +4,7 @@ from pathlib import Path
 
 from .core.codon_tables import process_codon_table_from_file
 from .core.constantes import CONSERVATION_THRESHOLD, SLOW_SPEED_THRESHOLD
-from .core.sequence_tuning import run_tuning
+from .core.sequence_tuning import tune_sequences
 from .core.utils import find_organism_from_nucleotide_name, read_text_file
 
 
@@ -45,7 +45,7 @@ def run_as_cli(
     )
 
     if clustal_file_path is None:
-        run_tuning(
+        tune_sequences(
             nucleotide_file_content,
             None,
             native_codon_tables,
@@ -56,7 +56,7 @@ def run_as_cli(
 
     else:
         clustal_file_content = read_text_file(clustal_file_path)
-        run_tuning(
+        tune_sequences(
             nucleotide_file_content,
             clustal_file_content,
             native_codon_tables,

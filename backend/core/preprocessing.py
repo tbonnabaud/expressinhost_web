@@ -1,17 +1,17 @@
 from Bio.SeqRecord import SeqRecord
 
 
-def dna_to_rna_sequences(nucleotide_sequences: list[SeqRecord]) -> list[str]:
-    return [str(record.seq.transcribe()) for record in nucleotide_sequences]
+def dna_to_rna_sequences(nucleotide_records: list[SeqRecord]) -> list[str]:
+    return [str(record.seq.transcribe()) for record in nucleotide_records]
 
 
 def align_nucleotide_sequences(
-    clustal_sequences: list[SeqRecord], cleared_nucleotide_sequences: list[str]
+    clustal_records: list[SeqRecord], cleared_nucleotide_sequences: list[str]
 ) -> list[str]:
     aligned_nucleotide_sequences = []
 
     for clustal_record, nucleo_seq in zip(
-        clustal_sequences, cleared_nucleotide_sequences
+        clustal_records, cleared_nucleotide_sequences
     ):
         new_line = ""
 

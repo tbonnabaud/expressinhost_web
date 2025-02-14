@@ -1,25 +1,22 @@
-def clear_output_sequences(output_sequences: list[str]) -> list[str]:
-    return [seq.replace("-", "").replace("U", "T") for seq in output_sequences]
+def clear_output_sequence(sequence: str) -> str:
+    """
+    Remove dashes and replaces all occurrences of "U" with "T" in a given sequence.
+    """
+    return sequence.replace("-", "").replace("U", "T")
 
 
-def compare_sequences(
-    cleared_nucleotide_sequences: list[str], cleared_output_sequences: list[str]
-) -> list:
-    results = []
+def compute_similarity(input_sequence: str, output_sequence: str) -> float:
+    """
+    Compute the similarity between input and output sequences by comparing codons.
+    """
+    counter_similarity = 0
+    codon_nb = int(len(input_sequence) / 3)
 
-    for input_seq, output_seq in zip(
-        cleared_nucleotide_sequences, cleared_output_sequences
-    ):
-        counter_similarity = 0
+    for t in range(codon_nb):
+        input_codon = input_sequence[3 * t : 3 * t + 3].replace("U", "T")
+        output_codon = output_sequence[3 * t : 3 * t + 3]
 
-        for t in range(int(len(input_seq) / 3)):
-            input_codon = input_seq[3 * t : 3 * t + 3].replace("U", "T")
-            output_codon = output_seq[3 * t : 3 * t + 3]
+        if input_codon == output_codon:
+            counter_similarity += 1
 
-            if input_codon == output_codon:
-                counter_similarity += 1
-
-        percentage = counter_similarity / (len(input_seq) / 3) * 100
-        results.append(percentage)
-
-    return results
+    return counter_similarity / codon_nb * 100

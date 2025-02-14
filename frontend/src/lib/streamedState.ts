@@ -1,0 +1,83 @@
+import { ref, onUnmounted } from 'vue'
+
+export enum Status {
+  IDLE = 'Idle',
+  RUNNING = 'Running',
+  ERROR = 'Error',
+  SUCCESS = 'Success',
+}
+
+export interface StreamState {
+  status: Status
+  message: string
+  step: number
+  total: number
+  result?: object | null
+}
+
+export function useStreamState(url: string, method: string, token?: string) {
+  const state = ref<StreamState | null>(null)
+  const isStreaming = ref(false)
+  let controller: AbortController | null = null
+
+  const startStream = async (data?: object) => {
+    isStreaming.value = true
+    controller = new AbortController()
+    const signal = controller.signal
+    const headers = {
+      Accept: 'text/event-stream',
+      'Content-Type': 'application/json',
+    }
+
+    try {
+      const response = await fetch(url, {
+        method: method,
+        headers: token
+          ? { ...headers, Authorization: `Bearer ${token}` }
+          : headers,
+        body: data ? JSON.stringify(data) : undefined,
+        signal,
+      })
+
+      if (!response.body) throw new Error('Stream not available')
+
+      const reader = response.body.getReader()
+      const decoder = new TextDecoder()
+      let partialData = ''
+
+      while (true) {
+        const { done, value } = await reader.read()
+        if (done) break
+        const chunk = decoder.decode(value, { stream: true })
+        partialData += chunk
+
+        try {
+          // Try to parse accumulated data
+          state.value = JSON.parse(partialData)
+          partialData = '' // Reset partial data after successful parse
+        } catch (parseError) {
+          // If parsing fails, it means we haven't received a complete JSON yet
+          console.warn('Partial data received:', (parseError as Error).message)
+        }
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        if (error.name === 'AbortError') {
+          console.log('Stream aborted')
+        } else {
+          console.error('Error fetching data:', error.message)
+        }
+      }
+    } finally {
+      isStreaming.value = false
+    }
+  }
+
+  const stopStream = () => controller?.abort()
+
+  onUnmounted(() => {
+    stopStream()
+  })
+
+  return { state, isStreaming, startStream, stopStream }
+}
