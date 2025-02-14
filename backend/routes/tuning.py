@@ -71,77 +71,83 @@ def stream_sequence_tuning(token: OptionalTokenDependency, form: RunTuningForm):
     tuning_state = TuningState().start()
     tuning_state.set_total(2)
 
-    with context_get_session() as session:
-        # Get user if token
-        user = get_current_user(session, token) if token else None
-        tuning_state.next_step("Process codon tables...")
+    try:
+        with context_get_session() as session:
+            # Get user if token
+            user = get_current_user(session, token) if token else None
+            tuning_state.next_step("Process codon tables...")
+            yield tuning_state.model_dump_json()
+
+            # Extract native codon table IDs of the form
+            native_codon_table_ids = get_native_codon_table_ids(
+                form.nucleotide_file_content, form.sequences_native_codon_tables
+            )
+            # Processed codon tables
+            native_codon_tables, host_codon_table = get_processed_tables(
+                session,
+                native_codon_table_ids,
+                form.host_codon_table_id,
+                form.slow_speed_threshold,
+            )
+
+        time.sleep(1)
+        tuning_state.next_step("Tune sequences...")
         yield tuning_state.model_dump_json()
 
-        # Extract native codon table IDs of the form
-        native_codon_table_ids = get_native_codon_table_ids(
-            form.nucleotide_file_content, form.sequences_native_codon_tables
-        )
-        # Processed codon tables
-        native_codon_tables, host_codon_table = get_processed_tables(
-            session,
-            native_codon_table_ids,
-            form.host_codon_table_id,
-            form.slow_speed_threshold,
+        tuned_sequences = tune_sequences(
+            form.nucleotide_file_content,
+            form.clustal_file_content,
+            native_codon_tables,
+            host_codon_table,
+            form.mode,
+            form.conservation_threshold,
         )
 
-    time.sleep(1)
-    tuning_state.next_step("Tune sequences...")
-    yield tuning_state.model_dump_json()
+        # Stringify UUIDs to make the dictionary serializable
+        serializable_sequences_native_codon_tables = {
+            key: str(value) for key, value in form.sequences_native_codon_tables.items()
+        }
 
-    tuned_sequences = tune_sequences(
-        form.nucleotide_file_content,
-        form.clustal_file_content,
-        native_codon_tables,
-        host_codon_table,
-        form.mode,
-        form.conservation_threshold,
-    )
+        result = {
+            "creation_date": datetime.now(UTC),
+            "name": form.name,
+            "host_codon_table_id": form.host_codon_table_id,
+            "sequences_native_codon_tables": serializable_sequences_native_codon_tables,
+            "mode": form.mode,
+            "slow_speed_threshold": form.slow_speed_threshold,
+            "conservation_threshold": form.conservation_threshold,
+        }
 
-    # Stringify UUIDs to make the dictionary serializable
-    serializable_sequences_native_codon_tables = {
-        key: str(value) for key, value in form.sequences_native_codon_tables.items()
-    }
+        with context_get_session_with_commit() as session:
+            if user:
+                result["user_id"] = user.id
+                result_id = ResultRepository(session).add(result)
 
-    result = {
-        "creation_date": datetime.now(UTC),
-        "name": form.name,
-        "host_codon_table_id": form.host_codon_table_id,
-        "sequences_native_codon_tables": serializable_sequences_native_codon_tables,
-        "mode": form.mode,
-        "slow_speed_threshold": form.slow_speed_threshold,
-        "conservation_threshold": form.conservation_threshold,
-    }
+                # Attach the tuned sequences to the result
+                for seq in tuned_sequences:
+                    seq["result_id"] = result_id
 
-    with context_get_session_with_commit() as session:
-        if user:
-            result["user_id"] = user.id
-            result_id = ResultRepository(session).add(result)
+                TunedSequenceRepository(session).add_batch(tuned_sequences)
 
-            # Attach the tuned sequences to the result
-            for seq in tuned_sequences:
-                seq["result_id"] = result_id
+            result["host_codon_table"] = CodonTableRepository(session).get(
+                user and user.id, form.host_codon_table_id
+            )
+            tuning_output = TuningOutput.model_validate(
+                {
+                    "result": result,
+                    "tuned_sequences": tuned_sequences,
+                }
+            )
 
-            TunedSequenceRepository(session).add_batch(tuned_sequences)
+        time.sleep(0.5)
+        tuning_state.success()
+        tuning_state.result = tuning_output
+        yield tuning_state.model_dump_json()
 
-        result["host_codon_table"] = CodonTableRepository(session).get(
-            user and user.id, form.host_codon_table_id
-        )
-        tuning_output = TuningOutput.model_validate(
-            {
-                "result": result,
-                "tuned_sequences": tuned_sequences,
-            }
-        )
-
-    time.sleep(1)
-    tuning_state.success()
-    tuning_state.result = tuning_output
-    yield tuning_state.model_dump_json()
+    except Exception:
+        time.sleep(0.5)
+        tuning_state.error()
+        yield tuning_state.model_dump_json()
 
 
 @router.post("/run-tuning")
