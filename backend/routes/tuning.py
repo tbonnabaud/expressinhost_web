@@ -13,8 +13,8 @@ from ..crud.codon_tables import CodonTableRepository
 from ..crud.codon_translations import CodonTranslationRepository
 from ..crud.results import ResultRepository
 from ..crud.tuned_sequences import TunedSequenceRepository
-from ..database import context_get_session, context_get_session_with_commit
-from ..schemas import ProgressState, RunTuningForm, Status, TuningOutput
+from ..database import Session, context_get_session, context_get_session_with_commit
+from ..schemas import ProgressState, RunTuningForm, TuningOutput
 
 router = APIRouter(tags=["Tuning"])
 
@@ -45,46 +45,49 @@ def process_codon_table_from_db(
 
 
 def get_processed_tables(
+    session: Session,
     native_codon_table_ids: list[UUID],
     host_codon_table_id: UUID,
     slow_speed_threshold: float,
 ):
-    with context_get_session() as session:
-        codon_translation_repo = CodonTranslationRepository(session)
-
-        native_codon_tables = [
-            process_codon_table_from_db(
-                codon_translation_repo, codon_table_id, slow_speed_threshold
-            )
-            for codon_table_id in native_codon_table_ids
-        ]
-
-        host_codon_table = process_codon_table_from_db(
-            codon_translation_repo,
-            host_codon_table_id,
-            slow_speed_threshold,
+    codon_translation_repo = CodonTranslationRepository(session)
+    native_codon_tables = [
+        process_codon_table_from_db(
+            codon_translation_repo, codon_table_id, slow_speed_threshold
         )
+        for codon_table_id in native_codon_table_ids
+    ]
 
-        return native_codon_tables, host_codon_table
+    host_codon_table = process_codon_table_from_db(
+        codon_translation_repo,
+        host_codon_table_id,
+        slow_speed_threshold,
+    )
+
+    return native_codon_tables, host_codon_table
 
 
 def stream_sequence_tuning(token: OptionalTokenDependency, form: RunTuningForm):
-    TOTAL_STEPS = 2
-    tuning_state = TuningState(
-        status=Status.RUNNING,
-        message="Process codon tables...",
-        step=1,
-        total=TOTAL_STEPS,
-    )
-    yield tuning_state.model_dump_json()
+    tuning_state = TuningState().start()
+    tuning_state.set_total(2)
 
-    native_codon_table_ids = get_native_codon_table_ids(
-        form.nucleotide_file_content, form.sequences_native_codon_tables
-    )
+    with context_get_session() as session:
+        # Get user if token
+        user = get_current_user(session, token) if token else None
+        tuning_state.next_step("Process codon tables...")
+        yield tuning_state.model_dump_json()
 
-    native_codon_tables, host_codon_table = get_processed_tables(
-        native_codon_table_ids, form.host_codon_table_id, form.slow_speed_threshold
-    )
+        # Extract native codon table IDs of the form
+        native_codon_table_ids = get_native_codon_table_ids(
+            form.nucleotide_file_content, form.sequences_native_codon_tables
+        )
+        # Processed codon tables
+        native_codon_tables, host_codon_table = get_processed_tables(
+            session,
+            native_codon_table_ids,
+            form.host_codon_table_id,
+            form.slow_speed_threshold,
+        )
 
     time.sleep(1)
     tuning_state.next_step("Tune sequences...")
@@ -115,8 +118,6 @@ def stream_sequence_tuning(token: OptionalTokenDependency, form: RunTuningForm):
     }
 
     with context_get_session_with_commit() as session:
-        user = get_current_user(session, token) if token else None
-
         if user:
             result["user_id"] = user.id
             result_id = ResultRepository(session).add(result)
