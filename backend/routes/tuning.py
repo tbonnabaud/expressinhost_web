@@ -8,7 +8,7 @@ from fastapi.responses import StreamingResponse
 
 from ..authentication import OptionalTokenDependency, get_current_user
 from ..core.codon_tables import process_raw_codon_table
-from ..core.sequence_tuning import tune_sequences
+from ..core.sequence_tuning import SequenceTuner
 from ..crud.codon_tables import CodonTableRepository
 from ..crud.codon_translations import CodonTranslationRepository
 from ..crud.results import ResultRepository
@@ -69,7 +69,7 @@ def get_processed_tables(
 
 def stream_sequence_tuning(token: OptionalTokenDependency, form: RunTuningForm):
     tuning_state = TuningState().start()
-    tuning_state.set_total(2)
+    tuning_state.set_total(4)
 
     try:
         with context_get_session() as session:
@@ -90,18 +90,29 @@ def stream_sequence_tuning(token: OptionalTokenDependency, form: RunTuningForm):
                 form.slow_speed_threshold,
             )
 
-        time.sleep(1)
-        tuning_state.next_step("Tune sequences...")
+        time.sleep(0.5)
+        tuning_state.next_step("Preprocess sequences...")
         yield tuning_state.model_dump_json()
 
-        tuned_sequences = tune_sequences(
+        sequence_tuner = SequenceTuner(
             form.nucleotide_file_content,
             form.clustal_file_content,
             native_codon_tables,
             host_codon_table,
-            form.mode,
-            form.conservation_threshold,
         )
+
+        time.sleep(0.5)
+        tuning_state.next_step("Process sequences...")
+        yield tuning_state.model_dump_json()
+
+        processed_sequences = sequence_tuner.process(
+            form.mode, form.conservation_threshold
+        )
+
+        time.sleep(0.5)
+        tuning_state.next_step("Postprocess sequences...")
+        yield tuning_state.model_dump_json()
+        tuned_sequences = sequence_tuner.postprocess(processed_sequences)
 
         # Stringify UUIDs to make the dictionary serializable
         serializable_sequences_native_codon_tables = {
