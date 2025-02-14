@@ -426,100 +426,12 @@ def tune_sequences(
     mode: str,
     conservation_threshold: float | None,
 ) -> list[dict]:
-    # Preprocessing
-    nucleotide_records = parse_sequences(nucleotide_file_content, "fasta")
-    cleared_nucleotide_sequences = dna_to_rna_sequences(nucleotide_records)
-
-    # Processing
-    if mode == "direct_mapping":
-        output_sequences = direct_mapping(
-            cleared_nucleotide_sequences, native_codon_tables, host_codon_table
-        )
-
-    else:
-        if clustal_file_content is None:
-            raise Exception("Clustal file is required.")
-
-        clustal_records = parse_sequences(clustal_file_content, "clustal")
-
-        # Ensure sequences are the same in the two files
-        for nucleotide_record, clustal_record in zip(
-            nucleotide_records, clustal_records
-        ):
-            if not check_nucleotides_clustal_identity(
-                nucleotide_record, clustal_record
-            ):
-                raise NoIdenticalSequencesError(
-                    f"Sequences {nucleotide_record.name} (FASTA) and {clustal_record.name} (CLUSTAL) are not identical."
-                    "Check their value in the two files and check their order."
-                )
-
-        # write_text_to_file(
-        #     "\n".join([str(r.seq) for r in clustal_sequences]),
-        #     "tmp/modif_sequences_2.txt",
-        # )
-
-        aligned_nucleotide_sequences = align_nucleotide_sequences(
-            clustal_records, cleared_nucleotide_sequences
-        )
-
-        symbol_sequence = get_clustal_symbol_sequence(clustal_file_content)
-
-        if mode == "optimisation_and_conservation_1":
-            output_sequences = optimisation_and_conservation_1(
-                aligned_nucleotide_sequences,
-                symbol_sequence,
-                native_codon_tables,
-                host_codon_table,
-            )
-
-        elif mode == "optimisation_and_conservation_2":
-            output_sequences = optimisation_and_conservation_2(
-                aligned_nucleotide_sequences,
-                symbol_sequence,
-                native_codon_tables,
-                host_codon_table,
-                conservation_threshold,
-            )
-
-        else:
-            raise Exception(
-                "Invalid mode. Should be direct_mapping, optimisation_and_conservation_1 or optimisation_and_conservation_2."
-            )
-
-    output_list = []
-
-    # Postprocessing
-    for input_record, output_sequence, native_codon_table in zip(
-        nucleotide_records,
-        output_sequences,
+    sequence_tuner = SequenceTuner(
+        nucleotide_file_content,
+        clustal_file_content,
         native_codon_tables,
-    ):
-        cleared_output_sequence = clear_output_sequence(output_sequence)
+        host_codon_table,
+    )
+    processed_sequences = sequence_tuner.process(mode, conservation_threshold)
 
-        # Ensure input and ouput nucleotide sequence have the same amino-acid sequence
-        if not check_amino_acido_conservation(input_record, cleared_output_sequence):
-            raise NoAminoAcidConservation(
-                "Amino acid sequences from input and output are supposed to be the same."
-            )
-
-        input_sequence = str(input_record.seq)
-        identity_percentage = compute_similarity(
-            input_sequence, cleared_output_sequence
-        )
-        output_list.append(
-            {
-                "name": input_record.name,
-                "input": input_sequence,
-                "output": cleared_output_sequence,
-                "identity_percentage": identity_percentage,
-                "input_profiles": get_sequence_profiles(
-                    input_sequence, native_codon_table
-                ),
-                "output_profiles": get_sequence_profiles(
-                    cleared_output_sequence, host_codon_table
-                ),
-            }
-        )
-
-    return output_list
+    return sequence_tuner.postprocess(processed_sequences)
