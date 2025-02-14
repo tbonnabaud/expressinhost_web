@@ -26,6 +26,8 @@ class ProgressState(BaseModel):
         self.total = 0
         self.message = message
 
+        return self
+
     def set_total(self, total: int):
         self.total = total
 
