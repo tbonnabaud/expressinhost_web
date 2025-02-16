@@ -18,8 +18,6 @@ const user = store.currentUser
       </p>
     </div>
 
-    <p id="warning">⚠ This web application is under development ⚠</p>
-
     <div id="description">
       <p>
         In the rapidly evolving field of recombinant protein expression,
@@ -88,12 +86,6 @@ const user = store.currentUser
   text-shadow: 0 0 5px #303030;
 }
 
-#warning {
-  margin-top: 1em;
-  font-size: 2em;
-  text-align: center;
-}
-
 #description {
   margin: 2em 5em;
   font-size: 1.5em;
@@ -114,10 +106,6 @@ const user = store.currentUser
 @media (max-width: 768px) {
   #summary {
     font-size: 1.5em;
-  }
-
-  #warning {
-    font-size: 1.2em;
   }
 
   #description {
