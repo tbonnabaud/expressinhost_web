@@ -308,61 +308,67 @@ async function runTuning() {
     <section>
       <h2>Mode</h2>
 
-      <div id="mode-selector">
-        <input
-          id="direct_mapping"
-          type="radio"
-          value="direct_mapping"
-          v-model="baseForm.mode"
-          required
-        />
-        <label htmlFor="direct_mapping">
-          <ToolTip>
-            Direct mapping 🯄
-            <template #tooltip>
-              Tuning mode, mimics the translation speed profile from the native
-              organism into the host organism.
-            </template>
-          </ToolTip>
-        </label>
+      <div id="modeSelector">
+        <div>
+          <input
+            id="direct_mapping"
+            type="radio"
+            value="direct_mapping"
+            v-model="baseForm.mode"
+            required
+          />
+          <label htmlFor="direct_mapping">
+            <ToolTip>
+              Direct mapping 🯄
+              <template #tooltip>
+                Tuning mode, mimics the translation speed profile from the
+                native organism into the host organism.
+              </template>
+            </ToolTip>
+          </label>
+        </div>
 
-        <input
-          id="optimisation_and_conservation_1"
-          type="radio"
-          value="optimisation_and_conservation_1"
-          v-model="baseForm.mode"
-        />
-        <label htmlFor="optimisation_and_conservation_1">
-          <ToolTip>
-            Optimisation and conservation 1 🯄
-            <template #tooltip>
-              Tuning mode, performs a protein sequence similarity analysis to
-              identify conserved amino acids across a set of orthologous
-              proteins from different organisms. The translation speed profile
-              is maximised excepted at the conserved positions. Requirement:
-              CLUSTAL alignment file.
-            </template>
-          </ToolTip>
-        </label>
+        <div>
+          <input
+            id="optimisation_and_conservation_1"
+            type="radio"
+            value="optimisation_and_conservation_1"
+            v-model="baseForm.mode"
+          />
+          <label htmlFor="optimisation_and_conservation_1">
+            <ToolTip>
+              Optimisation and conservation 1 🯄
+              <template #tooltip>
+                Tuning mode, performs a protein sequence similarity analysis to
+                identify conserved amino acids across a set of orthologous
+                proteins from different organisms. The translation speed profile
+                is maximised excepted at the conserved positions. Requirement:
+                CLUSTAL alignment file.
+              </template>
+            </ToolTip>
+          </label>
+        </div>
 
-        <input
-          id="optimisation_and_conservation_2"
-          type="radio"
-          value="optimisation_and_conservation_2"
-          v-model="baseForm.mode"
-        />
-        <label htmlFor="optimisation_and_conservation_2">
-          <ToolTip>
-            Optimisation and conservation 2 🯄
-            <template #tooltip>
-              Tuning mode, individually analyses the translation speed profile
-              of each sequence in the set of orthologous proteins from different
-              organisms, and identifies conserved slow translation codons. The
-              translation speed profile is maximised excepted at the conserved
-              positions. Requirement: CLUSTAL alignment file.
-            </template>
-          </ToolTip>
-        </label>
+        <div>
+          <input
+            id="optimisation_and_conservation_2"
+            type="radio"
+            value="optimisation_and_conservation_2"
+            v-model="baseForm.mode"
+          />
+          <label htmlFor="optimisation_and_conservation_2">
+            <ToolTip>
+              Optimisation and conservation 2 🯄
+              <template #tooltip>
+                Tuning mode, individually analyses the translation speed profile
+                of each sequence in the set of orthologous proteins from
+                different organisms, and identifies conserved slow translation
+                codons. The translation speed profile is maximised excepted at
+                the conserved positions. Requirement: CLUSTAL alignment file.
+              </template>
+            </ToolTip>
+          </label>
+        </div>
       </div>
     </section>
 
@@ -460,8 +466,10 @@ td {
   width: 50%;
 }
 
-#mode-selector {
-  text-align: left;
+#modeSelector {
+  display: flex;
+  column-gap: 2em;
+  row-gap: 1em;
 }
 
 #runTuningButton {
@@ -476,5 +484,11 @@ td {
 
 #tuningProgressWrapper {
   height: 3em;
+}
+
+@media (max-width: 1024px) {
+  #modeSelector {
+    flex-direction: column;
+  }
 }
 </style>
