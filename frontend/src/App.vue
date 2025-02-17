@@ -35,7 +35,7 @@ function logout() {
   <header>
     <nav>
       <ul id="navBrand">
-        <li><img id="logo" src="./assets/logo2.png" alt="Logo" /></li>
+        <li><img id="logo" src="./assets/cropped_logo.png" alt="Logo" /></li>
         <li><strong>ExpressInHost</strong></li>
         <li class="burger-menu" @click="openMenu = !openMenu">☰</li>
       </ul>
