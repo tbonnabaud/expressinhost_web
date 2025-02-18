@@ -3,7 +3,7 @@
     <h1>About</h1>
 
     <p>
-      This application is currently being developed by
+      This application has been developed by
       <a href="http://raguin-lab.org" target="_blank">
         Raguin's lab (raguin-lab.org) </a
       >.
