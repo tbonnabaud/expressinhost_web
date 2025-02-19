@@ -227,7 +227,7 @@ async function runTuning() {
     <section>
       <h2>Data files</h2>
 
-      <div class="flex-container">
+      <div id="fileSelectors">
         <div class="input-file">
           <ToolTip>
             <label for="fasta">Sequence file (FASTA) 🯄</label>
@@ -452,6 +452,10 @@ section {
   margin-top: 2em;
 }
 
+#fileSelectors {
+  display: flex;
+}
+
 .input-file {
   width: 100%;
 }
@@ -479,7 +483,6 @@ td {
 #modeSelector {
   display: flex;
   column-gap: 2em;
-  row-gap: 1em;
   justify-content: center;
 }
 
@@ -512,6 +515,14 @@ td {
 @media (max-width: 1024px) {
   #modeSelector {
     flex-direction: column;
+    row-gap: 1em;
+  }
+}
+
+@media (max-width: 768px) {
+  #fileSelectors {
+    flex-direction: column;
+    row-gap: 2em;
   }
 }
 </style>
