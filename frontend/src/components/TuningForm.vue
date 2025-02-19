@@ -317,7 +317,7 @@ async function runTuning() {
             v-model="baseForm.mode"
             required
           />
-          <label htmlFor="direct_mapping">
+          <label for="direct_mapping">
             <ToolTip>
               Direct mapping 🯄
               <template #tooltip>
@@ -335,7 +335,7 @@ async function runTuning() {
             value="optimisation_and_conservation_1"
             v-model="baseForm.mode"
           />
-          <label htmlFor="optimisation_and_conservation_1">
+          <label for="optimisation_and_conservation_1">
             <ToolTip>
               Optimisation and conservation 1 🯄
               <template #tooltip>
@@ -356,7 +356,7 @@ async function runTuning() {
             value="optimisation_and_conservation_2"
             v-model="baseForm.mode"
           />
-          <label htmlFor="optimisation_and_conservation_2">
+          <label for="optimisation_and_conservation_2">
             <ToolTip>
               Optimisation and conservation 2 🯄
               <template #tooltip>
