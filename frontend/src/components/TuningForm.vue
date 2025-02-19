@@ -480,6 +480,7 @@ td {
   display: flex;
   column-gap: 2em;
   row-gap: 1em;
+  justify-content: center;
 }
 
 #dataConsent {
