@@ -424,6 +424,16 @@ async function runTuning() {
 
     <hr />
 
+    <div id="dataConsent">
+      <input id="dataConsentCheckbox" type="checkbox" checked required />
+      <label for="dataConsentCheckbox">
+        Data are sent to the server for the computations but are not shared with
+        third-party. Results are not saved if you are not logged-in. We are not
+        responsible of the lost of your sensitive data. By checking this box you
+        agree our data privacy policy.
+      </label>
+    </div>
+
     <div id="tuningProgressWrapper">
       <ProgressBar
         v-if="tuningLoading"
@@ -470,6 +480,18 @@ td {
   display: flex;
   column-gap: 2em;
   row-gap: 1em;
+}
+
+#dataConsent {
+  margin-bottom: 1em;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+#dataConsent label {
+  font-size: small;
+  flex: 1;
 }
 
 #runTuningButton {
