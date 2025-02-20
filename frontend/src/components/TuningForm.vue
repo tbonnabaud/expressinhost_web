@@ -427,10 +427,10 @@ async function runTuning() {
     <div id="dataConsent">
       <input id="dataConsentCheckbox" type="checkbox" checked required />
       <label for="dataConsentCheckbox">
-        Data are sent to the server for the computations but are not shared with
+        Data are sent to our server for computing but are not shared with
         third-party. Results are not saved if you are not logged-in. We decline
-        all responsibility for any loss of data. By checking this box you agree
-        our data privacy policy.
+        all responsibilities for any loss or leak of data. By checking this box
+        you agree with our data privacy policy.
       </label>
     </div>
 
