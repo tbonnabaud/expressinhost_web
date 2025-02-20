@@ -426,11 +426,23 @@ async function runTuning() {
 
     <div id="dataConsent">
       <input id="dataConsentCheckbox" type="checkbox" checked required />
-      <label for="dataConsentCheckbox">
+      <!-- <label for="dataConsentCheckbox">
         Data are sent to our server for computing but are not shared with
         third-party. Results are not saved if you are not logged-in. We decline
         all responsibilities for any loss or leak of data. By checking this box
         you agree with our data privacy policy.
+      </label> -->
+
+      <label for="dataConsentCheckbox">
+        Uploaded data are sent to our server for computing but are not shared
+        with any third-party. Results are not saved unless you are logged-in. We
+        take reasonable measures to protect the data you upload and store on our
+        servers. While we strive to maintain a secure environment, we cannot
+        guarantee absolute security. We are not liable for any unauthorized
+        access, loss, or disclosure of data. By checking this box, you
+        acknowledge that you have read and understand this Data Privacy Policy
+        and agree to the collection, processing, and storage of your data as
+        described herein.
       </label>
     </div>
 
@@ -496,6 +508,7 @@ td {
 #dataConsent label {
   font-size: small;
   flex: 1;
+  text-align: justify;
 }
 
 #runTuningButton {
