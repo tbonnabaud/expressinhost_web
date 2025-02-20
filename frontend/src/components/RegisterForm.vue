@@ -12,7 +12,7 @@ const form = reactive({
   full_name: '',
   email: '',
   password: '',
-  contact_consent: false,
+  contact_consent: true,
 } as UserForm)
 
 const passwordError = ref('')

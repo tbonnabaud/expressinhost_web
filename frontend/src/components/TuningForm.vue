@@ -227,7 +227,7 @@ async function runTuning() {
     <section>
       <h2>Data files</h2>
 
-      <div class="flex-container">
+      <div id="fileSelectors">
         <div class="input-file">
           <ToolTip>
             <label for="fasta">Sequence file (FASTA) 🯄</label>
@@ -317,7 +317,7 @@ async function runTuning() {
             v-model="baseForm.mode"
             required
           />
-          <label htmlFor="direct_mapping">
+          <label for="direct_mapping">
             <ToolTip>
               Direct mapping 🯄
               <template #tooltip>
@@ -335,7 +335,7 @@ async function runTuning() {
             value="optimisation_and_conservation_1"
             v-model="baseForm.mode"
           />
-          <label htmlFor="optimisation_and_conservation_1">
+          <label for="optimisation_and_conservation_1">
             <ToolTip>
               Optimisation and conservation 1 🯄
               <template #tooltip>
@@ -356,7 +356,7 @@ async function runTuning() {
             value="optimisation_and_conservation_2"
             v-model="baseForm.mode"
           />
-          <label htmlFor="optimisation_and_conservation_2">
+          <label for="optimisation_and_conservation_2">
             <ToolTip>
               Optimisation and conservation 2 🯄
               <template #tooltip>
@@ -424,6 +424,28 @@ async function runTuning() {
 
     <hr />
 
+    <div id="dataConsent">
+      <input id="dataConsentCheckbox" type="checkbox" checked required />
+      <!-- <label for="dataConsentCheckbox">
+        Data are sent to our server for computing but are not shared with
+        third-party. Results are not saved if you are not logged-in. We decline
+        all responsibilities for any loss or leak of data. By checking this box
+        you agree with our data privacy policy.
+      </label> -->
+
+      <label for="dataConsentCheckbox">
+        Uploaded data are sent to our server for computing but are not shared
+        with any third-party. Results are not saved unless you are logged-in. We
+        take reasonable measures to protect the data you upload and store on our
+        servers. While we strive to maintain a secure environment, we cannot
+        guarantee absolute security. We are not liable for any unauthorized
+        access, loss, or disclosure of data. By checking this box, you
+        acknowledge that you have read and understand this Data Privacy Policy
+        and agree to the collection, processing, and storage of your data as
+        described herein.
+      </label>
+    </div>
+
     <div id="tuningProgressWrapper">
       <ProgressBar
         v-if="tuningLoading"
@@ -440,6 +462,10 @@ async function runTuning() {
 <style scoped>
 section {
   margin-top: 2em;
+}
+
+#fileSelectors {
+  display: flex;
 }
 
 .input-file {
@@ -469,7 +495,20 @@ td {
 #modeSelector {
   display: flex;
   column-gap: 2em;
-  row-gap: 1em;
+  justify-content: center;
+}
+
+#dataConsent {
+  margin-bottom: 1em;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+#dataConsent label {
+  font-size: small;
+  flex: 1;
+  text-align: justify;
 }
 
 #runTuningButton {
@@ -489,6 +528,14 @@ td {
 @media (max-width: 1024px) {
   #modeSelector {
     flex-direction: column;
+    row-gap: 1em;
+  }
+}
+
+@media (max-width: 768px) {
+  #fileSelectors {
+    flex-direction: column;
+    row-gap: 2em;
   }
 }
 </style>
