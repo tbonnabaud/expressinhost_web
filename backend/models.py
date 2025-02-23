@@ -1,4 +1,4 @@
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from uuid import UUID, uuid4
 
 import sqlalchemy as sa
@@ -144,3 +144,23 @@ class TunedSequence(Base):
     identity_percentage: Mapped[float] = mapped_column(sa.Float)
     input_profiles: Mapped[dict] = mapped_column(JSONB, default=lambda: {})
     output_profiles: Mapped[dict] = mapped_column(JSONB, default=lambda: {})
+
+
+class RunInfo(Base):
+    """Class for usage data analysis."""
+
+    __tablename__ = "run_infos"
+
+    id: Mapped[UUID] = mapped_column(
+        sa.UUID(as_uuid=True), primary_key=True, default=uuid4
+    )
+    creation_date: Mapped[datetime] = mapped_column(
+        sa.DateTime(timezone=True), default=lambda: datetime.now(UTC)
+    )
+    duration: Mapped[timedelta] = mapped_column(sa.Interval)
+    sequence_number: Mapped[int] = mapped_column(sa.Integer)
+    mode: Mapped[str] = mapped_column(sa.String)
+    slow_speed_threshold: Mapped[float] = mapped_column(sa.Float)
+    conservation_threshold: Mapped[float | None] = mapped_column(
+        sa.Float, nullable=True
+    )
