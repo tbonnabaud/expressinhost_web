@@ -1,3 +1,4 @@
+from datetime import timedelta
 from uuid import UUID
 
 import sqlalchemy as sa
@@ -32,3 +33,35 @@ class RunInfoRepository(BaseRepository):
         result = self.session.execute(stmt)
 
         return result.scalar_one_or_none()
+
+    def compute_duration_statistics(self) -> dict[str, timedelta]:
+        stmt = sa.select(
+            sa.func.min(RunInfo.duration).label("min_duration"),
+            sa.func.avg(RunInfo.duration).label("avg_duration"),
+            sa.func.max(RunInfo.duration).label("max_duration"),
+        )
+
+        result = self.session.execute(stmt).one()
+
+        return {
+            "min_duration": result.min_duration,
+            "avg_duration": result.avg_duration,
+            "max_duration": result.max_duration,
+        }
+
+    def compute_mode_distribution(self) -> dict[str, int]:
+        stmt = sa.select(
+            RunInfo.mode, sa.func.count(RunInfo.mode).label("count")
+        ).group_by(RunInfo.mode)
+
+        result = self.session.execute(stmt).fetchall()
+        return {row.mode: row.count for row in result}
+
+    def compute_run_count_per_day(self) -> dict[sa.Date, int]:
+        stmt = sa.select(
+            sa.cast(RunInfo.creation_date, sa.Date).label("date"),
+            sa.func.count(RunInfo.id).label("count"),
+        ).group_by(sa.cast(RunInfo.creation_date, sa.Date))
+
+        result = self.session.execute(stmt).fetchall()
+        return {row.date: row.count for row in result}
