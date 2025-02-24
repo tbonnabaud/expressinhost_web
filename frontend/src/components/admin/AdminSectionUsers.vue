@@ -63,7 +63,7 @@ async function fetchUserList() {
     </footer>
   </BaseModal>
 
-  <section>
+  <div>
     <h2>Management of users</h2>
 
     <div>
@@ -73,5 +73,5 @@ async function fetchUserList() {
         </template>
       </PaginationDualColWrapper>
     </div>
-  </section>
+  </div>
 </template>
