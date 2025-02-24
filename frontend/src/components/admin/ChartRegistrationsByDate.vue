@@ -79,7 +79,7 @@ async function fetchUserList() {
 
 <template>
   <strong>
-    Number of registered users: <ins>{{ userList.length }}</ins>
+    Total: <ins>{{ userList.length }}</ins>
   </strong>
 
   <div class="chart-wrapper">
