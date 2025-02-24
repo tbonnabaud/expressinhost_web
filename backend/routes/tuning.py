@@ -12,9 +12,10 @@ from ..core.sequence_tuning import SequenceTuner
 from ..crud.codon_tables import CodonTableRepository
 from ..crud.codon_translations import CodonTranslationRepository
 from ..crud.results import ResultRepository
+from ..crud.run_infos import RunInfoRepository
 from ..crud.tuned_sequences import TunedSequenceRepository
 from ..database import Session, context_get_session, context_get_session_with_commit
-from ..schemas import ProgressState, RunTuningForm, TuningOutput
+from ..schemas import ProgressState, RunInfoForm, RunTuningForm, TuningOutput
 
 router = APIRouter(tags=["Tuning"])
 
@@ -70,6 +71,7 @@ def get_processed_tables(
 def stream_sequence_tuning(token: OptionalTokenDependency, form: RunTuningForm):
     tuning_state = TuningState().start()
     tuning_state.set_total(4)
+    run_start_date = datetime.now(UTC)
 
     try:
         with context_get_session() as session:
@@ -119,8 +121,10 @@ def stream_sequence_tuning(token: OptionalTokenDependency, form: RunTuningForm):
             key: str(value) for key, value in form.sequences_native_codon_tables.items()
         }
 
+        run_end_date = datetime.now(UTC)
+
         result = {
-            "creation_date": datetime.now(UTC),
+            "creation_date": run_end_date,
             "name": form.name,
             "host_codon_table_id": form.host_codon_table_id,
             "sequences_native_codon_tables": serializable_sequences_native_codon_tables,
@@ -130,6 +134,17 @@ def stream_sequence_tuning(token: OptionalTokenDependency, form: RunTuningForm):
         }
 
         with context_get_session_with_commit() as session:
+            RunInfoRepository(session).add(
+                RunInfoForm(
+                    creation_date=run_start_date,
+                    duration=(run_end_date - run_start_date),
+                    sequence_number=len(processed_sequences),
+                    mode=form.mode,
+                    slow_speed_threshold=form.slow_speed_threshold,
+                    conservation_threshold=form.conservation_threshold,
+                ).model_dump()
+            )
+
             if user:
                 result["user_id"] = user.id
                 result_id = ResultRepository(session).add(result)
