@@ -58,10 +58,14 @@ class RunInfoRepository(BaseRepository):
         return {row.mode: row.count for row in result}
 
     def compute_run_count_per_day(self) -> dict[sa.Date, int]:
-        stmt = sa.select(
-            sa.cast(RunInfo.creation_date, sa.Date).label("date"),
-            sa.func.count(RunInfo.id).label("count"),
-        ).group_by(sa.cast(RunInfo.creation_date, sa.Date))
+        stmt = (
+            sa.select(
+                sa.cast(RunInfo.creation_date, sa.Date).label("date"),
+                sa.func.count(RunInfo.id).label("count"),
+            )
+            .group_by(sa.cast(RunInfo.creation_date, sa.Date))
+            .order_by("date")
+        )
 
         result = self.session.execute(stmt).fetchall()
         return {row.date: row.count for row in result}
