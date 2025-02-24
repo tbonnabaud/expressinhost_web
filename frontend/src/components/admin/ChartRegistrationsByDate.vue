@@ -1,14 +1,15 @@
 <script setup lang="ts">
 import type { User } from '@/lib/interfaces'
+import { API } from '@/lib/api'
 import type { ChartOptions } from 'chart.js'
 import 'chartjs-adapter-date-fns'
-import { computed } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import ChartWrapper from '@/components/ChartWrapper.vue'
 
-const props = defineProps<{ userList: Array<User> }>()
+const userList = ref([] as Array<User>)
 
 const registrationsByMonth = computed(() => {
-  return props.userList
+  return userList.value
     .map(e => getYearMonthFromDateString(e.creation_date))
     .reduce((acc: Record<string, number>, e) => {
       acc[e] = acc[e] ? acc[e] + 1 : 1
@@ -60,13 +61,27 @@ const options: ChartOptions = {
   },
 }
 
+onMounted(async () => await fetchUserList())
+
 function getYearMonthFromDateString(dateISOString: string): string {
   const [year, month] = dateISOString.split('-')
   return `${year}-${month}`
 }
+
+async function fetchUserList() {
+  const [data, error] = await API.users.list()
+
+  if (!error && data !== null) {
+    userList.value = data
+  }
+}
 </script>
 
 <template>
+  <strong>
+    Number of registered users: <ins>{{ userList.length }}</ins>
+  </strong>
+
   <div class="chart-wrapper">
     <ChartWrapper type="bar" :data="data" :options="options" />
   </div>
