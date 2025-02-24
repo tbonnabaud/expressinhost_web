@@ -7,6 +7,10 @@ import ChartWrapper from '@/components/ChartWrapper.vue'
 
 const runsPerDay = ref({} as Record<string, number>)
 
+const totalRuns = computed(() =>
+  Object.values(runsPerDay.value).reduce((x, y) => x + y, 0),
+)
+
 const data = computed(() => {
   return {
     labels: Object.keys(runsPerDay.value),
@@ -14,7 +18,6 @@ const data = computed(() => {
       {
         label: 'Runs',
         data: Object.values(runsPerDay.value),
-        // borderWidth: 2,
       },
     ],
   }
@@ -36,6 +39,7 @@ const options: ChartOptions = {
     y: {
       ticks: {
         stepSize: 1,
+        precision: 0,
       },
     },
   },
@@ -68,6 +72,10 @@ async function fetchCountPerDay() {
 </script>
 
 <template>
+  <strong>
+    Total: <ins>{{ totalRuns }}</ins>
+  </strong>
+
   <div class="chart-wrapper">
     <ChartWrapper type="line" :data="data" :options="options" />
   </div>
