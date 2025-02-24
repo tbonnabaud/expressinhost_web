@@ -1,5 +1,5 @@
 import re
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from enum import Enum
 from typing import Literal
 from uuid import UUID
@@ -230,3 +230,22 @@ class RunTuningForm(BaseModel):
 class TuningOutput(BaseModel):
     result: Result
     tuned_sequences: list[TunedSequence]
+
+
+class RunInfo(BaseModel):
+    id: UUID
+    creation_date: datetime
+    duration: timedelta
+    sequence_number: int
+    mode: str
+    slow_speed_threshold: float
+    conservation_threshold: float | None
+
+
+class RunInfoForm(BaseModel):
+    creation_date: datetime
+    duration: timedelta
+    sequence_number: int
+    mode: str
+    slow_speed_threshold: float
+    conservation_threshold: float | None
