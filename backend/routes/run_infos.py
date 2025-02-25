@@ -32,3 +32,8 @@ def compute_mode_distribution(session: SessionDependency):
 @router.get("/run-infos/count-per-day", response_model=dict[date, int])
 def compute_run_count_per_day(session: SessionDependency):
     return RunInfoRepository(session).compute_run_count_per_day()
+
+
+@router.get("/run-infos/sequence-number-statistics", response_model=dict[str, int])
+def compute_sequence_number_statistics(session: SessionDependency):
+    return RunInfoRepository(session).compute_sequence_number_statistics()
