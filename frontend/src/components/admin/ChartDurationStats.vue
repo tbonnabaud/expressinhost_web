@@ -22,7 +22,7 @@ async function fetchDurationStats() {
     <p>
       <strong>Minimum duration: </strong>
       <ins>
-        {{ parseISODuration(durationStats?.min_duration || '0') }}
+        {{ parseISODuration(durationStats?.min_duration || '0').toFixed(3) }}
       </ins>
       seconds
     </p>
@@ -30,7 +30,7 @@ async function fetchDurationStats() {
     <p>
       <strong>Average duration: </strong>
       <ins>
-        {{ parseISODuration(durationStats?.avg_duration || '0') }}
+        {{ parseISODuration(durationStats?.avg_duration || '0').toFixed(3) }}
       </ins>
       seconds
     </p>
@@ -38,7 +38,7 @@ async function fetchDurationStats() {
     <p>
       <strong>Maximum duration: </strong>
       <ins>
-        {{ parseISODuration(durationStats?.max_duration || '0') }}
+        {{ parseISODuration(durationStats?.max_duration || '0').toFixed(3) }}
       </ins>
       seconds
     </p>
