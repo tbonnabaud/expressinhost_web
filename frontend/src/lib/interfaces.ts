@@ -134,3 +134,19 @@ export interface LastWebScraping {
   release: string
   scraping_date: string
 }
+
+export interface RunInfo {
+  id: string
+  creation_date: string
+  duration: string
+  sequence_number: number
+  mode: string
+  slow_speed_threshold: number
+  conservation_threshold: number | null
+}
+
+export interface RunInfoDurationStats {
+  min_duration: string
+  avg_duration: string
+  max_duration: string
+}

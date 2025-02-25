@@ -40,7 +40,7 @@ async function fetchLastRelease() {
 </script>
 
 <template>
-  <section>
+  <div>
     <h2>Web scraping of codon tables</h2>
 
     <div class="grid">
@@ -71,7 +71,7 @@ async function fetchLastRelease() {
     />
 
     <p id="stateMessage">{{ scrapingState?.message }}</p>
-  </section>
+  </div>
 </template>
 
 <style scoped>

@@ -124,6 +124,16 @@ const admin = {
     await REQUESTS.get(`/admin/log/backup/${backupNumber}`),
 }
 
+const runInfos = {
+  list: async (limit: number | null = null, offset: number | null = null) =>
+    await REQUESTS.get('/run-infos', { limit, offset }),
+  durationStats: async () =>
+    await REQUESTS.get('/run-infos/duration-statistics'),
+  modeDistribution: async () =>
+    await REQUESTS.get('/run-infos/mode-distribution'),
+  countPerDay: async () => await REQUESTS.get('/run-infos/count-per-day'),
+}
+
 const users = {
   register: async (form: UserForm) => await REQUESTS.post('/users', form),
   me: async () => await REQUESTS.get('/users/me'),
@@ -178,6 +188,7 @@ export const API = {
   codonTables: codonTables,
   results: results,
   tunedSequences: tunedSequences,
+  runInfos: runInfos,
   admin: admin,
 }
 

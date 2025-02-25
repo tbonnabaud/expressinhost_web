@@ -1,29 +1,52 @@
 <script setup lang="ts">
-import { API } from '@/lib/api'
-import type { User } from '@/lib/interfaces'
-import { onMounted, ref } from 'vue'
 import ChartRegistrationsByDate from './ChartRegistrationsByDate.vue'
-
-const userList = ref([] as Array<User>)
-
-onMounted(async () => await fetchUserList())
-
-async function fetchUserList() {
-  const [data, error] = await API.users.list()
-
-  if (!error && data !== null) {
-    userList.value = data
-  }
-}
+import ChartRunsByDay from './ChartRunsByDay.vue'
+import ChartDurationStats from './ChartDurationStats.vue'
+import ChartModeDistribution from './ChartModeDistribution.vue'
 </script>
 
 <template>
-  <section>
+  <div>
     <h2>Statistics</h2>
 
-    <h3>
-      Number of registered users: <ins>{{ userList.length }}</ins>
-    </h3>
-    <ChartRegistrationsByDate :user-list="userList" />
-  </section>
+    <article>
+      <h3>Registered users</h3>
+      <ChartRegistrationsByDate />
+    </article>
+
+    <article>
+      <h3>Runs</h3>
+      <ChartRunsByDay />
+    </article>
+
+    <div class="stats-row">
+      <article>
+        <h3>Duration statistics</h3>
+        <ChartDurationStats />
+      </article>
+
+      <article>
+        <h3>Tuning mode usage</h3>
+        <ChartModeDistribution />
+      </article>
+    </div>
+  </div>
 </template>
+
+<style scoped>
+.stats-row {
+  display: flex;
+  flex-direction: row;
+  column-gap: 1em;
+}
+
+.stats-row article {
+  flex: 1;
+}
+
+@media (max-width: 768px) {
+  .stats-row {
+    flex-direction: column;
+  }
+}
+</style>

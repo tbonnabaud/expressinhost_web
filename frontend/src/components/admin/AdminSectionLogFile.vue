@@ -12,5 +12,13 @@ async function downloadLogFile() {
 </script>
 
 <template>
-  <button @click="downloadLogFile">Download log file</button>
+  <button id="downloadLogFile" @click="downloadLogFile">
+    Download log file
+  </button>
 </template>
+
+<style scoped>
+#downloadLogFile {
+  width: 100%;
+}
+</style>
