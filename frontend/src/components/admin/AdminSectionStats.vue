@@ -26,7 +26,7 @@ import ChartModeDistribution from './ChartModeDistribution.vue'
       </article>
 
       <article>
-        <h3>Tuning modes</h3>
+        <h3>Tuning mode usage</h3>
         <ChartModeDistribution />
       </article>
     </div>
