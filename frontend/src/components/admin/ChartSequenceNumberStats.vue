@@ -1,18 +1,17 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import { API } from '@/lib/api'
-import { parseISODuration } from '@/lib/helpers'
-import type { RunInfoDurationStats } from '@/lib/interfaces'
+import type { RunInfoSequenceNumberStats } from '@/lib/interfaces'
 
-const durationStats = ref(null as RunInfoDurationStats | null)
+const sequenceNumberStats = ref(null as RunInfoSequenceNumberStats | null)
 
 onMounted(async () => await fetchDurationStats())
 
 async function fetchDurationStats() {
-  const [data, error] = await API.runInfos.durationStats()
+  const [data, error] = await API.runInfos.sequenceNumberStats()
 
   if (!error) {
-    durationStats.value = data
+    sequenceNumberStats.value = data
   }
 }
 </script>
@@ -22,19 +21,19 @@ async function fetchDurationStats() {
     <div class="stat">
       <div class="label">Minimum</div>
       <div class="number">
-        {{ parseISODuration(durationStats?.min_duration || '0').toFixed(3) }}s
+        {{ sequenceNumberStats?.min_sequence_number || 0 }}
       </div>
     </div>
     <div class="stat">
       <div class="label">Average</div>
       <div class="number">
-        {{ parseISODuration(durationStats?.avg_duration || '0').toFixed(3) }}s
+        {{ Math.round(sequenceNumberStats?.avg_sequence_number || 0) }}
       </div>
     </div>
     <div class="stat">
       <div class="label">Maximum</div>
       <div class="number">
-        {{ parseISODuration(durationStats?.max_duration || '0').toFixed(3) }}s
+        {{ sequenceNumberStats?.max_sequence_number || 0 }}
       </div>
     </div>
   </div>
