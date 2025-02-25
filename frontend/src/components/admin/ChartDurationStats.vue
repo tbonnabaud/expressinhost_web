@@ -15,6 +15,19 @@ async function fetchDurationStats() {
     durationStats.value = data
   }
 }
+
+function formatDuration(duration: string): string {
+  const { hours, minutes, seconds } = parseISODuration(duration)
+  console.log(seconds)
+
+  const parts = []
+
+  if (hours > 0) parts.push(`${hours}h`)
+  if (minutes > 0) parts.push(`${minutes}m`)
+  if (seconds > 0 || parts.length === 0) parts.push(`${seconds.toFixed(2)}s`)
+
+  return parts.join(' ')
+}
 </script>
 
 <template>
@@ -22,19 +35,19 @@ async function fetchDurationStats() {
     <div class="stat">
       <div class="label">Minimum</div>
       <div class="number">
-        {{ parseISODuration(durationStats?.min_duration || '0').toFixed(3) }}s
+        {{ formatDuration(durationStats?.min_duration || '0') }}
       </div>
     </div>
     <div class="stat">
       <div class="label">Average</div>
       <div class="number">
-        {{ parseISODuration(durationStats?.avg_duration || '0').toFixed(3) }}s
+        {{ formatDuration(durationStats?.avg_duration || '0') }}
       </div>
     </div>
     <div class="stat">
       <div class="label">Maximum</div>
       <div class="number">
-        {{ parseISODuration(durationStats?.max_duration || '0').toFixed(3) }}s
+        {{ formatDuration(durationStats?.max_duration || '0') }}
       </div>
     </div>
   </div>
@@ -56,7 +69,7 @@ async function fetchDurationStats() {
 }
 
 .stat .number {
-  font-size: 24px;
+  font-size: 16px;
   font-weight: bold;
   color: #1d6a54;
 }
