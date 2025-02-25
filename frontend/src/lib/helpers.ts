@@ -121,7 +121,7 @@ export function downloadFile(content: string, filename: string) {
  * parseISODuration("PT1H30M15.5S"); // returns 5415.5
  */
 export function parseISODuration(duration: string): number {
-  const regex = /(?:(\d+)H)?(?:(\d+)M)?(?:(\d+(\.\d+)?)S)?/
+  const regex = /^PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+(\.\d+)?)S)?$/
   const matches = duration.match(regex)
 
   if (!matches) {
