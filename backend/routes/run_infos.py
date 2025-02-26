@@ -12,7 +12,7 @@ router = APIRouter(tags=["Run infos"], dependencies=[Depends(check_is_admin)])
 
 
 @router.get("/run-infos", response_model=list[RunInfo])
-def get_run_infos(
+def list_run_infos(
     session: SessionDependency,
     filter_params: FilterParamDependency,
 ):
