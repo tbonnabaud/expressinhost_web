@@ -210,7 +210,10 @@ async function runTuning() {
 
     <section>
       <ToolTip>
-        <h2>Host organism 🯄</h2>
+        <h2>
+          Host organism
+          <span class="material-icons question-marks">question_mark</span>
+        </h2>
         <template #tooltip>
           The organism in which the mRNA is to be expressed. The tRNA-GCN codon
           table of the host organism is utilised for codon tuning. For custom
@@ -230,7 +233,10 @@ async function runTuning() {
       <div id="fileSelectors">
         <div class="input-file">
           <ToolTip>
-            <label for="fasta">Sequence file (FASTA) 🯄</label>
+            <label for="fasta">
+              Sequence file (FASTA)
+              <span class="material-icons question-marks">question_mark</span>
+            </label>
             <template #tooltip>
               A text-based file containing the mRNA coding sequence(s), with
               each sequence preceded by a carat (">"), followed by an unique
@@ -250,7 +256,10 @@ async function runTuning() {
 
         <div class="input-file">
           <ToolTip>
-            <label for="clustal">Alignment file (CLUSTAL, optional) 🯄</label>
+            <label for="clustal">
+              Alignment file (CLUSTAL, optional)
+              <span class="material-icons question-marks">question_mark</span>
+            </label>
             <template #tooltip>
               A text-based file containing multiple sequence alignment data of
               orthologous proteins from different organisms. The alignment must
@@ -319,7 +328,8 @@ async function runTuning() {
           />
           <label for="direct_mapping">
             <ToolTip>
-              Direct mapping 🯄
+              Direct mapping
+              <span class="material-icons question-marks">question_mark</span>
               <template #tooltip>
                 Tuning mode, mimics the translation speed profile from the
                 native organism into the host organism.
@@ -337,7 +347,8 @@ async function runTuning() {
           />
           <label for="optimisation_and_conservation_1">
             <ToolTip>
-              Optimisation and conservation 1 🯄
+              Optimisation and conservation 1
+              <span class="material-icons question-marks">question_mark</span>
               <template #tooltip>
                 Tuning mode, performs a protein sequence similarity analysis to
                 identify conserved amino acids across a set of orthologous
@@ -358,7 +369,8 @@ async function runTuning() {
           />
           <label for="optimisation_and_conservation_2">
             <ToolTip>
-              Optimisation and conservation 2 🯄
+              Optimisation and conservation 2
+              <span class="material-icons question-marks">question_mark</span>
               <template #tooltip>
                 Tuning mode, individually analyses the translation speed profile
                 of each sequence in the set of orthologous proteins from
@@ -380,7 +392,8 @@ async function runTuning() {
           <ToolTip>
             <label>
               Slow speed threshold =
-              {{ toFixedFloat(baseForm.slow_speed_threshold * 100, 1) }}% 🯄
+              {{ toFixedFloat(baseForm.slow_speed_threshold * 100, 1) }}%
+              <span class="material-icons question-marks">question_mark</span>
             </label>
             <template #tooltip>
               Applies to the mode Optimisation and Conservation 2. The speed
@@ -402,7 +415,8 @@ async function runTuning() {
           <ToolTip>
             <label>
               Conservation threshold =
-              {{ toFixedFloat(baseForm.conservation_threshold * 100, 1) }}% 🯄
+              {{ toFixedFloat(baseForm.conservation_threshold * 100, 1) }}%
+              <span class="material-icons question-marks">question_mark</span>
             </label>
             <template #tooltip>
               Applies to the mode Optimisation and Conservation 2. A threshold
@@ -523,6 +537,12 @@ td {
 
 #tuningProgressWrapper {
   height: 3em;
+}
+
+span.question-marks {
+  border: 2px solid salmon;
+  border-radius: 50%;
+  font-size: 1rem;
 }
 
 @media (max-width: 1024px) {
