@@ -25,8 +25,6 @@
   border-radius: 6px;
   padding: 10px;
   opacity: 0;
-  -webkit-transition: opacity 0.5s;
-  transition: opacity 0.5s;
 
   position: absolute;
   z-index: 1;
