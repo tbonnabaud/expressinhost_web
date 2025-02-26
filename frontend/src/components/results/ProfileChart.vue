@@ -9,6 +9,8 @@ const props = defineProps<{
   outputValues: Array<number>
 }>()
 
+const chartWidth = computed(() => props.inputValues.length * 10)
+
 const data = computed(() => {
   return {
     labels: [...props.inputValues.keys()],
@@ -19,7 +21,7 @@ const data = computed(() => {
         pointStyle: false,
         borderColor: '#D55E00',
         backgroundColor: '#D55E00',
-        borderWidth: 1,
+        borderWidth: 2,
       },
       {
         label: 'Output sequence',
@@ -27,7 +29,7 @@ const data = computed(() => {
         pointStyle: false,
         borderColor: '#0072B2',
         backgroundColor: '#0072B2',
-        borderWidth: 1,
+        borderWidth: 2,
       },
     ],
   }
@@ -50,13 +52,21 @@ const options: ChartOptions = {
 </script>
 
 <template>
-  <div class="chart-container">
-    <ChartWrapper type="line" :data="data" :options="options" />
+  <div style="overflow-x: scroll">
+    <div class="chart-container" :style="{ width: chartWidth + 'px' }">
+      <ChartWrapper
+        class="wrapper"
+        type="line"
+        :data="data"
+        :options="options"
+      />
+    </div>
   </div>
 </template>
 
 <style scoped>
 .chart-container {
-  height: 30vh;
+  height: 20vh;
+  min-width: 100%;
 }
 </style>
