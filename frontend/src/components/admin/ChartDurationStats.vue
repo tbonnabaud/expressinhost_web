@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import { API } from '@/lib/api'
-import { parseISODuration } from '@/lib/helpers'
+import { formatDuration } from '@/lib/helpers'
 import type { RunInfoDurationStats } from '@/lib/interfaces'
 
 const durationStats = ref(null as RunInfoDurationStats | null)
@@ -14,19 +14,6 @@ async function fetchDurationStats() {
   if (!error) {
     durationStats.value = data
   }
-}
-
-function formatDuration(duration: string): string {
-  const { hours, minutes, seconds } = parseISODuration(duration)
-  console.log(seconds)
-
-  const parts = []
-
-  if (hours > 0) parts.push(`${hours}h`)
-  if (minutes > 0) parts.push(`${minutes}m`)
-  if (seconds > 0 || parts.length === 0) parts.push(`${seconds.toFixed(2)}s`)
-
-  return parts.join(' ')
 }
 </script>
 

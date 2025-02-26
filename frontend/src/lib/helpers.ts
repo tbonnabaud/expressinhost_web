@@ -138,3 +138,38 @@ export function parseISODuration(duration: string): {
 
   return { hours, minutes, seconds }
 }
+
+/**
+ * Formats an ISO 8601 duration string into a human-readable format.
+ *
+ * @param duration - The ISO 8601 duration string to format.
+ *                   The format should be "PTnHnMnS" where:
+ *                   - "P" is the duration designator (for "period"),
+ *                   - "T" is the time designator that precedes the time components,
+ *                   - "nH" is the number of hours,
+ *                   - "nM" is the number of minutes,
+ *                   - "nS" is the number of seconds.
+ * @returns A string representing the duration in a human-readable format.
+ *          The format is "Xh Ym Zs" where:
+ *          - "Xh" is the number of hours,
+ *          - "Ym" is the number of minutes,
+ *          - "Zs" is the number of seconds, rounded to two decimal places.
+ *          If the duration is less than one hour, the hours part is omitted.
+ *          If the duration is less than one minute, the minutes part is omitted.
+ *          If the duration is zero, only the seconds part is shown.
+ *
+ * @example
+ * formatDuration("PT1H30M15.5S") // "1h 30m 15.50s"
+ * formatDuration("PT0H5M0S") // "5m 0.00s"
+ * formatDuration("PT0H0M30S") // "30.00s"
+ */
+export function formatDuration(duration: string): string {
+  const { hours, minutes, seconds } = parseISODuration(duration)
+  const parts = []
+
+  if (hours > 0) parts.push(`${hours}h`)
+  if (minutes > 0) parts.push(`${minutes}m`)
+  if (seconds > 0 || parts.length === 0) parts.push(`${seconds.toFixed(2)}s`)
+
+  return parts.join(' ')
+}
