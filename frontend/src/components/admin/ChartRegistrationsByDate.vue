@@ -82,13 +82,13 @@ async function fetchUserList() {
     Total: <ins>{{ userList.length }}</ins>
   </strong>
 
-  <div class="chart-wrapper">
+  <div class="chart-container">
     <ChartWrapper type="bar" :data="data" :options="options" />
   </div>
 </template>
 
 <style scoped>
-.chart-wrapper {
+.chart-container {
   height: 30vh;
 }
 </style>

@@ -48,13 +48,13 @@ const options: ChartOptions = {
 </script>
 
 <template>
-  <div class="chart-wrapper">
+  <div class="chart-container">
     <ChartWrapper type="line" :data="data" :options="options" />
   </div>
 </template>
 
 <style scoped>
-.chart-wrapper {
+.chart-container {
   height: 20vh;
 }
 </style>

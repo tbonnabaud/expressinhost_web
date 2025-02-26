@@ -76,13 +76,13 @@ async function fetchCountPerDay() {
     Total: <ins>{{ totalRuns }}</ins>
   </strong>
 
-  <div class="chart-wrapper">
+  <div class="chart-container">
     <ChartWrapper type="line" :data="data" :options="options" />
   </div>
 </template>
 
 <style scoped>
-.chart-wrapper {
+.chart-container {
   height: 30vh;
 }
 </style>

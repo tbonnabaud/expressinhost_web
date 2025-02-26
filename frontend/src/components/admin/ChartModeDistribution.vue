@@ -50,13 +50,13 @@ async function fetchDurationStats() {
     Total: <ins>{{ Object.keys(MODE_LABEL_MAPPING).length }}</ins>
   </strong>
 
-  <div class="chart-wrapper">
+  <div class="chart-container">
     <ChartWrapper type="doughnut" :data="data" :options="options" />
   </div>
 </template>
 
 <style scoped>
-.chart-wrapper {
+.chart-container {
   height: 30vh;
 }
 </style>
