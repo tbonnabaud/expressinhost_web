@@ -3,6 +3,7 @@ import ChartRegistrationsByDate from './ChartRegistrationsByDate.vue'
 import ChartRunsByDay from './ChartRunsByDay.vue'
 import ChartDurationStats from './ChartDurationStats.vue'
 import ChartModeDistribution from './ChartModeDistribution.vue'
+import ChartSequenceNumberStats from './ChartSequenceNumberStats.vue'
 </script>
 
 <template>
@@ -20,10 +21,17 @@ import ChartModeDistribution from './ChartModeDistribution.vue'
     </article>
 
     <div class="stats-row">
-      <article>
-        <h3>Duration statistics</h3>
-        <ChartDurationStats />
-      </article>
+      <div class="stats-column">
+        <article>
+          <h3>Duration statistics</h3>
+          <ChartDurationStats />
+        </article>
+
+        <article>
+          <h3>Input sequence statistics</h3>
+          <ChartSequenceNumberStats />
+        </article>
+      </div>
 
       <article>
         <h3>Tuning mode usage</h3>
@@ -40,11 +48,20 @@ import ChartModeDistribution from './ChartModeDistribution.vue'
   column-gap: 1em;
 }
 
-.stats-row article {
+.stats-row > * {
   flex: 1;
 }
 
-@media (max-width: 768px) {
+.stats-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.stats-column > * {
+  flex: 1;
+}
+
+@media (max-width: 1024px) {
   .stats-row {
     flex-direction: column;
   }

@@ -104,7 +104,7 @@ export function downloadFile(content: string, filename: string) {
 }
 
 /**
- * Parses an ISO 8601 duration string and returns the total duration in seconds.
+ * Parses an ISO 8601 duration string and returns the duration as an object with hours, minutes, and seconds.
  *
  * @param duration - The ISO 8601 duration string to parse.
  *   The format should be "PT[nH][nM][nS]", where:
@@ -114,25 +114,27 @@ export function downloadFile(content: string, filename: string) {
  *   - "nS" represents seconds (optional).
  *   Examples: "PT1.5S", "PT1H30M15.5S".
  *
- * @returns The total duration in seconds.
+ * @returns An object containing the hours, minutes, and seconds.
  *
  * @example
- * parseISODuration("PT1.565351S"); // returns 1.565351
- * parseISODuration("PT1H30M15.5S"); // returns 5415.5
+ * parseISODuration("PT1.565351S"); // returns { hours: 0, minutes: 0, seconds: 1.565351 }
+ * parseISODuration("PT1H30M15.5S"); // returns { hours: 1, minutes: 30, seconds: 15.5 }
  */
-export function parseISODuration(duration: string): number {
+export function parseISODuration(duration: string): {
+  hours: number
+  minutes: number
+  seconds: number
+} {
   const regex = /^PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+(\.\d+)?)S)?$/
   const matches = duration.match(regex)
 
   if (!matches) {
-    return 0
+    return { hours: 0, minutes: 0, seconds: 0 }
   }
 
   const hours = parseInt(matches[1] || '0')
   const minutes = parseInt(matches[2] || '0')
   const seconds = parseFloat(matches[3] || '0')
 
-  const totalSeconds = seconds + minutes * 60 + hours * 3600
-
-  return totalSeconds
+  return { hours, minutes, seconds }
 }

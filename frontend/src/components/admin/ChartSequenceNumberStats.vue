@@ -1,32 +1,18 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import { API } from '@/lib/api'
-import { parseISODuration } from '@/lib/helpers'
-import type { RunInfoDurationStats } from '@/lib/interfaces'
+import type { RunInfoSequenceNumberStats } from '@/lib/interfaces'
 
-const durationStats = ref(null as RunInfoDurationStats | null)
+const sequenceNumberStats = ref(null as RunInfoSequenceNumberStats | null)
 
 onMounted(async () => await fetchDurationStats())
 
 async function fetchDurationStats() {
-  const [data, error] = await API.runInfos.durationStats()
+  const [data, error] = await API.runInfos.sequenceNumberStats()
 
   if (!error) {
-    durationStats.value = data
+    sequenceNumberStats.value = data
   }
-}
-
-function formatDuration(duration: string): string {
-  const { hours, minutes, seconds } = parseISODuration(duration)
-  console.log(seconds)
-
-  const parts = []
-
-  if (hours > 0) parts.push(`${hours}h`)
-  if (minutes > 0) parts.push(`${minutes}m`)
-  if (seconds > 0 || parts.length === 0) parts.push(`${seconds.toFixed(2)}s`)
-
-  return parts.join(' ')
 }
 </script>
 
@@ -35,19 +21,19 @@ function formatDuration(duration: string): string {
     <div class="stat">
       <div class="label">Minimum</div>
       <div class="number">
-        {{ formatDuration(durationStats?.min_duration || '0') }}
+        {{ sequenceNumberStats?.min_sequence_number || 0 }}
       </div>
     </div>
     <div class="stat">
       <div class="label">Average</div>
       <div class="number">
-        {{ formatDuration(durationStats?.avg_duration || '0') }}
+        {{ Math.round(sequenceNumberStats?.avg_sequence_number || 0) }}
       </div>
     </div>
     <div class="stat">
       <div class="label">Maximum</div>
       <div class="number">
-        {{ formatDuration(durationStats?.max_duration || '0') }}
+        {{ sequenceNumberStats?.max_sequence_number || 0 }}
       </div>
     </div>
   </div>
@@ -69,7 +55,7 @@ function formatDuration(duration: string): string {
 }
 
 .stat .number {
-  font-size: 16px;
+  font-size: 24px;
   font-weight: bold;
   color: #1d6a54;
 }

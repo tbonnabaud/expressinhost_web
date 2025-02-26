@@ -132,6 +132,8 @@ const runInfos = {
   modeDistribution: async () =>
     await REQUESTS.get('/run-infos/mode-distribution'),
   countPerDay: async () => await REQUESTS.get('/run-infos/count-per-day'),
+  sequenceNumberStats: async () =>
+    await REQUESTS.get('/run-infos/sequence-number-statistics'),
 }
 
 const users = {

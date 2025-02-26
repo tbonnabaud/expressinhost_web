@@ -150,3 +150,9 @@ export interface RunInfoDurationStats {
   avg_duration: string
   max_duration: string
 }
+
+export interface RunInfoSequenceNumberStats {
+  min_sequence_number: number
+  avg_sequence_number: number
+  max_sequence_number: number
+}
