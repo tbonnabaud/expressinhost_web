@@ -28,7 +28,7 @@ def get_native_codon_table_ids(
     nucleotide_file_content: str, sequences_native_codon_tables: dict[str, UUID]
 ) -> list[UUID]:
     """Get the IDs from the mapping of sequence names and ensure the order of FASTA file."""
-    sequence_names = re.findall(r"^\> *(.*\w)", nucleotide_file_content, re.MULTILINE)
+    sequence_names = re.findall(r"^\>(\S+) ?.*", nucleotide_file_content, re.MULTILINE)
 
     return [sequences_native_codon_tables[name] for name in sequence_names]
 
