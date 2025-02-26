@@ -34,7 +34,7 @@
     "npm-run-all2": "^6.2.3",
     "prettier": "^3.3.3",
     "typescript": "~5.5.4",
-    "vite": "^5.4.8",
+    "vite": "^6.2.0",
     "vue-tsc": "^2.1.6"
   }
 }
