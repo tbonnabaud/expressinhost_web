@@ -7,6 +7,7 @@ from ..crud.run_infos import RunInfoRepository
 from ..database import SessionDependency
 from ..schemas import RunInfo
 from .common import FilterParamDependency
+from ..logger import logger
 
 router = APIRouter(tags=["Run infos"], dependencies=[Depends(check_is_admin)])
 
@@ -36,4 +37,9 @@ def compute_run_count_per_day(session: SessionDependency):
 
 @router.get("/run-infos/sequence-number-statistics", response_model=dict[str, int])
 def compute_sequence_number_statistics(session: SessionDependency):
-    return RunInfoRepository(session).compute_sequence_number_statistics()
+    try:
+        return RunInfoRepository(session).compute_sequence_number_statistics()
+
+    except Exception as exc:
+        logger.error(exc)
+        raise exc
