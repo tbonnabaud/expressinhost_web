@@ -19,6 +19,7 @@ const data = computed(() => {
         pointStyle: false,
         borderColor: '#D55E00',
         backgroundColor: '#D55E00',
+        borderWidth: 1,
       },
       {
         label: 'Output sequence',
@@ -26,6 +27,7 @@ const data = computed(() => {
         pointStyle: false,
         borderColor: '#0072B2',
         backgroundColor: '#0072B2',
+        borderWidth: 1,
       },
     ],
   }
@@ -55,6 +57,6 @@ const options: ChartOptions = {
 
 <style scoped>
 .chart-container {
-  height: 20vh;
+  height: 30vh;
 }
 </style>
