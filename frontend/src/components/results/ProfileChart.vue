@@ -41,7 +41,7 @@ const options: ChartOptions = {
   plugins: {
     legend: {
       display: true,
-      position: 'top',
+      position: 'left',
     },
     title: {
       display: true,
