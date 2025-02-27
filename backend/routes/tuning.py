@@ -4,10 +4,12 @@ from datetime import UTC, datetime
 from uuid import UUID
 
 from fastapi import APIRouter
+from fastapi.exceptions import HTTPException
 from fastapi.responses import StreamingResponse
 
 from ..authentication import OptionalTokenDependency, get_current_user
 from ..core.codon_tables import process_raw_codon_table
+from ..core.exceptions import ExpressInHostError
 from ..core.sequence_tuning import SequenceTuner
 from ..crud.codon_tables import CodonTableRepository
 from ..crud.codon_translations import CodonTranslationRepository
@@ -168,6 +170,11 @@ def stream_sequence_tuning(token: OptionalTokenDependency, form: RunTuningForm):
         time.sleep(0.5)
         tuning_state.success()
         tuning_state.result = tuning_output
+        yield tuning_state.model_dump_json()
+
+    except (ExpressInHostError, HTTPException) as exc:
+        time.sleep(0.5)
+        tuning_state.error(str(exc))
         yield tuning_state.model_dump_json()
 
     except Exception:

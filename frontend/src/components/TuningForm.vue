@@ -7,6 +7,7 @@ import { Status, useStreamState } from '@/lib/streamedState'
 import CodonTableSearchSelect from '@/components/codon-tables/CodonTableSearchSelect.vue'
 import ToolTip from '@/components/ToolTip.vue'
 import WithAlertError from './WithAlertError.vue'
+import AlertError from './AlertError.vue'
 import ProgressBar from './ProgressBar.vue'
 import {
   checkClustal,
@@ -460,6 +461,13 @@ async function runTuning() {
       </label>
     </div>
 
+    <AlertError
+      :show="tuningState?.status == Status.ERROR"
+      @close="tuningState = null"
+    >
+      {{ tuningState?.message }}
+    </AlertError>
+
     <div id="tuningProgressWrapper">
       <ProgressBar
         v-if="tuningLoading"
@@ -525,18 +533,27 @@ td {
   text-align: justify;
 }
 
-#runTuningButton {
-  width: 100%;
-  height: 100%;
+#tuningProgressWrapper {
+  height: 3em;
+  margin-bottom: 1rem;
 }
 
-#tuningProgressWrapper,
+#runTuningButton {
+  height: 100%;
+  margin-bottom: 0;
+}
+
 #tuningProgress {
   height: 100%;
 }
 
-#tuningProgressWrapper {
-  height: 3em;
+#tuningError {
+  border: 1px solid #721c24;
+  color: #721c24;
+  background-color: #f8d7da;
+  border-radius: 0.25rem;
+  padding: 0.75rem 1.25rem;
+  margin: 0.75rem 0;
 }
 
 span.question-marks {
