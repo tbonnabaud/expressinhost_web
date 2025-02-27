@@ -6,6 +6,7 @@ from .exceptions import NoAminoAcidConservation, NoIdenticalSequencesError
 from .postprocessing import (
     clear_output_sequence,
     compute_similarity,
+    rna_to_dna_sequence,
 )
 from .preprocessing import align_nucleotide_sequences, dna_to_rna_sequences
 from .utils import (  # write_text_to_file,
@@ -377,39 +378,45 @@ class SequenceTuner:
                     "Invalid mode. Should be direct_mapping, optimisation_and_conservation_1 or optimisation_and_conservation_2."
                 )
 
-    def postprocess(self, output_sequences: list[str]) -> list[dict]:
+    def postprocess(self, output_rna_sequences: list[str]) -> list[dict]:
         output_list = []
 
-        for input_record, output_sequence, native_codon_table in zip(
+        for input_record, output_rna_sequence, native_codon_table in zip(
             self.nucleotide_records,
-            output_sequences,
+            output_rna_sequences,
             self.native_codon_tables,
         ):
-            cleared_output_sequence = clear_output_sequence(output_sequence)
+            cleared_output_rna_sequence = clear_output_sequence(output_rna_sequence)
+            cleared_output_dna_sequence = rna_to_dna_sequence(
+                cleared_output_rna_sequence
+            )
 
             # Ensure input and ouput nucleotide sequence have the same amino-acid sequence
             if not check_amino_acido_conservation(
-                input_record, cleared_output_sequence
+                input_record, cleared_output_rna_sequence
             ):
                 raise NoAminoAcidConservation(
                     "Amino acid sequences from input and output are supposed to be the same."
                 )
 
-            input_sequence = str(input_record.seq)
+            input_dna_sequence = str(input_record.seq)
             identity_percentage = compute_similarity(
-                input_sequence, cleared_output_sequence
+                input_dna_sequence, cleared_output_dna_sequence
             )
             output_list.append(
                 {
                     "name": input_record.description,
-                    "input": input_sequence,
-                    "output": cleared_output_sequence,
+                    "input": input_dna_sequence,
+                    "output": cleared_output_dna_sequence,
                     "identity_percentage": identity_percentage,
                     "input_profiles": get_sequence_profiles(
-                        input_sequence, native_codon_table
+                        input_dna_sequence.replace(
+                            "T", "U"
+                        ),  # Need to have RNA sequence
+                        native_codon_table,
                     ),
                     "output_profiles": get_sequence_profiles(
-                        cleared_output_sequence, self.host_codon_table
+                        cleared_output_rna_sequence, self.host_codon_table
                     ),
                 }
             )
