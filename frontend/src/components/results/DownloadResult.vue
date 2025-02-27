@@ -15,6 +15,31 @@ function formatToFasta(tunedSequences: Array<TunedSequence>) {
     .join('\n\n')
 }
 
+/**
+ * Returns a CSV formatted string with columns for codon_index, input, and output.
+ *
+ * @param input - Array of input numbers.
+ * @param output - Array of output numbers.
+ * @returns {string} The CSV formatted string.
+ */
+function formatProfileCSV(input: number[], output: number[]): string {
+  if (input.length !== output.length) {
+    throw new Error('Input and output arrays must have the same length')
+  }
+
+  // Create the CSV header
+  const csvRows = ['codon_index,input,output']
+
+  // Create the CSV rows
+  for (let i = 0; i < input.length; i++) {
+    const row = `${i},${input[i]},${output[i]}`
+    csvRows.push(row)
+  }
+
+  // Join all rows into a single CSV string
+  return csvRows.join('\n')
+}
+
 async function downloadZip() {
   const zip = new JSZip()
   // FASTA
@@ -25,6 +50,33 @@ async function downloadZip() {
 
   // Add the files into the archive
   zip.file(fastaFileName, fastaContent)
+
+  for (const tunedSequence of props.tuned_sequences) {
+    // Match only ID to avoid a too long name
+    const matchId = tunedSequence.name.match(/^\S+/)
+
+    if (matchId) {
+      const seqId = matchId[0]
+      // Add speed profiles
+      zip.file(
+        `speeds/${seqId}_speed_profiles.csv`,
+        formatProfileCSV(
+          tunedSequence.input_profiles.speed,
+          tunedSequence.output_profiles.speed,
+        ),
+      )
+      // Add rank profiles
+      zip.file(
+        `ranks/${seqId}_rank_profiles.csv`,
+        formatProfileCSV(
+          tunedSequence.input_profiles.rank,
+          tunedSequence.output_profiles.rank,
+        ),
+      )
+    } else {
+      console.warn(`ID not found for sequence: ${tunedSequence.name}`)
+    }
+  }
 
   const zipBlob = await zip.generateAsync({ type: 'blob' })
   downloadFile(zipBlob, zipFileName)
