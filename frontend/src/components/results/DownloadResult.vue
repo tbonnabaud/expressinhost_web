@@ -15,12 +15,15 @@ function formatToFasta(tunedSequences: Array<TunedSequence>) {
     .join('\n\n')
 }
 
-async function downloadFasta() {
+async function downloadZip() {
   const zip = new JSZip()
+  // FASTA
   const fastaContent = formatToFasta(props.tuned_sequences)
   const fastaFileName = `tuned_sequences_${props.result.mode}.fasta`
+  // ZIP file name
   const zipFileName = `${props.result.name}.zip`
 
+  // Add the files into the archive
   zip.file(fastaFileName, fastaContent)
 
   const zipBlob = await zip.generateAsync({ type: 'blob' })
@@ -29,7 +32,7 @@ async function downloadFasta() {
 </script>
 
 <template>
-  <button @click="downloadFasta">Download zipped output</button>
+  <button @click="downloadZip">Download zipped output</button>
 </template>
 
 <style scoped>
