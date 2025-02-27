@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { TuningOutput, TunedSequence } from '@/lib/interfaces'
 import { downloadFile } from '@/lib/helpers'
+import JSZip from 'jszip'
 
 const props = defineProps<TuningOutput>()
 
@@ -14,16 +15,21 @@ function formatToFasta(tunedSequences: Array<TunedSequence>) {
     .join('\n\n')
 }
 
-function downloadFasta() {
-  downloadFile(
-    formatToFasta(props.tuned_sequences),
-    `tuned_sequences_${props.result.mode}.fasta`,
-  )
+async function downloadFasta() {
+  const zip = new JSZip()
+  const fastaContent = formatToFasta(props.tuned_sequences)
+  const fastaFileName = `tuned_sequences_${props.result.mode}.fasta`
+  const zipFileName = `${props.result.name}.zip`
+
+  zip.file(fastaFileName, fastaContent)
+
+  const zipBlob = await zip.generateAsync({ type: 'blob' })
+  downloadFile(zipBlob, zipFileName)
 }
 </script>
 
 <template>
-  <button @click="downloadFasta">Download output FASTA file</button>
+  <button @click="downloadFasta">Download zipped output</button>
 </template>
 
 <style scoped>
