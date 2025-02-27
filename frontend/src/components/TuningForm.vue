@@ -7,6 +7,7 @@ import { Status, useStreamState } from '@/lib/streamedState'
 import CodonTableSearchSelect from '@/components/codon-tables/CodonTableSearchSelect.vue'
 import ToolTip from '@/components/ToolTip.vue'
 import WithAlertError from './WithAlertError.vue'
+import AlertError from './AlertError.vue'
 import ProgressBar from './ProgressBar.vue'
 import {
   checkClustal,
@@ -460,11 +461,12 @@ async function runTuning() {
       </label>
     </div>
 
-    <div id="tuningErrorWrapper">
-      <p id="tuningError" v-if="tuningState?.status == Status.ERROR">
-        {{ tuningState.message }}
-      </p>
-    </div>
+    <AlertError
+      :show="tuningState?.status == Status.ERROR"
+      @close="tuningState = null"
+    >
+      {{ tuningState?.message }}
+    </AlertError>
 
     <div id="tuningProgressWrapper">
       <ProgressBar
