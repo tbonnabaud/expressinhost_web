@@ -1,14 +1,18 @@
-class FastaFormatError(Exception):
+class ExpressInHostError(Exception):
     pass
 
 
-class ClustalFormatError(Exception):
+class FastaFormatError(ExpressInHostError):
     pass
 
 
-class NoIdenticalSequencesError(Exception):
+class ClustalFormatError(ExpressInHostError):
     pass
 
 
-class NoAminoAcidConservation(Exception):
+class NoIdenticalSequencesError(ExpressInHostError):
+    pass
+
+
+class NoAminoAcidConservation(ExpressInHostError):
     pass
