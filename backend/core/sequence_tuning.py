@@ -295,7 +295,7 @@ def get_sequence_profiles(rna_sequence: str, codon_table: ProcessedCodonTable):
         codon = rna_sequence[3 * t : 3 * t + 3]
         row = codon_table.get_row(codon)
 
-        if row is not None:
+        if row:
             speed_profile.append(row.speed)
             rank_profile.append(row.rank)
 
