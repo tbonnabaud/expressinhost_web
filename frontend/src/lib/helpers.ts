@@ -73,20 +73,28 @@ export function toFixedFloat(value: number, fractionDigits: number = 0) {
 }
 
 /**
- * The `downloadFile` function in TypeScript creates a downloadable file from the provided content and
- * filename.
- * @param {string} content - The `content` parameter in the `downloadFile` function is the actual data
- * that you want to download as a file. It should be a string containing the content that you want to
- * save in the file.
- * @param {string} filename - The `filename` parameter is a string that represents the name under which
- * the file will be saved when downloaded. For example, if you are downloading a text file, the
- * `filename` could be something like "example.txt".
+ * Downloads a file with the specified content and filename.
+ *
+ * @param content - The content to be downloaded. Can be a string or a Blob.
+ * @param filename - The name of the file to be downloaded.
+ *
+ * @example
+ * // Download a text file
+ * downloadFile("Hello, world!", "hello.txt");
+ *
+ * // Download a binary file (e.g., a ZIP file)
+ * const zipBlob = new Blob([zipContent], { type: 'application/zip' });
+ * downloadFile(zipBlob, "archive.zip");
  */
-export function downloadFile(content: string, filename: string) {
-  // Creating a Blob from the data
-  const blob = new Blob([content], {
-    type: 'text/plain',
-  })
+export function downloadFile(content: Blob | string, filename: string) {
+  // Creating a Blob from the data if it's not already a Blob
+  const blob =
+    content instanceof Blob
+      ? content
+      : new Blob([content], {
+          type: 'text/plain',
+        })
+
   const url = URL.createObjectURL(blob)
 
   // Creating a temporary link element
