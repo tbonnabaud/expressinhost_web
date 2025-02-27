@@ -2,10 +2,15 @@ import random
 
 from .checks import check_amino_acido_conservation, check_nucleotides_clustal_identity
 from .codon_tables import ProcessedCodonTable
-from .exceptions import NoAminoAcidConservation, NoIdenticalSequencesError
+from .exceptions import (
+    ExpressInHostError,
+    NoAminoAcidConservation,
+    NoIdenticalSequencesError,
+)
 from .postprocessing import (
     clear_output_sequence,
     compute_similarity,
+    rna_to_dna_sequence,
 )
 from .preprocessing import align_nucleotide_sequences, dna_to_rna_sequences
 from .utils import (  # write_text_to_file,
@@ -19,7 +24,7 @@ def find_amino_acid_and_rank(
     codon: str, table: ProcessedCodonTable
 ) -> tuple[str, float] | tuple[None, None]:
     """Return the tuple corresponding to the given codon."""
-    row = table.get(codon)
+    row = table.get_row(codon)
 
     if row:
         return row.amino_acid, row.rank
@@ -281,16 +286,16 @@ def optimisation_and_conservation_2(
     return results
 
 
-def get_sequence_profiles(sequence: str, codon_table: ProcessedCodonTable):
+def get_sequence_profiles(rna_sequence: str, codon_table: ProcessedCodonTable):
     """Get speed and rank profiles."""
     speed_profile = []
     rank_profile = []
 
-    for t in range(int(len(sequence) / 3)):
-        codon = sequence[3 * t : 3 * t + 3]
-        row = codon_table.get(codon)
+    for t in range(int(len(rna_sequence) / 3)):
+        codon = rna_sequence[3 * t : 3 * t + 3]
+        row = codon_table.get_row(codon)
 
-        if row is not None:
+        if row:  # Else it is probably a stop codon
             speed_profile.append(row.speed)
             rank_profile.append(row.rank)
 
@@ -349,7 +354,7 @@ class SequenceTuner:
 
         else:
             if self.nucleotide_records is None:
-                raise Exception("Clustal file is required.")
+                raise ExpressInHostError("Clustal file is required.")
 
             aligned_nucleotide_sequences = align_nucleotide_sequences(
                 self.clustal_records, cleared_nucleotide_sequences
@@ -373,43 +378,47 @@ class SequenceTuner:
                 )
 
             else:
-                raise Exception(
+                raise ExpressInHostError(
                     "Invalid mode. Should be direct_mapping, optimisation_and_conservation_1 or optimisation_and_conservation_2."
                 )
 
-    def postprocess(self, output_sequences: list[str]) -> list[dict]:
+    def postprocess(self, output_rna_sequences: list[str]) -> list[dict]:
         output_list = []
 
-        for input_record, output_sequence, native_codon_table in zip(
+        for input_record, output_rna_sequence, native_codon_table in zip(
             self.nucleotide_records,
-            output_sequences,
+            output_rna_sequences,
             self.native_codon_tables,
         ):
-            cleared_output_sequence = clear_output_sequence(output_sequence)
+            cleared_output_rna_sequence = clear_output_sequence(output_rna_sequence)
+            cleared_output_dna_sequence = rna_to_dna_sequence(
+                cleared_output_rna_sequence
+            )
 
             # Ensure input and ouput nucleotide sequence have the same amino-acid sequence
             if not check_amino_acido_conservation(
-                input_record, cleared_output_sequence
+                input_record, cleared_output_rna_sequence
             ):
                 raise NoAminoAcidConservation(
                     "Amino acid sequences from input and output are supposed to be the same."
                 )
 
-            input_sequence = str(input_record.seq)
+            input_dna_sequence = str(input_record.seq)
             identity_percentage = compute_similarity(
-                input_sequence, cleared_output_sequence
+                input_dna_sequence, cleared_output_dna_sequence
             )
             output_list.append(
                 {
                     "name": input_record.description,
-                    "input": input_sequence,
-                    "output": cleared_output_sequence,
+                    "input": input_dna_sequence,
+                    "output": cleared_output_dna_sequence,
                     "identity_percentage": identity_percentage,
                     "input_profiles": get_sequence_profiles(
-                        input_sequence, native_codon_table
+                        input_dna_sequence.replace("T", "U"),  # RNA sequence required
+                        native_codon_table,
                     ),
                     "output_profiles": get_sequence_profiles(
-                        cleared_output_sequence, self.host_codon_table
+                        cleared_output_rna_sequence, self.host_codon_table
                     ),
                 }
             )

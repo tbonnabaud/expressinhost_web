@@ -10,7 +10,7 @@ from Bio.SeqRecord import SeqRecord
 
 from ..logger import logger
 from .constantes import TABLE_BASE_PATH
-from .exceptions import ClustalFormatError, FastaFormatError
+from .exceptions import ClustalFormatError, ExpressInHostError, FastaFormatError
 
 
 def timeit(func):
@@ -86,4 +86,4 @@ def find_organism_from_nucleotide_name(name: str) -> str:
         if organism.lower() in name.lower():
             return organism
 
-    raise Exception(f"Organism not found for nucleotide: {name}.")
+    raise ExpressInHostError(f"Organism not found for nucleotide: {name}.")
