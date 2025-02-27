@@ -290,7 +290,7 @@ def get_sequence_profiles(sequence: str, codon_table: ProcessedCodonTable):
         codon = sequence[3 * t : 3 * t + 3]
         row = codon_table.get(codon)
 
-        if row:
+        if row is not None:
             speed_profile.append(row.speed)
             rank_profile.append(row.rank)
 
@@ -401,7 +401,7 @@ class SequenceTuner:
             )
             output_list.append(
                 {
-                    "name": input_record.name,
+                    "name": input_record.description,
                     "input": input_sequence,
                     "output": cleared_output_sequence,
                     "identity_percentage": identity_percentage,
