@@ -2,8 +2,11 @@
 import type { TuningOutput, TunedSequence } from '@/lib/interfaces'
 import { downloadFile } from '@/lib/helpers'
 import JSZip from 'jszip'
+import { ref } from 'vue'
 
 const props = defineProps<TuningOutput>()
+
+const isLoading = ref(false)
 
 function foldSequence(sequence: string) {
   return sequence.replace(/(.{80})/g, '$1\n')
@@ -41,6 +44,7 @@ function formatProfileCSV(input: number[], output: number[]): string {
 }
 
 async function downloadZip() {
+  isLoading.value = true
   const zip = new JSZip()
   // FASTA
   const fastaContent = formatToFasta(props.tuned_sequences)
@@ -80,11 +84,14 @@ async function downloadZip() {
 
   const zipBlob = await zip.generateAsync({ type: 'blob' })
   downloadFile(zipBlob, zipFileName)
+  isLoading.value = false
 }
 </script>
 
 <template>
-  <button @click="downloadZip">Download zipped output</button>
+  <button @click="downloadZip" :aria-busy="isLoading" :disabled="isLoading">
+    Download zipped output
+  </button>
 </template>
 
 <style scoped>
