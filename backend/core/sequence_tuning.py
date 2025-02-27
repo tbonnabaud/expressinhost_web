@@ -286,13 +286,13 @@ def optimisation_and_conservation_2(
     return results
 
 
-def get_sequence_profiles(sequence: str, codon_table: ProcessedCodonTable):
+def get_sequence_profiles(rna_sequence: str, codon_table: ProcessedCodonTable):
     """Get speed and rank profiles."""
     speed_profile = []
     rank_profile = []
 
-    for t in range(int(len(sequence) / 3)):
-        codon = sequence[3 * t : 3 * t + 3]
+    for t in range(int(len(rna_sequence) / 3)):
+        codon = rna_sequence[3 * t : 3 * t + 3]
         row = codon_table.get(codon)
 
         if row is not None:
