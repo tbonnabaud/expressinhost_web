@@ -525,18 +525,19 @@ td {
   text-align: justify;
 }
 
+#tuningProgressWrapper {
+  height: 3em;
+  margin-bottom: 1rem;
+}
+
 #runTuningButton {
   width: 100%;
   height: 100%;
+  margin-bottom: 0;
 }
 
-#tuningProgressWrapper,
 #tuningProgress {
   height: 100%;
-}
-
-#tuningProgressWrapper {
-  height: 3em;
 }
 
 span.question-marks {

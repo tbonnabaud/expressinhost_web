@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 
-const props = defineProps<{ value: number; max: number }>()
+const props = defineProps<{ value: number; max: number; color?: string }>()
 
 const percentage = computed(() => {
   if (props.max) {
-    return (props.value / props.max) * 100
+    return Math.round((props.value / props.max) * 100)
   } else {
     return 0
   }
@@ -14,22 +14,24 @@ const percentage = computed(() => {
 
 <template>
   <div class="progress-container">
-    <progress class="progress-bar" :value="value" :max="max"></progress>
-    <span class="progress-text">{{ percentage.toFixed(0) }}%</span>
+    <div class="progress-bar" :style="{ width: `${percentage}%` }"></div>
+    <div class="progress-text">{{ percentage }}%</div>
   </div>
 </template>
 
 <style scoped>
 .progress-container {
+  background-color: #727a8d;
+  border-radius: 0.25rem;
   position: relative;
-  width: 100%;
+  overflow: hidden;
 }
 
 .progress-bar {
-  width: 100%;
   height: 100%;
-  background-color: #727a8d;
+  background-color: v-bind('props.color || "#0172ad"');
   border-radius: 0.25rem;
+  transition: width 0.3s ease;
 }
 
 .progress-text {
@@ -37,8 +39,7 @@ const percentage = computed(() => {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  color: white;
+  color: #fff;
   font-weight: bold;
-  pointer-events: none;
 }
 </style>
