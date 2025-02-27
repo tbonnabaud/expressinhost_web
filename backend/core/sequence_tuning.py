@@ -410,9 +410,7 @@ class SequenceTuner:
                     "output": cleared_output_dna_sequence,
                     "identity_percentage": identity_percentage,
                     "input_profiles": get_sequence_profiles(
-                        input_dna_sequence.replace(
-                            "T", "U"
-                        ),  # Need to have RNA sequence
+                        input_dna_sequence.replace("T", "U"),  # RNA sequence required
                         native_codon_table,
                     ),
                     "output_profiles": get_sequence_profiles(
