@@ -103,17 +103,23 @@ function colorSequences(inputSequence: string, outputSequence: string) {
     </div>
 
     <div v-if="openDetails">
-      <ProfileChart
-        title="Speed profiles"
-        :input-values="tunedSequence.input_profiles.speed"
-        :output-values="tunedSequence.output_profiles.speed"
-      />
+      <div class="profiles">
+        <h5 class="profile-title">Speed profiles</h5>
+        <ProfileChart
+          title="Speed profiles"
+          :input-values="tunedSequence.input_profiles.speed"
+          :output-values="tunedSequence.output_profiles.speed"
+        />
+      </div>
 
-      <ProfileChart
-        title="Rank profiles"
-        :input-values="tunedSequence.input_profiles.rank"
-        :output-values="tunedSequence.output_profiles.rank"
-      />
+      <div class="profiles">
+        <h5 class="profile-title">Rank profiles</h5>
+        <ProfileChart
+          title="Rank profiles"
+          :input-values="tunedSequence.input_profiles.rank"
+          :output-values="tunedSequence.output_profiles.rank"
+        />
+      </div>
     </div>
   </details>
 
@@ -121,6 +127,14 @@ function colorSequences(inputSequence: string, outputSequence: string) {
 </template>
 
 <style scoped>
+.profiles {
+  margin-top: 1em;
+}
+
+.profiles .profile-title {
+  margin-bottom: 0;
+}
+
 .sequence {
   height: 2.5em;
   white-space: nowrap;

@@ -44,7 +44,7 @@ const options: ChartOptions = {
       position: 'left',
     },
     title: {
-      display: true,
+      display: false,
       text: props.title,
     },
   },
