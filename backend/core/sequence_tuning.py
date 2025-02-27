@@ -401,7 +401,7 @@ class SequenceTuner:
             )
             output_list.append(
                 {
-                    "name": input_record.name,
+                    "name": input_record.description,
                     "input": input_sequence,
                     "output": cleared_output_sequence,
                     "identity_percentage": identity_percentage,
