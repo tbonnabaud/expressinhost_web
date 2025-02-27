@@ -460,6 +460,12 @@ async function runTuning() {
       </label>
     </div>
 
+    <div id="tuningErrorWrapper">
+      <p id="tuningError" v-if="tuningState?.status == Status.ERROR">
+        {{ tuningState.message }}
+      </p>
+    </div>
+
     <div id="tuningProgressWrapper">
       <ProgressBar
         v-if="tuningLoading"
@@ -537,6 +543,15 @@ td {
 
 #tuningProgress {
   height: 100%;
+}
+
+#tuningError {
+  border: 1px solid #721c24;
+  color: #721c24;
+  background-color: #f8d7da;
+  border-radius: 0.25rem;
+  padding: 0.75rem 1.25rem;
+  margin: 0.75rem 0;
 }
 
 span.question-marks {
