@@ -26,7 +26,7 @@ class ProcessedCodonTable:
     def __getitem__(self, key: str):
         return self.indexed_rows[key]
 
-    def get(self, key: str):
+    def get_row(self, key: str):
         return self.indexed_rows.get(key)
 
     def values(self):

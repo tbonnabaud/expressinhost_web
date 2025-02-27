@@ -24,7 +24,7 @@ def find_amino_acid_and_rank(
     codon: str, table: ProcessedCodonTable
 ) -> tuple[str, float] | tuple[None, None]:
     """Return the tuple corresponding to the given codon."""
-    row = table.get(codon)
+    row = table.get_row(codon)
 
     if row:
         return row.amino_acid, row.rank
@@ -293,7 +293,7 @@ def get_sequence_profiles(rna_sequence: str, codon_table: ProcessedCodonTable):
 
     for t in range(int(len(rna_sequence) / 3)):
         codon = rna_sequence[3 * t : 3 * t + 3]
-        row = codon_table.get(codon)
+        row = codon_table.get_row(codon)
 
         if row is not None:
             speed_profile.append(row.speed)
