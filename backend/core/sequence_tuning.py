@@ -2,7 +2,11 @@ import random
 
 from .checks import check_amino_acido_conservation, check_nucleotides_clustal_identity
 from .codon_tables import ProcessedCodonTable
-from .exceptions import NoAminoAcidConservation, NoIdenticalSequencesError
+from .exceptions import (
+    ExpressInHostError,
+    NoAminoAcidConservation,
+    NoIdenticalSequencesError,
+)
 from .postprocessing import (
     clear_output_sequence,
     compute_similarity,
@@ -350,7 +354,7 @@ class SequenceTuner:
 
         else:
             if self.nucleotide_records is None:
-                raise Exception("Clustal file is required.")
+                raise ExpressInHostError("Clustal file is required.")
 
             aligned_nucleotide_sequences = align_nucleotide_sequences(
                 self.clustal_records, cleared_nucleotide_sequences
@@ -374,7 +378,7 @@ class SequenceTuner:
                 )
 
             else:
-                raise Exception(
+                raise ExpressInHostError(
                     "Invalid mode. Should be direct_mapping, optimisation_and_conservation_1 or optimisation_and_conservation_2."
                 )
 
