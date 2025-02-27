@@ -76,6 +76,11 @@ function colorSequences(inputSequence: string, outputSequence: string) {
       <strong>&rarr; Native codon table: </strong>
       <i>{{ nativeCodonTable.organism }}</i> - {{ nativeCodonTable.name }}
     </p>
+    <p v-else>
+      <span class="warning-icons material-icons">warning</span>
+      Native codon table not found
+      <span class="warning-icons material-icons">warning</span>
+    </p>
 
     <p>
       <strong>&rarr; Similarity: </strong>
@@ -145,5 +150,9 @@ function colorSequences(inputSequence: string, outputSequence: string) {
 
 details summary {
   font-size: 1.2em;
+}
+
+.warning-icons {
+  font-size: 0.75rem;
 }
 </style>
