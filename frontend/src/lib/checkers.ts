@@ -20,6 +20,14 @@ export function checkFasta(content: string) {
             errors.push(`Invalid character ${match[0]} for ${header}.`)
           }
         }
+
+        const flatSequence = sequence.replace(/\s/g, '')
+
+        if (flatSequence.length % 3 !== 0) {
+          errors.push(
+            `Invalid number of nucleotides (${flatSequence.length}) for ${header}. Should be a multiple of three.`,
+          )
+        }
       } else if (header && !sequence) {
         errors.push(`Missing sequence for ${header}.`)
       } else {
