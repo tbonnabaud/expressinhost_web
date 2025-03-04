@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted, reactive, watch, computed } from 'vue'
 import { readTextFile, toFixedFloat } from '@/lib/helpers'
-import type { CodonTable } from '@/lib/interfaces'
+import type { CodonTable, RunTrainingForm } from '@/lib/interfaces'
 import { API } from '@/lib/api'
 import { Status, useStreamState } from '@/lib/streamedState'
 import CodonTableSearchSelect from '@/components/codon-tables/CodonTableSearchSelect.vue'
@@ -17,15 +17,15 @@ import {
 
 const emit = defineEmits(['submit'])
 
-const baseForm = reactive({
+const baseForm: RunTrainingForm = reactive({
   name: '',
   nucleotide_file_content: '',
   clustal_file_content: '',
   host_codon_table_id: '',
-  sequences_native_codon_tables: {} as Record<string, string>,
+  sequences_native_codon_tables: {},
   mode: 'direct_mapping',
   slow_speed_threshold: 0.5,
-  conservation_threshold: null as number | null,
+  conservation_threshold: null,
 })
 
 const baseFormErrors = reactive({
