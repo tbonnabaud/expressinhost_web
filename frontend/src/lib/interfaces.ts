@@ -49,7 +49,7 @@ export interface RunTrainingForm {
   sequences_native_codon_tables: Record<string, string>
   mode: string
   slow_speed_threshold: number
-  conservation_threshold?: number
+  conservation_threshold: number | null
 }
 
 export interface CodonTable {

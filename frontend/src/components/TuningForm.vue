@@ -25,7 +25,7 @@ const baseForm = reactive({
   sequences_native_codon_tables: {} as Record<string, string>,
   mode: 'direct_mapping',
   slow_speed_threshold: 0.5,
-  conservation_threshold: 0.75,
+  conservation_threshold: null as number | null,
 })
 
 const baseFormErrors = reactive({
@@ -87,6 +87,18 @@ watch(tuningState, state => {
     emit('submit', state.result)
   }
 })
+
+watch(
+  () => baseForm.mode,
+  value => {
+    if (value === 'optimisation_and_conservation_2') {
+      // Set a default value
+      baseForm.conservation_threshold = 0.75
+    } else {
+      baseForm.conservation_threshold = null
+    }
+  },
+)
 
 async function fetchCodonTables() {
   const [data, error] = await API.codonTables.list()
@@ -412,7 +424,13 @@ async function runTuning() {
           />
         </div>
 
-        <div class="input-range">
+        <div
+          class="input-range"
+          v-if="
+            baseForm.mode == 'optimisation_and_conservation_2' &&
+            baseForm.conservation_threshold !== null
+          "
+        >
           <ToolTip>
             <label>
               Conservation threshold =
