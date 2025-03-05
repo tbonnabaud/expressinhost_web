@@ -33,6 +33,12 @@
   filter: brightness(120%);
 }
 
+span.question-marks {
+  border: 2px solid salmon;
+  border-radius: 50%;
+  font-size: 1rem;
+}
+
 @media (prefers-color-scheme: dark) {
   .danger {
     background-color: #ad1f1f;
