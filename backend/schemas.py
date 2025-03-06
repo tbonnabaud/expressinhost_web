@@ -178,6 +178,46 @@ class UserCodonTableFormWithTranslations(BaseModel):
         return "user"
 
 
+class TuningMode(str, Enum):
+    DIRECT_MAPPING = "direct_mapping"
+    OPTIMISATION_AND_CONSERVATION_1 = "optimisation_and_conservation_1"
+    OPTIMISATION_AND_CONSERVATION_2 = "optimisation_and_conservation_2"
+
+
+class FivePrimeRegionTuningMode(str, Enum):
+    PARTIAL_UNTUNING = "partial_untuning"
+    FINE_TUNING = "fine_tuning"
+
+
+class PartialUntuningMode(BaseModel):
+    mode: Literal[FivePrimeRegionTuningMode.PARTIAL_UNTUNING]
+    untuned_codons: int
+
+
+## To use OSTIR
+class FineTuningMode(BaseModel):
+    mode: Literal[FivePrimeRegionTuningMode.FINE_TUNING]
+    codon_window: int
+    utr: str
+
+
+class RunTuningForm(BaseModel):
+    name: str = "Unnamed"
+    nucleotide_file_content: str
+    clustal_file_content: str | None
+    host_codon_table_id: UUID
+    sequences_native_codon_tables: dict[str, UUID]
+    mode: TuningMode
+    slow_speed_threshold: float
+    conservation_threshold: float | None
+    five_prime_region_tuning: PartialUntuningMode | FineTuningMode | None
+
+    @field_validator("name")
+    @staticmethod
+    def clean(value: str):
+        return value.strip() if value else "Unnamed"
+
+
 class Result(BaseModel):
     id: UUID | None = None
     user_id: UUID | None = None
@@ -189,6 +229,7 @@ class Result(BaseModel):
     slow_speed_threshold: float
     conservation_threshold: float | None
     host_codon_table: CodonTable
+    five_prime_region_tuning: PartialUntuningMode | FineTuningMode | None
 
 
 class Profiles(BaseModel):
@@ -207,26 +248,6 @@ class TunedSequence(BaseModel):
     output_profiles: Profiles
 
 
-class RunTuningForm(BaseModel):
-    name: str = "Unnamed"
-    nucleotide_file_content: str
-    clustal_file_content: str | None
-    host_codon_table_id: UUID
-    sequences_native_codon_tables: dict[str, UUID]
-    mode: Literal[
-        "direct_mapping",
-        "optimisation_and_conservation_1",
-        "optimisation_and_conservation_2",
-    ]
-    slow_speed_threshold: float
-    conservation_threshold: float | None
-
-    @field_validator("name")
-    @staticmethod
-    def clean(value: str):
-        return value.strip() if value else "Unnamed"
-
-
 class TuningOutput(BaseModel):
     result: Result
     tuned_sequences: list[TunedSequence]
@@ -237,9 +258,10 @@ class RunInfo(BaseModel):
     creation_date: datetime
     duration: timedelta
     sequence_number: int
-    mode: str
+    mode: TuningMode
     slow_speed_threshold: float
     conservation_threshold: float | None
+    five_prime_region_tuning_mode: FivePrimeRegionTuningMode | None
 
 
 class RunInfoForm(BaseModel):
@@ -249,3 +271,4 @@ class RunInfoForm(BaseModel):
     mode: str
     slow_speed_threshold: float
     conservation_threshold: float | None
+    five_prime_region_tuning_mode: str | None

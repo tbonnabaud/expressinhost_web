@@ -122,6 +122,7 @@ class Result(Base):
     conservation_threshold: Mapped[float | None] = mapped_column(
         sa.Float, nullable=True
     )
+    five_prime_region_tuning: Mapped[dict | None] = mapped_column(JSONB, nullable=True)
 
     host_codon_table: Mapped["CodonTable"] = relationship(
         "CodonTable", foreign_keys=[host_codon_table_id]
@@ -163,4 +164,7 @@ class RunInfo(Base):
     slow_speed_threshold: Mapped[float] = mapped_column(sa.Float)
     conservation_threshold: Mapped[float | None] = mapped_column(
         sa.Float, nullable=True
+    )
+    five_prime_region_tuning_mode: Mapped[str | None] = mapped_column(
+        sa.String, nullable=True
     )

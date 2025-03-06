@@ -17,6 +17,7 @@ from ..crud.results import ResultRepository
 from ..crud.run_infos import RunInfoRepository
 from ..crud.tuned_sequences import TunedSequenceRepository
 from ..database import Session, context_get_session, context_get_session_with_commit
+from ..logger import logger
 from ..schemas import ProgressState, RunInfoForm, RunTuningForm, TuningOutput
 
 router = APIRouter(tags=["Tuning"])
@@ -133,6 +134,11 @@ def stream_sequence_tuning(token: OptionalTokenDependency, form: RunTuningForm):
             "mode": form.mode,
             "slow_speed_threshold": form.slow_speed_threshold,
             "conservation_threshold": form.conservation_threshold,
+            "five_prime_region_tuning": (
+                form.five_prime_region_tuning.model_dump()
+                if form.five_prime_region_tuning
+                else None
+            ),
         }
 
         with context_get_session_with_commit() as session:
@@ -144,6 +150,11 @@ def stream_sequence_tuning(token: OptionalTokenDependency, form: RunTuningForm):
                     mode=form.mode,
                     slow_speed_threshold=form.slow_speed_threshold,
                     conservation_threshold=form.conservation_threshold,
+                    five_prime_region_tuning_mode=(
+                        form.five_prime_region_tuning.mode
+                        if form.five_prime_region_tuning
+                        else None
+                    ),
                 ).model_dump()
             )
 
@@ -177,9 +188,10 @@ def stream_sequence_tuning(token: OptionalTokenDependency, form: RunTuningForm):
         tuning_state.error(str(exc))
         yield tuning_state.model_dump_json()
 
-    except Exception:
+    except Exception as exc:
         time.sleep(0.5)
-        tuning_state.error()
+        tuning_state.error("Server error.")
+        logger.error(exc)
         yield tuning_state.model_dump_json()
 
 

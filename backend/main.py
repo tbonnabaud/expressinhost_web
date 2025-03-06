@@ -31,8 +31,8 @@ app = FastAPI(title="ExpressInHost")
 # )
 
 
-api_app = FastAPI(title="ExpressInHost API", docs_url=None, redoc_url=None)
-# api_app = FastAPI(title="ExpressInHost API")
+# api_app = FastAPI(title="ExpressInHost API", docs_url=None, redoc_url=None)
+api_app = FastAPI(title="ExpressInHost API")
 
 api_app.include_router(auth.router)
 api_app.include_router(admin.router, include_in_schema=False)

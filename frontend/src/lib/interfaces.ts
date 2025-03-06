@@ -41,6 +41,18 @@ export interface Token {
   token_type: string
 }
 
+export interface PartialUntuningMode {
+  mode: 'partial_untuning'
+  untuned_codons: number
+}
+
+// To use OSTIR
+export interface FineTuningMode {
+  mode: 'fine_tuning'
+  codon_window: number
+  utr: string
+}
+
 export interface RunTrainingForm {
   name: string
   nucleotide_file_content: string
@@ -50,6 +62,7 @@ export interface RunTrainingForm {
   mode: string
   slow_speed_threshold: number
   conservation_threshold: number | null
+  five_prime_region_tuning: PartialUntuningMode | FineTuningMode | null
 }
 
 export interface CodonTable {

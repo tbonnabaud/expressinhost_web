@@ -6,9 +6,10 @@ import { API } from '@/lib/api'
 import { Status, useStreamState } from '@/lib/streamedState'
 import CodonTableSearchSelect from '@/components/codon-tables/CodonTableSearchSelect.vue'
 import ToolTip from '@/components/ToolTip.vue'
-import WithAlertError from './WithAlertError.vue'
-import AlertError from './AlertError.vue'
-import ProgressBar from './ProgressBar.vue'
+import WithAlertError from '@/components/WithAlertError.vue'
+import AlertError from '@/components/AlertError.vue'
+import ProgressBar from '@/components/ProgressBar.vue'
+import FivePrimeRegionTuning from '@/components/tuning-form/FivePrimeRegionTuning.vue'
 import {
   checkClustal,
   checkClustalMatchingFasta,
@@ -26,6 +27,7 @@ const baseForm: RunTrainingForm = reactive({
   mode: 'direct_mapping',
   slow_speed_threshold: 0.5,
   conservation_threshold: null,
+  five_prime_region_tuning: null,
 })
 
 const baseFormErrors = reactive({
@@ -455,6 +457,12 @@ async function runTuning() {
       </div>
     </section>
 
+    <section>
+      <h2>Specific tuning of mRNA's 5’ region</h2>
+
+      <FivePrimeRegionTuning v-model="baseForm.five_prime_region_tuning" />
+    </section>
+
     <hr />
 
     <div id="dataConsent">
@@ -505,17 +513,6 @@ section {
   width: 100%;
 }
 
-.input-range input {
-  width: 90%;
-  margin-bottom: 1em;
-}
-
-.input-range {
-  flex: auto;
-  text-align: center;
-  width: 100%;
-}
-
 .select-cell details {
   width: 100%;
   margin: 0;
@@ -529,6 +526,10 @@ td {
   display: flex;
   column-gap: 2em;
   justify-content: center;
+}
+
+#codonWindow {
+  margin-top: 1em;
 }
 
 #dataConsent {
@@ -565,12 +566,6 @@ td {
   border-radius: 0.25rem;
   padding: 0.75rem 1.25rem;
   margin: 0.75rem 0;
-}
-
-span.question-marks {
-  border: 2px solid salmon;
-  border-radius: 50%;
-  font-size: 1rem;
 }
 
 @media (max-width: 1024px) {
