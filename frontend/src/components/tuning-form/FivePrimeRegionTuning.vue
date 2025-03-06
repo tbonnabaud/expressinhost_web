@@ -46,7 +46,7 @@ watch(mode, value => {
       <label>
         <input type="radio" value="partial_untuning" v-model="mode" />
         <ToolTip>
-          Un-tuned
+          Untuned
           <span class="material-icons question-marks">question_mark</span>
           <template #tooltip>
             User selects a number of codons (something like a range slider –
