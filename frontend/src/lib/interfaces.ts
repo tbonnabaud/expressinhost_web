@@ -49,7 +49,7 @@ export interface PartialUntuningMode {
 // To use OSTIR
 export interface FineTuningMode {
   mode: 'fine_tuning'
-  codon_window: number
+  codon_window_size: number
   utr: string
 }
 

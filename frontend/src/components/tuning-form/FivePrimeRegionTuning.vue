@@ -17,7 +17,7 @@ watch(mode, value => {
   } else if (value == 'fine_tuning') {
     model.value = {
       mode: value,
-      codon_window: 5,
+      codon_window_size: 5,
       utr: '',
     } as FineTuningMode
   } else {
@@ -80,7 +80,7 @@ watch(mode, value => {
     <div class="input-range" v-if="'untuned_codons' in model">
       <ToolTip>
         <label>
-          Untuned codons = {{ model.untuned_codons }} codons
+          Number of untuned codons = {{ model.untuned_codons }} codons
           <span class="material-icons question-marks">question_mark</span>
         </label>
         <template #tooltip> Lorem ipsum </template>
@@ -96,10 +96,10 @@ watch(mode, value => {
   </div>
 
   <div id="fineTuningModeOptions" v-else-if="mode == 'fine_tuning' && model">
-    <div class="input-range" v-if="'codon_window' in model">
+    <div class="input-range" v-if="'codon_window_size' in model">
       <ToolTip>
         <label>
-          Codon window = {{ model.codon_window }} codons
+          Codon window size = {{ model.codon_window_size }} codons
           <span class="material-icons question-marks">question_mark</span>
         </label>
         <template #tooltip> Lorem ipsum </template>
@@ -109,7 +109,7 @@ watch(mode, value => {
         min="1"
         max="10"
         step="1"
-        v-model="model.codon_window"
+        v-model="model.codon_window_size"
       />
     </div>
 

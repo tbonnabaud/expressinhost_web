@@ -197,7 +197,7 @@ class PartialUntuningMode(BaseModel):
 ## To use OSTIR
 class FineTuningMode(BaseModel):
     mode: Literal[FivePrimeRegionTuningMode.FINE_TUNING]
-    codon_window: int
+    codon_window_size: int
     utr: str
 
 
