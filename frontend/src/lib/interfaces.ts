@@ -43,7 +43,7 @@ export interface Token {
 
 export interface PartialUntuningMode {
   mode: 'partial_untuning'
-  untuned_codons: number
+  untuned_codon_number: number
 }
 
 // To use OSTIR

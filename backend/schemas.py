@@ -191,7 +191,7 @@ class FivePrimeRegionTuningMode(str, Enum):
 
 class PartialUntuningMode(BaseModel):
     mode: Literal[FivePrimeRegionTuningMode.PARTIAL_UNTUNING]
-    untuned_codons: int
+    untuned_codon_number: int
 
 
 ## To use OSTIR
