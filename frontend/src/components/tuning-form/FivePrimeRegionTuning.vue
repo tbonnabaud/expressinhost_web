@@ -69,8 +69,8 @@ watch(mode, value => {
             codon window. The larger the codon window, the longer the
             calculation time, due to the greater number of combinations (of the
             order of the factorial). For example, per sequence, it may take
-            about 3 seconds for a window of 5 codons, but about 50 minutes for
-            10.
+            about 3 seconds for a window of 5 codons, but more than half an hour
+            for 10.
           </template>
         </ToolTip>
       </label>
