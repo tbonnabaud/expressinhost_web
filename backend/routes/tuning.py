@@ -1,5 +1,5 @@
+import asyncio
 import re
-import time
 from datetime import UTC, datetime
 from uuid import UUID
 
@@ -71,7 +71,7 @@ def get_processed_tables(
     return native_codon_tables, host_codon_table
 
 
-def stream_sequence_tuning(token: OptionalTokenDependency, form: RunTuningForm):
+async def stream_sequence_tuning(token: OptionalTokenDependency, form: RunTuningForm):
     # Extract native codon table IDs of the form
     native_codon_table_ids = get_native_codon_table_ids(
         form.nucleotide_file_content, form.sequences_native_codon_tables
@@ -99,7 +99,7 @@ def stream_sequence_tuning(token: OptionalTokenDependency, form: RunTuningForm):
                 form.slow_speed_threshold,
             )
 
-        time.sleep(0.5)
+        await asyncio.sleep(0.5)
 
         sequence_tuner = SequenceTuner(
             form.nucleotide_file_content,
@@ -121,7 +121,7 @@ def stream_sequence_tuning(token: OptionalTokenDependency, form: RunTuningForm):
             try:
                 tuned_sequence = next(pipeline)
                 tuned_sequences.append(tuned_sequence)
-                time.sleep(0.3)
+                await asyncio.sleep(0.3)
 
             except StopIteration:
                 break
@@ -188,25 +188,31 @@ def stream_sequence_tuning(token: OptionalTokenDependency, form: RunTuningForm):
                 }
             )
 
-        time.sleep(0.5)
+        await asyncio.sleep(0.5)
         tuning_state.success()
         tuning_state.result = tuning_output
         yield tuning_state.model_dump_json()
 
     except (ExpressInHostError, HTTPException) as exc:
-        time.sleep(0.5)
+        await asyncio.sleep(0.3)
         tuning_state.error(str(exc))
         yield tuning_state.model_dump_json()
 
+    except asyncio.CancelledError:
+        await asyncio.sleep(0.3)
+        logger.warning("Cancelled.")
+        tuning_state.error("Cancelled.")
+        yield tuning_state.model_dump_json()
+
     except Exception as exc:
-        time.sleep(0.5)
+        await asyncio.sleep(0.3)
         tuning_state.error("Server error.")
         logger.error(exc)
         yield tuning_state.model_dump_json()
 
 
 @router.post("/run-tuning")
-def run_tuning(
+async def run_tuning(
     token: OptionalTokenDependency,
     form: RunTuningForm,
 ):
