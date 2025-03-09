@@ -504,6 +504,10 @@ async function runTuning() {
 </template>
 
 <style scoped>
+#runTuningForm {
+  padding-bottom: 3em;
+}
+
 section {
   margin-top: 2em;
 }
@@ -550,7 +554,7 @@ td {
 
 #tuningProgressWrapper {
   height: 3em;
-  margin-bottom: 1rem;
+  margin-bottom: 3em;
 }
 
 #tuningProgressText {
