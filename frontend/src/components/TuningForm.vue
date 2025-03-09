@@ -488,6 +488,9 @@ async function runTuning() {
     </AlertError>
 
     <div id="tuningProgressWrapper">
+      <p v-if="tuningState?.status == Status.RUNNING" id="tuningProgressText">
+        {{ tuningState.message }}
+      </p>
       <ProgressBar
         v-if="tuningLoading"
         id="tuningProgress"
@@ -548,6 +551,11 @@ td {
 #tuningProgressWrapper {
   height: 3em;
   margin-bottom: 1rem;
+}
+
+#tuningProgressText {
+  text-align: center;
+  font-style: italic;
 }
 
 #runTuningButton {
