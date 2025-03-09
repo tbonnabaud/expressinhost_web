@@ -35,7 +35,7 @@ watch(mode, value => {
           Like the whole sequence
           <span class="material-icons question-marks">question_mark</span>
           <template #tooltip>
-            Here nothing to be done, the output sequence is the one from the
+            Here nothing to be done, the output sequences are the ones from the
             modes as they are.
           </template>
         </ToolTip>
@@ -49,10 +49,9 @@ watch(mode, value => {
           Untuned
           <span class="material-icons question-marks">question_mark</span>
           <template #tooltip>
-            User selects a number of codons (something like a range slider –
-            like for thresholds) between 0 and 50 codons. This part of the
-            sequence is exactly like the one that was initially input by the
-            user (no tuning has taken place).
+            In this mode the N first selected codons of the sequences are
+            exactly like the ones that was initially input by the user (no
+            tuning has taken place).
           </template>
         </ToolTip>
       </label>
@@ -65,8 +64,13 @@ watch(mode, value => {
           Fine-tuned
           <span class="material-icons question-marks">question_mark</span>
           <template #tooltip>
-            User selects a number of codons (something like a range slider)
-            between 0 and 10 codons, that defines the codon window.
+            In this mode the sequences are optimised with OSTIR software. User
+            selects a number of codons between 1 and 10 codons, that defines the
+            codon window. The larger the codon window, the longer the
+            calculation time, due to the greater number of combinations (of the
+            order of the factorial). For example, per sequence, it may take
+            about 3 seconds for a window of 5 codons, but about 50 minutes for
+            10.
           </template>
         </ToolTip>
       </label>
