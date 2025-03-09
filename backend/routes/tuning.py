@@ -121,6 +121,7 @@ def stream_sequence_tuning(token: OptionalTokenDependency, form: RunTuningForm):
             try:
                 tuned_sequence = next(pipeline)
                 tuned_sequences.append(tuned_sequence)
+                time.sleep(0.3)
 
             except StopIteration:
                 break
