@@ -78,13 +78,9 @@ watch(mode, value => {
     v-if="mode == 'partial_untuning' && model"
   >
     <div class="input-range" v-if="'untuned_codon_number' in model">
-      <ToolTip>
-        <label>
-          Number of untuned codons = {{ model.untuned_codon_number }} codons
-          <span class="material-icons question-marks">question_mark</span>
-        </label>
-        <template #tooltip> Lorem ipsum </template>
-      </ToolTip>
+      <label>
+        Number of untuned codons = {{ model.untuned_codon_number }} codons
+      </label>
       <input
         type="range"
         min="1"
@@ -97,13 +93,7 @@ watch(mode, value => {
 
   <div id="fineTuningModeOptions" v-else-if="mode == 'fine_tuning' && model">
     <div class="input-range" v-if="'codon_window_size' in model">
-      <ToolTip>
-        <label>
-          Codon window size = {{ model.codon_window_size }} codons
-          <span class="material-icons question-marks">question_mark</span>
-        </label>
-        <template #tooltip> Lorem ipsum </template>
-      </ToolTip>
+      <label> Codon window size = {{ model.codon_window_size }} codons </label>
       <input
         type="range"
         min="1"
