@@ -33,6 +33,22 @@
   filter: brightness(120%);
 }
 
+span.question-marks {
+  border: 2px solid salmon;
+  border-radius: 50%;
+  font-size: 1rem;
+}
+
+.input-range {
+  text-align: center;
+  width: 100%;
+}
+
+.input-range input {
+  width: 90%;
+  margin-bottom: 1em;
+}
+
 @media (prefers-color-scheme: dark) {
   .danger {
     background-color: #ad1f1f;

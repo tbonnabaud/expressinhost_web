@@ -49,7 +49,7 @@ class RunInfoRepository(BaseRepository):
             "max_duration": result.max_duration,
         }
 
-    def compute_sequence_number_statistics(self) -> dict[str, timedelta]:
+    def compute_sequence_number_statistics(self) -> dict[str, float]:
         stmt = sa.select(
             sa.func.min(RunInfo.sequence_number).label("min_sequence_number"),
             sa.func.avg(RunInfo.sequence_number).label("avg_sequence_number"),

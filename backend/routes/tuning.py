@@ -17,6 +17,7 @@ from ..crud.results import ResultRepository
 from ..crud.run_infos import RunInfoRepository
 from ..crud.tuned_sequences import TunedSequenceRepository
 from ..database import Session, context_get_session, context_get_session_with_commit
+from ..logger import logger
 from ..schemas import ProgressState, RunInfoForm, RunTuningForm, TuningOutput
 
 router = APIRouter(tags=["Tuning"])
@@ -71,8 +72,16 @@ def get_processed_tables(
 
 
 def stream_sequence_tuning(token: OptionalTokenDependency, form: RunTuningForm):
+    # Extract native codon table IDs of the form
+    native_codon_table_ids = get_native_codon_table_ids(
+        form.nucleotide_file_content, form.sequences_native_codon_tables
+    )
+    total_sequence_number = len(native_codon_table_ids)
+
     tuning_state = TuningState().start()
-    tuning_state.set_total(4)
+    # Total of steps is the number of sequences
+    # plus codon table processing step plus end step
+    tuning_state.set_total(total_sequence_number + 2)
     run_start_date = datetime.now(UTC)
 
     try:
@@ -82,10 +91,6 @@ def stream_sequence_tuning(token: OptionalTokenDependency, form: RunTuningForm):
             tuning_state.next_step("Process codon tables...")
             yield tuning_state.model_dump_json()
 
-            # Extract native codon table IDs of the form
-            native_codon_table_ids = get_native_codon_table_ids(
-                form.nucleotide_file_content, form.sequences_native_codon_tables
-            )
             # Processed codon tables
             native_codon_tables, host_codon_table = get_processed_tables(
                 session,
@@ -95,8 +100,6 @@ def stream_sequence_tuning(token: OptionalTokenDependency, form: RunTuningForm):
             )
 
         time.sleep(0.5)
-        tuning_state.next_step("Preprocess sequences...")
-        yield tuning_state.model_dump_json()
 
         sequence_tuner = SequenceTuner(
             form.nucleotide_file_content,
@@ -105,18 +108,26 @@ def stream_sequence_tuning(token: OptionalTokenDependency, form: RunTuningForm):
             host_codon_table,
         )
 
-        time.sleep(0.5)
-        tuning_state.next_step("Process sequences...")
-        yield tuning_state.model_dump_json()
-
-        processed_sequences = sequence_tuner.process(
-            form.mode, form.conservation_threshold
+        tuned_sequences = []
+        pipeline = sequence_tuner.tuning_pipeline(
+            form.mode, form.conservation_threshold, form.five_prime_region_tuning
         )
 
-        time.sleep(0.5)
-        tuning_state.next_step("Postprocess sequences...")
+        for cpt in range(1, total_sequence_number + 1):
+            # Update state before process
+            tuning_state.next_step(f"Process sequence {cpt}/{total_sequence_number}...")
+            yield tuning_state.model_dump_json()
+
+            try:
+                tuned_sequence = next(pipeline)
+                tuned_sequences.append(tuned_sequence)
+                time.sleep(0.3)
+
+            except StopIteration:
+                break
+
+        tuning_state.next_step("Serialization of the results...")
         yield tuning_state.model_dump_json()
-        tuned_sequences = sequence_tuner.postprocess(processed_sequences)
 
         # Stringify UUIDs to make the dictionary serializable
         serializable_sequences_native_codon_tables = {
@@ -133,6 +144,11 @@ def stream_sequence_tuning(token: OptionalTokenDependency, form: RunTuningForm):
             "mode": form.mode,
             "slow_speed_threshold": form.slow_speed_threshold,
             "conservation_threshold": form.conservation_threshold,
+            "five_prime_region_tuning": (
+                form.five_prime_region_tuning.model_dump()
+                if form.five_prime_region_tuning
+                else None
+            ),
         }
 
         with context_get_session_with_commit() as session:
@@ -140,10 +156,15 @@ def stream_sequence_tuning(token: OptionalTokenDependency, form: RunTuningForm):
                 RunInfoForm(
                     creation_date=run_start_date,
                     duration=(run_end_date - run_start_date),
-                    sequence_number=len(processed_sequences),
+                    sequence_number=len(tuned_sequences),
                     mode=form.mode,
                     slow_speed_threshold=form.slow_speed_threshold,
                     conservation_threshold=form.conservation_threshold,
+                    five_prime_region_tuning_mode=(
+                        form.five_prime_region_tuning.mode
+                        if form.five_prime_region_tuning
+                        else None
+                    ),
                 ).model_dump()
             )
 
@@ -177,9 +198,10 @@ def stream_sequence_tuning(token: OptionalTokenDependency, form: RunTuningForm):
         tuning_state.error(str(exc))
         yield tuning_state.model_dump_json()
 
-    except Exception:
+    except Exception as exc:
         time.sleep(0.5)
-        tuning_state.error()
+        tuning_state.error("Server error.")
+        logger.error(exc)
         yield tuning_state.model_dump_json()
 
 

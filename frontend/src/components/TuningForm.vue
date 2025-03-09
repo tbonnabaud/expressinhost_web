@@ -1,14 +1,15 @@
 <script setup lang="ts">
 import { ref, onMounted, reactive, watch, computed } from 'vue'
 import { readTextFile, toFixedFloat } from '@/lib/helpers'
-import type { CodonTable } from '@/lib/interfaces'
+import type { CodonTable, RunTrainingForm } from '@/lib/interfaces'
 import { API } from '@/lib/api'
 import { Status, useStreamState } from '@/lib/streamedState'
 import CodonTableSearchSelect from '@/components/codon-tables/CodonTableSearchSelect.vue'
 import ToolTip from '@/components/ToolTip.vue'
-import WithAlertError from './WithAlertError.vue'
-import AlertError from './AlertError.vue'
-import ProgressBar from './ProgressBar.vue'
+import WithAlertError from '@/components/WithAlertError.vue'
+import AlertError from '@/components/AlertError.vue'
+import ProgressBar from '@/components/ProgressBar.vue'
+import FivePrimeRegionTuning from '@/components/tuning-form/FivePrimeRegionTuning.vue'
 import {
   checkClustal,
   checkClustalMatchingFasta,
@@ -17,15 +18,16 @@ import {
 
 const emit = defineEmits(['submit'])
 
-const baseForm = reactive({
+const baseForm: RunTrainingForm = reactive({
   name: '',
   nucleotide_file_content: '',
   clustal_file_content: '',
   host_codon_table_id: '',
-  sequences_native_codon_tables: {} as Record<string, string>,
+  sequences_native_codon_tables: {},
   mode: 'direct_mapping',
   slow_speed_threshold: 0.5,
-  conservation_threshold: 0.75,
+  conservation_threshold: null,
+  five_prime_region_tuning: null,
 })
 
 const baseFormErrors = reactive({
@@ -87,6 +89,18 @@ watch(tuningState, state => {
     emit('submit', state.result)
   }
 })
+
+watch(
+  () => baseForm.mode,
+  value => {
+    if (value === 'optimisation_and_conservation_2') {
+      // Set a default value
+      baseForm.conservation_threshold = 0.75
+    } else {
+      baseForm.conservation_threshold = null
+    }
+  },
+)
 
 async function fetchCodonTables() {
   const [data, error] = await API.codonTables.list()
@@ -412,7 +426,13 @@ async function runTuning() {
           />
         </div>
 
-        <div class="input-range">
+        <div
+          class="input-range"
+          v-if="
+            baseForm.mode == 'optimisation_and_conservation_2' &&
+            baseForm.conservation_threshold !== null
+          "
+        >
           <ToolTip>
             <label>
               Conservation threshold =
@@ -437,17 +457,16 @@ async function runTuning() {
       </div>
     </section>
 
+    <section>
+      <h2>Specific tuning of mRNA's 5’ region</h2>
+
+      <FivePrimeRegionTuning v-model="baseForm.five_prime_region_tuning" />
+    </section>
+
     <hr />
 
     <div id="dataConsent">
       <input id="dataConsentCheckbox" type="checkbox" checked required />
-      <!-- <label for="dataConsentCheckbox">
-        Data are sent to our server for computing but are not shared with
-        third-party. Results are not saved if you are not logged-in. We decline
-        all responsibilities for any loss or leak of data. By checking this box
-        you agree with our data privacy policy.
-      </label> -->
-
       <label for="dataConsentCheckbox">
         Uploaded data are sent to our server for computing but are not shared
         with any third-party. Results are not saved unless you are logged-in. We
@@ -469,6 +488,9 @@ async function runTuning() {
     </AlertError>
 
     <div id="tuningProgressWrapper">
+      <p v-if="tuningState?.status == Status.RUNNING" id="tuningProgressText">
+        {{ tuningState.message }}
+      </p>
       <ProgressBar
         v-if="tuningLoading"
         id="tuningProgress"
@@ -494,17 +516,6 @@ section {
   width: 100%;
 }
 
-.input-range input {
-  width: 90%;
-  margin-bottom: 1em;
-}
-
-.input-range {
-  flex: auto;
-  text-align: center;
-  width: 100%;
-}
-
 .select-cell details {
   width: 100%;
   margin: 0;
@@ -518,6 +529,10 @@ td {
   display: flex;
   column-gap: 2em;
   justify-content: center;
+}
+
+#codonWindow {
+  margin-top: 1em;
 }
 
 #dataConsent {
@@ -538,6 +553,11 @@ td {
   margin-bottom: 1rem;
 }
 
+#tuningProgressText {
+  text-align: center;
+  font-style: italic;
+}
+
 #runTuningButton {
   height: 100%;
   margin-bottom: 0;
@@ -554,12 +574,6 @@ td {
   border-radius: 0.25rem;
   padding: 0.75rem 1.25rem;
   margin: 0.75rem 0;
-}
-
-span.question-marks {
-  border: 2px solid salmon;
-  border-radius: 50%;
-  font-size: 1rem;
 }
 
 @media (max-width: 1024px) {

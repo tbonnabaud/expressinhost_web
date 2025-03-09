@@ -1,5 +1,7 @@
 import random
+from typing import Iterator
 
+from ..schemas import FineTuningMode, PartialUntuningMode
 from .checks import check_amino_acido_conservation, check_nucleotides_clustal_identity
 from .codon_tables import ProcessedCodonTable
 from .exceptions import (
@@ -7,17 +9,14 @@ from .exceptions import (
     NoAminoAcidConservation,
     NoIdenticalSequencesError,
 )
+from .five_prime_region_tuning import optimize_with_ostir
 from .postprocessing import (
     clear_output_sequence,
     compute_similarity,
     rna_to_dna_sequence,
 )
 from .preprocessing import align_nucleotide_sequences, dna_to_rna_sequences
-from .utils import (  # write_text_to_file,
-    get_clustal_symbol_sequence,
-    parse_sequences,
-    timeit,
-)
+from .utils import get_clustal_symbol_sequence, parse_sequences, timeit
 
 
 def find_amino_acid_and_rank(
@@ -76,9 +75,7 @@ def direct_mapping(
     cleared_nucleotide_sequences: list[str],
     native_codon_tables: list[ProcessedCodonTable],
     host_codon_table: ProcessedCodonTable,
-) -> list[str]:
-    results = []
-
+) -> Iterator[str]:
     for seq, native_codon_table in zip(
         cleared_nucleotide_sequences, native_codon_tables
     ):
@@ -118,11 +115,7 @@ def direct_mapping(
                     # Add it to the processed sequence
                     new_line += output_codon
 
-        results.append(new_line)
-
-    # write_text_to_file("\n".join(results), "tmp/modif_sequences_6.txt")
-
-    return results
+        yield new_line
 
 
 def optimisation_and_conservation_1(
@@ -130,9 +123,7 @@ def optimisation_and_conservation_1(
     symbol_sequence: str,
     native_codon_tables: list[ProcessedCodonTable],
     host_codon_table: ProcessedCodonTable,
-) -> list[str]:
-    results = []
-
+) -> Iterator[str]:
     for seq, native_codon_table in zip(
         aligned_nucleotide_sequences, native_codon_tables
     ):
@@ -183,11 +174,7 @@ def optimisation_and_conservation_1(
                     # Add it to the processed sequence
                     new_line += output_codon
 
-        results.append(new_line)
-
-    # write_text_to_file("\n".join(results), "tmp/modif_sequences_6.txt")
-
-    return results
+        yield new_line
 
 
 def optimisation_and_conservation_2(
@@ -196,7 +183,7 @@ def optimisation_and_conservation_2(
     native_codon_tables: list[ProcessedCodonTable],
     host_codon_table: ProcessedCodonTable,
     conservation_threshold: float,
-) -> list[str]:
+) -> Iterator[str]:
     cpt_symbols = [0.0 for _ in range(len(aligned_nucleotide_sequences[0]))]
 
     # Make a loop on all natives to create the corresponding "0" and "S" file ("S" indicate slow codons)
@@ -226,12 +213,8 @@ def optimisation_and_conservation_2(
         else:
             symbol_sequence += "0"
 
-    # write_text_to_file(symbol_sequence, "tmp/modif_sequences_7.txt")
-
     # In a similar fashion as in optimisation_and_conservation_1,
     # optimise all sequences but mimic native speed where slow codons are conserved
-    results = []
-
     for seq, native_codon_table in zip(
         aligned_nucleotide_sequences, native_codon_tables
     ):
@@ -279,11 +262,7 @@ def optimisation_and_conservation_2(
                     # Add it to the processed sequence
                     new_line += output_codon
 
-        results.append(new_line)
-
-    # write_text_to_file("\n".join(results), "tmp/modif_sequences_6.txt")
-
-    return results
+        yield new_line
 
 
 def get_sequence_profiles(rna_sequence: str, codon_table: ProcessedCodonTable):
@@ -309,8 +288,6 @@ class SequenceTuner:
         clustal_file_content: str | None,
         native_codon_tables: list[ProcessedCodonTable],
         host_codon_table: ProcessedCodonTable,
-        # mode: str,
-        # conservation_threshold: float | None,
     ):
         self.nucleotide_records = parse_sequences(nucleotide_file_content, "fasta")
         self.clustal_records = (
@@ -342,7 +319,9 @@ class SequenceTuner:
                     "Check their value in the two files and check their order."
                 )
 
-    def process(self, mode: str, conservation_threshold: float | None) -> list[str]:
+    def get_tuning_iterator(
+        self, mode: str, conservation_threshold: float | None
+    ) -> Iterator[str]:
         cleared_nucleotide_sequences = dna_to_rna_sequences(self.nucleotide_records)
 
         if mode == "direct_mapping":
@@ -382,18 +361,39 @@ class SequenceTuner:
                     "Invalid mode. Should be direct_mapping, optimisation_and_conservation_1 or optimisation_and_conservation_2."
                 )
 
-    def postprocess(self, output_rna_sequences: list[str]) -> list[dict]:
-        output_list = []
+    def tuning_pipeline(
+        self,
+        mode: str,
+        conservation_threshold: float | None,
+        five_prime_region_tuning: PartialUntuningMode | FineTuningMode | None,
+    ) -> Iterator[dict]:
+        tuning_iterator = self.get_tuning_iterator(mode, conservation_threshold)
 
         for input_record, output_rna_sequence, native_codon_table in zip(
             self.nucleotide_records,
-            output_rna_sequences,
+            tuning_iterator,
             self.native_codon_tables,
         ):
             cleared_output_rna_sequence = clear_output_sequence(output_rna_sequence)
             cleared_output_dna_sequence = rna_to_dna_sequence(
                 cleared_output_rna_sequence
             )
+            input_dna_sequence = str(input_record.seq)
+
+            if five_prime_region_tuning:
+                if isinstance(five_prime_region_tuning, PartialUntuningMode):
+                    cut_index = five_prime_region_tuning.untuned_codon_number * 3 + 1
+                    cleared_output_dna_sequence = (
+                        input_dna_sequence[:cut_index]
+                        + cleared_output_dna_sequence[cut_index:]
+                    )
+
+                elif isinstance(five_prime_region_tuning, FineTuningMode):
+                    cleared_output_rna_sequence = optimize_with_ostir(
+                        five_prime_region_tuning.utr,
+                        cleared_output_rna_sequence,
+                        five_prime_region_tuning.codon_window_size,
+                    )
 
             # Ensure input and ouput nucleotide sequence have the same amino-acid sequence
             if not check_amino_acido_conservation(
@@ -403,27 +403,26 @@ class SequenceTuner:
                     "Amino acid sequences from input and output are supposed to be the same."
                 )
 
-            input_dna_sequence = str(input_record.seq)
             identity_percentage = compute_similarity(
                 input_dna_sequence, cleared_output_dna_sequence
             )
-            output_list.append(
-                {
-                    "name": input_record.description,
-                    "input": input_dna_sequence,
-                    "output": cleared_output_dna_sequence,
-                    "identity_percentage": identity_percentage,
-                    "input_profiles": get_sequence_profiles(
-                        input_dna_sequence.replace("T", "U"),  # RNA sequence required
-                        native_codon_table,
-                    ),
-                    "output_profiles": get_sequence_profiles(
-                        cleared_output_rna_sequence, self.host_codon_table
-                    ),
-                }
+            input_profiles = get_sequence_profiles(
+                input_dna_sequence.replace("T", "U"),  # RNA sequence required
+                native_codon_table,
+            )
+            output_profiles = get_sequence_profiles(
+                cleared_output_rna_sequence, self.host_codon_table
             )
 
-        return output_list
+            # Format result
+            yield {
+                "name": input_record.description,
+                "input": input_dna_sequence,
+                "output": cleared_output_dna_sequence,
+                "identity_percentage": identity_percentage,
+                "input_profiles": input_profiles,
+                "output_profiles": output_profiles,
+            }
 
 
 @timeit
@@ -434,6 +433,7 @@ def tune_sequences(
     host_codon_table: ProcessedCodonTable,
     mode: str,
     conservation_threshold: float | None,
+    five_prime_region_tuning: PartialUntuningMode | FineTuningMode | None,
 ) -> list[dict]:
     sequence_tuner = SequenceTuner(
         nucleotide_file_content,
@@ -441,6 +441,8 @@ def tune_sequences(
         native_codon_tables,
         host_codon_table,
     )
-    processed_sequences = sequence_tuner.process(mode, conservation_threshold)
+    pipeline = sequence_tuner.tuning_pipeline(
+        mode, conservation_threshold, five_prime_region_tuning
+    )
 
-    return sequence_tuner.postprocess(processed_sequences)
+    return list(pipeline)
