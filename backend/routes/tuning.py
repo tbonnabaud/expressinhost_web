@@ -79,8 +79,9 @@ def stream_sequence_tuning(token: OptionalTokenDependency, form: RunTuningForm):
     total_sequence_number = len(native_codon_table_ids)
 
     tuning_state = TuningState().start()
-    # Total of steps is the number of sequences plus codon table processing step
-    tuning_state.set_total(total_sequence_number + 1)
+    # Total of steps is the number of sequences
+    # plus codon table processing step plus end step
+    tuning_state.set_total(total_sequence_number + 2)
     run_start_date = datetime.now(UTC)
 
     try:
@@ -123,6 +124,9 @@ def stream_sequence_tuning(token: OptionalTokenDependency, form: RunTuningForm):
 
             except StopIteration:
                 break
+
+        tuning_state.next_step("Serialization of the results...")
+        yield tuning_state.model_dump_json()
 
         # Stringify UUIDs to make the dictionary serializable
         serializable_sequences_native_codon_tables = {
