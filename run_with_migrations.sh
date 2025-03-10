@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# Create logs directory
+mkdir -p logs
 # Run database migrations
 alembic upgrade head
 # Add example codon tables if none exists in database

@@ -11,7 +11,7 @@ logger.setLevel(logging.INFO)
 
 # Create a rotating file handler
 file_handler = RotatingFileHandler(
-    "expressinhost.log",  # Log file name
+    "logs/expressinhost.log",  # Log file name
     maxBytes=5 * 1024 * 1024,  # Maximum file size (5 MB)
     backupCount=2,  # Number of backup files to keep
 )
