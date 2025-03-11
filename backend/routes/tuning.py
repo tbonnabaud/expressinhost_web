@@ -18,7 +18,13 @@ from ..crud.run_infos import RunInfoRepository
 from ..crud.tuned_sequences import TunedSequenceRepository
 from ..database import Session, context_get_session, context_get_session_with_commit
 from ..logger import logger
-from ..schemas import ProgressState, RunInfoForm, RunTuningForm, TuningOutput
+from ..schemas import (
+    FineTuningMode,
+    ProgressState,
+    RunInfoForm,
+    RunTuningForm,
+    TuningOutput,
+)
 
 router = APIRouter(tags=["Tuning"])
 
@@ -88,6 +94,12 @@ async def stream_sequence_tuning(token: OptionalTokenDependency, form: RunTuning
         with context_get_session() as session:
             # Get user if token
             user = get_current_user(session, token) if token else None
+
+            if user is None and isinstance(
+                form.five_prime_region_tuning, FineTuningMode
+            ):
+                form.five_prime_region_tuning = None
+
             tuning_state.next_step("Process codon tables...")
             yield tuning_state.model_dump_json()
 
