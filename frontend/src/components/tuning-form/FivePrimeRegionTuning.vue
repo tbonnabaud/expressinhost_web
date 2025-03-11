@@ -2,7 +2,9 @@
 import { ref, watch } from 'vue'
 import type { PartialUntuningMode, FineTuningMode } from '@/lib/interfaces'
 import ToolTip from '@/components/ToolTip.vue'
+import { store } from '@/lib/store'
 
+const user = store.currentUser
 const mode = ref<string | null>(null)
 const model = defineModel<PartialUntuningMode | FineTuningMode | null>()
 
@@ -57,7 +59,7 @@ watch(mode, value => {
       </label>
     </div>
 
-    <div>
+    <div v-if="user">
       <label>
         <input type="radio" value="fine_tuning" v-model="mode" />
         <ToolTip>
@@ -95,7 +97,10 @@ watch(mode, value => {
     </div>
   </div>
 
-  <div id="fineTuningModeOptions" v-else-if="mode == 'fine_tuning' && model">
+  <div
+    id="fineTuningModeOptions"
+    v-else-if="user && mode == 'fine_tuning' && model"
+  >
     <div class="input-range" v-if="'codon_window_size' in model">
       <label> Codon window size = {{ model.codon_window_size }} codons </label>
       <input
