@@ -72,21 +72,19 @@ async def stream_job_state(job_id: str):
                 yield json.dumps(state)
                 await asyncio.sleep(0.5)
 
-            elif status == JobStatus.FINISHED:
-                state["message"] = "Finished."
-                state["result"] = job.result
-                yield json.dumps(state, default=str)
-                break
-
-            elif status in [JobStatus.FAILED, JobStatus.CANCELED]:
-                state["message"] = "Failed."
-                state["exc_info"] = job.exc_info
-                yield json.dumps(state)
-                break
-
             else:
-                state["message"] = f"{status}.".capitalize()
-                yield json.dumps(state)
+                if status == JobStatus.FINISHED:
+                    state["message"] = "Finished."
+                    state["result"] = job.result
+
+                elif status in [JobStatus.FAILED, JobStatus.CANCELED]:
+                    state["message"] = "Failed."
+                    state["exc_info"] = job.exc_info
+
+                else:
+                    state["message"] = f"{status}.".capitalize()
+
+                yield json.dumps(state, default=str)
                 break
 
     except (InvalidJobOperation, NoSuchJobError):
