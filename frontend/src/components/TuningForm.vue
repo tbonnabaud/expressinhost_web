@@ -82,7 +82,7 @@ watch(tuningState, state => {
   if (state) {
     if (state.status == Status.FINISHED) {
       emit('submit', state.result)
-    } else if (state.status == Status.NOT_FOUND) {
+    } else if (![Status.STARTED, Status.QUEUED].includes(state.status)) {
       localStorage.removeItem('tuningJobId')
     }
   }
