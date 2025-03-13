@@ -6,6 +6,8 @@ mkdir -p logs
 alembic upgrade head
 # Add example codon tables if none exists in database
 python -m backend.add_example_tables
+# Run Python RQ workers
+python -m backend.workers &
 # Run the periodic web scraping script in background 
 python -m backend.external_db_extractors.lowe_lab &
 # Run the server
