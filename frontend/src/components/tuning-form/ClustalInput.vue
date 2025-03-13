@@ -11,22 +11,20 @@ const clustalContent = ref('')
 const errors = ref<string[]>([])
 const matchingErrors = ref<string[]>([])
 
+watch(clustalContent, content => {
+  model.value = content
+
+  if (content) {
+    errors.value = checkClustal(content)
+  }
+})
+
 watch(
   [() => props.fastaContent, () => clustalContent.value],
   ([fasta, clustal]) => {
     matchingErrors.value = checkClustalMatchingFasta(clustal, fasta)
   },
 )
-
-watch(clustalContent, value => {
-  model.value = value
-})
-
-function checkClustalContent() {
-  if (clustalContent.value) {
-    errors.value = checkClustal(clustalContent.value)
-  }
-}
 
 async function setClustalContent(event: Event) {
   clustalContent.value = await readTextFile(event)
@@ -53,7 +51,6 @@ async function setClustalContent(event: Event) {
         rows="10"
         spellcheck="false"
         v-model="clustalContent"
-        @input="checkClustalContent"
       ></textarea>
     </WithAlertError>
 

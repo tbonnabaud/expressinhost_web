@@ -9,15 +9,13 @@ const model = defineModel<string>()
 const fastaContent = ref('')
 const errors = ref<string[]>([])
 
-watch(fastaContent, value => {
-  model.value = value
-})
+watch(fastaContent, content => {
+  model.value = content
 
-function checkFastaContent() {
-  if (fastaContent.value) {
-    errors.value = checkFasta(fastaContent.value)
+  if (content) {
+    errors.value = checkFasta(content)
   }
-}
+})
 
 async function setFastaContent(event: Event) {
   fastaContent.value = await readTextFile(event)
@@ -42,7 +40,6 @@ async function setFastaContent(event: Event) {
         rows="10"
         spellcheck="false"
         v-model="fastaContent"
-        @input="checkFastaContent"
       ></textarea>
     </WithAlertError>
 
