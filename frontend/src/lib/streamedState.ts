@@ -9,6 +9,7 @@ export enum Status {
   SCHEDULED = 'scheduled',
   STOPPED = 'stopped',
   CANCELED = 'canceled',
+  NOT_FOUND = 'not found',
 }
 
 export interface StreamState {

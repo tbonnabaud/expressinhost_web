@@ -8,11 +8,6 @@ from pydantic import BaseModel, ConfigDict, Field, computed_field, field_validat
 
 
 class Status(str, Enum):
-    # IDLE = "Idle"
-    # RUNNING = "Running"
-    # ERROR = "Error"
-    # SUCCESS = "Success"
-
     QUEUED = "queued"
     FINISHED = "finished"
     FAILED = "failed"
@@ -21,6 +16,7 @@ class Status(str, Enum):
     SCHEDULED = "scheduled"
     STOPPED = "stopped"
     CANCELED = "canceled"
+    NOT_FOUND = "not found"
 
 
 class ProgressState(BaseModel):
