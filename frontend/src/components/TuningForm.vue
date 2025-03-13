@@ -159,9 +159,6 @@ async function runTuning() {
       },
     )
 
-    // // To remove
-    // console.log(JSON.stringify(form))
-
     const [jobId, error] = await API.runTraining(form)
 
     if (!error) {
@@ -206,12 +203,6 @@ async function runTuning() {
       <h2>Sequences of native organisms</h2>
 
       <FastaInput id="fastaInput" v-model="baseForm.nucleotide_file_content" />
-      <ClustalInput
-        id="clustalInput"
-        v-if="clustalIsRequired"
-        v-model="baseForm.clustal_file_content"
-        :fasta-content="baseForm.nucleotide_file_content"
-      />
     </section>
 
     <section>
@@ -248,6 +239,16 @@ async function runTuning() {
       <h2>Mode</h2>
 
       <TuningModeSelector v-model="baseForm.mode" />
+    </section>
+
+    <section v-if="clustalIsRequired">
+      <h2>Alignments</h2>
+
+      <ClustalInput
+        id="clustalInput"
+        v-model="baseForm.clustal_file_content"
+        :fasta-content="baseForm.nucleotide_file_content"
+      />
     </section>
 
     <section>
