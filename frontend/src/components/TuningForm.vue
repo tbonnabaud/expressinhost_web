@@ -329,7 +329,7 @@ async function runTuning() {
     <section>
       <h2>Mode</h2>
 
-      <div id="modeSelector">
+      <div id="tuningModeSelector">
         <div>
           <input
             id="direct_mapping"
@@ -532,7 +532,7 @@ td {
   width: 50%;
 }
 
-#modeSelector {
+#tuningModeSelector {
   display: flex;
   column-gap: 2em;
   justify-content: center;
@@ -584,7 +584,7 @@ td {
 }
 
 @media (max-width: 1024px) {
-  #modeSelector {
+  #tuningModeSelector {
     flex-direction: column;
     row-gap: 1em;
   }
