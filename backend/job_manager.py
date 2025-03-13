@@ -86,4 +86,4 @@ async def stream_job_state(job_id: str):
                 await asyncio.sleep(0.5)
 
     except (InvalidJobOperation, NoSuchJobError):
-        yield json.dumps({"status": "not found", "message": "not found"})
+        yield json.dumps({"status": "not found", "message": "Not found."})
