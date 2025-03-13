@@ -50,7 +50,12 @@ const { state: tuningState, startStream: startTuningStream } = useStreamState(
   localStorage.getItem('accessToken') || undefined,
 )
 
-const clustalIsRequired = computed(() => baseForm.mode != 'direct_mapping')
+const clustalIsRequired = computed(() =>
+  [
+    'optimisation_and_conservation_1',
+    'optimisation_and_conservation_2',
+  ].includes(baseForm.mode),
+)
 
 onMounted(async () => await fetchCodonTables())
 
@@ -74,13 +79,12 @@ watch(
 watch(
   [() => baseForm.nucleotide_file_content, () => baseForm.clustal_file_content],
   ([fastaContent, clustalContent]) => {
+    baseFormErrors.clustal_file_content = []
+
     if (fastaContent && clustalContent) {
       const errors = checkClustalMatchingFasta(clustalContent, fastaContent)
-
-      if (errors.length) {
-        baseFormErrors.clustal_file_content =
-          baseFormErrors.clustal_file_content.concat(errors)
-      }
+      baseFormErrors.clustal_file_content =
+        baseFormErrors.clustal_file_content.concat(errors)
     }
   },
 )
@@ -118,30 +122,26 @@ function parseFastaSequenceNames(content: string) {
   return Array.from(content.matchAll(fastaSeqIdentifierRegex), m => m[1])
 }
 
-async function setFastaContent(event: Event) {
-  // Reset error list
-  baseFormErrors.nucleotide_file_content = []
-  const content = await readTextFile(event)
-  const errors = checkFasta(content)
+function checkFastaContent() {
+  const errors = checkFasta(baseForm.nucleotide_file_content)
+  baseFormErrors.nucleotide_file_content = errors
+}
 
-  if (errors.length) {
-    baseFormErrors.nucleotide_file_content = errors
+async function setFastaContent(event: Event) {
+  baseForm.nucleotide_file_content = await readTextFile(event)
+}
+
+function checkClustalContent() {
+  if (baseForm.clustal_file_content) {
+    const errors = checkClustal(baseForm.clustal_file_content)
+    baseFormErrors.clustal_file_content = errors
   } else {
-    baseForm.nucleotide_file_content = content
+    baseFormErrors.clustal_file_content = []
   }
 }
 
 async function setClustalContent(event: Event) {
-  // Reset error list
-  baseFormErrors.clustal_file_content = []
-  const content = await readTextFile(event)
-  const errors = checkClustal(content)
-
-  if (errors.length) {
-    baseFormErrors.clustal_file_content = errors
-  } else {
-    baseForm.clustal_file_content = content
-  }
+  baseForm.clustal_file_content = await readTextFile(event)
 }
 
 /**
@@ -243,54 +243,70 @@ async function runTuning() {
     </section>
 
     <section>
-      <h2>Data files</h2>
+      <h2>Sequences</h2>
 
-      <div id="fileSelectors">
+      <div id="fastaInput">
+        <ToolTip>
+          <label for="fastaContent">
+            Fasta format
+            <span class="material-icons question-marks">question_mark</span>
+          </label>
+          <template #tooltip>
+            A text containing the mRNA coding sequence(s), with each sequence
+            preceded by a carat (">"), followed by an unique sequence
+            identifier.
+          </template>
+        </ToolTip>
+        <WithAlertError :errors="baseFormErrors.nucleotide_file_content">
+          <textarea
+            id="fastaContent"
+            rows="10"
+            spellcheck="false"
+            v-model="baseForm.nucleotide_file_content"
+            @input="checkFastaContent"
+          ></textarea>
+        </WithAlertError>
+
         <div class="input-file">
-          <ToolTip>
-            <label for="fasta">
-              Sequence file (FASTA)
-              <span class="material-icons question-marks">question_mark</span>
-            </label>
-            <template #tooltip>
-              A text-based file containing the mRNA coding sequence(s), with
-              each sequence preceded by a carat (">"), followed by an unique
-              sequence identifier.
-            </template>
-          </ToolTip>
-
-          <WithAlertError :errors="baseFormErrors.nucleotide_file_content">
-            <input type="file" id="fasta" @change="setFastaContent" required />
-          </WithAlertError>
+          <input type="file" id="fasta" @change="setFastaContent" required />
 
           <i>
             You can download an example sequence file
             <a href="/examples/Rad51_nucleotide.txt" download>here</a>.
           </i>
         </div>
+      </div>
+
+      <div id="clustalInput" v-if="clustalIsRequired">
+        <ToolTip>
+          <label for="clustalContent">
+            Alignments (CLUSTAL, optional)
+            <span class="material-icons question-marks">question_mark</span>
+          </label>
+          <template #tooltip>
+            A text containing multiple sequence alignment data of orthologous
+            proteins from different organisms. The alignment must include the
+            amino acid sequence corresponding to the uploaded FASTA sequence,
+            and must strictly follow the same order.
+          </template>
+        </ToolTip>
+        <WithAlertError :errors="baseFormErrors.clustal_file_content">
+          <textarea
+            id="clustalContent"
+            rows="10"
+            spellcheck="false"
+            v-model="baseForm.clustal_file_content"
+            @input="checkClustalContent"
+          ></textarea>
+        </WithAlertError>
 
         <div class="input-file">
-          <ToolTip>
-            <label for="clustal">
-              Alignment file (CLUSTAL, optional)
-              <span class="material-icons question-marks">question_mark</span>
-            </label>
-            <template #tooltip>
-              A text-based file containing multiple sequence alignment data of
-              orthologous proteins from different organisms. The alignment must
-              include the amino acid sequence corresponding to the uploaded
-              FASTA sequence, and must strictly follow the same order.
-            </template>
-          </ToolTip>
-
-          <WithAlertError :errors="baseFormErrors.clustal_file_content">
-            <input
-              type="file"
-              id="clustal"
-              @change="setClustalContent"
-              :required="clustalIsRequired"
-            />
-          </WithAlertError>
+          <input
+            type="file"
+            id="clustal"
+            @change="setClustalContent"
+            :required="clustalIsRequired"
+          />
           <i>
             You can download an example alignment file
             <a href="/examples/Rad51_CLUSTAL.txt" download>here</a>.
@@ -300,7 +316,7 @@ async function runTuning() {
     </section>
 
     <section>
-      <h2>Sequences</h2>
+      <h2>Native organisms</h2>
 
       <table v-if="Object.keys(selectedSequencesNativeCodonTables).length">
         <thead>
@@ -411,10 +427,6 @@ section {
   margin-top: 2em;
 }
 
-#fileSelectors {
-  display: flex;
-}
-
 .input-file {
   width: 100%;
 }
@@ -471,12 +483,5 @@ td {
   border-radius: 0.25rem;
   padding: 0.75rem 1.25rem;
   margin: 0.75rem 0;
-}
-
-@media (max-width: 768px) {
-  #fileSelectors {
-    flex-direction: column;
-    row-gap: 2em;
-  }
 }
 </style>
