@@ -9,7 +9,11 @@ services:
       - expressinhost-volume:/var/lib/postgresql/data
     env_file:
       - .env.compose
-    # restart: always
+
+  broker:
+    image: redis
+    ports:
+      - 6379:6379
 
   web:
     image: expressinhostweb
@@ -22,6 +26,7 @@ services:
       - .env.compose
     depends_on:
       - db
+      - broker
     # restart: always
 
 volumes:

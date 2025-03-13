@@ -17,6 +17,8 @@ class Settings(BaseSettings):
     MAIL_USERNAME: str | None = None
     MAIL_PASSWORD: str | None = None
     MAIL_ADDRESS: str | None = None
+    REDIS_HOST: str = "localhost"
+    REDIS_PORT: int = 6379
 
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
