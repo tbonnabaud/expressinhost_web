@@ -40,12 +40,14 @@ async function setClustalContent(event: Event) {
   <div id="fastaInput">
     <ToolTip>
       <label for="fastaContent">
-        Fasta format
+        CLUSTAL format
         <span class="material-icons question-marks">question_mark</span>
       </label>
       <template #tooltip>
-        A text containing the mRNA coding sequence(s), with each sequence
-        preceded by a carat (">"), followed by an unique sequence identifier.
+        A text containing multiple sequence alignment data of orthologous
+        proteins from different organisms. The alignment must include the amino
+        acid sequence corresponding to the uploaded FASTA sequence, and must
+        strictly follow the same order.
       </template>
     </ToolTip>
     <WithAlertError :errors="errors.concat(matchingErrors)">
