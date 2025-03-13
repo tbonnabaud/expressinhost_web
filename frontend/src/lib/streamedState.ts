@@ -1,10 +1,14 @@
 import { ref, onUnmounted } from 'vue'
 
 export enum Status {
-  IDLE = 'Idle',
-  RUNNING = 'Running',
-  ERROR = 'Error',
-  SUCCESS = 'Success',
+  QUEUED = 'queued',
+  FINISHED = 'finished',
+  FAILED = 'failed',
+  STARTED = 'started',
+  DEFERRED = 'deferred',
+  SCHEDULED = 'scheduled',
+  STOPPED = 'stopped',
+  CANCELED = 'canceled',
 }
 
 export interface StreamState {
@@ -15,12 +19,12 @@ export interface StreamState {
   result?: object | null
 }
 
-export function useStreamState(url: string, method: string, token?: string) {
+export function useStreamState(token?: string) {
   const state = ref<StreamState | null>(null)
   const isStreaming = ref(false)
   let controller: AbortController | null = null
 
-  const startStream = async (data?: object) => {
+  const startStream = async (url: string, method?: string, data?: object) => {
     isStreaming.value = true
     controller = new AbortController()
     const signal = controller.signal
@@ -31,7 +35,7 @@ export function useStreamState(url: string, method: string, token?: string) {
 
     try {
       const response = await fetch(url, {
-        method: method,
+        method: method ?? 'GET',
         headers: token
           ? { ...headers, Authorization: `Bearer ${token}` }
           : headers,

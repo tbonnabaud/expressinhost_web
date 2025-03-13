@@ -44,8 +44,6 @@ const codonTableList = ref([] as Array<CodonTable>)
 const tuningLoading = ref(false)
 
 const { state: tuningState, startStream: startTuningStream } = useStreamState(
-  '/api/run-tuning',
-  'POST',
   localStorage.getItem('accessToken') || undefined,
 )
 
@@ -85,7 +83,7 @@ watch(
 )
 
 watch(tuningState, state => {
-  if (state && state.status == Status.SUCCESS) {
+  if (state && state.status == Status.FINISHED) {
     emit('submit', state.result)
   }
 })
@@ -201,12 +199,11 @@ async function runTuning() {
     // // To remove
     // console.log(JSON.stringify(form))
 
-    // const [data, error] = await API.runTraining(form)
-    await startTuningStream(form)
+    const [jobId, error] = await API.runTraining(form)
 
-    // if (!error) {
-    //   emit('submit', data)
-    // }
+    if (!error) {
+      await startTuningStream(`/api/tuning/state/${jobId}`)
+    }
   }
 
   tuningLoading.value = false
@@ -481,14 +478,20 @@ async function runTuning() {
     </div>
 
     <AlertError
-      :show="tuningState?.status == Status.ERROR"
+      :show="tuningState?.status == Status.FAILED"
       @close="tuningState = null"
     >
       {{ tuningState?.message }}
     </AlertError>
 
     <div id="tuningProgressWrapper">
-      <p v-if="tuningState?.status == Status.RUNNING" id="tuningProgressText">
+      <p
+        v-if="
+          tuningState &&
+          [Status.STARTED, Status.QUEUED].includes(tuningState.status)
+        "
+        id="tuningProgressText"
+      >
         {{ tuningState.message }}
       </p>
       <ProgressBar

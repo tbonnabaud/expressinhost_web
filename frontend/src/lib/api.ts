@@ -1,7 +1,6 @@
 import axios, { type AxiosRequestConfig } from 'axios'
 import type {
   RunTrainingForm,
-  TuningOutput,
   UserForm,
   UserLogin,
   Token,
@@ -184,7 +183,7 @@ const tunedSequences = {
 
 export const API = {
   runTraining: async (form: RunTrainingForm) =>
-    (await REQUESTS.post('/run-tuning', form)) as ApiResponse<TuningOutput>,
+    (await REQUESTS.post('/run-tuning', form)) as ApiResponse<string>,
   auth: auth,
   users: users,
   codonTables: codonTables,

@@ -8,42 +8,28 @@ from pydantic import BaseModel, ConfigDict, Field, computed_field, field_validat
 
 
 class Status(str, Enum):
-    IDLE = "Idle"
-    RUNNING = "Running"
-    ERROR = "Error"
-    SUCCESS = "Success"
+    # IDLE = "Idle"
+    # RUNNING = "Running"
+    # ERROR = "Error"
+    # SUCCESS = "Success"
+
+    QUEUED = "queued"
+    FINISHED = "finished"
+    FAILED = "failed"
+    STARTED = "started"
+    DEFERRED = "deferred"
+    SCHEDULED = "scheduled"
+    STOPPED = "stopped"
+    CANCELED = "canceled"
 
 
 class ProgressState(BaseModel):
-    status: Status = Status.IDLE
+    status: Status
     message: str = ""
     step: int = 0
     total: int = 0
-
-    def start(self, message: str = "Starting..."):
-        self.status = Status.RUNNING
-        self.step = 0
-        self.total = 0
-        self.message = message
-
-        return self
-
-    def set_total(self, total: int):
-        self.total = total
-
-    def next_step(self, message: str | None = None):
-        self.step += 1
-
-        if message is not None:
-            self.message = message
-
-    def success(self, message: str = "Success."):
-        self.status = Status.SUCCESS
-        self.message = message
-
-    def error(self, message: str = "Error."):
-        self.status = Status.ERROR
-        self.message = message
+    result: dict | None = None
+    exc_info: str | None = None
 
 
 class FilterParams(BaseModel):

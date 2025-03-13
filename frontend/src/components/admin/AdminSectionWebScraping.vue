@@ -9,25 +9,27 @@ import { formatToLocaleDateString } from '@/lib/helpers'
 const isLoading = ref(false)
 const lastWebScraping = ref<LastWebScraping | null>(null)
 const { state: scrapingState, startStream: startScrapingStream } =
-  useStreamState(
-    '/api/admin/external-db/web-scraping/state',
-    'GET',
-    localStorage.getItem('accessToken') || undefined,
-  )
+  useStreamState(localStorage.getItem('accessToken') || undefined)
 
-onMounted(startScrapingStream)
 onMounted(fetchLastRelease)
 
 watch(scrapingState, value => {
   if (value) {
-    isLoading.value = value.status == Status.RUNNING
+    isLoading.value = [Status.STARTED, Status.QUEUED].includes(value.status)
   }
 })
 
 async function runWebScraping() {
   isLoading.value = true
-  await API.admin.runWebScraping()
-  await startScrapingStream()
+  const [jobId, error] = await API.admin.runWebScraping()
+
+  if (!error) {
+    await startScrapingStream(
+      `/api/admin/external-db/web-scraping/state/${jobId}`,
+    )
+  } else {
+    console.error('No job ID.')
+  }
 }
 
 async function fetchLastRelease() {
