@@ -7,13 +7,13 @@ export function checkFasta(content: string) {
     const sequenceBlocks = content.trim().split(/\n{2,}/)
 
     for (const block of sequenceBlocks) {
-      const parsedBlock = block.match(/^\>(\S+) ?.*?\n(.+)/s)
+      const parsedBlock = block.match(/^\>(\S+) ?.*?\r?\n(.+)/s)
 
       const header = parsedBlock?.[1]
       const sequence = parsedBlock?.[2]
 
       if (header && sequence) {
-        const invalidCharacters = sequence?.match(/[^ACTGU\n]/g)
+        const invalidCharacters = sequence?.match(/[^ACTGU\r\n]/g)
 
         if (invalidCharacters) {
           for (const match of invalidCharacters) {

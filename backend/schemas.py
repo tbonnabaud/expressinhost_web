@@ -203,6 +203,14 @@ class RunTuningForm(BaseModel):
     def clean(value: str):
         return value.strip() if value else "Unnamed"
 
+    @field_validator("nucleotide_file_content", "clustal_file_content")
+    @staticmethod
+    def remove_carriage_return_characters(value: str | None):
+        if value is None:
+            return None
+
+        return value.replace("\r", "")
+
 
 class Result(BaseModel):
     id: UUID | None = None
