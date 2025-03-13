@@ -77,8 +77,6 @@ async function fetchLastRelease() {
       </p>
     </div>
 
-    <p>{{ scrapingState?.status }}</p>
-
     <ProgressBar
       v-if="scrapingState"
       id="progressBar"
@@ -93,6 +91,7 @@ async function fetchLastRelease() {
 <style scoped>
 #progressBar {
   height: 3em;
+  margin-top: 1em;
 }
 
 #stateMessage {
