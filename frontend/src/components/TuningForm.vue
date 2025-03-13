@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted, reactive, watch, computed } from 'vue'
-import { readTextFile, toFixedFloat } from '@/lib/helpers'
+import { readTextFile } from '@/lib/helpers'
 import type { CodonTable, RunTrainingForm } from '@/lib/interfaces'
 import { API } from '@/lib/api'
 import { Status, useStreamState } from '@/lib/streamedState'
@@ -9,6 +9,9 @@ import ToolTip from '@/components/ToolTip.vue'
 import WithAlertError from '@/components/WithAlertError.vue'
 import AlertError from '@/components/AlertError.vue'
 import ProgressBar from '@/components/ProgressBar.vue'
+import TuningModeSelector from '@/components/tuning-form/TuningModeSelector.vue'
+import SlowSpeedThresholdSelector from '@/components/tuning-form/SlowSpeedThresholdSelector.vue'
+import ConservationThresholdSelector from '@/components/tuning-form/ConservationThresholdSelector.vue'
 import FivePrimeRegionTuning from '@/components/tuning-form/FivePrimeRegionTuning.vue'
 import {
   checkClustal,
@@ -329,128 +332,21 @@ async function runTuning() {
     <section>
       <h2>Mode</h2>
 
-      <div id="tuningModeSelector">
-        <div>
-          <input
-            id="direct_mapping"
-            type="radio"
-            value="direct_mapping"
-            v-model="baseForm.mode"
-            required
-          />
-          <label for="direct_mapping">
-            <ToolTip>
-              Direct mapping
-              <span class="material-icons question-marks">question_mark</span>
-              <template #tooltip>
-                Tuning mode, mimics the translation speed profile from the
-                native organism into the host organism.
-              </template>
-            </ToolTip>
-          </label>
-        </div>
-
-        <div>
-          <input
-            id="optimisation_and_conservation_1"
-            type="radio"
-            value="optimisation_and_conservation_1"
-            v-model="baseForm.mode"
-          />
-          <label for="optimisation_and_conservation_1">
-            <ToolTip>
-              Optimisation and conservation 1
-              <span class="material-icons question-marks">question_mark</span>
-              <template #tooltip>
-                Tuning mode, performs a protein sequence similarity analysis to
-                identify conserved amino acids across a set of orthologous
-                proteins from different organisms. The translation speed profile
-                is maximised excepted at the conserved positions. Requirement:
-                CLUSTAL alignment file.
-              </template>
-            </ToolTip>
-          </label>
-        </div>
-
-        <div>
-          <input
-            id="optimisation_and_conservation_2"
-            type="radio"
-            value="optimisation_and_conservation_2"
-            v-model="baseForm.mode"
-          />
-          <label for="optimisation_and_conservation_2">
-            <ToolTip>
-              Optimisation and conservation 2
-              <span class="material-icons question-marks">question_mark</span>
-              <template #tooltip>
-                Tuning mode, individually analyses the translation speed profile
-                of each sequence in the set of orthologous proteins from
-                different organisms, and identifies conserved slow translation
-                codons. The translation speed profile is maximised excepted at
-                the conserved positions. Requirement: CLUSTAL alignment file.
-              </template>
-            </ToolTip>
-          </label>
-        </div>
-      </div>
+      <TuningModeSelector v-model="baseForm.mode" />
     </section>
 
     <section>
       <h2>Thresholds</h2>
 
       <div class="flex-container">
-        <div class="input-range">
-          <ToolTip>
-            <label>
-              Slow speed threshold =
-              {{ toFixedFloat(baseForm.slow_speed_threshold * 100, 1) }}%
-              <span class="material-icons question-marks">question_mark</span>
-            </label>
-            <template #tooltip>
-              Applies to the mode Optimisation and Conservation 2. The speed
-              index range spans from the slowest codon to the median translation
-              speed for the native mRNA sequence. A threshold of 0.5 selects
-              codons within the slowest 50% of this range.
-            </template>
-          </ToolTip>
-          <input
-            type="range"
-            min="0"
-            max="1"
-            step="0.01"
-            v-model="baseForm.slow_speed_threshold"
-          />
-        </div>
-
-        <div
-          class="input-range"
+        <SlowSpeedThresholdSelector v-model="baseForm.slow_speed_threshold" />
+        <ConservationThresholdSelector
           v-if="
             baseForm.mode == 'optimisation_and_conservation_2' &&
             baseForm.conservation_threshold !== null
           "
-        >
-          <ToolTip>
-            <label>
-              Conservation threshold =
-              {{ toFixedFloat(baseForm.conservation_threshold * 100, 1) }}%
-              <span class="material-icons question-marks">question_mark</span>
-            </label>
-            <template #tooltip>
-              Applies to the mode Optimisation and Conservation 2. A threshold
-              of 0.75 identifies a codon as conserved if 75% of the sequences in
-              the set of orthologous proteins share a slow codon at the same
-              position.
-            </template>
-          </ToolTip>
-          <input
-            type="range"
-            min="0"
-            max="1"
-            step="0.01"
-            v-model="baseForm.conservation_threshold"
-          />
-        </div>
+          v-model="baseForm.conservation_threshold"
+        />
       </div>
     </section>
 
@@ -532,12 +428,6 @@ td {
   width: 50%;
 }
 
-#tuningModeSelector {
-  display: flex;
-  column-gap: 2em;
-  justify-content: center;
-}
-
 #codonWindow {
   margin-top: 1em;
 }
@@ -581,13 +471,6 @@ td {
   border-radius: 0.25rem;
   padding: 0.75rem 1.25rem;
   margin: 0.75rem 0;
-}
-
-@media (max-width: 1024px) {
-  #tuningModeSelector {
-    flex-direction: column;
-    row-gap: 1em;
-  }
 }
 
 @media (max-width: 768px) {
