@@ -54,7 +54,6 @@ async def stream_job_state(job_id: str):
             job.refresh()
             status = job.get_status(refresh=False)
             meta = job.get_meta(refresh=False)
-            print(meta.get("step", 0), meta.get("total", 0))
 
             state = {
                 "status": status,
