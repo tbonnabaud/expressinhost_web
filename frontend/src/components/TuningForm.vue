@@ -53,6 +53,13 @@ const clustalIsRequired = computed(() =>
 )
 
 onMounted(async () => await fetchCodonTables())
+onMounted(async () => {
+  const jobId = localStorage.getItem('tuningJobId')
+
+  if (jobId) {
+    await startTuningStream(`/api/tuning/state/${jobId}`)
+  }
+})
 
 watch(
   () => baseForm.nucleotide_file_content,
@@ -72,8 +79,12 @@ watch(
 )
 
 watch(tuningState, state => {
-  if (state && state.status == Status.FINISHED) {
-    emit('submit', state.result)
+  if (state) {
+    if (state.status == Status.FINISHED) {
+      emit('submit', state.result)
+    } else if (state.status == Status.NOT_FOUND) {
+      localStorage.removeItem('tuningJobId')
+    }
   }
 })
 
@@ -163,6 +174,7 @@ async function runTuning() {
 
     if (!error) {
       await startTuningStream(`/api/tuning/state/${jobId}`)
+      localStorage.setItem('tuningJobId', jobId)
     }
   }
 

@@ -12,10 +12,23 @@ const { state: scrapingState, startStream: startScrapingStream } =
   useStreamState(localStorage.getItem('accessToken') || undefined)
 
 onMounted(fetchLastRelease)
+onMounted(async () => {
+  const jobId = localStorage.getItem('webScrapingJobId')
 
-watch(scrapingState, value => {
-  if (value) {
-    isLoading.value = [Status.STARTED, Status.QUEUED].includes(value.status)
+  if (jobId) {
+    await startScrapingStream(
+      `/api/admin/external-db/web-scraping/state/${jobId}`,
+    )
+  }
+})
+
+watch(scrapingState, state => {
+  if (state) {
+    isLoading.value = [Status.STARTED, Status.QUEUED].includes(state.status)
+
+    if (state.status == Status.NOT_FOUND) {
+      localStorage.removeItem('webScrapingJobId')
+    }
   }
 })
 
@@ -27,6 +40,7 @@ async function runWebScraping() {
     await startScrapingStream(
       `/api/admin/external-db/web-scraping/state/${jobId}`,
     )
+    localStorage.setItem('webScrapingJobId', jobId)
   } else {
     console.error('No job ID.')
   }
