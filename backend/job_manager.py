@@ -62,7 +62,17 @@ async def stream_job_state(job_id: str):
                 "total": meta.get("total", 0),
             }
 
-            if status == JobStatus.FINISHED:
+            if status == JobStatus.STARTED:
+                yield json.dumps(state)
+                await asyncio.sleep(0.5)
+
+            elif status == JobStatus.QUEUED:
+                position = job.get_position()
+                state["message"] = f"Enqueued at position {position}."
+                yield json.dumps(state)
+                await asyncio.sleep(0.5)
+
+            elif status == JobStatus.FINISHED:
                 state["message"] = "Finished."
                 state["result"] = job.result
                 yield json.dumps(state, default=str)
@@ -74,15 +84,10 @@ async def stream_job_state(job_id: str):
                 yield json.dumps(state)
                 break
 
-            if status == JobStatus.QUEUED:
-                position = job.get_position()
-                state["message"] = f"Enqueued at position {position}."
-                yield json.dumps(state)
-                await asyncio.sleep(0.5)
-
             else:
+                state["message"] = f"{status}.".capitalize()
                 yield json.dumps(state)
-                await asyncio.sleep(0.5)
+                break
 
     except (InvalidJobOperation, NoSuchJobError):
         yield json.dumps({"status": "not found", "message": "Not found."})
