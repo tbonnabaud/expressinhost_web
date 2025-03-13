@@ -64,6 +64,7 @@ async def stream_job_state(job_id: str):
             }
 
             if status == JobStatus.FINISHED:
+                state["message"] = "Finished."
                 state["result"] = job.result
                 yield json.dumps(state, default=str)
                 break
