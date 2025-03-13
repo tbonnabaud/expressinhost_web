@@ -1,23 +1,18 @@
 <script setup lang="ts">
 import { ref, onMounted, reactive, watch, computed } from 'vue'
-import { readTextFile } from '@/lib/helpers'
 import type { CodonTable, RunTrainingForm } from '@/lib/interfaces'
 import { API } from '@/lib/api'
 import { Status, useStreamState } from '@/lib/streamedState'
 import CodonTableSearchSelect from '@/components/codon-tables/CodonTableSearchSelect.vue'
 import ToolTip from '@/components/ToolTip.vue'
-import WithAlertError from '@/components/WithAlertError.vue'
 import AlertError from '@/components/AlertError.vue'
 import ProgressBar from '@/components/ProgressBar.vue'
 import TuningModeSelector from '@/components/tuning-form/TuningModeSelector.vue'
 import SlowSpeedThresholdSelector from '@/components/tuning-form/SlowSpeedThresholdSelector.vue'
 import ConservationThresholdSelector from '@/components/tuning-form/ConservationThresholdSelector.vue'
 import FivePrimeRegionTuning from '@/components/tuning-form/FivePrimeRegionTuning.vue'
-import {
-  checkClustal,
-  checkClustalMatchingFasta,
-  checkFasta,
-} from '@/lib/checkers'
+import FastaInput from '@/components/tuning-form/FastaInput.vue'
+import ClustalInput from '@/components/tuning-form/ClustalInput.vue'
 
 const emit = defineEmits(['submit'])
 
@@ -76,19 +71,6 @@ watch(
   },
 )
 
-watch(
-  [() => baseForm.nucleotide_file_content, () => baseForm.clustal_file_content],
-  ([fastaContent, clustalContent]) => {
-    baseFormErrors.clustal_file_content = []
-
-    if (fastaContent && clustalContent) {
-      const errors = checkClustalMatchingFasta(clustalContent, fastaContent)
-      baseFormErrors.clustal_file_content =
-        baseFormErrors.clustal_file_content.concat(errors)
-    }
-  },
-)
-
 watch(tuningState, state => {
   if (state && state.status == Status.FINISHED) {
     emit('submit', state.result)
@@ -120,28 +102,6 @@ function parseFastaSequenceNames(content: string) {
   const fastaSeqIdentifierRegex = /^\>(\S+ ?.*)/gm
 
   return Array.from(content.matchAll(fastaSeqIdentifierRegex), m => m[1])
-}
-
-function checkFastaContent() {
-  const errors = checkFasta(baseForm.nucleotide_file_content)
-  baseFormErrors.nucleotide_file_content = errors
-}
-
-async function setFastaContent(event: Event) {
-  baseForm.nucleotide_file_content = await readTextFile(event)
-}
-
-function checkClustalContent() {
-  if (baseForm.clustal_file_content) {
-    const errors = checkClustal(baseForm.clustal_file_content)
-    baseFormErrors.clustal_file_content = errors
-  } else {
-    baseFormErrors.clustal_file_content = []
-  }
-}
-
-async function setClustalContent(event: Event) {
-  baseForm.clustal_file_content = await readTextFile(event)
 }
 
 /**
@@ -245,74 +205,13 @@ async function runTuning() {
     <section>
       <h2>Sequences</h2>
 
-      <div id="fastaInput">
-        <ToolTip>
-          <label for="fastaContent">
-            Fasta format
-            <span class="material-icons question-marks">question_mark</span>
-          </label>
-          <template #tooltip>
-            A text containing the mRNA coding sequence(s), with each sequence
-            preceded by a carat (">"), followed by an unique sequence
-            identifier.
-          </template>
-        </ToolTip>
-        <WithAlertError :errors="baseFormErrors.nucleotide_file_content">
-          <textarea
-            id="fastaContent"
-            rows="10"
-            spellcheck="false"
-            v-model="baseForm.nucleotide_file_content"
-            @input="checkFastaContent"
-          ></textarea>
-        </WithAlertError>
-
-        <div class="input-file">
-          <input type="file" id="fasta" @change="setFastaContent" required />
-
-          <i>
-            You can download an example sequence file
-            <a href="/examples/Rad51_nucleotide.txt" download>here</a>.
-          </i>
-        </div>
-      </div>
-
-      <div id="clustalInput" v-if="clustalIsRequired">
-        <ToolTip>
-          <label for="clustalContent">
-            Alignments (CLUSTAL, optional)
-            <span class="material-icons question-marks">question_mark</span>
-          </label>
-          <template #tooltip>
-            A text containing multiple sequence alignment data of orthologous
-            proteins from different organisms. The alignment must include the
-            amino acid sequence corresponding to the uploaded FASTA sequence,
-            and must strictly follow the same order.
-          </template>
-        </ToolTip>
-        <WithAlertError :errors="baseFormErrors.clustal_file_content">
-          <textarea
-            id="clustalContent"
-            rows="10"
-            spellcheck="false"
-            v-model="baseForm.clustal_file_content"
-            @input="checkClustalContent"
-          ></textarea>
-        </WithAlertError>
-
-        <div class="input-file">
-          <input
-            type="file"
-            id="clustal"
-            @change="setClustalContent"
-            :required="clustalIsRequired"
-          />
-          <i>
-            You can download an example alignment file
-            <a href="/examples/Rad51_CLUSTAL.txt" download>here</a>.
-          </i>
-        </div>
-      </div>
+      <FastaInput id="fastaInput" v-model="baseForm.nucleotide_file_content" />
+      <ClustalInput
+        id="clustalInput"
+        v-if="clustalIsRequired"
+        v-model="baseForm.clustal_file_content"
+        :fasta-content="baseForm.nucleotide_file_content"
+      />
     </section>
 
     <section>
