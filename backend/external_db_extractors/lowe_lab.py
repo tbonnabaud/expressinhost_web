@@ -215,6 +215,7 @@ async def run_scraping():
     job = get_current_job()
     start_time = time.time()
     scraping_logger.info("Fetching and parsing HTML data...")
+    update_job_meta(job, "Starting...", 0, 0)
     last_release = await get_last_release()
 
     async with ClientSession() as session:
