@@ -14,10 +14,7 @@ const matchingErrors = ref<string[]>([])
 watch(
   [() => props.fastaContent, () => clustalContent.value],
   ([fasta, clustal]) => {
-    if (fasta && clustal) {
-      const errors = checkClustalMatchingFasta(clustal, fasta)
-      matchingErrors.value = errors
-    }
+    matchingErrors.value = checkClustalMatchingFasta(clustal, fasta)
   },
 )
 
