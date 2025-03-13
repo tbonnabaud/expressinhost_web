@@ -2,11 +2,13 @@ import os
 import signal
 from multiprocessing import Process
 
-import redis
+from redis import Redis
 from rq import Worker
 
+from .settings import settings
+
 # Establish a connection to Redis
-redis_conn = redis.Redis()
+redis_conn = Redis(host=settings.REDIS_HOST, port=settings.REDIS_PORT)
 processes: list[Process] = []
 
 

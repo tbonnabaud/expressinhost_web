@@ -7,9 +7,12 @@ from rq import Queue
 from rq.exceptions import InvalidJobOperation, NoSuchJobError
 from rq.job import Job, JobStatus
 
-redis_conn = Redis(host="localhost", port=6379, db=0)
+from .settings import settings
 
-# Files d'attente
+# Establish a connection to Redis
+redis_conn = Redis(host=settings.REDIS_HOST, port=settings.REDIS_PORT)
+
+# Queues
 light_queue = Queue("light", connection=redis_conn)
 heavy_queue = Queue("heavy", connection=redis_conn)
 web_scraping_queue = Queue("web_scraping", connection=redis_conn)
