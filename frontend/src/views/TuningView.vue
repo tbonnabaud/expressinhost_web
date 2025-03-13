@@ -13,6 +13,7 @@ function handleSubmit(output: TuningOutput) {
 }
 
 function goBackToForm() {
+  localStorage.removeItem('tuningJobId')
   tuningOutput.value = {} as TuningOutput
 }
 </script>
