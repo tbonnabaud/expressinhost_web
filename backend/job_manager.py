@@ -77,10 +77,11 @@ async def stream_job_state(job_id: str):
                     state["message"] = "Finished."
                     state["result"] = job.result
 
-                elif status in [JobStatus.FAILED, JobStatus.CANCELED]:
+                elif status == JobStatus.FAILED:
                     state["message"] = "Failed."
                     state["exc_info"] = job.exc_info
 
+                # Cancelled, stopped, etc.
                 else:
                     state["message"] = f"{status}.".capitalize()
 
