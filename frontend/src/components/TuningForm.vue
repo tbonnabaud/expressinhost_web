@@ -203,7 +203,7 @@ async function runTuning() {
     </section>
 
     <section>
-      <h2>Sequences</h2>
+      <h2>Sequences of native organisms</h2>
 
       <FastaInput id="fastaInput" v-model="baseForm.nucleotide_file_content" />
       <ClustalInput
@@ -215,7 +215,7 @@ async function runTuning() {
     </section>
 
     <section>
-      <h2>Native organisms</h2>
+      <h2>Codon tables for the native organisms</h2>
 
       <table v-if="Object.keys(selectedSequencesNativeCodonTables).length">
         <thead>
