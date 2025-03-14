@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
-import type { PartialUntuningMode, FineTuningMode } from '@/lib/interfaces'
-import { UTR_EXAMPLE } from '@/lib/referentials'
 import { store } from '@/lib/store'
+import type { PartialUntuningMode, FineTuningMode } from '@/lib/interfaces'
 import ToolTip from '@/components/ToolTip.vue'
+import UtrSequenceInput from './five-prime-region/UtrSequenceInput.vue'
 
 const user = store.currentUser
 const mode = ref<string | null>(null)
@@ -27,12 +27,6 @@ watch(mode, value => {
     console.error(`Invalid ${value} mode.`)
   }
 })
-
-function addExampleUTR() {
-  if (model.value && 'utr' in model.value) {
-    model.value.utr = UTR_EXAMPLE
-  }
-}
 </script>
 
 <template>
@@ -120,21 +114,7 @@ function addExampleUTR() {
     </div>
 
     <div v-if="'utr' in model">
-      <label id="utrSequenceLabel" for="utrSequence">UTR sequence</label>
-      <textarea
-        id="utrSequence"
-        v-model="model.utr"
-        placeholder="Put UTR sequence"
-        rows="3"
-        spellcheck="false"
-      ></textarea>
-      <button
-        id="addUtrExampleButton"
-        @click.prevent="addExampleUTR"
-        class="outline secondary"
-      >
-        Fill with an example
-      </button>
+      <UtrSequenceInput v-model="model.utr" />
     </div>
   </div>
 </template>
@@ -153,10 +133,5 @@ function addExampleUTR() {
 
 #fineTuningModeOptions {
   text-align: center;
-}
-
-#addUtrExampleButton {
-  font-size: 90%;
-  padding: 5px 10px;
 }
 </style>
