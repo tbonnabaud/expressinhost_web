@@ -4,15 +4,17 @@ import time
 from dataclasses import dataclass
 
 from aiohttp import ClientSession
+from rq import get_current_job
 from selectolax.parser import HTMLParser, Node
 
 from ..crud.codon_tables import CodonTableRepository
 from ..crud.codon_translations import CodonTranslationRepository
 from ..crud.last_web_scraping import LastWebScrapingRepository
 from ..database import IntegrityError, LocalSession
+from ..job_manager import Job, update_job_meta, web_scraping_queue
 from ..logger import scraping_logger
 from ..routes.codon_tables import assign_codon_table_id
-from ..schemas import CodonTableFormWithTranslations, CodonTranslation, ProgressState
+from ..schemas import CodonTableFormWithTranslations, CodonTranslation
 from .mappings import AMINO_ACID_MAPPING, WOBBLE_MAPPING
 
 SOURCE = "Lowe Lab"
@@ -21,8 +23,6 @@ GENOME_LIST_URL = f"{BASE_URL}/cgi-bin/trna_chooseorg?org="
 
 # Third group to handle cell containing X/Y
 CELL_REGEX = re.compile(r"([A-Z]+)\s+(\d*)/?(\d*)")
-
-scraping_state = ProgressState()
 
 
 @dataclass(slots=True)
@@ -184,10 +184,11 @@ async def get_url_content(session: ClientSession, url: str):
             )
 
 
-async def task(session: ClientSession, genome_page: GenomePageMetadata):
-    scraping_state.next_step()
+async def task(job: Job, session: ClientSession, genome_page: GenomePageMetadata):
     summary_page = await get_url_content(session, genome_page.link)
     codon_table = None
+    step = job.get_meta()["step"]
+    update_job_meta(job, genome_page.organism, step + 1)
 
     if summary_page:
         translations = parse_trna_gene_summary(summary_page)
@@ -211,37 +212,37 @@ async def get_last_release():
 
 
 async def run_scraping():
-    scraping_state.start()
+    job = get_current_job()
     start_time = time.time()
     scraping_logger.info("Fetching and parsing HTML data...")
+    update_job_meta(job, "Starting...", 0, 0)
     last_release = await get_last_release()
 
     async with ClientSession() as session:
-        scraping_state.message = "Fetching list of genomes..."
         genome_list_page = await get_url_content(session, GENOME_LIST_URL)
         genome_list = list(parse_genome_list(genome_list_page))
 
-        scraping_state.set_total(2 * len(genome_list))
+        update_job_meta(job, "Fetching list of genomes...", 0, 2 * len(genome_list))
 
         results = await asyncio.gather(
-            *[task(session, genome_page) for genome_page in genome_list]
+            *[task(job, session, genome_page) for genome_page in genome_list]
         )
 
     insert_message = "Insertion of the extracted codon tables in the database..."
     scraping_logger.info(insert_message)
-    scraping_state.message = insert_message
 
     with LocalSession() as db_session:
         codon_table_repo = CodonTableRepository(db_session)
         codon_translation_repo = CodonTranslationRepository(db_session)
+        step = job.get_meta()["step"] + 1
 
         # To avoid to try to insert duplicates from the page listing available genomes
         inserted_organisms = set()
 
-        for result in results:
-            scraping_state.next_step()
+        for result in filter(lambda r: r is not None, results):
+            update_job_meta(job, insert_message, step)
 
-            if result is not None and result.organism not in inserted_organisms:
+            if result.organism not in inserted_organisms:
                 try:
                     meta_dict = result.model_dump(exclude={"translations"})
                     meta_dict["user_id"] = None
@@ -266,17 +267,18 @@ async def run_scraping():
                     scraping_logger.error(exc)
                     db_session.rollback()
 
-            LastWebScrapingRepository(db_session).upsert(SOURCE, last_release)
+                step += 1
+
+        LastWebScrapingRepository(db_session).upsert(SOURCE, last_release)
 
     end_time = time.time()
     elapsed_time = end_time - start_time
     end_message = f"Elapsed time for the web scraping: {elapsed_time:.0f} seconds. {len(inserted_organisms)} new table(s) inserted."
     scraping_logger.info(end_message)
-    scraping_state.success(end_message)
 
 
 async def periodic_web_scraping():
-    """Example background task that runs every 60 seconds"""
+    """Example background task that runs every 24 hours."""
     while True:
         try:
             scraping_logger.info("Check if database is up to date.")
@@ -291,7 +293,7 @@ async def periodic_web_scraping():
 
             if not scraping_in_db or scraping_in_db.release != last_release:
                 scraping_logger.info("Database is not up to date. Run web scraping...")
-                await run_scraping()
+                web_scraping_queue.enqueue(run_scraping)
 
             else:
                 scraping_logger.info("Database is up to date.")

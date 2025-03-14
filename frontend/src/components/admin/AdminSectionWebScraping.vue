@@ -9,25 +9,41 @@ import { formatToLocaleDateString } from '@/lib/helpers'
 const isLoading = ref(false)
 const lastWebScraping = ref<LastWebScraping | null>(null)
 const { state: scrapingState, startStream: startScrapingStream } =
-  useStreamState(
-    '/api/admin/external-db/web-scraping/state',
-    'GET',
-    localStorage.getItem('accessToken') || undefined,
-  )
+  useStreamState(localStorage.getItem('accessToken') || undefined)
 
-onMounted(startScrapingStream)
 onMounted(fetchLastRelease)
+onMounted(async () => {
+  const jobId = localStorage.getItem('webScrapingJobId')
 
-watch(scrapingState, value => {
-  if (value) {
-    isLoading.value = value.status == Status.RUNNING
+  if (jobId) {
+    await startScrapingStream(
+      `/api/admin/external-db/web-scraping/state/${jobId}`,
+    )
+  }
+})
+
+watch(scrapingState, state => {
+  if (state) {
+    isLoading.value = [Status.STARTED, Status.QUEUED].includes(state.status)
+
+    if (state.status == Status.NOT_FOUND) {
+      localStorage.removeItem('webScrapingJobId')
+    }
   }
 })
 
 async function runWebScraping() {
   isLoading.value = true
-  await API.admin.runWebScraping()
-  await startScrapingStream()
+  const [jobId, error] = await API.admin.runWebScraping()
+
+  if (!error) {
+    await startScrapingStream(
+      `/api/admin/external-db/web-scraping/state/${jobId}`,
+    )
+    localStorage.setItem('webScrapingJobId', jobId)
+  } else {
+    console.error('No job ID.')
+  }
 }
 
 async function fetchLastRelease() {
@@ -61,8 +77,6 @@ async function fetchLastRelease() {
       </p>
     </div>
 
-    <p>{{ scrapingState?.status }}</p>
-
     <ProgressBar
       v-if="scrapingState"
       id="progressBar"
@@ -77,6 +91,7 @@ async function fetchLastRelease() {
 <style scoped>
 #progressBar {
   height: 3em;
+  margin-top: 1em;
 }
 
 #stateMessage {

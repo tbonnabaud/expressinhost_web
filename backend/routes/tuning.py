@@ -1,11 +1,12 @@
-import asyncio
 import re
+import time
 from datetime import UTC, datetime
 from uuid import UUID
 
 from fastapi import APIRouter
 from fastapi.exceptions import HTTPException
 from fastapi.responses import StreamingResponse
+from rq import get_current_job
 
 from ..authentication import OptionalTokenDependency, get_current_user
 from ..core.codon_tables import process_raw_codon_table
@@ -17,6 +18,7 @@ from ..crud.results import ResultRepository
 from ..crud.run_infos import RunInfoRepository
 from ..crud.tuned_sequences import TunedSequenceRepository
 from ..database import Session, context_get_session, context_get_session_with_commit
+from ..job_manager import heavy_queue, light_queue, stream_job_state, update_job_meta
 from ..logger import logger
 from ..schemas import (
     FineTuningMode,
@@ -77,17 +79,18 @@ def get_processed_tables(
     return native_codon_tables, host_codon_table
 
 
-async def stream_sequence_tuning(token: OptionalTokenDependency, form: RunTuningForm):
+def tune_sequences(token: OptionalTokenDependency, form: RunTuningForm):
+    job = get_current_job()
+
     # Extract native codon table IDs of the form
     native_codon_table_ids = get_native_codon_table_ids(
         form.nucleotide_file_content, form.sequences_native_codon_tables
     )
     total_sequence_number = len(native_codon_table_ids)
-
-    tuning_state = TuningState().start()
+    step = 0
     # Total of steps is the number of sequences
     # plus codon table processing step plus end step
-    tuning_state.set_total(total_sequence_number + 2)
+    update_job_meta(job, "Init...", step, total_sequence_number + 2)
     run_start_date = datetime.now(UTC)
 
     try:
@@ -100,8 +103,8 @@ async def stream_sequence_tuning(token: OptionalTokenDependency, form: RunTuning
             ):
                 form.five_prime_region_tuning = None
 
-            tuning_state.next_step("Process codon tables...")
-            yield tuning_state.model_dump_json()
+            step += 1
+            update_job_meta(job, "Process codon tables...", step)
 
             # Processed codon tables
             native_codon_tables, host_codon_table = get_processed_tables(
@@ -111,7 +114,7 @@ async def stream_sequence_tuning(token: OptionalTokenDependency, form: RunTuning
                 form.slow_speed_threshold,
             )
 
-        await asyncio.sleep(0.5)
+        time.sleep(0.5)
 
         sequence_tuner = SequenceTuner(
             form.nucleotide_file_content,
@@ -125,21 +128,23 @@ async def stream_sequence_tuning(token: OptionalTokenDependency, form: RunTuning
             form.mode, form.conservation_threshold, form.five_prime_region_tuning
         )
 
-        for cpt in range(1, total_sequence_number + 1):
+        for seq_no in range(1, total_sequence_number + 1):
             # Update state before process
-            tuning_state.next_step(f"Process sequence {cpt}/{total_sequence_number}...")
-            yield tuning_state.model_dump_json()
+            step += 1
+            update_job_meta(
+                job, f"Process sequence {seq_no}/{total_sequence_number}...", step
+            )
 
             try:
                 tuned_sequence = next(pipeline)
                 tuned_sequences.append(tuned_sequence)
-                await asyncio.sleep(0.3)
+                time.sleep(0.3)
 
             except StopIteration:
                 break
 
-        tuning_state.next_step("Serialization of the results...")
-        yield tuning_state.model_dump_json()
+        step += 1
+        update_job_meta(job, "Serialization of the results...", step)
 
         # Stringify UUIDs to make the dictionary serializable
         serializable_sequences_native_codon_tables = {
@@ -193,34 +198,20 @@ async def stream_sequence_tuning(token: OptionalTokenDependency, form: RunTuning
             result["host_codon_table"] = CodonTableRepository(session).get(
                 user and user.id, form.host_codon_table_id
             )
-            tuning_output = TuningOutput.model_validate(
-                {
-                    "result": result,
-                    "tuned_sequences": tuned_sequences,
-                }
-            )
 
-        await asyncio.sleep(0.5)
-        tuning_state.success()
-        tuning_state.result = tuning_output
-        yield tuning_state.model_dump_json()
+        time.sleep(0.5)
+
+        return {
+            "result": result,
+            "tuned_sequences": tuned_sequences,
+        }
 
     except (ExpressInHostError, HTTPException) as exc:
-        await asyncio.sleep(0.3)
-        tuning_state.error(str(exc))
-        yield tuning_state.model_dump_json()
-
-    except asyncio.CancelledError:
-        await asyncio.sleep(0.3)
-        logger.warning("Cancelled.")
-        tuning_state.error("Cancelled.")
-        yield tuning_state.model_dump_json()
+        raise exc
 
     except Exception as exc:
-        await asyncio.sleep(0.3)
-        tuning_state.error("Server error.")
         logger.error(exc)
-        yield tuning_state.model_dump_json()
+        raise Exception("Server error")
 
 
 @router.post("/run-tuning")
@@ -228,6 +219,15 @@ async def run_tuning(
     token: OptionalTokenDependency,
     form: RunTuningForm,
 ):
-    return StreamingResponse(
-        stream_sequence_tuning(token, form), media_type="text/event-stream"
-    )
+    if isinstance(form.five_prime_region_tuning, FineTuningMode):
+        job = heavy_queue.enqueue(tune_sequences, token, form)
+
+    else:
+        job = light_queue.enqueue(tune_sequences, token, form)
+
+    return job.id
+
+
+@router.get("/tuning/state/{job_id}")
+def stream_tuning_state(job_id: str):
+    return StreamingResponse(stream_job_state(job_id), media_type="text/event-stream")

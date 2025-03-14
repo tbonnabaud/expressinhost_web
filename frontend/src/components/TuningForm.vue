@@ -1,20 +1,18 @@
 <script setup lang="ts">
 import { ref, onMounted, reactive, watch, computed } from 'vue'
-import { readTextFile, toFixedFloat } from '@/lib/helpers'
 import type { CodonTable, RunTrainingForm } from '@/lib/interfaces'
 import { API } from '@/lib/api'
 import { Status, useStreamState } from '@/lib/streamedState'
 import CodonTableSearchSelect from '@/components/codon-tables/CodonTableSearchSelect.vue'
 import ToolTip from '@/components/ToolTip.vue'
-import WithAlertError from '@/components/WithAlertError.vue'
 import AlertError from '@/components/AlertError.vue'
 import ProgressBar from '@/components/ProgressBar.vue'
+import TuningModeSelector from '@/components/tuning-form/TuningModeSelector.vue'
+import SlowSpeedThresholdSelector from '@/components/tuning-form/SlowSpeedThresholdSelector.vue'
+import ConservationThresholdSelector from '@/components/tuning-form/ConservationThresholdSelector.vue'
 import FivePrimeRegionTuning from '@/components/tuning-form/FivePrimeRegionTuning.vue'
-import {
-  checkClustal,
-  checkClustalMatchingFasta,
-  checkFasta,
-} from '@/lib/checkers'
+import FastaInput from '@/components/tuning-form/FastaInput.vue'
+import ClustalInput from '@/components/tuning-form/ClustalInput.vue'
 
 const emit = defineEmits(['submit'])
 
@@ -44,14 +42,24 @@ const codonTableList = ref([] as Array<CodonTable>)
 const tuningLoading = ref(false)
 
 const { state: tuningState, startStream: startTuningStream } = useStreamState(
-  '/api/run-tuning',
-  'POST',
   localStorage.getItem('accessToken') || undefined,
 )
 
-const clustalIsRequired = computed(() => baseForm.mode != 'direct_mapping')
+const clustalIsRequired = computed(() =>
+  [
+    'optimisation_and_conservation_1',
+    'optimisation_and_conservation_2',
+  ].includes(baseForm.mode),
+)
 
 onMounted(async () => await fetchCodonTables())
+onMounted(async () => {
+  const jobId = localStorage.getItem('tuningJobId')
+
+  if (jobId) {
+    await startTuningStream(`/api/tuning/state/${jobId}`)
+  }
+})
 
 watch(
   () => baseForm.nucleotide_file_content,
@@ -70,23 +78,13 @@ watch(
   },
 )
 
-watch(
-  [() => baseForm.nucleotide_file_content, () => baseForm.clustal_file_content],
-  ([fastaContent, clustalContent]) => {
-    if (fastaContent && clustalContent) {
-      const errors = checkClustalMatchingFasta(clustalContent, fastaContent)
-
-      if (errors.length) {
-        baseFormErrors.clustal_file_content =
-          baseFormErrors.clustal_file_content.concat(errors)
-      }
-    }
-  },
-)
-
 watch(tuningState, state => {
-  if (state && state.status == Status.SUCCESS) {
-    emit('submit', state.result)
+  if (state) {
+    if (state.status == Status.FINISHED) {
+      emit('submit', state.result)
+    } else if (![Status.STARTED, Status.QUEUED].includes(state.status)) {
+      localStorage.removeItem('tuningJobId')
+    }
   }
 })
 
@@ -115,32 +113,6 @@ function parseFastaSequenceNames(content: string) {
   const fastaSeqIdentifierRegex = /^\>(\S+ ?.*)/gm
 
   return Array.from(content.matchAll(fastaSeqIdentifierRegex), m => m[1])
-}
-
-async function setFastaContent(event: Event) {
-  // Reset error list
-  baseFormErrors.nucleotide_file_content = []
-  const content = await readTextFile(event)
-  const errors = checkFasta(content)
-
-  if (errors.length) {
-    baseFormErrors.nucleotide_file_content = errors
-  } else {
-    baseForm.nucleotide_file_content = content
-  }
-}
-
-async function setClustalContent(event: Event) {
-  // Reset error list
-  baseFormErrors.clustal_file_content = []
-  const content = await readTextFile(event)
-  const errors = checkClustal(content)
-
-  if (errors.length) {
-    baseFormErrors.clustal_file_content = errors
-  } else {
-    baseForm.clustal_file_content = content
-  }
 }
 
 /**
@@ -198,15 +170,12 @@ async function runTuning() {
       },
     )
 
-    // // To remove
-    // console.log(JSON.stringify(form))
+    const [jobId, error] = await API.runTraining(form)
 
-    // const [data, error] = await API.runTraining(form)
-    await startTuningStream(form)
-
-    // if (!error) {
-    //   emit('submit', data)
-    // }
+    if (!error) {
+      await startTuningStream(`/api/tuning/state/${jobId}`)
+      localStorage.setItem('tuningJobId', jobId)
+    }
   }
 
   tuningLoading.value = false
@@ -243,64 +212,13 @@ async function runTuning() {
     </section>
 
     <section>
-      <h2>Data files</h2>
+      <h2>Sequences of native organisms</h2>
 
-      <div id="fileSelectors">
-        <div class="input-file">
-          <ToolTip>
-            <label for="fasta">
-              Sequence file (FASTA)
-              <span class="material-icons question-marks">question_mark</span>
-            </label>
-            <template #tooltip>
-              A text-based file containing the mRNA coding sequence(s), with
-              each sequence preceded by a carat (">"), followed by an unique
-              sequence identifier.
-            </template>
-          </ToolTip>
-
-          <WithAlertError :errors="baseFormErrors.nucleotide_file_content">
-            <input type="file" id="fasta" @change="setFastaContent" required />
-          </WithAlertError>
-
-          <i>
-            You can download an example sequence file
-            <a href="/examples/Rad51_nucleotide.txt" download>here</a>.
-          </i>
-        </div>
-
-        <div class="input-file">
-          <ToolTip>
-            <label for="clustal">
-              Alignment file (CLUSTAL, optional)
-              <span class="material-icons question-marks">question_mark</span>
-            </label>
-            <template #tooltip>
-              A text-based file containing multiple sequence alignment data of
-              orthologous proteins from different organisms. The alignment must
-              include the amino acid sequence corresponding to the uploaded
-              FASTA sequence, and must strictly follow the same order.
-            </template>
-          </ToolTip>
-
-          <WithAlertError :errors="baseFormErrors.clustal_file_content">
-            <input
-              type="file"
-              id="clustal"
-              @change="setClustalContent"
-              :required="clustalIsRequired"
-            />
-          </WithAlertError>
-          <i>
-            You can download an example alignment file
-            <a href="/examples/Rad51_CLUSTAL.txt" download>here</a>.
-          </i>
-        </div>
-      </div>
+      <FastaInput id="fastaInput" v-model="baseForm.nucleotide_file_content" />
     </section>
 
     <section>
-      <h2>Sequences</h2>
+      <h2>Codon tables for the native organisms</h2>
 
       <table v-if="Object.keys(selectedSequencesNativeCodonTables).length">
         <thead>
@@ -332,128 +250,31 @@ async function runTuning() {
     <section>
       <h2>Mode</h2>
 
-      <div id="modeSelector">
-        <div>
-          <input
-            id="direct_mapping"
-            type="radio"
-            value="direct_mapping"
-            v-model="baseForm.mode"
-            required
-          />
-          <label for="direct_mapping">
-            <ToolTip>
-              Direct mapping
-              <span class="material-icons question-marks">question_mark</span>
-              <template #tooltip>
-                Tuning mode, mimics the translation speed profile from the
-                native organism into the host organism.
-              </template>
-            </ToolTip>
-          </label>
-        </div>
+      <TuningModeSelector v-model="baseForm.mode" />
+    </section>
 
-        <div>
-          <input
-            id="optimisation_and_conservation_1"
-            type="radio"
-            value="optimisation_and_conservation_1"
-            v-model="baseForm.mode"
-          />
-          <label for="optimisation_and_conservation_1">
-            <ToolTip>
-              Optimisation and conservation 1
-              <span class="material-icons question-marks">question_mark</span>
-              <template #tooltip>
-                Tuning mode, performs a protein sequence similarity analysis to
-                identify conserved amino acids across a set of orthologous
-                proteins from different organisms. The translation speed profile
-                is maximised excepted at the conserved positions. Requirement:
-                CLUSTAL alignment file.
-              </template>
-            </ToolTip>
-          </label>
-        </div>
+    <section v-if="clustalIsRequired">
+      <h2>Alignments</h2>
 
-        <div>
-          <input
-            id="optimisation_and_conservation_2"
-            type="radio"
-            value="optimisation_and_conservation_2"
-            v-model="baseForm.mode"
-          />
-          <label for="optimisation_and_conservation_2">
-            <ToolTip>
-              Optimisation and conservation 2
-              <span class="material-icons question-marks">question_mark</span>
-              <template #tooltip>
-                Tuning mode, individually analyses the translation speed profile
-                of each sequence in the set of orthologous proteins from
-                different organisms, and identifies conserved slow translation
-                codons. The translation speed profile is maximised excepted at
-                the conserved positions. Requirement: CLUSTAL alignment file.
-              </template>
-            </ToolTip>
-          </label>
-        </div>
-      </div>
+      <ClustalInput
+        id="clustalInput"
+        v-model="baseForm.clustal_file_content"
+        :fasta-content="baseForm.nucleotide_file_content"
+      />
     </section>
 
     <section>
       <h2>Thresholds</h2>
 
       <div class="flex-container">
-        <div class="input-range">
-          <ToolTip>
-            <label>
-              Slow speed threshold =
-              {{ toFixedFloat(baseForm.slow_speed_threshold * 100, 1) }}%
-              <span class="material-icons question-marks">question_mark</span>
-            </label>
-            <template #tooltip>
-              Applies to the mode Optimisation and Conservation 2. The speed
-              index range spans from the slowest codon to the median translation
-              speed for the native mRNA sequence. A threshold of 0.5 selects
-              codons within the slowest 50% of this range.
-            </template>
-          </ToolTip>
-          <input
-            type="range"
-            min="0"
-            max="1"
-            step="0.01"
-            v-model="baseForm.slow_speed_threshold"
-          />
-        </div>
-
-        <div
-          class="input-range"
+        <SlowSpeedThresholdSelector v-model="baseForm.slow_speed_threshold" />
+        <ConservationThresholdSelector
           v-if="
             baseForm.mode == 'optimisation_and_conservation_2' &&
             baseForm.conservation_threshold !== null
           "
-        >
-          <ToolTip>
-            <label>
-              Conservation threshold =
-              {{ toFixedFloat(baseForm.conservation_threshold * 100, 1) }}%
-              <span class="material-icons question-marks">question_mark</span>
-            </label>
-            <template #tooltip>
-              Applies to the mode Optimisation and Conservation 2. A threshold
-              of 0.75 identifies a codon as conserved if 75% of the sequences in
-              the set of orthologous proteins share a slow codon at the same
-              position.
-            </template>
-          </ToolTip>
-          <input
-            type="range"
-            min="0"
-            max="1"
-            step="0.01"
-            v-model="baseForm.conservation_threshold"
-          />
-        </div>
+          v-model="baseForm.conservation_threshold"
+        />
       </div>
     </section>
 
@@ -481,14 +302,20 @@ async function runTuning() {
     </div>
 
     <AlertError
-      :show="tuningState?.status == Status.ERROR"
+      :show="tuningState?.status == Status.FAILED"
       @close="tuningState = null"
     >
       {{ tuningState?.message }}
     </AlertError>
 
     <div id="tuningProgressWrapper">
-      <p v-if="tuningState?.status == Status.RUNNING" id="tuningProgressText">
+      <p
+        v-if="
+          tuningState &&
+          [Status.STARTED, Status.QUEUED].includes(tuningState.status)
+        "
+        id="tuningProgressText"
+      >
         {{ tuningState.message }}
       </p>
       <ProgressBar
@@ -512,10 +339,6 @@ section {
   margin-top: 2em;
 }
 
-#fileSelectors {
-  display: flex;
-}
-
 .input-file {
   width: 100%;
 }
@@ -527,12 +350,6 @@ section {
 
 td {
   width: 50%;
-}
-
-#modeSelector {
-  display: flex;
-  column-gap: 2em;
-  justify-content: center;
 }
 
 #codonWindow {
@@ -578,19 +395,5 @@ td {
   border-radius: 0.25rem;
   padding: 0.75rem 1.25rem;
   margin: 0.75rem 0;
-}
-
-@media (max-width: 1024px) {
-  #modeSelector {
-    flex-direction: column;
-    row-gap: 1em;
-  }
-}
-
-@media (max-width: 768px) {
-  #fileSelectors {
-    flex-direction: column;
-    row-gap: 2em;
-  }
 }
 </style>
