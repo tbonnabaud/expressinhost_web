@@ -20,11 +20,11 @@ RUN npm run build
 FROM python:3.13-slim
 ENV DEBIAN_FRONTEND=noninteractive
 
-RUN apt-get update && apt-get -y dist-upgrade && apt-get install -y wget && \
+RUN apt-get update && apt-get -y dist-upgrade && apt-get install -y curl && \
     apt-get clean && apt-get autoremove && rm -rf /var/lib/apt/lists/*
 
 # Install ViennaRNA package
-RUN wget -O /tmp/viennarna_2.7.0-1_amd64.deb "https://www.tbi.univie.ac.at/RNA/download/debian/debian_12/viennarna_2.7.0-1_amd64.deb"
+RUN curl -L -o /tmp/viennarna_2.7.0-1_amd64.deb "https://www.tbi.univie.ac.at/RNA/download/debian/debian_12/viennarna_2.7.0-1_amd64.deb"
 RUN dpkg -i /tmp/viennarna_2.7.0-1_amd64.deb || apt-get install -y -f
 RUN rm /tmp/viennarna_2.7.0-1_amd64.deb
 
