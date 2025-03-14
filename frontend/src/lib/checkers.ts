@@ -92,6 +92,40 @@ export function checkClustalMatchingFasta(
   return errors
 }
 
+export function checkUtrSequence(sequence: string) {
+  const errors = []
+  const trimmedSequence = sequence.trim()
+
+  const invalidCharacters = trimmedSequence.match(/[^ACTGU]/g)
+
+  if (invalidCharacters) {
+    for (const match of invalidCharacters) {
+      const matchedChar = match[0]
+
+      switch (matchedChar) {
+        case '\r\n':
+        case '\n':
+          errors.push(`Invalid newline character.`)
+          break
+        case ' ':
+          errors.push(`Invalid space character.`)
+          break
+        default:
+          errors.push(`Invalid character ${matchedChar}.`)
+          break
+      }
+    }
+  }
+
+  if (sequence.replace(/[\r\n]+/, '').length % 3 !== 0) {
+    errors.push(
+      `Invalid number of nucleotides (${sequence.length}). Should be a multiple of three.`,
+    )
+  }
+
+  return errors
+}
+
 export function checkPasswordConstraints(password: string) {
   if (password.length < 8 || password.length > 20) {
     return 'The password must be between 8 and 20 characters long.'
