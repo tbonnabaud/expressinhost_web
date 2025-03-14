@@ -80,10 +80,13 @@ watch(
 
 watch(tuningState, state => {
   if (state) {
+    // After the job has been ended remove tuningJobId from local storage
+    if (![Status.STARTED, Status.QUEUED].includes(state.status)) {
+      localStorage.removeItem('tuningJobId')
+    }
+
     if (state.status == Status.FINISHED) {
       emit('submit', state.result)
-    } else if (![Status.STARTED, Status.QUEUED].includes(state.status)) {
-      localStorage.removeItem('tuningJobId')
     }
   }
 })

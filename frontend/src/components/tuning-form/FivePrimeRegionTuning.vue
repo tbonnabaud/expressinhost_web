@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
+import { store } from '@/lib/store'
 import type { PartialUntuningMode, FineTuningMode } from '@/lib/interfaces'
 import ToolTip from '@/components/ToolTip.vue'
-import { store } from '@/lib/store'
+import UtrSequenceInput from './five-prime-region/UtrSequenceInput.vue'
 
-const user = store.currentUser
+const isGuest = ref(store.currentUser.value === null)
 const mode = ref<string | null>(null)
 const model = defineModel<PartialUntuningMode | FineTuningMode | null>()
 
@@ -59,10 +60,16 @@ watch(mode, value => {
       </label>
     </div>
 
-    <div v-if="user">
-      <label>
-        <input type="radio" value="fine_tuning" v-model="mode" />
-        <ToolTip>
+    <div>
+      <label :aria-disabled="isGuest">
+        <input
+          type="radio"
+          value="fine_tuning"
+          v-model="mode"
+          :disabled="isGuest"
+        />
+        <span v-if="isGuest">Fine-tuned (for logged user only)</span>
+        <ToolTip v-else>
           Fine-tuned
           <span class="material-icons question-marks">question_mark</span>
           <template #tooltip>
@@ -99,7 +106,7 @@ watch(mode, value => {
 
   <div
     id="fineTuningModeOptions"
-    v-else-if="user && mode == 'fine_tuning' && model"
+    v-else-if="!isGuest && mode == 'fine_tuning' && model"
   >
     <div class="input-range" v-if="'codon_window_size' in model">
       <label> Codon window size = {{ model.codon_window_size }} codons </label>
@@ -113,13 +120,7 @@ watch(mode, value => {
     </div>
 
     <div v-if="'utr' in model">
-      <label id="utrSequenceLabel" for="utrSequence">UTR sequence</label>
-      <textarea
-        id="utrSequence"
-        v-model="model.utr"
-        placeholder="Put UTR sequence"
-        rows="3"
-      ></textarea>
+      <UtrSequenceInput v-model="model.utr" />
     </div>
   </div>
 </template>

@@ -21,6 +21,7 @@ from ..database import Session, context_get_session, context_get_session_with_co
 from ..job_manager import heavy_queue, light_queue, stream_job_state, update_job_meta
 from ..logger import logger
 from ..schemas import (
+    CodonTable,
     FineTuningMode,
     ProgressState,
     RunInfoForm,
@@ -195,9 +196,12 @@ def tune_sequences(token: OptionalTokenDependency, form: RunTuningForm):
 
                 TunedSequenceRepository(session).add_batch(tuned_sequences)
 
-            result["host_codon_table"] = CodonTableRepository(session).get(
+            host_codon_table = CodonTableRepository(session).get(
                 user and user.id, form.host_codon_table_id
             )
+            result["host_codon_table"] = CodonTable.model_validate(
+                host_codon_table
+            ).model_dump()
 
         time.sleep(0.5)
 
