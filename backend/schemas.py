@@ -182,6 +182,11 @@ class FineTuningMode(BaseModel):
     codon_window_size: int
     utr: str
 
+    @field_validator("utr")
+    @staticmethod
+    def clean(value: str):
+        return value.strip()
+
 
 class RunTuningForm(BaseModel):
     name: str = "Unnamed"
