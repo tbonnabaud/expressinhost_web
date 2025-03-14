@@ -26,6 +26,7 @@ from ..schemas import (
     RunInfoForm,
     RunTuningForm,
     TuningOutput,
+    CodonTable,
 )
 
 router = APIRouter(tags=["Tuning"])
@@ -195,9 +196,12 @@ def tune_sequences(token: OptionalTokenDependency, form: RunTuningForm):
 
                 TunedSequenceRepository(session).add_batch(tuned_sequences)
 
-            result["host_codon_table"] = CodonTableRepository(session).get(
+            host_codon_table = CodonTableRepository(session).get(
                 user and user.id, form.host_codon_table_id
             )
+            result["host_codon_table"] = CodonTable.model_validate(
+                host_codon_table
+            ).model_dump()
 
         time.sleep(0.5)
 
