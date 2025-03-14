@@ -21,12 +21,12 @@ from ..database import Session, context_get_session, context_get_session_with_co
 from ..job_manager import heavy_queue, light_queue, stream_job_state, update_job_meta
 from ..logger import logger
 from ..schemas import (
+    CodonTable,
     FineTuningMode,
     ProgressState,
     RunInfoForm,
     RunTuningForm,
     TuningOutput,
-    CodonTable,
 )
 
 router = APIRouter(tags=["Tuning"])
