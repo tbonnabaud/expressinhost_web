@@ -40,11 +40,12 @@ async function setFastaContent(event: Event) {
         rows="10"
         spellcheck="false"
         v-model="fastaContent"
+        required
       ></textarea>
     </WithAlertError>
 
     <div class="input-file">
-      <input type="file" id="fasta" @change="setFastaContent" required />
+      <input type="file" id="fasta" @change="setFastaContent" />
 
       <i>
         You can download an example sequence file

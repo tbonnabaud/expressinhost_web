@@ -51,11 +51,12 @@ async function setClustalContent(event: Event) {
         rows="10"
         spellcheck="false"
         v-model="clustalContent"
+        required
       ></textarea>
     </WithAlertError>
 
     <div class="input-file">
-      <input type="file" id="fasta" @change="setClustalContent" required />
+      <input type="file" id="clustal" @change="setClustalContent" />
 
       <i>
         You can download an example sequence file
