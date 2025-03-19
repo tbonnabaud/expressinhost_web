@@ -439,4 +439,10 @@ td {
   padding: 0.75rem 1.25rem;
   margin: 0.75rem 0;
 }
+
+@media (max-width: 786px) {
+  #cancelTuningButton {
+    width: 50%;
+  }
+}
 </style>
