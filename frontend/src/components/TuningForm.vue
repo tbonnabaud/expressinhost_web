@@ -2,6 +2,7 @@
 import { ref, onMounted, reactive, watch, computed } from 'vue'
 import type { CodonTable, RunTrainingForm } from '@/lib/interfaces'
 import { API } from '@/lib/api'
+import { store } from '@/lib/store'
 import { Status, useStreamState } from '@/lib/streamedState'
 import CodonTableSearchSelect from '@/components/codon-tables/CodonTableSearchSelect.vue'
 import ToolTip from '@/components/ToolTip.vue'
@@ -52,6 +53,8 @@ const clustalIsRequired = computed(() =>
     'optimisation_and_conservation_2',
   ].includes(baseForm.mode),
 )
+
+const isGuest = computed(() => store.currentUser.value === null)
 
 onMounted(async () => await fetchCodonTables())
 onMounted(async () => {
@@ -348,6 +351,7 @@ async function cancelTuning() {
           :max="tuningState?.total || 0"
         />
         <button
+          v-if="!isGuest"
           id="cancelTuningButton"
           type="button"
           class="danger"
