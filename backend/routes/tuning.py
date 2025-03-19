@@ -3,12 +3,12 @@ import time
 from datetime import UTC, datetime
 from uuid import UUID
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 from fastapi.exceptions import HTTPException
 from fastapi.responses import StreamingResponse
 from rq import get_current_job
 
-from ..authentication import OptionalTokenDependency, get_current_user
+from ..authentication import OptionalTokenDependency, check_is_member, get_current_user
 from ..core.codon_tables import process_raw_codon_table
 from ..core.exceptions import ExpressInHostError
 from ..core.sequence_tuning import SequenceTuner
@@ -244,8 +244,8 @@ def stream_tuning_state(job_id: str):
     return StreamingResponse(stream_job_state(job_id), media_type="text/event-stream")
 
 
-@router.delete("/tuning/{job_id}")
-def cancel_tuning(token: OptionalTokenDependency, job_id: str):
+@router.delete("/tuning/{job_id}", dependencies=[Depends(check_is_member)])
+def cancel_tuning(job_id: str):
     cancel_job(job_id)
 
     return f"Job {job_id} cancelled."
