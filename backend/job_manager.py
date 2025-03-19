@@ -4,6 +4,7 @@ import json
 from fastapi.exceptions import HTTPException
 from redis import Redis
 from rq import Queue
+from rq.command import send_stop_job_command
 from rq.exceptions import InvalidJobOperation, NoSuchJobError
 from rq.job import Job, JobStatus
 
@@ -16,6 +17,10 @@ redis_conn = Redis(host=settings.REDIS_HOST, port=settings.REDIS_PORT)
 light_queue = Queue("light", connection=redis_conn)
 heavy_queue = Queue("heavy", connection=redis_conn)
 web_scraping_queue = Queue("web_scraping", connection=redis_conn)
+
+
+class ManuallyStoppedException(Exception):
+    pass
 
 
 def update_job_meta(job: Job, message: str, step: int, total: int | None = None):
@@ -90,3 +95,13 @@ async def stream_job_state(job_id: str):
 
     except (InvalidJobOperation, NoSuchJobError):
         yield json.dumps({"status": "not found", "message": "Not found."})
+
+
+def cancel_job(job_id: str):
+    job = Job.fetch(job_id, connection=redis_conn)
+
+    if job.is_started:
+        send_stop_job_command(redis_conn, job.id)
+    else:
+        # Delete job from Redis
+        job.delete()
