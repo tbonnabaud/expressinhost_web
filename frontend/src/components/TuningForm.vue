@@ -344,7 +344,7 @@ async function cancelTuning() {
         {{ tuningState.message }}
       </p>
 
-      <template v-if="tuningLoading">
+      <template v-if="tuningState || tuningLoading">
         <ProgressBar
           id="tuningProgress"
           :value="tuningState?.step || 0"
