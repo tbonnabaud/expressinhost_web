@@ -229,11 +229,12 @@ async def run_tuning(
     token: OptionalTokenDependency,
     form: RunTuningForm,
 ):
-    if isinstance(form.five_prime_region_tuning, FineTuningMode):
-        job = heavy_queue.enqueue(tune_sequences, token, form)
-
-    else:
-        job = light_queue.enqueue(tune_sequences, token, form)
+    selected_queue = (
+        heavy_queue
+        if isinstance(form.five_prime_region_tuning, FineTuningMode)
+        else light_queue
+    )
+    job = selected_queue.enqueue(tune_sequences, token, form, failure_ttl=500)
 
     return job.id
 
