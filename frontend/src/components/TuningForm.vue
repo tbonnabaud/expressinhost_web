@@ -424,7 +424,6 @@ td {
 #cancelTuningButton {
   height: 100%;
   margin-top: 1em;
-  margin-bottom: 0;
   width: 20%;
 }
 
