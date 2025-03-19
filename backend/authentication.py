@@ -118,18 +118,34 @@ def get_current_user(
     )
 
 
-def check_is_member(session: SessionDependency, token: TokenDependency):
-    return get_current_user(session, token)
-
-
-def check_is_admin(session: SessionDependency, token: TokenDependency):
+def check_is_member(session: SessionDependency, token: TokenDependency) -> bool:
     user = get_current_user(session, token)
 
-    if user.role != "admin":
+    if user is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+    return True
+
+
+def check_is_admin(session: SessionDependency, token: TokenDependency) -> bool:
+    user = get_current_user(session, token)
+
+    if user is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+    elif user.role != "admin":
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Not admin",
             headers={"WWW-Authenticate": "Bearer"},
         )
 
-    return user
+    return True

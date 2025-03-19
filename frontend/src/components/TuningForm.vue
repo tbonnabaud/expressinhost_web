@@ -2,6 +2,7 @@
 import { ref, onMounted, reactive, watch, computed } from 'vue'
 import type { CodonTable, RunTrainingForm } from '@/lib/interfaces'
 import { API } from '@/lib/api'
+import { store } from '@/lib/store'
 import { Status, useStreamState } from '@/lib/streamedState'
 import CodonTableSearchSelect from '@/components/codon-tables/CodonTableSearchSelect.vue'
 import ToolTip from '@/components/ToolTip.vue'
@@ -40,6 +41,7 @@ const selectedSequencesNativeCodonTables = ref(
 
 const codonTableList = ref([] as Array<CodonTable>)
 const tuningLoading = ref(false)
+const currentJobId = ref(null as string | null)
 
 const { state: tuningState, startStream: startTuningStream } = useStreamState(
   localStorage.getItem('accessToken') || undefined,
@@ -52,12 +54,14 @@ const clustalIsRequired = computed(() =>
   ].includes(baseForm.mode),
 )
 
+const isGuest = computed(() => store.currentUser.value === null)
+
 onMounted(async () => await fetchCodonTables())
 onMounted(async () => {
-  const jobId = localStorage.getItem('tuningJobId')
+  currentJobId.value = localStorage.getItem('tuningJobId')
 
-  if (jobId) {
-    await startTuningStream(`/api/tuning/state/${jobId}`)
+  if (currentJobId.value) {
+    await startTuningStream(`/api/tuning/state/${currentJobId.value}`)
   }
 })
 
@@ -83,6 +87,7 @@ watch(tuningState, state => {
     // After the job has been ended remove tuningJobId from local storage
     if (![Status.STARTED, Status.QUEUED].includes(state.status)) {
       localStorage.removeItem('tuningJobId')
+      currentJobId.value = null
     }
 
     if (state.status == Status.FINISHED) {
@@ -176,9 +181,26 @@ async function runTuning() {
     const [jobId, error] = await API.runTraining(form)
 
     if (!error) {
-      await startTuningStream(`/api/tuning/state/${jobId}`)
       localStorage.setItem('tuningJobId', jobId)
+      currentJobId.value = jobId
+      await startTuningStream(`/api/tuning/state/${jobId}`)
     }
+  } else {
+    tuningLoading.value = false
+  }
+}
+
+async function cancelTuning() {
+  if (currentJobId.value) {
+    const [data, error] = await API.cancelTuning(currentJobId.value)
+
+    if (!error) {
+      console.log(data)
+    } else {
+      console.error(error)
+    }
+  } else {
+    console.log('No job ID.')
   }
 
   tuningLoading.value = false
@@ -321,12 +343,23 @@ async function runTuning() {
       >
         {{ tuningState.message }}
       </p>
-      <ProgressBar
-        v-if="tuningLoading"
-        id="tuningProgress"
-        :value="tuningState?.step || 0"
-        :max="tuningState?.total || 0"
-      />
+
+      <template v-if="tuningState || tuningLoading">
+        <ProgressBar
+          id="tuningProgress"
+          :value="tuningState?.step || 0"
+          :max="tuningState?.total || 0"
+        />
+        <button
+          v-if="!isGuest"
+          id="cancelTuningButton"
+          type="button"
+          class="danger"
+          @click="cancelTuning"
+        >
+          Cancel
+        </button>
+      </template>
 
       <button v-else id="runTuningButton" type="submit">Run tuning</button>
     </div>
@@ -375,6 +408,7 @@ td {
 #tuningProgressWrapper {
   height: 3em;
   margin-bottom: 3em;
+  text-align: center;
 }
 
 #tuningProgressText {
@@ -385,6 +419,12 @@ td {
 #runTuningButton {
   height: 100%;
   margin-bottom: 0;
+}
+
+#cancelTuningButton {
+  height: 100%;
+  margin-top: 1em;
+  width: 20%;
 }
 
 #tuningProgress {
@@ -398,5 +438,11 @@ td {
   border-radius: 0.25rem;
   padding: 0.75rem 1.25rem;
   margin: 0.75rem 0;
+}
+
+@media (max-width: 786px) {
+  #cancelTuningButton {
+    width: 50%;
+  }
 }
 </style>

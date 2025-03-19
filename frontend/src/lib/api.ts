@@ -184,6 +184,8 @@ const tunedSequences = {
 export const API = {
   runTraining: async (form: RunTrainingForm) =>
     (await REQUESTS.post('/run-tuning', form)) as ApiResponse<string>,
+  cancelTuning: async (jobId: string) =>
+    (await REQUESTS.delete(`/tuning/${jobId}`)) as ApiResponse<string>,
   auth: auth,
   users: users,
   codonTables: codonTables,

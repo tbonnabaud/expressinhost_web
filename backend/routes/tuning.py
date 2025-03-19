@@ -3,12 +3,12 @@ import time
 from datetime import UTC, datetime
 from uuid import UUID
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 from fastapi.exceptions import HTTPException
 from fastapi.responses import StreamingResponse
 from rq import get_current_job
 
-from ..authentication import OptionalTokenDependency, get_current_user
+from ..authentication import OptionalTokenDependency, check_is_member, get_current_user
 from ..core.codon_tables import process_raw_codon_table
 from ..core.exceptions import ExpressInHostError
 from ..core.sequence_tuning import SequenceTuner
@@ -18,7 +18,13 @@ from ..crud.results import ResultRepository
 from ..crud.run_infos import RunInfoRepository
 from ..crud.tuned_sequences import TunedSequenceRepository
 from ..database import Session, context_get_session, context_get_session_with_commit
-from ..job_manager import heavy_queue, light_queue, stream_job_state, update_job_meta
+from ..job_manager import (
+    cancel_job,
+    heavy_queue,
+    light_queue,
+    stream_job_state,
+    update_job_meta,
+)
 from ..logger import logger
 from ..schemas import (
     CodonTable,
@@ -223,11 +229,12 @@ async def run_tuning(
     token: OptionalTokenDependency,
     form: RunTuningForm,
 ):
-    if isinstance(form.five_prime_region_tuning, FineTuningMode):
-        job = heavy_queue.enqueue(tune_sequences, token, form)
-
-    else:
-        job = light_queue.enqueue(tune_sequences, token, form)
+    selected_queue = (
+        heavy_queue
+        if isinstance(form.five_prime_region_tuning, FineTuningMode)
+        else light_queue
+    )
+    job = selected_queue.enqueue(tune_sequences, token, form, failure_ttl=500)
 
     return job.id
 
@@ -235,3 +242,10 @@ async def run_tuning(
 @router.get("/tuning/state/{job_id}")
 def stream_tuning_state(job_id: str):
     return StreamingResponse(stream_job_state(job_id), media_type="text/event-stream")
+
+
+@router.delete("/tuning/{job_id}", dependencies=[Depends(check_is_member)])
+def cancel_tuning(job_id: str):
+    cancel_job(job_id)
+
+    return f"Job {job_id} cancelled."

@@ -1,13 +1,14 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { store } from '@/lib/store'
 import type { PartialUntuningMode, FineTuningMode } from '@/lib/interfaces'
 import ToolTip from '@/components/ToolTip.vue'
 import UtrSequenceInput from './five-prime-region/UtrSequenceInput.vue'
 
-const isGuest = ref(store.currentUser.value === null)
 const mode = ref<string | null>(null)
 const model = defineModel<PartialUntuningMode | FineTuningMode | null>()
+
+const isGuest = computed(() => store.currentUser.value === null)
 
 watch(mode, value => {
   if (value === null) {
