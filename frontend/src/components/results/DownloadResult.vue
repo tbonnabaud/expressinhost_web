@@ -19,23 +19,35 @@ function formatToFasta(tunedSequences: Array<TunedSequence>) {
 }
 
 /**
- * Returns a CSV formatted string with columns for codon_index, input, and output.
+ * Generates a CSV formatted string from input and output codon arrays and their corresponding profiles.
  *
- * @param input - Array of input numbers.
- * @param output - Array of output numbers.
- * @returns {string} The CSV formatted string.
+ * @param inputCodonArray - An array of input codon strings.
+ * @param inputProfile - An array of numerical values representing the profile of the input codons.
+ * @param outputCodonArray - An array of output codon strings.
+ * @param outputProfile - An array of numerical values representing the profile of the output codons.
+ * @param profileType - The type of profile being represented, either 'speed' or 'rank'.
+ * @returns A CSV formatted string with columns for index, input codon, input profile, output codon, and output profile.
+ * @throws Will throw an error if the inputProfile and outputProfile arrays do not have the same length.
  */
-function formatProfileCSV(input: number[], output: number[]): string {
-  if (input.length !== output.length) {
+function formatProfileCSV(
+  inputCodonArray: string[],
+  inputProfile: number[],
+  outputCodonArray: string[],
+  outputProfile: number[],
+  profileType: 'speed' | 'rank',
+): string {
+  if (inputProfile.length !== outputProfile.length) {
     throw new Error('Input and output arrays must have the same length')
   }
 
   // Create the CSV header
-  const csvRows = ['codon_index,input,output']
+  const csvRows = [
+    `index,input_codon,input_${profileType},output_codon,output_${profileType}`,
+  ]
 
   // Create the CSV rows
-  for (let i = 0; i < input.length; i++) {
-    const row = `${i},${input[i]},${output[i]}`
+  for (let i = 0; i < inputProfile.length; i++) {
+    const row = `${i},${inputCodonArray[i]},${inputProfile[i]},${outputCodonArray[i]},${outputProfile[i]}`
     csvRows.push(row)
   }
 
@@ -61,20 +73,28 @@ async function downloadZip() {
 
     if (matchId) {
       const seqId = matchId[0]
+      const inputCodonArray = tunedSequence.input.match(/.{3}/g) || []
+      const outputCodonArray = tunedSequence.output.match(/.{3}/g) || []
       // Add speed profiles
       zip.file(
         `speeds/${seqId}_speed_profiles.csv`,
         formatProfileCSV(
+          inputCodonArray,
           tunedSequence.input_profiles.speed,
+          outputCodonArray,
           tunedSequence.output_profiles.speed,
+          'speed',
         ),
       )
       // Add rank profiles
       zip.file(
         `ranks/${seqId}_rank_profiles.csv`,
         formatProfileCSV(
+          inputCodonArray,
           tunedSequence.input_profiles.rank,
+          outputCodonArray,
           tunedSequence.output_profiles.rank,
+          'rank',
         ),
       )
     } else {
