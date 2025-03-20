@@ -117,12 +117,6 @@ export function checkUtrSequence(sequence: string) {
     }
   }
 
-  if (sequence.replace(/[\r\n]+/, '').length % 3 !== 0) {
-    errors.push(
-      `Invalid number of nucleotides (${sequence.length}). Should be a multiple of three.`,
-    )
-  }
-
   return errors
 }
 
