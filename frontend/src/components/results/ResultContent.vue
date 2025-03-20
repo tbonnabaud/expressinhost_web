@@ -110,33 +110,53 @@ async function deleteResult() {
   <h3>Five prime region tuning</h3>
 
   <div v-if="result.five_prime_region_tuning">
-    <strong>Mode:</strong>
-    {{
-      FIVE_PRIME_REGION_TUNING_LABEL_MAPPING[
-        result.five_prime_region_tuning.mode
-      ]
-    }}
+    <table>
+      <thead>
+        <tr>
+          <th scope="col">Mode</th>
+          <th
+            scope="col"
+            v-if="result.five_prime_region_tuning.mode == 'partial_untuning'"
+          >
+            Untuned codon number
+          </th>
+          <th
+            scope="col"
+            v-else-if="result.five_prime_region_tuning.mode == 'fine_tuning'"
+          >
+            Codon window size
+          </th>
+        </tr>
+      </thead>
 
-    <div v-if="result.five_prime_region_tuning.mode == 'partial_untuning'">
-      <p>
-        <strong>Untuned codon number:</strong>
-        {{ result.five_prime_region_tuning.untuned_codon_number }}
-      </p>
-    </div>
+      <tbody>
+        <tr>
+          <td>
+            {{
+              FIVE_PRIME_REGION_TUNING_LABEL_MAPPING[
+                result.five_prime_region_tuning.mode
+              ]
+            }}
+          </td>
+          <td v-if="result.five_prime_region_tuning.mode == 'partial_untuning'">
+            {{ result.five_prime_region_tuning.untuned_codon_number }}
+          </td>
+          <td v-else-if="result.five_prime_region_tuning.mode == 'fine_tuning'">
+            {{ result.five_prime_region_tuning.codon_window_size }}
+          </td>
+        </tr>
+      </tbody>
+    </table>
 
-    <div v-else-if="result.five_prime_region_tuning.mode == 'fine_tuning'">
-      <p>
-        <strong>Codon window size:</strong>
-        {{ result.five_prime_region_tuning.codon_window_size }}
-      </p>
-
-      <article>
-        <details name="utrAccordion">
-          <summary>UTR sequence</summary>
-          {{ result.five_prime_region_tuning.utr }}
-        </details>
-      </article>
-    </div>
+    <article
+      id="utrSequence"
+      v-if="result.five_prime_region_tuning.mode == 'fine_tuning'"
+    >
+      <details name="utrAccordion">
+        <summary>UTR sequence</summary>
+        {{ result.five_prime_region_tuning.utr }}
+      </details>
+    </article>
   </div>
 
   <div v-else>None</div>
@@ -158,6 +178,15 @@ async function deleteResult() {
 </template>
 
 <style scoped>
+table th,
+table td {
+  text-align: center;
+}
+
+#utrSequence {
+  padding-bottom: 0.3em;
+}
+
 #deleteButton {
   margin-left: auto;
 }
