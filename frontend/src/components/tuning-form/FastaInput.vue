@@ -40,6 +40,7 @@ async function setFastaContent(event: Event) {
         rows="10"
         spellcheck="false"
         v-model="fastaContent"
+        placeholder="Put your FASTA sequences here or import a file using the button below."
         required
       ></textarea>
     </WithAlertError>

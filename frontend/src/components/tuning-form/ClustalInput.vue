@@ -51,6 +51,7 @@ async function setClustalContent(event: Event) {
         rows="10"
         spellcheck="false"
         v-model="clustalContent"
+        placeholder="Put your CLUSTAL here or import a file using the button below."
         required
       ></textarea>
     </WithAlertError>
