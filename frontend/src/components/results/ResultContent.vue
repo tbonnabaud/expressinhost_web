@@ -99,7 +99,7 @@ async function deleteResult() {
         <td v-if="result.conservation_threshold">
           {{ result.conservation_threshold * 100 }}%
         </td>
-        <td v-else>null</td>
+        <td v-else>None</td>
       </tr>
     </tbody>
   </table>
