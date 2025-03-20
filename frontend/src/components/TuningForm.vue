@@ -43,9 +43,11 @@ const codonTableList = ref([] as Array<CodonTable>)
 const tuningLoading = ref(false)
 const currentJobId = ref(null as string | null)
 
-const { state: tuningState, startStream: startTuningStream } = useStreamState(
-  localStorage.getItem('accessToken') || undefined,
-)
+const {
+  state: tuningState,
+  startStream: startTuningStream,
+  stopStream: stopTuningStream,
+} = useStreamState(localStorage.getItem('accessToken') || undefined)
 
 const clustalIsRequired = computed(() =>
   [
@@ -202,7 +204,10 @@ async function cancelTuning() {
   } else {
     console.log('No job ID.')
   }
-
+  stopTuningStream()
+  localStorage.removeItem('tuningJobId')
+  currentJobId.value = null
+  tuningState.value = null
   tuningLoading.value = false
 }
 </script>
