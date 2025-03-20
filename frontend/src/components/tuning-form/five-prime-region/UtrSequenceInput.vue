@@ -20,11 +20,11 @@ function addExampleUTR() {
 
 <template>
   <WithAlertError :errors="errors">
-    <label id="utrSequenceLabel" for="utrSequence">UTR sequence</label>
+    <label id="utrSequenceLabel" for="utrSequence">5' UTR sequence</label>
     <textarea
       id="utrSequence"
       v-model="utr"
-      placeholder="Put UTR sequence"
+      placeholder="Put 5' UTR sequence."
       rows="3"
       spellcheck="false"
     ></textarea>
