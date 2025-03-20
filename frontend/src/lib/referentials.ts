@@ -7,6 +7,11 @@ export const MODE_LABEL_MAPPING: Record<string, string> = {
   optimisation_and_conservation_2: 'Optimisation and conservation 2',
 }
 
+export const FIVE_PRIME_REGION_TUNING_LABEL_MAPPING: Record<string, string> = {
+  partial_untuning: 'Partial untuning',
+  fine_tuning: 'Fine tuning',
+}
+
 const BASE_CODON_TABLE = [
   { amino_acid: 'Ala', anticodon: 'AGC', codon: 'GCU' },
   { amino_acid: 'Ala', anticodon: 'GGC', codon: 'GCC' },
