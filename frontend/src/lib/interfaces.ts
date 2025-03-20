@@ -101,6 +101,7 @@ export interface Result {
   slow_speed_threshold: number
   conservation_threshold: number | null
   host_codon_table: CodonTable
+  five_prime_region_tuning: PartialUntuningMode | FineTuningMode | null
 }
 
 export interface ResultWithId {
@@ -114,6 +115,7 @@ export interface ResultWithId {
   slow_speed_threshold: number
   conservation_threshold: number | null
   host_codon_table: CodonTable
+  five_prime_region_tuning: PartialUntuningMode | FineTuningMode | null
 }
 
 export interface Profiles {

@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import type { Result } from '@/lib/interfaces'
-import { MODE_LABEL_MAPPING } from '@/lib/referentials'
+import {
+  MODE_LABEL_MAPPING,
+  FIVE_PRIME_REGION_TUNING_LABEL_MAPPING,
+} from '@/lib/referentials'
 import { formatToLocaleDateString } from '@/lib/helpers'
 
 defineProps<{ result: Result }>()
@@ -35,10 +38,24 @@ defineProps<{ result: Result }>()
           </p>
           <p>
             <strong>Conservation threshold:</strong>
-            {{
-              result.conservation_threshold &&
-              result.conservation_threshold * 100
-            }}%
+            <span v-if="result.conservation_threshold">
+              {{ result.conservation_threshold * 100 }}%
+            </span>
+            <span v-else> None</span>
+          </p>
+        </div>
+
+        <div>
+          <p>
+            <strong>Five prime region tuning: </strong>
+            <span v-if="result.five_prime_region_tuning">
+              {{
+                FIVE_PRIME_REGION_TUNING_LABEL_MAPPING[
+                  result.five_prime_region_tuning.mode
+                ]
+              }}
+            </span>
+            <span v-else> None</span>
           </p>
         </div>
       </div>
@@ -49,7 +66,7 @@ defineProps<{ result: Result }>()
 <style scoped>
 article {
   height: 100%;
-  padding-bottom: 0.3em;
+  padding-bottom: 0;
 }
 
 a {
