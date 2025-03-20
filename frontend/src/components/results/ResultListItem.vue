@@ -35,10 +35,10 @@ defineProps<{ result: Result }>()
           </p>
           <p>
             <strong>Conservation threshold:</strong>
-            {{
-              result.conservation_threshold &&
-              result.conservation_threshold * 100
-            }}%
+            <span v-if="result.conservation_threshold">
+              {{ result.conservation_threshold * 100 }}%
+            </span>
+            <span v-else> null</span>
           </p>
         </div>
       </div>
