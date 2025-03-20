@@ -37,6 +37,7 @@ function formatProfileCSV(
   profileType: 'speed' | 'rank',
 ): string {
   if (inputProfile.length !== outputProfile.length) {
+    alert('Input and output arrays must have the same length')
     throw new Error('Input and output arrays must have the same length')
   }
 
