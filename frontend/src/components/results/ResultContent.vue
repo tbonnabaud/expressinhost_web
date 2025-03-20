@@ -3,7 +3,10 @@ import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import type { TuningOutput } from '@/lib/interfaces'
 import { formatToLocaleDateString } from '@/lib/helpers'
-import { MODE_LABEL_MAPPING } from '@/lib/referentials'
+import {
+  MODE_LABEL_MAPPING,
+  FIVE_PRIME_REGION_TUNING_LABEL_MAPPING,
+} from '@/lib/referentials'
 import { API } from '@/lib/api'
 import SequenceComparison from '@/components/results/SequenceComparison.vue'
 import DownloadResult from './DownloadResult.vue'
@@ -103,6 +106,40 @@ async function deleteResult() {
       </tr>
     </tbody>
   </table>
+
+  <h3>Five prime region tuning</h3>
+
+  <div v-if="result.five_prime_region_tuning">
+    <strong>Mode:</strong>
+    {{
+      FIVE_PRIME_REGION_TUNING_LABEL_MAPPING[
+        result.five_prime_region_tuning.mode
+      ]
+    }}
+
+    <div v-if="result.five_prime_region_tuning.mode == 'partial_untuning'">
+      <p>
+        <strong>Untuned codon number:</strong>
+        {{ result.five_prime_region_tuning.untuned_codon_number }}
+      </p>
+    </div>
+
+    <div v-else-if="result.five_prime_region_tuning.mode == 'fine_tuning'">
+      <p>
+        <strong>Codon window size:</strong>
+        {{ result.five_prime_region_tuning.codon_window_size }}
+      </p>
+
+      <article>
+        <details name="utrAccordion">
+          <summary>UTR sequence</summary>
+          {{ result.five_prime_region_tuning.utr }}
+        </details>
+      </article>
+    </div>
+  </div>
+
+  <div v-else>None</div>
 
   <h3>Sequence comparisons</h3>
   <hr />
