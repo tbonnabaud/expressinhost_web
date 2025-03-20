@@ -108,6 +108,7 @@ async function deleteResult() {
   </table>
 
   <h3>Five prime region tuning</h3>
+  <hr />
 
   <div v-if="result.five_prime_region_tuning">
     <table>
