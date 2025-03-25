@@ -2,15 +2,6 @@
 left to right direction
 skinparam dpi 200
 
-' skinparam BackgroundColor #1b212c
-skinparam BackgroundColor transparent
-' skinparam ActorBackgroundColor #fff
-' skinparam ActorBorderColor #fff
-' skinparam ActorFontColor #fff
-' skinparam UsecaseBackgroundColor #1b212c
-' skinparam UsecaseBorderColor #fff
-' skinparam UsecaseFontColor #fff
-
 actor LoggedUser
 actor Admin
 actor Member
@@ -22,6 +13,7 @@ usecase "Read result" as u3
 usecase "Download result" as u4
 usecase "Access to previous results" as u5
 usecase "Edit/remove users" as u6
+usecase "Access usage statistics" as u7
 
 Admin --> LoggedUser #line:MediumPurple
 Member --> LoggedUser #line:MediumPurple
@@ -37,4 +29,5 @@ LoggedUser --> u4 #line:DodgerBlue
 LoggedUser --> u5 #line:DodgerBlue
 
 Admin --> u6 #line:Crimson
+Admin --> u7 #line:Crimson
 @enduml

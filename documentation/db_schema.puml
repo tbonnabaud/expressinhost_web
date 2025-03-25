@@ -2,11 +2,9 @@
 skinparam linetype ortho
 skinparam dpi 200
 
-' !theme amiga
 ' left to right direction
-' skinparam BackgroundColor transparent
 
-entity users {
+entity User {
     * id: uuid <<PK>>
     --
     * creation_date: datetime
@@ -17,7 +15,14 @@ entity users {
     * contact_consent: boolean
 }
 
-entity codon_tables {
+entity LastWebScraping {
+    * source: varchar <<PK>>
+    * release: varchar <<PK>>
+    --
+    * scraping_date: datetime
+}
+
+entity CodonTable {
     * id: uuid <<PK>>
     --
     user_id: uuid <<FK>>
@@ -27,62 +32,59 @@ entity codon_tables {
     source: varchar
 }
 
-entity codon_translations {
-    * codon_table_id: uuid <<FK>> <<PK>>
-    * codon: varchar(3) <<PK>>
+entity CodonTranslation {
+    * codon_table_id: uuid <<PK, FK>>
+    * codon: char(3) <<PK>>
     --
-    * anticodon: varchar(3)
-    * amino_acid: varchar(3)
+    * anticodon: char(3)
+    * amino_acid: char(3)
     * trna_gcn: float
-    * wobble_codon: varchar(3)
+    * wobble_codon: char(3)
     * wobble_rate: float
 }
 
-entity results {
+entity Result {
     * id: uuid <<PK>>
     --
     user_id: uuid <<FK>>
     * creation_date: datetime
-    * host_codon_table_id: uuid
-    * sequences_native_codon_tables: json
+    * name: varchar
+    * host_codon_table_id: uuid <<FK>>
+    * sequences_native_codon_tables: jsonb
     * mode: varchar
     * slow_speed_threshold: float
     conservation_threshold: float
+    five_prime_region_tuning: jsonb
 }
 
-json sequences_native_codon_tables {
-    "seq1": "table1_id",
-    "seq2": "table2_id"
-}
-
-entity tuned_sequences {
+entity TunedSequence {
     * id: uuid <<PK>>
     --
     * result_id: uuid <<FK>>
     * name: varchar
     * input: text
     * output: text
-    * percentage_identity: float
-    * input_profiles: json
-    * output_profiles: json
+    * identity_percentage: float
+    * input_profiles: jsonb
+    * output_profiles: jsonb
 }
 
-json input_profiles {
-    "speed": [0.0, 0.0],
-    "rank": [0.0, 0.0]
+entity RunInfo {
+    * id: uuid <<PK>>
+    --
+    * creation_date: datetime
+    * duration: interval
+    * sequence_number: int
+    * mode: varchar
+    * slow_speed_threshold: float
+    conservation_threshold: float
+    five_prime_region_tuning_mode: varchar
 }
 
-json output_profiles {
-    "speed": [0.0, 0.0],
-    "rank": [0.0, 0.0]
-}
+User ||--o{ CodonTable
+CodonTable ||--o{ CodonTranslation
+User ||--o{ Result
+CodonTable ||--o{ Result
+Result ||--o{ TunedSequence
 
-users |o--o{ results
-users |o--o{ codon_tables
-results ||--o{ tuned_sequences
-results |o--{ codon_tables
-results ||--|| sequences_native_codon_tables
-tuned_sequences ||--|| input_profiles
-tuned_sequences ||--|| output_profiles
-codon_tables ||--|{ codon_translations
 @enduml
