@@ -12,6 +12,56 @@ It builds on our [previous work](https://openresearchsoftware.metajnl.com/articl
 - Optimizing mRNA structural properties for ribosome binding
 - Providing a free, user-friendly interface for researchers and scientists
 
+# User interface
+
+The interface is built with Vue.js and includes these key components:
+
+## Tuning Form
+
+The tuning form provides:
+
+- Sequence input options (paste, file upload)
+- Codon table selection (host organism)
+- Tuning mode selection
+- Advanced parameters configuration
+- Job submission and progress tracking
+
+## Registration
+
+The registration system includes:
+
+- User signup with email verification
+- Login with JWT authentication
+- Password reset functionality
+- Profile management
+
+## Codon Table Editor
+
+The codon table editor allows:
+
+- Viewing built-in codon tables
+- Creating custom codon tables
+- Editing tRNA gene copy numbers
+
+## History of Results
+
+The results history features:
+
+- List of previous tuning jobs
+- Detailed view of each result
+- Comparison between original and tuned sequences
+- Speed and rank profile visualization with Chart.js
+- Export options (FASTA, CSV)
+
+## Administration Dashboard
+
+The admin dashboard provides:
+
+- User management (create, edit, delete)
+- System usage statistics
+- Codon table management
+- Server logs
+
 # Server-side
 
 ## API
@@ -91,56 +141,6 @@ The core tuning system involves:
 4. Preserving amino acid sequences
 5. Computing similarity between input and output
 6. Generating speed and rank profiles
-
-# User interface
-
-The interface is built with Vue.js and includes these key components:
-
-## Tuning Form
-
-The tuning form provides:
-
-- Sequence input options (paste, file upload)
-- Codon table selection (host organism)
-- Tuning mode selection
-- Advanced parameters configuration
-- Job submission and progress tracking
-
-## Registration
-
-The registration system includes:
-
-- User signup with email verification
-- Login with JWT authentication
-- Password reset functionality
-- Profile management
-
-## Codon Table Editor
-
-The codon table editor allows:
-
-- Viewing built-in codon tables
-- Creating custom codon tables
-- Editing tRNA gene copy numbers
-
-## History of Results
-
-The results history features:
-
-- List of previous tuning jobs
-- Detailed view of each result
-- Comparison between original and tuned sequences
-- Speed and rank profile visualization with Chart.js
-- Export options (FASTA, CSV)
-
-## Administration Dashboard
-
-The admin dashboard provides:
-
-- User management (create, edit, delete)
-- System usage statistics
-- Codon table management
-- Server logs
 
 # Logo credits
 
