@@ -8,7 +8,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 from ..authentication import check_password, create_token
 from ..crud.users import UserRepository
 from ..database import SessionDependency
-from ..email import send_email
+from ..email_service import send_email
 from ..schemas import Token
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
