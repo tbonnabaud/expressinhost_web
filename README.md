@@ -12,7 +12,7 @@ It builds on our [previous work](https://openresearchsoftware.metajnl.com/articl
 - Optimizing mRNA structural properties for ribosome binding
 - Providing a free, user-friendly interface for researchers and scientists
 
-# Backend
+# Server-side
 
 ## API
 
@@ -62,7 +62,7 @@ The job manager uses Redis Queue (RQ) to handle asynchronous processing:
 
 - **Multiple Queues**: Separates jobs into "light", "heavy", and "web_scraping" queues for efficient resource allocation
 - **Job State Tracking**: Maintains job state (queued, started, finished, failed) and progress information
-- **Streaming Progress**: Provides real-time progress updates to the frontend through streaming responses
+- **Streaming Progress**: Provides real-time progress updates to the client through streaming responses
 - **Job Control**: Allows cancellation and management of running jobs
 - **Error Handling**: Robust error handling for failed jobs with detailed exception information
 
@@ -92,9 +92,9 @@ The core tuning system involves:
 5. Computing similarity between input and output
 6. Generating speed and rank profiles
 
-# Frontend
+# User interface
 
-The frontend is built with Vue.js and includes these key components:
+The interface is built with Vue.js and includes these key components:
 
 ## Tuning Form
 
@@ -142,6 +142,6 @@ The admin dashboard provides:
 - Codon table management
 - Server logs
 
-## Logo credits
+# Logo credits
 
 The logo is made by Jagjot Arora.
