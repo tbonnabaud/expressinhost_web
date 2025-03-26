@@ -2,7 +2,7 @@
 skinparam linetype ortho
 skinparam dpi 200
 
-' left to right direction
+left to right direction
 
 entity User {
     * id: uuid <<PK>>
