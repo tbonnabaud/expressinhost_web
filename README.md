@@ -20,11 +20,11 @@ The backend API is built using FastAPI, a modern, high-performance web framework
 
 ## Database
 
-The application uses PostgreSQL as its primary database. PostgreSQL is a powerful, open-source object-relational database system known for its reliability and robustness.
+The application uses PostgreSQL as its primary database.
 
 ![Database schema](docs/db_schema.png)
 
-The database schema includes tables for:
+The schema includes tables for:
 
 - User management (users, roles)
 - Codon tables and translations
@@ -52,7 +52,7 @@ The application maintains up-to-date codon usage data by periodically scraping t
 The application uses JSON Web Tokens (JWT) for authentication:
 
 - JWT tokens contain encoded user information and are signed to prevent tampering
-- Access tokens are short-lived for security (12 hours)
+- Access tokens have a limited lifetime (12 hours)
 - Passwords are securely hashed using bcrypt
 - Role-based access control protects sensitive endpoints
 
