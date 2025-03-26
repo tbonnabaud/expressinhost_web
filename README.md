@@ -22,7 +22,7 @@ The tuning form provides:
 
 - Sequence input options (paste, file upload)
 - Codon table selection (host organism)
-- Tuning mode selection
+- Tuning mode selection (see [Tuning Modes](#tuning-modes) below)
 - Advanced parameters configuration
 - Job submission and progress tracking
 
