@@ -114,7 +114,9 @@ The job manager uses Redis Queue (RQ) to handle asynchronous processing:
 - **Job State Tracking**: Maintains job state (queued, started, finished, failed) and progress information
 - **Streaming Progress**: Provides real-time progress updates to the client through streaming responses
 - **Job Control**: Allows cancellation and management of running jobs
-- **Error Handling**: Robust error handling for failed jobs with detailed exception information
+- **Error Handling**: Error handling for failed jobs
+
+There are `number_of_cores - 1` workers for the light computation modes. We dedicate one worker for the mode with heavy computation and the web scraping to ensure a sequential execution to optimize the resource usage.
 
 ## Tuning Modes
 
