@@ -123,6 +123,8 @@ class Result(Base):
         sa.Float, nullable=True
     )
     five_prime_region_tuning: Mapped[dict | None] = mapped_column(JSONB, nullable=True)
+    # Restriction enzyme recognition sites to avoid
+    restriction_sites: Mapped[dict | None] = mapped_column(JSONB, nullable=True)
 
     host_codon_table: Mapped["CodonTable"] = relationship(
         "CodonTable", foreign_keys=[host_codon_table_id]

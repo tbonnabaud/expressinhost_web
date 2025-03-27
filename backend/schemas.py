@@ -225,6 +225,8 @@ class Result(BaseModel):
     conservation_threshold: float | None
     host_codon_table: CodonTable
     five_prime_region_tuning: PartialUntuningMode | FineTuningMode | None
+    # Restriction enzyme recognition sites to avoid
+    restriction_sites: dict[str, str] | None
 
 
 class Profiles(BaseModel):
