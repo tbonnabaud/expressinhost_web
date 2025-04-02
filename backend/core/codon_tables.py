@@ -21,13 +21,14 @@ class ProcessedCodonTableRow:
 
 @dataclass(slots=True)
 class ProcessedCodonTable:
+    # Key is the codon
     indexed_rows: dict[str, ProcessedCodonTableRow]
 
-    def __getitem__(self, key: str):
-        return self.indexed_rows[key]
+    def __getitem__(self, codon: str):
+        return self.indexed_rows[codon]
 
-    def get_row(self, key: str):
-        return self.indexed_rows.get(key)
+    def get_row(self, codon: str):
+        return self.indexed_rows.get(codon)
 
     def values(self):
         return self.indexed_rows.values()
