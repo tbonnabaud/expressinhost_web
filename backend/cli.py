@@ -3,7 +3,11 @@ import re
 from pathlib import Path
 
 from .core.codon_tables import process_codon_table_from_file
-from .core.constantes import CONSERVATION_THRESHOLD, SLOW_SPEED_THRESHOLD
+from .core.constantes import (
+    CONSERVATION_THRESHOLD,
+    SLOW_SPEED_THRESHOLD,
+    TABLE_BASE_PATH,
+)
 from .core.sequence_tuning import tune_sequences
 from .core.utils import find_organism_from_nucleotide_name, read_text_file
 
@@ -35,12 +39,14 @@ def run_as_cli(
     ]
 
     native_codon_tables = [
-        process_codon_table_from_file(name, SLOW_SPEED_THRESHOLD)
+        process_codon_table_from_file(
+            TABLE_BASE_PATH / f"{name}.csv", SLOW_SPEED_THRESHOLD
+        )
         for name in native_codon_table_names
     ]
 
     host_codon_table = process_codon_table_from_file(
-        host_codon_table_name,
+        TABLE_BASE_PATH / f"{host_codon_table_name}.csv",
         SLOW_SPEED_THRESHOLD,
     )
 

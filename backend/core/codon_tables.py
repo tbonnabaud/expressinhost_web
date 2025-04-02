@@ -1,9 +1,10 @@
 import csv
 from dataclasses import dataclass
+from pathlib import Path
 
 import numpy as np
 
-from .constantes import AMINO_ACID_LIST, TABLE_BASE_PATH
+from .constantes import AMINO_ACID_LIST
 
 
 @dataclass(slots=True)
@@ -198,9 +199,9 @@ def process_raw_codon_table(
 
 
 def process_codon_table_from_file(
-    codon_table_name: str, slow_speed_threshold: float
+    filepath: Path, slow_speed_threshold: float
 ) -> ProcessedCodonTable:
-    with open(TABLE_BASE_PATH / f"{codon_table_name}.csv") as file:
+    with open(filepath) as file:
         reader = csv.DictReader(file, delimiter="\t")
 
         return process_raw_codon_table(list(reader), slow_speed_threshold)
