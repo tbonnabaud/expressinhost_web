@@ -66,3 +66,9 @@ async function setClustalContent(event: Event) {
     </div>
   </div>
 </template>
+
+<style scoped>
+textarea {
+  font-family: 'Courier New', Courier, monospace;
+}
+</style>
