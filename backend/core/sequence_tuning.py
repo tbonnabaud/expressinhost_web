@@ -1,7 +1,7 @@
 import random
 from typing import Iterator
 
-from ..schemas import FineTuningMode, PartialUntuningMode
+from ..schemas import FineTuningMode, PartialUntuningMode, RestrictionSite
 from .checks import check_amino_acido_conservation, check_nucleotides_clustal_identity
 from .codon_tables import ProcessedCodonTable
 from .exceptions import (
@@ -16,6 +16,10 @@ from .postprocessing import (
     rna_to_dna_sequence,
 )
 from .preprocessing import align_nucleotide_sequences, dna_to_rna_sequences
+from .restriction_sites import (
+    find_recognition_site_positions,
+    replace_first_codon_within_recognition_site,
+)
 from .utils import get_clustal_symbol_sequence, parse_sequences, timeit
 
 
@@ -366,6 +370,7 @@ class SequenceTuner:
         mode: str,
         conservation_threshold: float | None,
         five_prime_region_tuning: PartialUntuningMode | FineTuningMode | None,
+        restriction_sites: list[RestrictionSite] | None,
     ) -> Iterator[dict]:
         tuning_iterator = self.get_tuning_iterator(mode, conservation_threshold)
 
@@ -393,6 +398,32 @@ class SequenceTuner:
                         five_prime_region_tuning.utr,
                         cleared_output_rna_sequence,
                         five_prime_region_tuning.codon_window_size,
+                    )
+
+            # Replace codons matching with each enzyme recognition sites
+            for site in restriction_sites:
+                recognition_site_positions = find_recognition_site_positions(
+                    site.sequence, cleared_output_rna_sequence
+                )
+
+                if recognition_site_positions:
+                    cleared_output_rna_sequence = (
+                        replace_first_codon_within_recognition_site(
+                            cleared_output_rna_sequence,
+                            recognition_site_positions,
+                            self.host_codon_table,
+                        )
+                    )
+
+            # Check if there are no more enzyme recognition sites
+            for site in restriction_sites:
+                recognition_site_positions = find_recognition_site_positions(
+                    site.sequence, cleared_output_rna_sequence
+                )
+
+                if recognition_site_positions != []:
+                    raise ExpressInHostError(
+                        "There are still enzyme recognition sites."
                     )
 
             # Ensure input and ouput nucleotide sequence have the same amino-acid sequence

@@ -1,6 +1,7 @@
 import re
 from typing import Callable
 
+from ..logger import logger
 from .codon_tables import ProcessedCodonTable
 
 
@@ -24,7 +25,12 @@ def replace_codon_by_closest_rank(
         host_codon_table.values(),
     )
 
-    return min(filtered_rows, key=lambda x: abs(x.rank - current_codon_rank)).codon
+    try:
+        return min(filtered_rows, key=lambda x: abs(x.rank - current_codon_rank)).codon
+
+    except ValueError as exc:
+        logger.warning(exc)
+        return current_codon
 
 
 def replace_first_codon_within_recognition_site(
