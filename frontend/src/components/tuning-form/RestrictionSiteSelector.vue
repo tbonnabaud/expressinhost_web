@@ -139,7 +139,7 @@ function closeDropdown() {
   display: inline-block;
   margin: 5px 5px;
   background-color: #3ca33c;
-  border-radius: 10px;
+  border-radius: 5px;
   padding: 10px 15px;
   font-weight: bold;
   color: white;
