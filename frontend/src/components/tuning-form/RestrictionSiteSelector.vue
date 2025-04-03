@@ -138,10 +138,11 @@ function closeDropdown() {
 .restriction-site-tag {
   display: inline-block;
   margin: 5px 5px;
-  background-color: #f37783;
+  background-color: #3ca33c;
   border-radius: 10px;
   padding: 10px 15px;
   font-weight: bold;
+  color: white;
 }
 
 .option-list {
@@ -177,7 +178,7 @@ input[type='radio'] {
   background: none;
   padding: 0 5px;
   margin: 0 0 0 1em;
-  border: 1px whitesmoke dotted;
+  border: 1px white solid;
 }
 
 @media (max-width: 768px) {
@@ -188,7 +189,7 @@ input[type='radio'] {
 
 @media (prefers-color-scheme: dark) {
   .restriction-site-tag {
-    background-color: #972732;
+    background-color: #297029;
   }
 }
 </style>
