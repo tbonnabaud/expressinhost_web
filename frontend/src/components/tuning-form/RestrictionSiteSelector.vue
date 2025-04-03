@@ -129,7 +129,6 @@ function closeDropdown() {
 .restriction-site-tag {
   display: inline-block;
   margin: 5px 5px;
-  border: 1px solid #373c44;
   background-color: #f37783;
   border-radius: 10px;
   padding: 10px 15px;
@@ -180,7 +179,6 @@ input[type='radio'] {
 
 @media (prefers-color-scheme: dark) {
   .restriction-site-tag {
-    border: 1px solid #f8d7da;
     background-color: #972732;
   }
 }
