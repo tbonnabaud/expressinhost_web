@@ -11,12 +11,20 @@ def find_recognition_site_positions(
     return [match.span() for match in re.finditer(recognition_site, sequence)]
 
 
-def replace_codon_by_closest_rank(codon: str, host_codon_table: ProcessedCodonTable):
-    "Replace codon by closest rank in host codon table."
-    codon_rank = host_codon_table.get_row(codon).rank
-    filtered_rows = filter(lambda x: x.codon != codon, host_codon_table.values())
+def replace_codon_by_closest_rank(
+    current_codon: str, host_codon_table: ProcessedCodonTable
+):
+    "Replace current codon by closest rank in host codon table."
+    current_codon_row = host_codon_table.get_row(current_codon)
+    current_codon_rank = current_codon_row.rank
+    # Remove row of current codon and conserve rows with same amino-acids
+    filtered_rows = filter(
+        lambda x: x.codon != current_codon
+        and current_codon_row.amino_acid == x.amino_acid,
+        host_codon_table.values(),
+    )
 
-    return min(filtered_rows, key=lambda x: abs(x.rank - codon_rank)).codon
+    return min(filtered_rows, key=lambda x: abs(x.rank - current_codon_rank)).codon
 
 
 def replace_first_codon_within_recognition_site(
