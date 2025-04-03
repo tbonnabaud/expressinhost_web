@@ -41,7 +41,6 @@ function addSiteSequence() {
 
   const site = siteToAdd.value
 
-  // if (site !== null) {
   if (site !== null && !model.value.includes(site)) {
     model.value.push(site)
   }
