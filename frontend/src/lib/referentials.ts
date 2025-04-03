@@ -1,4 +1,4 @@
-import type { CodonTranslation } from './interfaces'
+import type { CodonTranslation, RestrictionSiteOption } from './interfaces'
 import { groupByAminoAcid } from './helpers'
 
 export const MODE_LABEL_MAPPING: Record<string, string> = {
@@ -96,7 +96,7 @@ export const UTR_EXAMPLE =
   'ACCCGGCGCTCCATTAAATAGCCGTAGACGGAACTTCGCCTTTCTCTCGGCCTTAGCGCCATTTTTTTGGGTGAGTGTTTTTTGGTTCCTGCGTTGGGATTCCGTGTACAATCCATAGACATCTGACCTCGGCACTTAGCATCATCACAGCAAACTAACTGTAGCCTTTCTCTCTTTCCCTGTAGAAACCTCTGCGCC'
 
 // Restriction enzyme recognition sites
-export const RESTRICTION_SITES: Record<string, string>[] = [
+export const RESTRICTION_SITES: RestrictionSiteOption[] = [
   {
     enzyme: 'AatI',
     sequence: 'AGGCCT',

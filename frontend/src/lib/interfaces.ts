@@ -63,7 +63,7 @@ export interface RunTrainingForm {
   slow_speed_threshold: number
   conservation_threshold: number | null
   five_prime_region_tuning: PartialUntuningMode | FineTuningMode | null
-  restriction_sites: string[] | null
+  restriction_sites: string[]
 }
 
 export interface CodonTable {
@@ -173,4 +173,9 @@ export interface RunInfoSequenceNumberStats {
   min_sequence_number: number
   avg_sequence_number: number
   max_sequence_number: number
+}
+
+export interface RestrictionSiteOption {
+  enzyme: string
+  sequence: string
 }
