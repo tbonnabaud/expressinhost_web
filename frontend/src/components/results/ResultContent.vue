@@ -162,6 +162,19 @@ async function deleteResult() {
 
   <div v-else>None</div>
 
+  <h3>Restriction enzyme recognition sites to avoid</h3>
+  <hr />
+
+  <div v-if="result.restriction_sites">
+    <ul>
+      <li v-for="site in result.restriction_sites" :key="site.sequence">
+        <i>{{ site.enzyme }}</i> - {{ site.sequence }}
+      </li>
+    </ul>
+  </div>
+
+  <div v-else>None</div>
+
   <h3>Sequence comparisons</h3>
   <hr />
 
