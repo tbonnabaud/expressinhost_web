@@ -53,11 +53,6 @@ export interface FineTuningMode {
   utr: string
 }
 
-export interface RestrictionSite {
-  enzyme: string
-  sequence: string
-}
-
 export interface RunTrainingForm {
   name: string
   nucleotide_file_content: string
@@ -68,7 +63,7 @@ export interface RunTrainingForm {
   slow_speed_threshold: number
   conservation_threshold: number | null
   five_prime_region_tuning: PartialUntuningMode | FineTuningMode | null
-  restriction_sites: RestrictionSite[] | null
+  restriction_sites: string[] | null
 }
 
 export interface CodonTable {
@@ -108,7 +103,7 @@ export interface Result {
   conservation_threshold: number | null
   host_codon_table: CodonTable
   five_prime_region_tuning: PartialUntuningMode | FineTuningMode | null
-  restriction_sites: RestrictionSite[] | null
+  restriction_sites: string[] | null
 }
 
 export interface ResultWithId {
@@ -123,7 +118,7 @@ export interface ResultWithId {
   conservation_threshold: number | null
   host_codon_table: CodonTable
   five_prime_region_tuning: PartialUntuningMode | FineTuningMode | null
-  restriction_sites: RestrictionSite[] | null
+  restriction_sites: string[] | null
 }
 
 export interface Profiles {

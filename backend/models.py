@@ -2,7 +2,7 @@ from datetime import UTC, datetime, timedelta
 from uuid import UUID, uuid4
 
 import sqlalchemy as sa
-from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy.dialects.postgresql import ARRAY, JSONB
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
 
@@ -124,7 +124,9 @@ class Result(Base):
     )
     five_prime_region_tuning: Mapped[dict | None] = mapped_column(JSONB, nullable=True)
     # Restriction enzyme recognition sites to avoid
-    restriction_sites: Mapped[list[dict] | None] = mapped_column(JSONB, nullable=True)
+    restriction_sites: Mapped[list[str] | None] = mapped_column(
+        ARRAY(sa.String), nullable=True
+    )
 
     host_codon_table: Mapped["CodonTable"] = relationship(
         "CodonTable", foreign_keys=[host_codon_table_id]

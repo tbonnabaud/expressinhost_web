@@ -188,11 +188,6 @@ class FineTuningMode(BaseModel):
         return value.strip()
 
 
-class RestrictionSite(BaseModel):
-    enzyme: str
-    sequence: str
-
-
 class RunTuningForm(BaseModel):
     name: str = "Unnamed"
     nucleotide_file_content: str
@@ -203,7 +198,7 @@ class RunTuningForm(BaseModel):
     slow_speed_threshold: float
     conservation_threshold: float | None
     five_prime_region_tuning: PartialUntuningMode | FineTuningMode | None
-    restriction_sites: list[RestrictionSite] | None
+    restriction_sites: list[str] | None
 
     @field_validator("name")
     @staticmethod
@@ -232,7 +227,7 @@ class Result(BaseModel):
     host_codon_table: CodonTable
     five_prime_region_tuning: PartialUntuningMode | FineTuningMode | None
     # Restriction enzyme recognition sites to avoid
-    restriction_sites: list[RestrictionSite] | None
+    restriction_sites: list[str] | None
 
 
 class Profiles(BaseModel):
