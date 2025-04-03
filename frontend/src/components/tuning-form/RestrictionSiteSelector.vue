@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 import { RESTRICTION_SITES } from '@/lib/referentials'
-import type { RestrictionSiteOption } from '@/lib/interfaces'
+import type { RestrictionSite } from '@/lib/interfaces'
 const DEFAULT_NUMBER_TO_SHOW = 100
 
-const model = defineModel<string[]>()
-const siteToAdd = ref<RestrictionSiteOption | null>(null)
+const model = defineModel<RestrictionSite[]>()
+const siteToAdd = ref<RestrictionSite | null>(null)
 const filter = ref('')
 const collapseDropdown = ref(true)
 const optionsToShow = ref(DEFAULT_NUMBER_TO_SHOW)
@@ -41,14 +41,15 @@ function addSiteSequence() {
 
   const site = siteToAdd.value
 
-  if (site !== null) {
-    model.value.push(site.sequence)
+  // if (site !== null) {
+  if (site !== null && !model.value.includes(site)) {
+    model.value.push(site)
   }
 }
 
-function removeSite(site: string) {
+function removeSite(siteSequence: string) {
   if (model.value) {
-    model.value = model.value.filter(e => e != site)
+    model.value = model.value.filter(e => e.sequence !== siteSequence)
   }
 }
 
@@ -61,9 +62,17 @@ function closeDropdown() {
 <template>
   <div>
     <div v-if="model" class="restriction-site-tags">
-      <span class="restriction-site-tag" v-for="site in model" :key="site">
-        {{ site }}
-        <button type="button" class="close-button" @click="removeSite(site)">
+      <span
+        class="restriction-site-tag"
+        v-for="site in model"
+        :key="site.sequence"
+      >
+        <i>{{ site.enzyme }}</i> - {{ site.sequence }}
+        <button
+          type="button"
+          class="close-button"
+          @click="removeSite(site.sequence)"
+        >
           X
         </button>
       </span>
