@@ -46,8 +46,10 @@ function addSiteSequence() {
   }
 }
 
-function removeLastSite() {
-  model.value?.pop()
+function removeSite(site: string) {
+  if (model.value) {
+    model.value = model.value.filter(e => e != site)
+  }
 }
 
 function closeDropdown() {
@@ -61,6 +63,9 @@ function closeDropdown() {
     <div v-if="model" class="restriction-site-tags">
       <span class="restriction-site-tag" v-for="site in model" :key="site">
         {{ site }}
+        <button type="button" class="close-button" @click="removeSite(site)">
+          X
+        </button>
       </span>
     </div>
 
@@ -91,9 +96,9 @@ function closeDropdown() {
                 type="radio"
                 v-model="siteToAdd"
                 :value="null"
-                disabled
                 @change="closeDropdown"
               />
+              (None)
             </label>
           </li>
           <li v-for="option in filteredOptions" :key="option.sequence">
@@ -112,9 +117,6 @@ function closeDropdown() {
     </details>
 
     <button type="button" @click="addSiteSequence">Add</button>
-    <button type="button" class="danger" @click="removeLastSite">
-      Remove last
-    </button>
   </div>
 </template>
 
@@ -161,6 +163,13 @@ input[type='radio'] {
 
 .restriction-site-selector > button {
   margin-left: 0.5em;
+}
+
+.close-button {
+  background: none;
+  padding: 0 5px;
+  margin: 0 0 0 1em;
+  border: 1px whitesmoke dotted;
 }
 
 @media (max-width: 768px) {
