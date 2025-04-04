@@ -133,6 +133,10 @@ Additionally, there are two 5' region tuning options:
 - **Partial Untuning**: Keeps the first N codons unchanged from the native sequence
 - **Fine Tuning**: Uses a specialized algorithm ([OSTIR](https://github.com/barricklab/ostir)) to optimize the 5' UTR region for ribosome binding
 
+#### Restriction enzyme recognition sites to avoid
+
+It is possible to select restriction enzyme recognition sites to avoid. For each site detected one codon inside or overlapping will be replaced by a codon giving the same amino-acid with the closest rank. If there are still restriction enzyme recognition sites an error is thrown.
+
 ### Tuning Process
 
 The core tuning system involves:

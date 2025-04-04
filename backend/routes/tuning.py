@@ -132,7 +132,10 @@ def tune_sequences(token: OptionalTokenDependency, form: RunTuningForm):
 
         tuned_sequences = []
         pipeline = sequence_tuner.tuning_pipeline(
-            form.mode, form.conservation_threshold, form.five_prime_region_tuning
+            form.mode,
+            form.conservation_threshold,
+            form.five_prime_region_tuning,
+            form.restriction_sites,
         )
 
         for seq_no in range(1, total_sequence_number + 1):
@@ -160,6 +163,8 @@ def tune_sequences(token: OptionalTokenDependency, form: RunTuningForm):
 
         run_end_date = datetime.now(UTC)
 
+        logger.info(form.restriction_sites)
+
         result = {
             "creation_date": run_end_date,
             "name": form.name,
@@ -171,6 +176,11 @@ def tune_sequences(token: OptionalTokenDependency, form: RunTuningForm):
             "five_prime_region_tuning": (
                 form.five_prime_region_tuning.model_dump()
                 if form.five_prime_region_tuning
+                else None
+            ),
+            "restriction_sites": (
+                [site.model_dump() for site in form.restriction_sites]
+                if form.restriction_sites
                 else None
             ),
         }
@@ -217,11 +227,13 @@ def tune_sequences(token: OptionalTokenDependency, form: RunTuningForm):
         }
 
     except (ExpressInHostError, HTTPException) as exc:
+        update_job_meta(job, exc, step)
         raise exc
 
     except Exception as exc:
         logger.error(exc)
-        raise Exception("Server error")
+        update_job_meta(job, "Server error.", step)
+        raise Exception("Server error.")
 
 
 @router.post("/run-tuning")

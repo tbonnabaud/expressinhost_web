@@ -12,6 +12,7 @@ import SequenceComparison from '@/components/results/SequenceComparison.vue'
 import DownloadResult from './DownloadResult.vue'
 import SimilarityChart from './SimilarityChart.vue'
 import BaseModal from '../BaseModal.vue'
+import RestrictionSiteTag from '../RestrictionSiteTag.vue'
 
 const router = useRouter()
 const props = defineProps<TuningOutput>()
@@ -158,6 +159,25 @@ async function deleteResult() {
         {{ result.five_prime_region_tuning.utr }}
       </details>
     </article>
+  </div>
+
+  <div v-else>None</div>
+
+  <h3>Restriction enzyme recognition sites to avoid</h3>
+  <hr />
+
+  <div v-if="result.restriction_sites">
+    <RestrictionSiteTag
+      v-for="site in result.restriction_sites"
+      :site
+      :key="site.enzyme"
+      :deletable="false"
+    />
+    <!-- <ul>
+      <li v-for="site in result.restriction_sites" :key="site.enzyme">
+        <i>{{ site.enzyme }}</i> - {{ site.sequence }}
+      </li>
+    </ul> -->
   </div>
 
   <div v-else>None</div>

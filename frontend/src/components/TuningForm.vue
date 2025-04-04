@@ -14,6 +14,7 @@ import ConservationThresholdSelector from '@/components/tuning-form/Conservation
 import FivePrimeRegionTuning from '@/components/tuning-form/FivePrimeRegionTuning.vue'
 import FastaInput from '@/components/tuning-form/FastaInput.vue'
 import ClustalInput from '@/components/tuning-form/ClustalInput.vue'
+import RestrictionSiteSelector from './tuning-form/RestrictionSiteSelector.vue'
 
 const emit = defineEmits(['submit'])
 
@@ -27,6 +28,7 @@ const baseForm: RunTrainingForm = reactive({
   slow_speed_threshold: 0.5,
   conservation_threshold: null,
   five_prime_region_tuning: null,
+  restriction_sites: [],
 })
 
 const baseFormErrors = reactive({
@@ -316,6 +318,16 @@ async function cancelTuning() {
 
     <hr />
 
+    <section>
+      <h2>Restriction enzyme recognition sites to avoid</h2>
+
+      <div id="restrictionSiteSelector">
+        <RestrictionSiteSelector v-model="baseForm.restriction_sites" />
+      </div>
+    </section>
+
+    <hr />
+
     <div id="dataConsent">
       <input id="dataConsentCheckbox" type="checkbox" checked required />
       <label for="dataConsentCheckbox">
@@ -443,6 +455,10 @@ td {
   border-radius: 0.25rem;
   padding: 0.75rem 1.25rem;
   margin: 0.75rem 0;
+}
+
+#restrictionSiteSelector {
+  margin: auto 15rem;
 }
 
 @media (max-width: 786px) {

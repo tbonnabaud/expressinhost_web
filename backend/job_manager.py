@@ -83,7 +83,7 @@ async def stream_job_state(job_id: str):
                     state["result"] = job.result
 
                 elif status == JobStatus.FAILED:
-                    state["message"] = "Failed."
+                    state["message"] = meta.get("message", "Failed.")
                     state["exc_info"] = job.exc_info
 
                 # Cancelled, stopped, etc.

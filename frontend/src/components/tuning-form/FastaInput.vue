@@ -55,3 +55,15 @@ async function setFastaContent(event: Event) {
     </div>
   </div>
 </template>
+
+<style scoped>
+textarea {
+  font-family: 'Courier New', Courier, monospace;
+}
+
+@media (max-width: 1024px) {
+  textarea {
+    font-size: 90%;
+  }
+}
+</style>
