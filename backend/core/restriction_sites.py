@@ -50,7 +50,9 @@ def replace_first_codon_within_recognition_site(
 
             if (
                 site_start <= codon_start <= site_end
-                or site_start + 1 <= codon_end <= site_end
+                or site_start + 1
+                <= codon_end  # Ensure at least one nucleotide of the codon is inside the site
+                <= site_end
             ):
                 codon = replace_codon_by_closest_rank(codon, host_codon_table)
                 treated_site_idx += 1
