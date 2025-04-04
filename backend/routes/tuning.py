@@ -233,7 +233,7 @@ def tune_sequences(token: OptionalTokenDependency, form: RunTuningForm):
     except Exception as exc:
         logger.error(exc)
         update_job_meta(job, "Server error.", step)
-        raise Exception("Server error")
+        raise Exception("Server error.")
 
 
 @router.post("/run-tuning")
