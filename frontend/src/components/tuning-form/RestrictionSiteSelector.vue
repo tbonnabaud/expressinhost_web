@@ -66,7 +66,7 @@ function closeDropdown() {
       <RestrictionSiteTag
         v-for="site in model"
         :site
-        :key="site.sequence"
+        :key="site.enzyme"
         :deletable="true"
         @delete="removeSite"
       />
@@ -104,7 +104,7 @@ function closeDropdown() {
               (None)
             </label>
           </li>
-          <li v-for="option in filteredOptions" :key="option.sequence">
+          <li v-for="option in filteredOptions" :key="option.enzyme">
             <label>
               <input
                 type="radio"

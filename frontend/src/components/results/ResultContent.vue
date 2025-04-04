@@ -170,11 +170,11 @@ async function deleteResult() {
     <RestrictionSiteTag
       v-for="site in result.restriction_sites"
       :site
-      :key="site.sequence"
+      :key="site.enzyme"
       :deletable="false"
     />
     <!-- <ul>
-      <li v-for="site in result.restriction_sites" :key="site.sequence">
+      <li v-for="site in result.restriction_sites" :key="site.enzyme">
         <i>{{ site.enzyme }}</i> - {{ site.sequence }}
       </li>
     </ul> -->
