@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { RestrictionSite } from '@/lib/interfaces'
-defineProps<{ site: RestrictionSite }>()
+defineProps<{ site: RestrictionSite; deletable: boolean }>()
 defineEmits(['delete'])
 </script>
 
@@ -8,6 +8,7 @@ defineEmits(['delete'])
   <span class="restriction-site-tag">
     <i>{{ site.enzyme }}</i> - {{ site.sequence }}
     <button
+      v-if="deletable"
       type="button"
       class="close-button"
       @click="$emit('delete', site.sequence)"

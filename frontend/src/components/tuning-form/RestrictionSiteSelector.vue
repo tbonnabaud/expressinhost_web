@@ -67,6 +67,7 @@ function closeDropdown() {
         v-for="site in model"
         :site
         :key="site.sequence"
+        :deletable="true"
         @delete="removeSite"
       />
     </div>
