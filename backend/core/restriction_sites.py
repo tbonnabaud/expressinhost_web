@@ -27,6 +27,9 @@ def replace_codon_by_closest_rank(
     try:
         return min(filtered_rows, key=lambda x: abs(x.rank - current_codon_rank)).codon
 
+    # Avoid the case where only one codon for an amino-acid
+    # because it is filtered before and min function requires
+    # at least one element
     except ValueError as exc:
         logger.warning(exc)
         return current_codon
