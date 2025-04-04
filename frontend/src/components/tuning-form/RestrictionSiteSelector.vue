@@ -2,6 +2,8 @@
 import { computed, ref, watch } from 'vue'
 import { RESTRICTION_SITES } from '@/lib/referentials'
 import type { RestrictionSite } from '@/lib/interfaces'
+import RestrictionSiteTag from '../RestrictionSiteTag.vue'
+
 const DEFAULT_NUMBER_TO_SHOW = 100
 
 const model = defineModel<RestrictionSite[]>()
@@ -61,20 +63,12 @@ function closeDropdown() {
 <template>
   <div>
     <div v-if="model" class="restriction-site-tags">
-      <span
-        class="restriction-site-tag"
+      <RestrictionSiteTag
         v-for="site in model"
+        :site
         :key="site.sequence"
-      >
-        <i>{{ site.enzyme }}</i> - {{ site.sequence }}
-        <button
-          type="button"
-          class="close-button"
-          @click="removeSite(site.sequence)"
-        >
-          X
-        </button>
-      </span>
+        @delete="removeSite"
+      />
     </div>
 
     <p v-else>None.</p>
@@ -134,16 +128,6 @@ function closeDropdown() {
   margin-bottom: 1em;
 }
 
-.restriction-site-tag {
-  display: inline-block;
-  margin: 5px 5px;
-  background-color: #3ca33c;
-  border-radius: 5px;
-  padding: 10px 15px;
-  font-weight: bold;
-  color: white;
-}
-
 .option-list {
   max-height: 30em;
   overflow-y: scroll;
@@ -173,22 +157,9 @@ input[type='radio'] {
   margin-left: 0.5em;
 }
 
-.close-button {
-  background: none;
-  padding: 0 5px;
-  margin: 0 0 0 1em;
-  border: 1px white solid;
-}
-
 @media (max-width: 768px) {
   .option-list {
     width: 90vw;
-  }
-}
-
-@media (prefers-color-scheme: dark) {
-  .restriction-site-tag {
-    background-color: #297029;
   }
 }
 </style>
