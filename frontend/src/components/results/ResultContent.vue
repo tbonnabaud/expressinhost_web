@@ -12,6 +12,7 @@ import SequenceComparison from '@/components/results/SequenceComparison.vue'
 import DownloadResult from './DownloadResult.vue'
 import SimilarityChart from './SimilarityChart.vue'
 import BaseModal from '../BaseModal.vue'
+import RestrictionSiteTag from '../RestrictionSiteTag.vue'
 
 const router = useRouter()
 const props = defineProps<TuningOutput>()
@@ -166,11 +167,17 @@ async function deleteResult() {
   <hr />
 
   <div v-if="result.restriction_sites">
-    <ul>
+    <RestrictionSiteTag
+      v-for="site in result.restriction_sites"
+      :site
+      :key="site.sequence"
+      :deletable="false"
+    />
+    <!-- <ul>
       <li v-for="site in result.restriction_sites" :key="site.sequence">
         <i>{{ site.enzyme }}</i> - {{ site.sequence }}
       </li>
-    </ul>
+    </ul> -->
   </div>
 
   <div v-else>None</div>
