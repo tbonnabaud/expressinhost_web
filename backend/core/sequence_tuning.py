@@ -423,7 +423,7 @@ class SequenceTuner:
 
                 if recognition_site_positions != []:
                     raise ExpressInHostError(
-                        "There are still enzyme recognition sites."
+                        f"There is still enzyme recognition sites for {site.enzyme} - {site.sequence}."
                     )
 
             # Ensure input and ouput nucleotide sequence have the same amino-acid sequence
