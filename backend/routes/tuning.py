@@ -227,10 +227,12 @@ def tune_sequences(token: OptionalTokenDependency, form: RunTuningForm):
         }
 
     except (ExpressInHostError, HTTPException) as exc:
+        update_job_meta(job, exc, step)
         raise exc
 
     except Exception as exc:
         logger.error(exc)
+        update_job_meta(job, "Server error.", step)
         raise Exception("Server error")
 
 

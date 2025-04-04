@@ -1,5 +1,4 @@
 import re
-from typing import Callable
 
 from ..logger import logger
 from .codon_tables import ProcessedCodonTable
@@ -36,9 +35,7 @@ def replace_codon_by_closest_rank(
 def replace_first_codon_within_recognition_site(
     sequence: str,
     recognition_site_positions: list[tuple[int, int]],
-    replacement_strategy: Callable[
-        [str], str
-    ],  # Function for replacing a codon by another
+    host_codon_table: ProcessedCodonTable,
 ):
     updated_sequence = []
     treated_site_idx = 0
@@ -55,7 +52,7 @@ def replace_first_codon_within_recognition_site(
                 site_start <= codon_start <= site_end
                 or site_start + 1 <= codon_end <= site_end
             ):
-                codon = replacement_strategy(codon)
+                codon = replace_codon_by_closest_rank(codon, host_codon_table)
                 treated_site_idx += 1
 
         updated_sequence.append(codon)
