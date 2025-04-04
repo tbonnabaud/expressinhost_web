@@ -61,8 +61,8 @@ function closeDropdown() {
 </script>
 
 <template>
-  <div>
-    <div v-if="model?.length" class="restriction-site-tags">
+  <div class="restriction-site-tags">
+    <div v-if="model?.length">
       <RestrictionSiteTag
         v-for="site in model"
         :site
