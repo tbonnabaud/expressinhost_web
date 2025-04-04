@@ -14,8 +14,10 @@ const optionsToShow = ref(DEFAULT_NUMBER_TO_SHOW)
 
 const filteredOptions = computed(() => {
   const lowerCaseFilter = filter.value.toLowerCase()
-  return RESTRICTION_SITES.filter(site =>
-    site.sequence.toLowerCase().includes(lowerCaseFilter),
+  return RESTRICTION_SITES.filter(
+    site =>
+      site.enzyme.toLowerCase().includes(lowerCaseFilter) ||
+      site.sequence.toLowerCase().includes(lowerCaseFilter),
   ).slice(0, optionsToShow.value)
 })
 
