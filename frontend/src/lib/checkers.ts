@@ -17,7 +17,7 @@ export function checkFasta(content: string) {
 
         if (invalidCharacters) {
           for (const match of invalidCharacters) {
-            errors.push(`Invalid character ${match[0]} for ${header}.`)
+            errors.push(`Invalid character "${match[0]}" for ${header}.`)
           }
         }
 
@@ -111,7 +111,7 @@ export function checkUtrSequence(sequence: string) {
           errors.push(`Invalid space character.`)
           break
         default:
-          errors.push(`Invalid character ${matchedChar}.`)
+          errors.push(`Invalid character "${matchedChar}".`)
           break
       }
     }
