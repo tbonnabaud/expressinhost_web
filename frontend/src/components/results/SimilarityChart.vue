@@ -32,7 +32,7 @@ const options: ChartOptions = {
   plugins: {
     title: {
       display: true,
-      text: 'Input versus output codon similarity percentages',
+      text: 'Similarity percentages between the input and the tuned sequences',
     },
     legend: {
       display: true,
