@@ -29,6 +29,7 @@ const baseForm: RunTrainingForm = reactive({
   conservation_threshold: null,
   five_prime_region_tuning: null,
   restriction_sites: [],
+  send_email: false,
 })
 
 const baseFormErrors = reactive({
@@ -325,6 +326,19 @@ async function cancelTuning() {
         <RestrictionSiteSelector v-model="baseForm.restriction_sites" />
       </div>
     </section>
+
+    <hr />
+
+    <div id="sendEmail">
+      <input
+        id="sendEmailCheckbox"
+        type="checkbox"
+        v-model="baseForm.send_email"
+      />
+      <label for="sendEmailCheckbox">
+        Send an e-mail when the job is completed.
+      </label>
+    </div>
 
     <hr />
 
