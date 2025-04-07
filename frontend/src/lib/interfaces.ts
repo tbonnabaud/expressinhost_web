@@ -69,6 +69,7 @@ export interface RunTrainingForm {
   conservation_threshold: number | null
   five_prime_region_tuning: PartialUntuningMode | FineTuningMode | null
   restriction_sites: RestrictionSite[]
+  send_email: boolean
 }
 
 export interface CodonTable {
