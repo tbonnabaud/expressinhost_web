@@ -209,6 +209,7 @@ class RunTuningForm(BaseModel):
     conservation_threshold: float | None
     five_prime_region_tuning: PartialUntuningMode | FineTuningMode | None
     restriction_sites: list[RestrictionSite] | None
+    send_email: bool = False
 
     @field_validator("name")
     @staticmethod

@@ -3,7 +3,7 @@ import time
 from datetime import UTC, datetime
 from uuid import UUID
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Request
 from fastapi.exceptions import HTTPException
 from fastapi.responses import StreamingResponse
 from rq import get_current_job
@@ -18,6 +18,7 @@ from ..crud.results import ResultRepository
 from ..crud.run_infos import RunInfoRepository
 from ..crud.tuned_sequences import TunedSequenceRepository
 from ..database import Session, context_get_session, context_get_session_with_commit
+from ..email_service import send_email
 from ..job_manager import (
     cancel_job,
     heavy_queue,
@@ -86,7 +87,7 @@ def get_processed_tables(
     return native_codon_tables, host_codon_table
 
 
-def tune_sequences(token: OptionalTokenDependency, form: RunTuningForm):
+def tune_sequences(token: OptionalTokenDependency, base_url: str, form: RunTuningForm):
     job = get_current_job()
 
     # Extract native codon table IDs of the form
@@ -221,23 +222,48 @@ def tune_sequences(token: OptionalTokenDependency, form: RunTuningForm):
 
         time.sleep(0.5)
 
+        if user and form.send_email and result_id:
+            result_url = f"{base_url}results/{result_id}"
+            send_email(
+                user.email,
+                f'Job "{form.name}" completed',
+                f'Job "{form.name}" completed. Here is the link: {result_url}',
+            )
+
         return {
             "result": result,
             "tuned_sequences": tuned_sequences,
         }
 
     except (ExpressInHostError, HTTPException) as exc:
-        update_job_meta(job, exc, step)
+        update_job_meta(job, str(exc), step)
+
+        if user and form.send_email:
+            send_email(
+                user.email,
+                f'Job "{form.name}" failed',
+                f'Job "{form.name}" failed with the following error message:\n"{exc}"',
+            )
+
         raise exc
 
     except Exception as exc:
         logger.error(exc)
         update_job_meta(job, "Server error.", step)
+
+        if user and form.send_email:
+            send_email(
+                user.email,
+                f'Job "{form.name}" failed',
+                f'Job "{form.name}" failed with the following error message:\n"Server error"',
+            )
+
         raise Exception("Server error.")
 
 
 @router.post("/run-tuning")
 async def run_tuning(
+    request: Request,
     token: OptionalTokenDependency,
     form: RunTuningForm,
 ):
@@ -246,7 +272,9 @@ async def run_tuning(
         if isinstance(form.five_prime_region_tuning, FineTuningMode)
         else light_queue
     )
-    job = selected_queue.enqueue(tune_sequences, token, form, failure_ttl=500)
+    job = selected_queue.enqueue(
+        tune_sequences, token, str(request.base_url), form, failure_ttl=500
+    )
 
     return job.id
 
