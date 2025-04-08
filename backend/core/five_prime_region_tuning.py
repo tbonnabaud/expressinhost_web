@@ -204,7 +204,7 @@ def replace_first_codons_by_lowest_rank(
         new_codon = min(filtered_rows, key=lambda x: x.rank).codon
         updated_sequence.append(new_codon)
 
-    return "".join(updated_sequence) + rna_sequence[3 * slowed_down_codon_number + 3 :]
+    return "".join(updated_sequence) + rna_sequence[3 * slowed_down_codon_number :]
 
 
 # For testing purpose
