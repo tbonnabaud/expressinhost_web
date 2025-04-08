@@ -1,12 +1,17 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 import { store } from '@/lib/store'
-import type { PartialUntuningMode, FineTuningMode } from '@/lib/interfaces'
+import type {
+  PartialUntuningMode,
+  FineTuningMode,
+  SlowedDownMode,
+  FivePrimeRegionTuningMode,
+} from '@/lib/interfaces'
 import ToolTip from '@/components/ToolTip.vue'
 import UtrSequenceInput from './five-prime-region/UtrSequenceInput.vue'
 
 const mode = ref<string | null>(null)
-const model = defineModel<PartialUntuningMode | FineTuningMode | null>()
+const model = defineModel<FivePrimeRegionTuningMode | null>()
 
 const isGuest = computed(() => store.currentUser.value === null)
 
@@ -24,6 +29,8 @@ watch(mode, value => {
       codon_window_size: 5,
       utr: '',
     } as FineTuningMode
+  } else if (value == 'slowed_down') {
+    model.value = { mode: value, slowed_down_codon_number: 5 } as SlowedDownMode
   } else {
     console.error(`Invalid ${value} mode.`)
   }
@@ -58,6 +65,20 @@ watch(mode, value => {
             tuning has taken place).
           </template>
         </ToolTip>
+      </label>
+    </div>
+
+    <div>
+      <label>
+        <input type="radio" value="slowed_down" v-model="mode" />
+        Slowed down
+        <!-- <ToolTip>
+          Slowed down
+          <span class="material-icons question-marks">question_mark</span>
+          <template #tooltip>
+            TODO
+          </template>
+        </ToolTip> -->
       </label>
     </div>
 
@@ -101,6 +122,25 @@ watch(mode, value => {
         max="50"
         step="1"
         v-model="model.untuned_codon_number"
+      />
+    </div>
+  </div>
+
+  <div
+    id="partialUntuningModeOptions"
+    v-else-if="mode == 'slowed_down' && model"
+  >
+    <div class="input-range" v-if="'slowed_down_codon_number' in model">
+      <label>
+        Number of slowed down codons =
+        {{ model.slowed_down_codon_number }} codons
+      </label>
+      <input
+        type="range"
+        min="1"
+        max="50"
+        step="1"
+        v-model="model.slowed_down_codon_number"
       />
     </div>
   </div>
