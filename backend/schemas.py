@@ -160,7 +160,7 @@ class UserCodonTableFormWithTranslations(BaseModel):
         return "user"
 
 
-class TuningMode(str, Enum):
+class TuningModeName(str, Enum):
     DIRECT_MAPPING = "direct_mapping"
     OPTIMISATION_AND_CONSERVATION_1 = "optimisation_and_conservation_1"
     OPTIMISATION_AND_CONSERVATION_2 = "optimisation_and_conservation_2"
@@ -207,7 +207,7 @@ class RunTuningForm(BaseModel):
     clustal_file_content: str | None
     host_codon_table_id: UUID
     sequences_native_codon_tables: dict[str, UUID]
-    mode: TuningMode
+    mode: TuningModeName
     slow_speed_threshold: float
     conservation_threshold: float | None
     five_prime_region_tuning: FivePrimeRegionTuningMode | None
@@ -270,7 +270,7 @@ class RunInfo(BaseModel):
     creation_date: datetime
     duration: timedelta
     sequence_number: int
-    mode: TuningMode
+    mode: TuningModeName
     slow_speed_threshold: float
     conservation_threshold: float | None
     five_prime_region_tuning_mode: str | None
