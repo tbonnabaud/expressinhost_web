@@ -14,7 +14,7 @@ def find_recognition_site_positions(
 def replace_codon_by_closest_rank(
     current_codon: str, host_codon_table: ProcessedCodonTable
 ):
-    "Replace current codon by closest rank in host codon table."
+    """Replace current codon by the one with the closest rank in host codon table."""
     current_codon_row = host_codon_table.get_row(current_codon)
     current_codon_rank = current_codon_row.rank
     # Remove row of current codon and conserve rows with same amino-acids
