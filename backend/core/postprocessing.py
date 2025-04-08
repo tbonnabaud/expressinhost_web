@@ -3,11 +3,6 @@ def clear_output_sequence(sequence: str) -> str:
     return sequence.replace("-", "")
 
 
-def rna_to_dna_sequence(rna_sequence: str) -> str:
-    """Replace U by T."""
-    return rna_sequence.replace("U", "T")
-
-
 def compute_similarity(input_sequence: str, output_sequence: str) -> float:
     """
     Compute the similarity between input and output sequences by comparing codons.

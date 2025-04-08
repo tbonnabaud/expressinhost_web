@@ -18,11 +18,7 @@ from .five_prime_region_tuning import (
     optimize_with_ostir,
     replace_first_codons_by_lowest_rank,
 )
-from .postprocessing import (
-    clear_output_sequence,
-    compute_similarity,
-    rna_to_dna_sequence,
-)
+from .postprocessing import clear_output_sequence, compute_similarity
 from .preprocessing import align_nucleotide_sequences, dna_to_rna_sequences
 from .restriction_sites import (
     find_recognition_site_positions,
@@ -449,9 +445,7 @@ class SequenceTuner:
                 )
 
             # mRNA to DNA sequences
-            cleared_output_dna_sequence = rna_to_dna_sequence(
-                cleared_output_rna_sequence
-            )
+            cleared_output_dna_sequence = cleared_output_rna_sequence.replace("U", "T")
             input_dna_sequence = str(input_record.seq)
 
             identity_percentage = compute_similarity(
