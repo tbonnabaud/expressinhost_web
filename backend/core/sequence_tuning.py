@@ -393,7 +393,7 @@ class SequenceTuner:
                     cut_index = five_prime_region_tuning.untuned_codon_number * 3 + 1
                     cleared_output_rna_sequence = (
                         input_rna_sequence[:cut_index]
-                        + +cleared_output_rna_sequence[cut_index:]
+                        + cleared_output_rna_sequence[cut_index:]
                     )
 
                 elif isinstance(five_prime_region_tuning, FineTuningMode):
