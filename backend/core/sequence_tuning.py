@@ -390,17 +390,14 @@ class SequenceTuner:
             self.native_codon_tables,
         ):
             cleared_output_rna_sequence = clear_output_sequence(output_rna_sequence)
-            cleared_output_dna_sequence = rna_to_dna_sequence(
-                cleared_output_rna_sequence
-            )
-            input_dna_sequence = str(input_record.seq)
+            input_rna_sequence = str(input_record.seq.transcribe())
 
             if five_prime_region_tuning:
                 if isinstance(five_prime_region_tuning, PartialUntuningMode):
                     cut_index = five_prime_region_tuning.untuned_codon_number * 3 + 1
-                    cleared_output_dna_sequence = (
-                        input_dna_sequence[:cut_index]
-                        + cleared_output_dna_sequence[cut_index:]
+                    cleared_output_rna_sequence = (
+                        input_rna_sequence[:cut_index]
+                        + +cleared_output_rna_sequence[cut_index:]
                     )
 
                 elif isinstance(five_prime_region_tuning, FineTuningMode):
@@ -451,12 +448,17 @@ class SequenceTuner:
                     "Amino acid sequences from input and output are supposed to be the same."
                 )
 
+            # mRNA to DNA sequences
+            cleared_output_dna_sequence = rna_to_dna_sequence(
+                cleared_output_rna_sequence
+            )
+            input_dna_sequence = str(input_record.seq)
+
             identity_percentage = compute_similarity(
                 input_dna_sequence, cleared_output_dna_sequence
             )
             input_profiles = get_sequence_profiles(
-                input_dna_sequence.replace("T", "U"),  # RNA sequence required
-                native_codon_table,
+                input_rna_sequence, native_codon_table
             )
             output_profiles = get_sequence_profiles(
                 cleared_output_rna_sequence, self.host_codon_table
