@@ -7,6 +7,7 @@ from Bio.Seq import Seq
 from ostir import run_ostir
 
 from ..logger import logger
+from .codon_tables import ProcessedCodonTable
 
 
 @cache
@@ -181,6 +182,29 @@ def optimize_with_ostir(utr: str, orf: str, codon_window_size: int) -> str | Non
 
         # Remove UTR and return the sequence with the highest 'dG_mRNA'
         return best_sequence[len(utr) :]
+
+
+def replace_first_codons_by_lowest_rank(
+    rna_sequence: str,
+    slowed_down_codon_number: int,
+    host_codon_table: ProcessedCodonTable,
+) -> str:
+    """Replace the `slowed_down_codon_number` first codons by the ones with the lowest rank in host codon table."""
+    updated_sequence = []
+
+    for i in range(slowed_down_codon_number):
+        codon = rna_sequence[3 * i : 3 * i + 3]
+        codon_row = host_codon_table.get_row(codon)
+        # Conserve rows with same amino-acids
+        filtered_rows = filter(
+            lambda x: codon_row.amino_acid == x.amino_acid,
+            host_codon_table.values(),
+        )
+
+        new_codon = min(filtered_rows, key=lambda x: x.rank).codon
+        updated_sequence.append(new_codon)
+
+    return "".join(updated_sequence) + rna_sequence[3 * slowed_down_codon_number + 3 :]
 
 
 # For testing purpose

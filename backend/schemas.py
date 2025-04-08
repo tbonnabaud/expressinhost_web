@@ -169,6 +169,7 @@ class TuningMode(str, Enum):
 class FivePrimeRegionTuningMode(str, Enum):
     PARTIAL_UNTUNING = "partial_untuning"
     FINE_TUNING = "fine_tuning"
+    SLOWED_DOWN = "slowed_down"
 
 
 class PartialUntuningMode(BaseModel):
@@ -186,6 +187,11 @@ class FineTuningMode(BaseModel):
     @staticmethod
     def clean(value: str):
         return value.strip()
+
+
+class SlowedDownMode(BaseModel):
+    mode: Literal[FivePrimeRegionTuningMode.SLOWED_DOWN]
+    slowed_down_codon_number: int
 
 
 class RestrictionSite(BaseModel):
@@ -207,7 +213,9 @@ class RunTuningForm(BaseModel):
     mode: TuningMode
     slow_speed_threshold: float
     conservation_threshold: float | None
-    five_prime_region_tuning: PartialUntuningMode | FineTuningMode | None
+    five_prime_region_tuning: (
+        PartialUntuningMode | FineTuningMode | SlowedDownMode | None
+    )
     restriction_sites: list[RestrictionSite] | None
     send_email: bool = False
 
@@ -236,7 +244,9 @@ class Result(BaseModel):
     slow_speed_threshold: float
     conservation_threshold: float | None
     host_codon_table: CodonTable
-    five_prime_region_tuning: PartialUntuningMode | FineTuningMode | None
+    five_prime_region_tuning: (
+        PartialUntuningMode | FineTuningMode | SlowedDownMode | None
+    )
     # Restriction enzyme recognition sites to avoid
     restriction_sites: list[RestrictionSite] | None
 

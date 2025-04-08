@@ -1,7 +1,12 @@
 import random
 from typing import Iterator
 
-from ..schemas import FineTuningMode, PartialUntuningMode, RestrictionSite
+from ..schemas import (
+    FineTuningMode,
+    PartialUntuningMode,
+    RestrictionSite,
+    SlowedDownMode,
+)
 from .checks import check_amino_acido_conservation, check_nucleotides_clustal_identity
 from .codon_tables import ProcessedCodonTable
 from .exceptions import (
@@ -9,7 +14,10 @@ from .exceptions import (
     NoAminoAcidConservation,
     NoIdenticalSequencesError,
 )
-from .five_prime_region_tuning import optimize_with_ostir
+from .five_prime_region_tuning import (
+    optimize_with_ostir,
+    replace_first_codons_by_lowest_rank,
+)
 from .postprocessing import (
     clear_output_sequence,
     compute_similarity,
@@ -369,7 +377,9 @@ class SequenceTuner:
         self,
         mode: str,
         conservation_threshold: float | None,
-        five_prime_region_tuning: PartialUntuningMode | FineTuningMode | None,
+        five_prime_region_tuning: (
+            PartialUntuningMode | FineTuningMode | SlowedDownMode | None
+        ),
         restriction_sites: list[RestrictionSite] | None,
     ) -> Iterator[dict]:
         tuning_iterator = self.get_tuning_iterator(mode, conservation_threshold)
@@ -398,6 +408,13 @@ class SequenceTuner:
                         five_prime_region_tuning.utr,
                         cleared_output_rna_sequence,
                         five_prime_region_tuning.codon_window_size,
+                    )
+
+                elif isinstance(five_prime_region_tuning, SlowedDownMode):
+                    cleared_output_rna_sequence = replace_first_codons_by_lowest_rank(
+                        cleared_output_rna_sequence,
+                        five_prime_region_tuning.slowed_down_codon_number,
+                        self.host_codon_table,
                     )
 
             # Replace codons matching with each enzyme recognition sites
