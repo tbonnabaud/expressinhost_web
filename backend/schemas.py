@@ -166,20 +166,14 @@ class TuningMode(str, Enum):
     OPTIMISATION_AND_CONSERVATION_2 = "optimisation_and_conservation_2"
 
 
-class FivePrimeRegionTuningMode(str, Enum):
-    PARTIAL_UNTUNING = "partial_untuning"
-    FINE_TUNING = "fine_tuning"
-    SLOWED_DOWN = "slowed_down"
-
-
 class PartialUntuningMode(BaseModel):
-    mode: Literal[FivePrimeRegionTuningMode.PARTIAL_UNTUNING]
+    mode: Literal["partial_untuning"]
     untuned_codon_number: int
 
 
 ## To use OSTIR
 class FineTuningMode(BaseModel):
-    mode: Literal[FivePrimeRegionTuningMode.FINE_TUNING]
+    mode: Literal["fine_tuning"]
     codon_window_size: int
     utr: str
 
@@ -190,8 +184,11 @@ class FineTuningMode(BaseModel):
 
 
 class SlowedDownMode(BaseModel):
-    mode: Literal[FivePrimeRegionTuningMode.SLOWED_DOWN]
+    mode: Literal["slowed_down"]
     slowed_down_codon_number: int
+
+
+type FivePrimeRegionTuningMode = PartialUntuningMode | FineTuningMode | SlowedDownMode
 
 
 class RestrictionSite(BaseModel):
@@ -213,9 +210,7 @@ class RunTuningForm(BaseModel):
     mode: TuningMode
     slow_speed_threshold: float
     conservation_threshold: float | None
-    five_prime_region_tuning: (
-        PartialUntuningMode | FineTuningMode | SlowedDownMode | None
-    )
+    five_prime_region_tuning: FivePrimeRegionTuningMode | None
     restriction_sites: list[RestrictionSite] | None
     send_email: bool = False
 
@@ -244,9 +239,7 @@ class Result(BaseModel):
     slow_speed_threshold: float
     conservation_threshold: float | None
     host_codon_table: CodonTable
-    five_prime_region_tuning: (
-        PartialUntuningMode | FineTuningMode | SlowedDownMode | None
-    )
+    five_prime_region_tuning: FivePrimeRegionTuningMode | None
     # Restriction enzyme recognition sites to avoid
     restriction_sites: list[RestrictionSite] | None
 
@@ -280,7 +273,7 @@ class RunInfo(BaseModel):
     mode: TuningMode
     slow_speed_threshold: float
     conservation_threshold: float | None
-    five_prime_region_tuning_mode: FivePrimeRegionTuningMode | None
+    five_prime_region_tuning_mode: str | None
 
 
 class RunInfoForm(BaseModel):
