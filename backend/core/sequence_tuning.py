@@ -1,7 +1,12 @@
 import random
 from typing import Iterator
 
-from ..schemas import FineTuningMode, PartialUntuningMode, RestrictionSite
+from ..schemas import (
+    FineTuningMode,
+    PartialUntuningMode,
+    RestrictionSite,
+    SlowedDownMode,
+)
 from .checks import check_amino_acido_conservation, check_nucleotides_clustal_identity
 from .codon_tables import ProcessedCodonTable
 from .exceptions import (
@@ -9,12 +14,11 @@ from .exceptions import (
     NoAminoAcidConservation,
     NoIdenticalSequencesError,
 )
-from .five_prime_region_tuning import optimize_with_ostir
-from .postprocessing import (
-    clear_output_sequence,
-    compute_similarity,
-    rna_to_dna_sequence,
+from .five_prime_region_tuning import (
+    optimize_with_ostir,
+    replace_first_codons_by_lowest_rank,
 )
+from .postprocessing import clear_output_sequence, compute_similarity
 from .preprocessing import align_nucleotide_sequences, dna_to_rna_sequences
 from .restriction_sites import (
     find_recognition_site_positions,
@@ -369,7 +373,9 @@ class SequenceTuner:
         self,
         mode: str,
         conservation_threshold: float | None,
-        five_prime_region_tuning: PartialUntuningMode | FineTuningMode | None,
+        five_prime_region_tuning: (
+            PartialUntuningMode | FineTuningMode | SlowedDownMode | None
+        ),
         restriction_sites: list[RestrictionSite] | None,
     ) -> Iterator[dict]:
         tuning_iterator = self.get_tuning_iterator(mode, conservation_threshold)
@@ -380,17 +386,14 @@ class SequenceTuner:
             self.native_codon_tables,
         ):
             cleared_output_rna_sequence = clear_output_sequence(output_rna_sequence)
-            cleared_output_dna_sequence = rna_to_dna_sequence(
-                cleared_output_rna_sequence
-            )
-            input_dna_sequence = str(input_record.seq)
+            input_rna_sequence = str(input_record.seq.transcribe())
 
             if five_prime_region_tuning:
                 if isinstance(five_prime_region_tuning, PartialUntuningMode):
                     cut_index = five_prime_region_tuning.untuned_codon_number * 3 + 1
-                    cleared_output_dna_sequence = (
-                        input_dna_sequence[:cut_index]
-                        + cleared_output_dna_sequence[cut_index:]
+                    cleared_output_rna_sequence = (
+                        input_rna_sequence[:cut_index]
+                        + cleared_output_rna_sequence[cut_index:]
                     )
 
                 elif isinstance(five_prime_region_tuning, FineTuningMode):
@@ -398,6 +401,13 @@ class SequenceTuner:
                         five_prime_region_tuning.utr,
                         cleared_output_rna_sequence,
                         five_prime_region_tuning.codon_window_size,
+                    )
+
+                elif isinstance(five_prime_region_tuning, SlowedDownMode):
+                    cleared_output_rna_sequence = replace_first_codons_by_lowest_rank(
+                        cleared_output_rna_sequence,
+                        five_prime_region_tuning.slowed_down_codon_number,
+                        self.host_codon_table,
                     )
 
             # Replace codons matching with each enzyme recognition sites
@@ -434,12 +444,15 @@ class SequenceTuner:
                     "Amino acid sequences from input and output are supposed to be the same."
                 )
 
+            # mRNA to DNA sequences
+            cleared_output_dna_sequence = cleared_output_rna_sequence.replace("U", "T")
+            input_dna_sequence = str(input_record.seq)
+
             identity_percentage = compute_similarity(
                 input_dna_sequence, cleared_output_dna_sequence
             )
             input_profiles = get_sequence_profiles(
-                input_dna_sequence.replace("T", "U"),  # RNA sequence required
-                native_codon_table,
+                input_rna_sequence, native_codon_table
             )
             output_profiles = get_sequence_profiles(
                 cleared_output_rna_sequence, self.host_codon_table

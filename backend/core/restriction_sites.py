@@ -13,8 +13,8 @@ def find_recognition_site_positions(
 
 def replace_codon_by_closest_rank(
     current_codon: str, host_codon_table: ProcessedCodonTable
-):
-    "Replace current codon by closest rank in host codon table."
+) -> str:
+    """Replace current codon by the one with the closest rank in host codon table."""
     current_codon_row = host_codon_table.get_row(current_codon)
     current_codon_rank = current_codon_row.rank
     # Remove row of current codon and conserve rows with same amino-acids
@@ -36,17 +36,17 @@ def replace_codon_by_closest_rank(
 
 
 def replace_first_codon_within_recognition_site(
-    sequence: str,
+    rna_sequence: str,
     recognition_site_positions: list[tuple[int, int]],
     host_codon_table: ProcessedCodonTable,
 ):
     updated_sequence = []
     treated_site_idx = 0
 
-    for i in range(int(len(sequence) / 3)):
+    for i in range(int(len(rna_sequence) / 3)):
         codon_start = 3 * i
         codon_end = codon_start + 3
-        codon = sequence[codon_start:codon_end]
+        codon = rna_sequence[codon_start:codon_end]
 
         if treated_site_idx < len(recognition_site_positions):
             site_start, site_end = recognition_site_positions[treated_site_idx]

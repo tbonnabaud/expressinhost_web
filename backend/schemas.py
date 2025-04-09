@@ -160,25 +160,20 @@ class UserCodonTableFormWithTranslations(BaseModel):
         return "user"
 
 
-class TuningMode(str, Enum):
+class TuningModeName(str, Enum):
     DIRECT_MAPPING = "direct_mapping"
     OPTIMISATION_AND_CONSERVATION_1 = "optimisation_and_conservation_1"
     OPTIMISATION_AND_CONSERVATION_2 = "optimisation_and_conservation_2"
 
 
-class FivePrimeRegionTuningMode(str, Enum):
-    PARTIAL_UNTUNING = "partial_untuning"
-    FINE_TUNING = "fine_tuning"
-
-
 class PartialUntuningMode(BaseModel):
-    mode: Literal[FivePrimeRegionTuningMode.PARTIAL_UNTUNING]
+    mode: Literal["partial_untuning"]
     untuned_codon_number: int
 
 
 ## To use OSTIR
 class FineTuningMode(BaseModel):
-    mode: Literal[FivePrimeRegionTuningMode.FINE_TUNING]
+    mode: Literal["fine_tuning"]
     codon_window_size: int
     utr: str
 
@@ -186,6 +181,14 @@ class FineTuningMode(BaseModel):
     @staticmethod
     def clean(value: str):
         return value.strip()
+
+
+class SlowedDownMode(BaseModel):
+    mode: Literal["slowed_down"]
+    slowed_down_codon_number: int
+
+
+type FivePrimeRegionTuningMode = PartialUntuningMode | FineTuningMode | SlowedDownMode
 
 
 class RestrictionSite(BaseModel):
@@ -204,10 +207,10 @@ class RunTuningForm(BaseModel):
     clustal_file_content: str | None
     host_codon_table_id: UUID
     sequences_native_codon_tables: dict[str, UUID]
-    mode: TuningMode
+    mode: TuningModeName
     slow_speed_threshold: float
     conservation_threshold: float | None
-    five_prime_region_tuning: PartialUntuningMode | FineTuningMode | None
+    five_prime_region_tuning: FivePrimeRegionTuningMode | None
     restriction_sites: list[RestrictionSite] | None
     send_email: bool = False
 
@@ -236,7 +239,7 @@ class Result(BaseModel):
     slow_speed_threshold: float
     conservation_threshold: float | None
     host_codon_table: CodonTable
-    five_prime_region_tuning: PartialUntuningMode | FineTuningMode | None
+    five_prime_region_tuning: FivePrimeRegionTuningMode | None
     # Restriction enzyme recognition sites to avoid
     restriction_sites: list[RestrictionSite] | None
 
@@ -267,10 +270,10 @@ class RunInfo(BaseModel):
     creation_date: datetime
     duration: timedelta
     sequence_number: int
-    mode: TuningMode
+    mode: TuningModeName
     slow_speed_threshold: float
     conservation_threshold: float | None
-    five_prime_region_tuning_mode: FivePrimeRegionTuningMode | None
+    five_prime_region_tuning_mode: str | None
 
 
 class RunInfoForm(BaseModel):

@@ -53,6 +53,16 @@ export interface FineTuningMode {
   utr: string
 }
 
+export interface SlowedDownMode {
+  mode: 'slowed_down'
+  slowed_down_codon_number: number
+}
+
+export type FivePrimeRegionTuningMode =
+  | PartialUntuningMode
+  | FineTuningMode
+  | SlowedDownMode
+
 export interface RestrictionSite {
   enzyme: string
   sequence: string
@@ -67,7 +77,7 @@ export interface RunTrainingForm {
   mode: string
   slow_speed_threshold: number
   conservation_threshold: number | null
-  five_prime_region_tuning: PartialUntuningMode | FineTuningMode | null
+  five_prime_region_tuning: FivePrimeRegionTuningMode | null
   restriction_sites: RestrictionSite[]
   send_email: boolean
 }
@@ -108,7 +118,7 @@ export interface Result {
   slow_speed_threshold: number
   conservation_threshold: number | null
   host_codon_table: CodonTable
-  five_prime_region_tuning: PartialUntuningMode | FineTuningMode | null
+  five_prime_region_tuning: FivePrimeRegionTuningMode | null
   restriction_sites: RestrictionSite[] | null
 }
 
@@ -123,7 +133,7 @@ export interface ResultWithId {
   slow_speed_threshold: number
   conservation_threshold: number | null
   host_codon_table: CodonTable
-  five_prime_region_tuning: PartialUntuningMode | FineTuningMode | null
+  five_prime_region_tuning: FivePrimeRegionTuningMode | null
   restriction_sites: RestrictionSite[] | null
 }
 
