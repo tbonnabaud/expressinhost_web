@@ -20,7 +20,7 @@ RUN npm run build
 FROM python:3.13-slim
 ENV DEBIAN_FRONTEND=noninteractive
 
-RUN apt-get update && apt-get -y dist-upgrade && apt-get install -y curl && \
+RUN apt-get update && apt-get -y dist-upgrade && apt-get install -y curl dssp && \
     apt-get clean && apt-get autoremove && rm -rf /var/lib/apt/lists/*
 
 # Install ViennaRNA package
