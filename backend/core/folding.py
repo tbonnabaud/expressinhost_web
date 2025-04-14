@@ -160,6 +160,7 @@ def select_codon_from_table(
         if slow_rows:
             available_codons = [row.codon for row in slow_rows]
             codon_weights = [(1 - row.rank) ** 2 for row in slow_rows]
+            return random.choices(available_codons, weights=codon_weights)[0]
 
         # Else return the slowest of the fast codons
         else:
@@ -169,12 +170,11 @@ def select_codon_from_table(
         if fast_rows:
             available_codons = [row.codon for row in fast_rows]
             codon_weights = [row.rank**2 for row in fast_rows]
+            return random.choices(available_codons, weights=codon_weights)[0]
 
         # Else return the fastest of the slow codons
         else:
             return max(slow_rows, key=lambda row: row.rank).codon
-
-    return random.choices(available_codons, weights=codon_weights)[0]
 
 
 def generate_mrna_from_structure_infos(
