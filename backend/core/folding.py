@@ -141,7 +141,8 @@ def select_codon_from_table(
     Notes:
     - The function uses a rank to determine the speed of a codon, where a lower rank indicates
       a slower codon and a higher rank indicates a faster codon.
-    - The function uses weighted random selection to choose a codon based on its rank.
+    - The function uses weighted random selection to choose a codon based on its rank to not exhaust
+      the most abundant tRNA.
     - If no codons are available for the desired speed, the function falls back to the slowest
       fast codon or the fastest slow codon.
     """
@@ -158,9 +159,10 @@ def select_codon_from_table(
 
     if is_slow:
         if slow_rows:
-            available_codons = [row.codon for row in slow_rows]
-            codon_weights = [(1 - row.rank) ** 2 for row in slow_rows]
-            return random.choices(available_codons, weights=codon_weights)[0]
+            available_slow_codons = [row.codon for row in slow_rows]
+            slow_codon_weights = [(1 - row.rank) ** 2 for row in slow_rows]
+
+            return random.choices(available_slow_codons, weights=slow_codon_weights)[0]
 
         # Else return the slowest of the fast codons
         else:
@@ -168,9 +170,10 @@ def select_codon_from_table(
 
     else:
         if fast_rows:
-            available_codons = [row.codon for row in fast_rows]
-            codon_weights = [row.rank**2 for row in fast_rows]
-            return random.choices(available_codons, weights=codon_weights)[0]
+            available_fast_codons = [row.codon for row in fast_rows]
+            fast_codon_weights = [row.rank**2 for row in fast_rows]
+
+            return random.choices(available_fast_codons, weights=fast_codon_weights)[0]
 
         # Else return the fastest of the slow codons
         else:
