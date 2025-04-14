@@ -2,14 +2,14 @@
 import { toFixedFloat } from '@/lib/helpers'
 import ToolTip from '@/components/ToolTip.vue'
 
-const model = defineModel<number>()
+const model = defineModel<number | null>()
 </script>
 
 <template>
   <div class="input-range">
     <ToolTip>
       <label v-if="model">
-        Slow speed threshold =
+        Conservation threshold =
         {{ toFixedFloat(model * 100, 1) }}%
         <span class="material-icons question-marks">question_mark</span>
       </label>
