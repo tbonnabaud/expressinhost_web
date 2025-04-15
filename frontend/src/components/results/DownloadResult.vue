@@ -31,25 +31,38 @@ function formatToFasta(tunedSequences: Array<TunedSequence>) {
  */
 function formatProfileCSV(
   inputCodonArray: string[],
-  inputProfile: number[],
+  inputProfile: number[] | null | undefined,
   outputCodonArray: string[],
   outputProfile: number[],
   profileType: 'speed' | 'rank',
 ): string {
-  if (inputProfile.length !== outputProfile.length) {
-    alert('Input and output arrays must have the same length')
-    throw new Error('Input and output arrays must have the same length')
-  }
+  const csvRows: string[] = []
 
-  // Create the CSV header
-  const csvRows = [
-    `index,input_codon,input_${profileType},output_codon,output_${profileType}`,
-  ]
+  if (inputProfile) {
+    if (inputProfile.length !== outputProfile.length) {
+      alert('Input and output arrays must have the same length')
+      throw new Error('Input and output arrays must have the same length')
+    }
 
-  // Create the CSV rows
-  for (let i = 0; i < inputProfile.length; i++) {
-    const row = `${i},${inputCodonArray[i]},${inputProfile[i]},${outputCodonArray[i]},${outputProfile[i]}`
-    csvRows.push(row)
+    // Create the CSV header
+    csvRows.push(
+      `index,input_codon,input_${profileType},output_codon,output_${profileType}`,
+    )
+
+    // Create the CSV rows
+    for (let i = 0; i < inputProfile.length; i++) {
+      const row = `${i},${inputCodonArray[i]},${inputProfile[i]},${outputCodonArray[i]},${outputProfile[i]}`
+      csvRows.push(row)
+    }
+  } else {
+    // Create the CSV header
+    csvRows.push(`index,output_codon,output_${profileType}`)
+
+    // Create the CSV rows
+    for (let i = 0; i < outputProfile.length; i++) {
+      const row = `${i},${outputCodonArray[i]},${outputProfile[i]}`
+      csvRows.push(row)
+    }
   }
 
   // Join all rows into a single CSV string
@@ -81,7 +94,7 @@ async function downloadZip() {
         `speeds/${seqId}_speed_profiles.csv`,
         formatProfileCSV(
           inputCodonArray,
-          tunedSequence.input_profiles.speed,
+          tunedSequence.input_profiles?.speed,
           outputCodonArray,
           tunedSequence.output_profiles.speed,
           'speed',
@@ -92,7 +105,7 @@ async function downloadZip() {
         `ranks/${seqId}_rank_profiles.csv`,
         formatProfileCSV(
           inputCodonArray,
-          tunedSequence.input_profiles.rank,
+          tunedSequence.input_profiles?.rank,
           outputCodonArray,
           tunedSequence.output_profiles.rank,
           'rank',
