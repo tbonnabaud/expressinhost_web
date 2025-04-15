@@ -9,11 +9,11 @@ const props = defineProps<{
   outputValues: Array<number>
 }>()
 
-const chartWidth = computed(() => props.inputValues.length * 10)
+const chartWidth = computed(() => props.outputValues.length * 10)
 
 const data = computed(() => {
   return {
-    labels: [...props.inputValues.keys()],
+    labels: [...props.outputValues.keys()],
     datasets: [
       {
         label: 'Input sequence',
@@ -40,7 +40,7 @@ const options: ChartOptions = {
   maintainAspectRatio: false,
   plugins: {
     legend: {
-      display: true,
+      display: props.inputValues.length != 0,
       position: 'left',
     },
     title: {
