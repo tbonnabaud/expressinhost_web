@@ -1,5 +1,9 @@
 import random
+from pathlib import Path
 from typing import Iterator
+from uuid import uuid4
+
+from Bio.Seq import Seq
 
 from ..schemas import (
     FineTuningMode,
@@ -20,10 +24,11 @@ from .five_prime_region_tuning import (
 )
 from .postprocessing import clear_output_sequence, compute_similarity
 from .preprocessing import align_nucleotide_sequences, dna_to_rna_sequences
-from .restriction_sites import (
-    find_recognition_site_positions,
-    replace_first_codon_within_recognition_site,
+from .protein_structure import (
+    extract_structure_infos,
+    generate_mrna_from_residue_list,
 )
+from .restriction_sites import avoid_restriction_sites_for_sequence
 from .utils import get_clustal_symbol_sequence, parse_sequences, timeit
 
 
@@ -410,31 +415,9 @@ class SequenceTuner:
                         self.host_codon_table,
                     )
 
-            # Replace codons matching with each enzyme recognition sites
-            for site in restriction_sites:
-                recognition_site_positions = find_recognition_site_positions(
-                    site.sequence, cleared_output_rna_sequence
-                )
-
-                if recognition_site_positions:
-                    cleared_output_rna_sequence = (
-                        replace_first_codon_within_recognition_site(
-                            cleared_output_rna_sequence,
-                            recognition_site_positions,
-                            self.host_codon_table,
-                        )
-                    )
-
-            # Check if there are no more enzyme recognition sites
-            for site in restriction_sites:
-                recognition_site_positions = find_recognition_site_positions(
-                    site.sequence, cleared_output_rna_sequence
-                )
-
-                if recognition_site_positions != []:
-                    raise ExpressInHostError(
-                        f"There is still enzyme recognition sites for {site.enzyme} - {site.sequence}."
-                    )
+            cleared_output_rna_sequence = avoid_restriction_sites_for_sequence(
+                cleared_output_rna_sequence, restriction_sites, self.host_codon_table
+            )
 
             # Ensure input and ouput nucleotide sequence have the same amino-acid sequence
             if not check_amino_acido_conservation(
@@ -467,6 +450,81 @@ class SequenceTuner:
                 "input_profiles": input_profiles,
                 "output_profiles": output_profiles,
             }
+
+
+class StructureTuner:
+    def __init__(self, pdb_content: str, host_codon_table: ProcessedCodonTable):
+        self.pdb_content = pdb_content
+        self.host_codon_table = host_codon_table
+        self.tmp_pdb_dirpath = Path("/tmp")
+        self.tmp_pdb_filepath = None
+
+    def write_tmp_pdb_file(self):
+        self.tmp_pdb_filepath = self.tmp_pdb_dirpath / f"{uuid4()}.pdb"
+
+        with self.tmp_pdb_filepath.open("w") as f:
+            f.write(self.pdb_content)
+
+    def remove_tmp_pdb_file(self):
+        self.tmp_pdb_filepath.unlink(missing_ok=True)
+
+    def tuning(
+        self,
+        five_prime_region_tuning: FineTuningMode | SlowedDownMode | None,
+        restriction_sites: list[RestrictionSite] | None,
+        rsa_threshold: float = 0.25,
+    ) -> dict:
+        # Write a temporary file because the algorithm absolutly need to have a filepath as input
+        self.write_tmp_pdb_file()
+        structure_infos = extract_structure_infos(self.tmp_pdb_filepath)
+        # Remove the temporary file
+        self.remove_tmp_pdb_file()
+
+        if structure_infos is None:
+            raise ExpressInHostError("Unable to open the PDB file.")
+
+        input_aa_sequence = "".join(
+            [residue.amino_acid for residue in structure_infos.residue_list]
+        )
+        rna_sequence = generate_mrna_from_residue_list(
+            structure_infos.residue_list, self.host_codon_table, rsa_threshold
+        )
+
+        if five_prime_region_tuning:
+            if isinstance(five_prime_region_tuning, FineTuningMode):
+                rna_sequence = optimize_with_ostir(
+                    five_prime_region_tuning.utr,
+                    rna_sequence,
+                    five_prime_region_tuning.codon_window_size,
+                )
+
+            elif isinstance(five_prime_region_tuning, SlowedDownMode):
+                rna_sequence = replace_first_codons_by_lowest_rank(
+                    rna_sequence,
+                    five_prime_region_tuning.slowed_down_codon_number,
+                    self.host_codon_table,
+                )
+
+            rna_sequence = avoid_restriction_sites_for_sequence(
+                rna_sequence, restriction_sites, self.host_codon_table
+            )
+
+        if input_aa_sequence != str(Seq(rna_sequence).translate()):
+            raise NoAminoAcidConservation(
+                "Amino acid sequences from input and output are supposed to be the same."
+            )
+
+        output_dna_sequence = rna_sequence.replace("U", "T")
+        output_profiles = get_sequence_profiles(rna_sequence, self.host_codon_table)
+
+        return {
+            "name": "Unknown" if structure_infos.name is None else structure_infos.name,
+            "input": input_aa_sequence,
+            "output": output_dna_sequence,
+            "identity_percentage": None,
+            "input_profiles": None,
+            "output_profiles": output_profiles,
+        }
 
 
 @timeit
