@@ -60,7 +60,7 @@ REFERENCE_SASA = {
 
 
 @dataclass
-class ResidueInfo:
+class Residue:
     residue_number: int
     amino_acid: str
     secondary_structure: str
@@ -68,7 +68,13 @@ class ResidueInfo:
     rsa: np.float64
 
 
-def extract_structure_infos(pdb_filename: str) -> list[ResidueInfo] | None:
+@dataclass
+class StructureInfos:
+    name: str | None
+    residue_list: list[Residue]
+
+
+def extract_structure_infos(pdb_filename: str) -> StructureInfos | None:
     """
     Extract residue number, amino acid, secondary structure, SASA
     (solvent accessibility surface area) and RSA (relative SASA).
@@ -76,6 +82,7 @@ def extract_structure_infos(pdb_filename: str) -> list[ResidueInfo] | None:
     try:
         parser = PDBParser()
         structure = parser.get_structure("protein", pdb_filename)
+        name = parser.get_header().get("name")
         model = structure[0]
 
         # DSSP for secondary structure
@@ -85,7 +92,7 @@ def extract_structure_infos(pdb_filename: str) -> list[ResidueInfo] | None:
         sr = ShrakeRupley()
         sr.compute(structure, level="S")
 
-        structure_infos = []
+        residue_list = []
 
         for key in dssp.keys():
             chain_id, res_id = key
@@ -102,8 +109,8 @@ def extract_structure_infos(pdb_filename: str) -> list[ResidueInfo] | None:
                 ref_sasa = REFERENCE_SASA.get(aa, 100.0)
                 rsa = sasa / ref_sasa
 
-                structure_infos.append(
-                    ResidueInfo(
+                residue_list.append(
+                    Residue(
                         residue_number=resnum,
                         amino_acid=aa,
                         secondary_structure=ss,
@@ -112,7 +119,7 @@ def extract_structure_infos(pdb_filename: str) -> list[ResidueInfo] | None:
                     )
                 )
 
-        return structure_infos
+        return StructureInfos(name=name, residue_list=residue_list)
 
     except Exception as e:
         print(f"Error processing {pdb_filename}: {str(e)}")
@@ -181,13 +188,13 @@ def select_codon_from_table(
             return max(slow_rows, key=lambda row: row.rank).codon
 
 
-def generate_mrna_from_structure_infos(
-    structure_infos: Iterable[ResidueInfo], rsa_threshold: float = 0.25
+def generate_mrna_from_residue_list(
+    residue_list: Iterable[Residue], rsa_threshold: float = 0.25
 ) -> str:
     """
     Generates an mRNA sequence based on the provided structure information.
 
-    This function iterates over a collection of `ResidueInfo` objects, which contain
+    This function iterates over a collection of `Residue` objects, which contain
     information about each residue in a protein structure. For each residue, it
     determines whether the residue is considered "slow" based on its Relative Solvent
     Accessibility (RSA) value. If the RSA is greater than the specified `rsa_threshold`,
@@ -197,8 +204,8 @@ def generate_mrna_from_structure_infos(
     codons are concatenated to form the resulting mRNA sequence.
 
     Args:
-        structure_infos (Iterable[ResidueInfo]): An iterable collection of `ResidueInfo`
-            objects, each containing information about a residue in the protein structure.
+        residue_list (Iterable[Residue]): An iterable collection of `Residue` objects,
+            each containing information about a residue in the protein structure.
         rsa_threshold (float): The threshold value for RSA above which a residue is
             considered slow. Default is 0.25.
 
@@ -207,7 +214,7 @@ def generate_mrna_from_structure_infos(
     """
 
     def generator():
-        for residue in structure_infos:
+        for residue in residue_list:
             # RSA > rsa_threshold means outside, so considered as slow
             is_slow = residue.rsa > rsa_threshold
 
@@ -227,13 +234,17 @@ if __name__ == "__main__":
         structure_infos = extract_structure_infos(pdb_file)
 
         if structure_infos is not None:
-            input_aa = "".join([residue.amino_acid for residue in structure_infos])
-            mrna_sequence = generate_mrna_from_structure_infos(structure_infos)
+            input_aa = "".join(
+                [residue.amino_acid for residue in structure_infos.residue_list]
+            )
+            mrna_sequence = generate_mrna_from_residue_list(
+                structure_infos.residue_list
+            )
             output_aa = Seq(mrna_sequence).translate()
             assert input_aa == str(output_aa)
 
-            print(f"Amino-acid sequence:\n{input_aa}")
-            print()
+            print(f"Name: {structure_infos.name}\n")
+            print(f"Amino-acid sequence:\n{input_aa}\n")
             print(f"mRNA sequence:\n{mrna_sequence}")
 
     else:
