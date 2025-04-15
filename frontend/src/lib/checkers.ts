@@ -72,18 +72,7 @@ export function checkPdb(content: string): string[] {
   }
 
   // Check for required records in the PDB file
-  const requiredRecords = [
-    'TITLE',
-    'COMPND',
-    'SOURCE',
-    'KEYWDS',
-    'EXPDTA',
-    'AUTHOR',
-    'REMARK',
-    'SEQRES',
-    'ATOM',
-    'END',
-  ]
+  const requiredRecords = ['TITLE', 'COMPND', 'SOURCE', 'SEQRES', 'ATOM', 'END']
 
   for (const record of requiredRecords) {
     if (!lines.some(line => line.startsWith(record))) {
