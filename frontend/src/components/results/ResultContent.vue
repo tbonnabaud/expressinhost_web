@@ -174,11 +174,6 @@ async function deleteResult() {
       :key="site.enzyme"
       :deletable="false"
     />
-    <!-- <ul>
-      <li v-for="site in result.restriction_sites" :key="site.enzyme">
-        <i>{{ site.enzyme }}</i> - {{ site.sequence }}
-      </li>
-    </ul> -->
   </div>
 
   <div v-else>None</div>
