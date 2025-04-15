@@ -159,7 +159,7 @@ export interface TunedSequence {
   name: string
   input: string
   output: string
-  identity_percentage: number | null
+  identity_percentage: number
   input_profiles: Profiles | null
   output_profiles: Profiles
 }
