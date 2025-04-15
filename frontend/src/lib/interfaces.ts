@@ -41,6 +41,13 @@ export interface Token {
   token_type: string
 }
 
+export enum TuningModeName {
+  DIRECT_MAPPING = 'direct_mapping',
+  OPTIMISATION_AND_CONSERVATION_1 = 'optimisation_and_conservation_1',
+  OPTIMISATION_AND_CONSERVATION_2 = 'optimisation_and_conservation_2',
+  PROTEIN_STRUCTURE_ANALYSIS = 'protein_structure_analysis',
+}
+
 export interface PartialUntuningMode {
   mode: 'partial_untuning'
   untuned_codon_number: number
@@ -71,12 +78,14 @@ export interface RestrictionSite {
 export interface RunTrainingForm {
   name: string
   nucleotide_file_content: string
+  pdb_file_content: string | null
   clustal_file_content: string | null
   host_codon_table_id: string
   sequences_native_codon_tables: Record<string, string>
-  mode: string
+  mode: TuningModeName
   slow_speed_threshold: number
   conservation_threshold: number | null
+  rsa_threshold: number | null
   five_prime_region_tuning: FivePrimeRegionTuningMode | null
   restriction_sites: RestrictionSite[]
   send_email: boolean
@@ -117,6 +126,7 @@ export interface Result {
   mode: string
   slow_speed_threshold: number
   conservation_threshold: number | null
+  rsa_threshold: number | null
   host_codon_table: CodonTable
   five_prime_region_tuning: FivePrimeRegionTuningMode | null
   restriction_sites: RestrictionSite[] | null
@@ -132,6 +142,7 @@ export interface ResultWithId {
   mode: string
   slow_speed_threshold: number
   conservation_threshold: number | null
+  rsa_threshold: number | null
   host_codon_table: CodonTable
   five_prime_region_tuning: FivePrimeRegionTuningMode | null
   restriction_sites: RestrictionSite[] | null
@@ -148,8 +159,8 @@ export interface TunedSequence {
   name: string
   input: string
   output: string
-  identity_percentage: number
-  input_profiles: Profiles
+  identity_percentage: number | null
+  input_profiles: Profiles | null
   output_profiles: Profiles
 }
 
