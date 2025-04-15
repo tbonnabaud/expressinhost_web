@@ -5,11 +5,13 @@ export const MODE_LABEL_MAPPING: Record<string, string> = {
   direct_mapping: 'Direct mapping',
   optimisation_and_conservation_1: 'Optimisation and conservation 1',
   optimisation_and_conservation_2: 'Optimisation and conservation 2',
+  protein_structure_analysis: 'Protein structure analysis',
 }
 
 export const FIVE_PRIME_REGION_TUNING_LABEL_MAPPING: Record<string, string> = {
   partial_untuning: 'Partial untuning',
   fine_tuning: 'Fine tuning',
+  slowed_down: 'Slowed down',
 }
 
 const BASE_CODON_TABLE = [
