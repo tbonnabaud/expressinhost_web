@@ -189,30 +189,10 @@ def select_codon_from_table(
 
 
 def generate_mrna_from_residue_list(
-    residue_list: Iterable[Residue], rsa_threshold: float = 0.25
+    residue_list: Iterable[Residue],
+    host_codon_table: ProcessedCodonTable,
+    rsa_threshold: float = 0.25,
 ) -> str:
-    """
-    Generates an mRNA sequence based on the provided structure information.
-
-    This function iterates over a collection of `Residue` objects, which contain
-    information about each residue in a protein structure. For each residue, it
-    determines whether the residue is considered "slow" based on its Relative Solvent
-    Accessibility (RSA) value. If the RSA is greater than the specified `rsa_threshold`,
-    the residue is marked as slow. The function then selects a codon for the residue's
-    amino acid from a host codon table, preferring codons that are less frequent
-    (indicating slower translation) if the residue is marked as slow. The selected
-    codons are concatenated to form the resulting mRNA sequence.
-
-    Args:
-        residue_list (Iterable[Residue]): An iterable collection of `Residue` objects,
-            each containing information about a residue in the protein structure.
-        rsa_threshold (float): The threshold value for RSA above which a residue is
-            considered slow. Default is 0.25.
-
-    Returns:
-        str: The generated mRNA sequence as a string.
-    """
-
     def generator():
         for residue in residue_list:
             # RSA > rsa_threshold means outside, so considered as slow
@@ -238,7 +218,7 @@ if __name__ == "__main__":
                 [residue.amino_acid for residue in structure_infos.residue_list]
             )
             mrna_sequence = generate_mrna_from_residue_list(
-                structure_infos.residue_list
+                structure_infos.residue_list, host_codon_table, 0.25
             )
             output_aa = Seq(mrna_sequence).translate()
             assert input_aa == str(output_aa)
