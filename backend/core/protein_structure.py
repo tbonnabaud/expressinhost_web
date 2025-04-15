@@ -5,6 +5,7 @@ from typing import Iterable
 
 import numpy as np
 from Bio.PDB import DSSP, PDBParser, ShrakeRupley
+from Bio.Seq import Seq
 
 from .codon_tables import ProcessedCodonTable, process_codon_table_from_file
 
@@ -226,9 +227,14 @@ if __name__ == "__main__":
         structure_infos = extract_structure_infos(pdb_file)
 
         if structure_infos is not None:
-            print("".join([residue.amino_acid for residue in structure_infos]))
+            input_aa = "".join([residue.amino_acid for residue in structure_infos])
             mrna_sequence = generate_mrna_from_structure_infos(structure_infos)
-            print(mrna_sequence)
+            output_aa = Seq(mrna_sequence).translate()
+            assert input_aa == str(output_aa)
+
+            print(f"Amino-acid sequence:\n{input_aa}")
+            print()
+            print(f"mRNA sequence:\n{mrna_sequence}")
 
     else:
         print(f"PDB file not found: {pdb_file}")
