@@ -521,7 +521,7 @@ class StructureTuner:
             "name": "Unknown" if structure_infos.name is None else structure_infos.name,
             "input": input_aa_sequence,
             "output": output_dna_sequence,
-            "identity_percentage": None,
+            "identity_percentage": 0,
             "input_profiles": None,
             "output_profiles": output_profiles,
         }

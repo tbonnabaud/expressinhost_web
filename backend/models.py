@@ -145,7 +145,7 @@ class TunedSequence(Base):
     name: Mapped[str] = mapped_column(sa.String)
     input: Mapped[str] = mapped_column(sa.Text)
     output: Mapped[str] = mapped_column(sa.Text)
-    identity_percentage: Mapped[float | None] = mapped_column(sa.Float, nullable=True)
+    identity_percentage: Mapped[float] = mapped_column(sa.Float)
     input_profiles: Mapped[dict | None] = mapped_column(
         JSONB, default=lambda: {}, nullable=True
     )

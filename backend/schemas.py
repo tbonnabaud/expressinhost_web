@@ -261,7 +261,7 @@ class TunedSequence(BaseModel):
     name: str
     input: str
     output: str
-    identity_percentage: float | None
+    identity_percentage: float
     input_profiles: Profiles | None
     output_profiles: Profiles
 
