@@ -7,8 +7,11 @@ import type {
   SlowedDownMode,
   FivePrimeRegionTuningMode,
 } from '@/lib/interfaces'
+import { TuningModeName } from '@/lib/interfaces'
 import ToolTip from '@/components/ToolTip.vue'
 import UtrSequenceInput from './five-prime-region/UtrSequenceInput.vue'
+
+defineProps<{ mode: TuningModeName }>()
 
 const fivePrimeMode = ref<string | null>(null)
 const model = defineModel<FivePrimeRegionTuningMode | null>()
@@ -53,7 +56,7 @@ watch(fivePrimeMode, value => {
       </label>
     </div>
 
-    <div>
+    <div v-if="mode != TuningModeName.PROTEIN_STRUCTURE_ANALYSIS">
       <label>
         <input type="radio" value="partial_untuning" v-model="fivePrimeMode" />
         <ToolTip>
