@@ -162,7 +162,7 @@ def select_codon_from_table(
         if row.amino_acid == AMINO_ACID_LETTER_MAPPING[amino_acid]
     ]
 
-    slow_rows = [row for row in filtered_rows if row.rank < 0.5]
+    slow_rows = [row for row in filtered_rows if row.rank <= 0.5]
     fast_rows = [row for row in filtered_rows if row.rank >= 0.5]
 
     if is_slow:
