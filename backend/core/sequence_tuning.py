@@ -1,7 +1,6 @@
 import random
-from pathlib import Path
+from tempfile import NamedTemporaryFile
 from typing import Iterator
-from uuid import uuid4
 
 from Bio.Seq import Seq
 
@@ -456,17 +455,6 @@ class StructureTuner:
     def __init__(self, pdb_content: str, host_codon_table: ProcessedCodonTable):
         self.pdb_content = pdb_content
         self.host_codon_table = host_codon_table
-        self.tmp_pdb_dirpath = Path("/tmp")
-        self.tmp_pdb_filepath = None
-
-    def write_tmp_pdb_file(self):
-        self.tmp_pdb_filepath = self.tmp_pdb_dirpath / f"{uuid4()}.pdb"
-
-        with self.tmp_pdb_filepath.open("w") as f:
-            f.write(self.pdb_content)
-
-    def remove_tmp_pdb_file(self):
-        self.tmp_pdb_filepath.unlink(missing_ok=True)
 
     def tuning(
         self,
@@ -474,11 +462,10 @@ class StructureTuner:
         restriction_sites: list[RestrictionSite] | None,
         rsa_threshold: float = 0.25,
     ) -> dict:
-        # Write a temporary file because the algorithm absolutly need to have a filepath as input
-        self.write_tmp_pdb_file()
-        structure_infos = extract_structure_infos(self.tmp_pdb_filepath)
-        # Remove the temporary file
-        self.remove_tmp_pdb_file()
+        # Write a temporary file because the algorithm need to have a filepath as input
+        with NamedTemporaryFile(suffix=".pdb") as tmp_pdb_file:
+            tmp_pdb_file.write(self.pdb_content.encode())
+            structure_infos = extract_structure_infos(tmp_pdb_file.name)
 
         if structure_infos is None:
             raise ExpressInHostError("Unable to open the PDB file.")
