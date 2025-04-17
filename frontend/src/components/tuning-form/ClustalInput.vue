@@ -58,11 +58,6 @@ async function setClustalContent(event: Event) {
 
     <div class="input-file">
       <input type="file" id="clustal" @change="setClustalContent" />
-
-      <i>
-        You can download an example sequence file
-        <a href="/examples/Rad51_nucleotide.txt" download>here</a>.
-      </i>
     </div>
   </div>
 </template>

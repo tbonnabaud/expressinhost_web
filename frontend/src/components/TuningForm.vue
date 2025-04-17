@@ -260,6 +260,10 @@ async function cancelTuning() {
     <section v-if="baseForm.mode == TuningModeName.PROTEIN_STRUCTURE_ANALYSIS">
       <h2>Structure of the native organism</h2>
       <PdbInput id="pdbInput" v-model="baseForm.pdb_file_content" />
+      <i>
+        You can download an example PDB file
+        <a href="examples/AF-P37330-F1-model_v4.pdb" download>here</a>.
+      </i>
     </section>
 
     <template v-else>
@@ -270,6 +274,10 @@ async function cancelTuning() {
           id="fastaInput"
           v-model="baseForm.nucleotide_file_content"
         />
+        <i>
+          You can download an example sequence file
+          <a href="/examples/Rad51_nucleotide.txt" download>here</a>.
+        </i>
       </section>
 
       <section>
@@ -311,6 +319,10 @@ async function cancelTuning() {
         v-model="baseForm.clustal_file_content"
         :fasta-content="baseForm.nucleotide_file_content"
       />
+      <i>
+        You can download an example sequence file
+        <a href="/examples/Rad51_nucleotide.txt" download>here</a>.
+      </i>
     </section>
 
     <hr />
