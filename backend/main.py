@@ -6,6 +6,7 @@ from .routes import (
     admin,
     auth,
     codon_tables,
+    fasta_comparator,
     results,
     run_infos,
     tuned_sequences,
@@ -42,6 +43,7 @@ api_app.include_router(results.router)
 api_app.include_router(tuned_sequences.router)
 api_app.include_router(tuning.router)
 api_app.include_router(run_infos.router)
+api_app.include_router(fasta_comparator.router)
 
 
 @api_app.get("/")
