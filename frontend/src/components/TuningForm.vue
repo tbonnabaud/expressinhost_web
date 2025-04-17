@@ -352,18 +352,20 @@ async function cancelTuning() {
       </div>
     </section>
 
-    <hr />
+    <template v-if="!isGuest">
+      <hr />
 
-    <div id="sendEmail">
-      <input
-        id="sendEmailCheckbox"
-        type="checkbox"
-        v-model="baseForm.send_email"
-      />
-      <label for="sendEmailCheckbox">
-        Send an e-mail when the job is completed.
-      </label>
-    </div>
+      <div id="sendEmail">
+        <input
+          id="sendEmailCheckbox"
+          type="checkbox"
+          v-model="baseForm.send_email"
+        />
+        <label for="sendEmailCheckbox">
+          Send an e-mail when the job is completed.
+        </label>
+      </div>
+    </template>
 
     <hr />
 
