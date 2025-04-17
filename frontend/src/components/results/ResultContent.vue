@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import type { TuningOutput } from '@/lib/interfaces'
+import { TuningModeName, type TuningOutput } from '@/lib/interfaces'
 import { formatToLocaleDateString } from '@/lib/helpers'
 import {
   MODE_LABEL_MAPPING,
@@ -9,6 +9,7 @@ import {
 } from '@/lib/referentials'
 import { API } from '@/lib/api'
 import SequenceComparison from '@/components/results/SequenceComparison.vue'
+import SequenceFromProtein from '@/components/results/SequenceFromProtein.vue'
 import DownloadResult from './DownloadResult.vue'
 import SimilarityChart from './SimilarityChart.vue'
 import BaseModal from '../BaseModal.vue'
@@ -92,7 +93,10 @@ async function deleteResult() {
       <tr>
         <th scope="col">Mode</th>
         <th scope="col">Slow speed thresold</th>
-        <th scope="col">Conservation thresold</th>
+        <th v-if="result.conservation_threshold" scope="col">
+          Conservation thresold
+        </th>
+        <th v-if="result.rsa_threshold" scope="col">RSA thresold</th>
       </tr>
     </thead>
 
@@ -103,7 +107,7 @@ async function deleteResult() {
         <td v-if="result.conservation_threshold">
           {{ result.conservation_threshold * 100 }}%
         </td>
-        <td v-else>None</td>
+        <td v-if="result.rsa_threshold">{{ result.rsa_threshold * 100 }}%</td>
       </tr>
     </tbody>
   </table>
@@ -173,27 +177,36 @@ async function deleteResult() {
       :key="site.enzyme"
       :deletable="false"
     />
-    <!-- <ul>
-      <li v-for="site in result.restriction_sites" :key="site.enzyme">
-        <i>{{ site.enzyme }}</i> - {{ site.sequence }}
-      </li>
-    </ul> -->
   </div>
 
   <div v-else>None</div>
 
-  <h3>Sequence comparisons</h3>
+  <h3>Sequence profiles</h3>
   <hr />
 
-  <SequenceComparison
-    v-for="(item, index) in tuned_sequences"
-    :tuned-sequence="item"
-    :native-codon-table-id="result.sequences_native_codon_tables[item.name]"
-    :open="index == 0"
-    :key="index"
-  />
+  <div v-if="result.mode == TuningModeName.PROTEIN_STRUCTURE_ANALYSIS">
+    <SequenceFromProtein
+      v-for="(item, index) in tuned_sequences"
+      :tuned-sequence="item"
+      :key="index"
+    />
+  </div>
 
-  <SimilarityChart :labels="percentageLabels" :values="percentageValues" />
+  <div v-else class="sequence-comparisons">
+    <SequenceComparison
+      v-for="(item, index) in tuned_sequences"
+      :tuned-sequence="item"
+      :native-codon-table-id="result.sequences_native_codon_tables[item.name]"
+      :open="index == 0"
+      :key="index"
+    />
+  </div>
+
+  <SimilarityChart
+    v-if="result.mode != TuningModeName.PROTEIN_STRUCTURE_ANALYSIS"
+    :labels="percentageLabels"
+    :values="percentageValues"
+  />
 
   <DownloadResult :result="result" :tuned_sequences="tuned_sequences" />
 </template>

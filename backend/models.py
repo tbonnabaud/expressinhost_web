@@ -122,6 +122,7 @@ class Result(Base):
     conservation_threshold: Mapped[float | None] = mapped_column(
         sa.Float, nullable=True
     )
+    rsa_threshold: Mapped[float | None] = mapped_column(sa.Float, nullable=True)
     five_prime_region_tuning: Mapped[dict | None] = mapped_column(JSONB, nullable=True)
     # Restriction enzyme recognition sites to avoid
     restriction_sites: Mapped[list[dict] | None] = mapped_column(JSONB, nullable=True)
@@ -145,7 +146,9 @@ class TunedSequence(Base):
     input: Mapped[str] = mapped_column(sa.Text)
     output: Mapped[str] = mapped_column(sa.Text)
     identity_percentage: Mapped[float] = mapped_column(sa.Float)
-    input_profiles: Mapped[dict] = mapped_column(JSONB, default=lambda: {})
+    input_profiles: Mapped[dict | None] = mapped_column(
+        JSONB, default=lambda: {}, nullable=True
+    )
     output_profiles: Mapped[dict] = mapped_column(JSONB, default=lambda: {})
 
 

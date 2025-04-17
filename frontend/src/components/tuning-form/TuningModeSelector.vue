@@ -1,16 +1,37 @@
 <script setup lang="ts">
 import ToolTip from '@/components/ToolTip.vue'
+import { TuningModeName } from '@/lib/interfaces'
 
-const model = defineModel<string>()
+const model = defineModel<TuningModeName>()
 </script>
 
 <template>
   <div id="tuningModeSelector">
     <div>
       <input
+        id="protein_structure_analysis"
+        type="radio"
+        :value="TuningModeName.PROTEIN_STRUCTURE_ANALYSIS"
+        v-model="model"
+        required
+      />
+      <label for="protein_structure_analysis">
+        <ToolTip>
+          Protein structure analysis
+          <span class="material-icons question-marks">question_mark</span>
+          <template #tooltip>
+            Tuning mode, analyses the structure of a protein to determine slow
+            and fast parts.
+          </template>
+        </ToolTip>
+      </label>
+    </div>
+
+    <div>
+      <input
         id="direct_mapping"
         type="radio"
-        value="direct_mapping"
+        :value="TuningModeName.DIRECT_MAPPING"
         v-model="model"
         required
       />
@@ -30,7 +51,7 @@ const model = defineModel<string>()
       <input
         id="optimisation_and_conservation_1"
         type="radio"
-        value="optimisation_and_conservation_1"
+        :value="TuningModeName.OPTIMISATION_AND_CONSERVATION_1"
         v-model="model"
       />
       <label for="optimisation_and_conservation_1">
@@ -52,7 +73,7 @@ const model = defineModel<string>()
       <input
         id="optimisation_and_conservation_2"
         type="radio"
-        value="optimisation_and_conservation_2"
+        :value="TuningModeName.OPTIMISATION_AND_CONSERVATION_2"
         v-model="model"
       />
       <label for="optimisation_and_conservation_2">

@@ -164,15 +164,18 @@ class TuningModeName(str, Enum):
     DIRECT_MAPPING = "direct_mapping"
     OPTIMISATION_AND_CONSERVATION_1 = "optimisation_and_conservation_1"
     OPTIMISATION_AND_CONSERVATION_2 = "optimisation_and_conservation_2"
+    PROTEIN_STRUCTURE_ANALYSIS = "protein_structure_analysis"
 
 
+# Five prime region tuning modes
 class PartialUntuningMode(BaseModel):
     mode: Literal["partial_untuning"]
     untuned_codon_number: int
 
 
-## To use OSTIR
 class FineTuningMode(BaseModel):
+    """Mode for using OSTIR on five prime region."""
+
     mode: Literal["fine_tuning"]
     codon_window_size: int
     utr: str
@@ -203,13 +206,15 @@ class RestrictionSite(BaseModel):
 
 class RunTuningForm(BaseModel):
     name: str = "Unnamed"
-    nucleotide_file_content: str
+    nucleotide_file_content: str | None
+    pdb_file_content: str | None
     clustal_file_content: str | None
     host_codon_table_id: UUID
     sequences_native_codon_tables: dict[str, UUID]
     mode: TuningModeName
     slow_speed_threshold: float
     conservation_threshold: float | None
+    rsa_threshold: float | None
     five_prime_region_tuning: FivePrimeRegionTuningMode | None
     restriction_sites: list[RestrictionSite] | None
     send_email: bool = False
@@ -238,6 +243,7 @@ class Result(BaseModel):
     mode: str
     slow_speed_threshold: float
     conservation_threshold: float | None
+    rsa_threshold: float | None
     host_codon_table: CodonTable
     five_prime_region_tuning: FivePrimeRegionTuningMode | None
     # Restriction enzyme recognition sites to avoid
@@ -256,7 +262,7 @@ class TunedSequence(BaseModel):
     input: str
     output: str
     identity_percentage: float
-    input_profiles: Profiles
+    input_profiles: Profiles | None
     output_profiles: Profiles
 
 

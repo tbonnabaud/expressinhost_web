@@ -9,17 +9,16 @@ const model = defineModel<number | null>()
   <div class="input-range">
     <ToolTip>
       <label v-if="model">
-        Conservation threshold =
+        RSA threshold =
         {{ toFixedFloat(model * 100, 1) }}%
         <span class="material-icons question-marks">question_mark</span>
       </label>
       <template #tooltip>
-        Applies to the mode Optimisation and Conservation 2. The speed index
-        range spans from the slowest codon to the median translation speed for
-        the native mRNA sequence. A threshold of 0.5 selects codons within the
-        slowest 50% of this range.
+        RSA is the Relative Solvent Accessibility. If the RSA is greater than
+        the specified threshold, then the amino-acid is considered to be outside
+        the structure and therefore slow.
       </template>
     </ToolTip>
-    <input type="range" min="0" max="1" step="0.01" v-model="model" />
+    <input type="range" min="0" max="0.5" step="0.01" v-model="model" />
   </div>
 </template>

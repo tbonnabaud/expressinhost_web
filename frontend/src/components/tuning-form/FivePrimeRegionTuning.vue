@@ -7,15 +7,18 @@ import type {
   SlowedDownMode,
   FivePrimeRegionTuningMode,
 } from '@/lib/interfaces'
+import { TuningModeName } from '@/lib/interfaces'
 import ToolTip from '@/components/ToolTip.vue'
 import UtrSequenceInput from './five-prime-region/UtrSequenceInput.vue'
 
-const mode = ref<string | null>(null)
+defineProps<{ mode: TuningModeName }>()
+
+const fivePrimeMode = ref<string | null>(null)
 const model = defineModel<FivePrimeRegionTuningMode | null>()
 
 const isGuest = computed(() => store.currentUser.value === null)
 
-watch(mode, value => {
+watch(fivePrimeMode, value => {
   if (value === null) {
     model.value = null
   } else if (value == 'partial_untuning') {
@@ -41,7 +44,7 @@ watch(mode, value => {
   <div id="fivePrimeRegionTuningSelector">
     <div>
       <label>
-        <input type="radio" :value="null" v-model="mode" />
+        <input type="radio" :value="null" v-model="fivePrimeMode" />
         <ToolTip>
           Like the whole sequence
           <span class="material-icons question-marks">question_mark</span>
@@ -53,9 +56,9 @@ watch(mode, value => {
       </label>
     </div>
 
-    <div>
+    <div v-if="mode != TuningModeName.PROTEIN_STRUCTURE_ANALYSIS">
       <label>
-        <input type="radio" value="partial_untuning" v-model="mode" />
+        <input type="radio" value="partial_untuning" v-model="fivePrimeMode" />
         <ToolTip>
           Untuned
           <span class="material-icons question-marks">question_mark</span>
@@ -70,7 +73,7 @@ watch(mode, value => {
 
     <div>
       <label>
-        <input type="radio" value="slowed_down" v-model="mode" />
+        <input type="radio" value="slowed_down" v-model="fivePrimeMode" />
         Slowed down
         <!-- <ToolTip>
           Slowed down
@@ -87,7 +90,7 @@ watch(mode, value => {
         <input
           type="radio"
           value="fine_tuning"
-          v-model="mode"
+          v-model="fivePrimeMode"
           :disabled="isGuest"
         />
         <span v-if="isGuest">Fine-tuned (for logged user only)</span>
@@ -110,7 +113,7 @@ watch(mode, value => {
 
   <div
     id="partialUntuningModeOptions"
-    v-if="mode == 'partial_untuning' && model"
+    v-if="fivePrimeMode == 'partial_untuning' && model"
   >
     <div class="input-range" v-if="'untuned_codon_number' in model">
       <label>
@@ -128,7 +131,7 @@ watch(mode, value => {
 
   <div
     id="partialUntuningModeOptions"
-    v-else-if="mode == 'slowed_down' && model"
+    v-else-if="fivePrimeMode == 'slowed_down' && model"
   >
     <div class="input-range" v-if="'slowed_down_codon_number' in model">
       <label>
@@ -147,7 +150,7 @@ watch(mode, value => {
 
   <div
     id="fineTuningModeOptions"
-    v-else-if="!isGuest && mode == 'fine_tuning' && model"
+    v-else-if="!isGuest && fivePrimeMode == 'fine_tuning' && model"
   >
     <div class="input-range" v-if="'codon_window_size' in model">
       <label> Codon window size = {{ model.codon_window_size }} codons </label>

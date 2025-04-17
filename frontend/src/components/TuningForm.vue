@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import { ref, onMounted, reactive, watch, computed } from 'vue'
-import type { CodonTable, RunTrainingForm } from '@/lib/interfaces'
+import {
+  TuningModeName,
+  type CodonTable,
+  type RunTrainingForm,
+} from '@/lib/interfaces'
 import { API } from '@/lib/api'
 import { store } from '@/lib/store'
 import { Status, useStreamState } from '@/lib/streamedState'
@@ -14,19 +18,23 @@ import ConservationThresholdSelector from '@/components/tuning-form/Conservation
 import FivePrimeRegionTuning from '@/components/tuning-form/FivePrimeRegionTuning.vue'
 import FastaInput from '@/components/tuning-form/FastaInput.vue'
 import ClustalInput from '@/components/tuning-form/ClustalInput.vue'
-import RestrictionSiteSelector from './tuning-form/RestrictionSiteSelector.vue'
+import PdbInput from '@/components/tuning-form/PdbInput.vue'
+import RestrictionSiteSelector from '@/components/tuning-form/RestrictionSiteSelector.vue'
+import RsaThresholdSelector from '@/components/tuning-form/RsaThresholdSelector.vue'
 
 const emit = defineEmits(['submit'])
 
 const baseForm: RunTrainingForm = reactive({
   name: '',
   nucleotide_file_content: '',
+  pdb_file_content: '',
   clustal_file_content: '',
   host_codon_table_id: '',
   sequences_native_codon_tables: {},
-  mode: 'direct_mapping',
+  mode: TuningModeName.DIRECT_MAPPING,
   slow_speed_threshold: 0.5,
   conservation_threshold: null,
+  rsa_threshold: null,
   five_prime_region_tuning: null,
   restriction_sites: [],
   send_email: false,
@@ -104,12 +112,11 @@ watch(tuningState, state => {
 watch(
   () => baseForm.mode,
   value => {
-    if (value === 'optimisation_and_conservation_2') {
-      // Set a default value
-      baseForm.conservation_threshold = 0.75
-    } else {
-      baseForm.conservation_threshold = null
-    }
+    // Set default values
+    baseForm.conservation_threshold =
+      value === TuningModeName.OPTIMISATION_AND_CONSERVATION_2 ? 0.75 : null
+    baseForm.rsa_threshold =
+      value === TuningModeName.PROTEIN_STRUCTURE_ANALYSIS ? 0.25 : null
   },
 )
 
@@ -245,46 +252,56 @@ async function cancelTuning() {
     </section>
 
     <section>
-      <h2>Sequences of native organisms</h2>
-
-      <FastaInput id="fastaInput" v-model="baseForm.nucleotide_file_content" />
-    </section>
-
-    <section>
-      <h2>Codon tables for the native organisms</h2>
-
-      <table v-if="Object.keys(selectedSequencesNativeCodonTables).length">
-        <thead>
-          <tr>
-            <th>Sequence name</th>
-            <th>Codon table</th>
-          </tr>
-        </thead>
-
-        <tbody>
-          <tr
-            v-for="seq in Object.keys(selectedSequencesNativeCodonTables)"
-            :key="seq"
-          >
-            <td>{{ seq }}</td>
-            <td class="select-cell">
-              <CodonTableSearchSelect
-                v-model="selectedSequencesNativeCodonTables[seq]"
-                :options="codonTableList"
-              />
-            </td>
-          </tr>
-        </tbody>
-      </table>
-
-      <p v-else>No sequence. Please provide a valid FASTA file.</p>
-    </section>
-
-    <section>
       <h2>Mode</h2>
 
       <TuningModeSelector v-model="baseForm.mode" />
     </section>
+
+    <section v-if="baseForm.mode == TuningModeName.PROTEIN_STRUCTURE_ANALYSIS">
+      <h2>Structure of the native organism</h2>
+      <PdbInput id="pdbInput" v-model="baseForm.pdb_file_content" />
+    </section>
+
+    <template v-else>
+      <section>
+        <h2>Sequences of native organisms</h2>
+
+        <FastaInput
+          id="fastaInput"
+          v-model="baseForm.nucleotide_file_content"
+        />
+      </section>
+
+      <section>
+        <h2>Codon tables for the native organisms</h2>
+
+        <table v-if="Object.keys(selectedSequencesNativeCodonTables).length">
+          <thead>
+            <tr>
+              <th>Sequence name</th>
+              <th>Codon table</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr
+              v-for="seq in Object.keys(selectedSequencesNativeCodonTables)"
+              :key="seq"
+            >
+              <td>{{ seq }}</td>
+              <td class="select-cell">
+                <CodonTableSearchSelect
+                  v-model="selectedSequencesNativeCodonTables[seq]"
+                  :options="codonTableList"
+                />
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <p v-else>No sequence. Please provide a valid FASTA file.</p>
+      </section>
+    </template>
 
     <section v-if="clustalIsRequired">
       <h2>Alignments</h2>
@@ -296,25 +313,33 @@ async function cancelTuning() {
       />
     </section>
 
+    <hr />
+
     <section>
       <h2>Thresholds</h2>
 
       <div class="flex-container">
         <SlowSpeedThresholdSelector v-model="baseForm.slow_speed_threshold" />
         <ConservationThresholdSelector
-          v-if="
-            baseForm.mode == 'optimisation_and_conservation_2' &&
-            baseForm.conservation_threshold !== null
-          "
+          v-if="baseForm.mode == TuningModeName.OPTIMISATION_AND_CONSERVATION_2"
           v-model="baseForm.conservation_threshold"
+        />
+        <RsaThresholdSelector
+          v-else-if="baseForm.mode == TuningModeName.PROTEIN_STRUCTURE_ANALYSIS"
+          v-model="baseForm.rsa_threshold"
         />
       </div>
     </section>
 
+    <hr />
+
     <section>
       <h2>Specific tuning of mRNA's 5’ region</h2>
 
-      <FivePrimeRegionTuning v-model="baseForm.five_prime_region_tuning" />
+      <FivePrimeRegionTuning
+        v-model="baseForm.five_prime_region_tuning"
+        :mode="baseForm.mode"
+      />
     </section>
 
     <hr />

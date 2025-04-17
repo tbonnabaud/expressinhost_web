@@ -1,7 +1,7 @@
 // Stop codons for DNA and mRNA
 const STOP_CODONS = ['UAG', 'UAA', 'UGA', 'TAG', 'TAA', 'TGA']
 
-export function checkFasta(content: string) {
+export function checkFasta(content: string): string[] {
   const errors = []
 
   if (content == '') {
@@ -57,7 +57,36 @@ export function checkFasta(content: string) {
   return errors
 }
 
-export function checkClustal(content: string) {
+/**
+ * Function to validate if a given content is a correct PDB format.
+ * @param content - The content to validate as a PDB.
+ * @returns A list of string errors indicating issues with the PDB format.
+ */
+export function checkPdb(content: string): string[] {
+  const errors: string[] = []
+  const lines = content.split('\n')
+
+  // Check if the file starts with the correct header
+  if (!lines[0]?.startsWith('HEADER')) {
+    errors.push('Missing or incorrect HEADER record.')
+  }
+
+  // Check for required records in the PDB file
+  const requiredRecords = ['TITLE', 'COMPND', 'SOURCE', 'SEQRES', 'ATOM', 'END']
+
+  for (const record of requiredRecords) {
+    if (!lines.some(line => line.startsWith(record))) {
+      errors.push(`Missing required record: ${record}`)
+    }
+  }
+
+  // Additional validation can be added here, such as checking the format of each line
+  // For simplicity, we'll assume the presence of required records is sufficient
+
+  return errors
+}
+
+export function checkClustal(content: string): string[] {
   const errors = []
 
   if (content == '') {
@@ -74,7 +103,7 @@ export function checkClustal(content: string) {
 export function checkClustalMatchingFasta(
   clustalContent: string,
   fastaContent: string,
-) {
+): string[] {
   const errors = []
   const fastaIDs = Array.from(fastaContent.matchAll(/^>(\S+)/gm), m => m[1])
   const clustalBlocks = clustalContent
@@ -108,7 +137,7 @@ export function checkClustalMatchingFasta(
   return errors
 }
 
-export function checkUtrSequence(sequence: string) {
+export function checkUtrSequence(sequence: string): string[] {
   const errors = []
   const trimmedSequence = sequence.trim()
 
@@ -136,7 +165,7 @@ export function checkUtrSequence(sequence: string) {
   return errors
 }
 
-export function checkPasswordConstraints(password: string) {
+export function checkPasswordConstraints(password: string): string {
   if (password.length < 8 || password.length > 20) {
     return 'The password must be between 8 and 20 characters long.'
   } else if (!password.match(/([a-z].*\d)|(\d.*[a-z])/i)) {

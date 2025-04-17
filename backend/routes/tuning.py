@@ -11,7 +11,7 @@ from rq import get_current_job
 from ..authentication import OptionalTokenDependency, check_is_member, get_current_user
 from ..core.codon_tables import process_raw_codon_table
 from ..core.exceptions import ExpressInHostError
-from ..core.sequence_tuning import SequenceTuner
+from ..core.sequence_tuning import SequenceTuner, StructureTuner
 from ..crud.codon_tables import CodonTableRepository
 from ..crud.codon_translations import CodonTranslationRepository
 from ..crud.results import ResultRepository
@@ -33,6 +33,7 @@ from ..schemas import (
     ProgressState,
     RunInfoForm,
     RunTuningForm,
+    TuningModeName,
     TuningOutput,
 )
 
@@ -94,7 +95,13 @@ def tune_sequences(token: OptionalTokenDependency, base_url: str, form: RunTunin
     native_codon_table_ids = get_native_codon_table_ids(
         form.nucleotide_file_content, form.sequences_native_codon_tables
     )
-    total_sequence_number = len(native_codon_table_ids)
+
+    if form.mode == TuningModeName.PROTEIN_STRUCTURE_ANALYSIS:
+        # Only one sequence of amino-acids, provided by the PDB file
+        total_sequence_number = 1
+    else:
+        total_sequence_number = len(native_codon_table_ids)
+
     step = 0
     # Total of steps is the number of sequences
     # plus codon table processing step plus end step
@@ -124,35 +131,48 @@ def tune_sequences(token: OptionalTokenDependency, base_url: str, form: RunTunin
 
         time.sleep(0.5)
 
-        sequence_tuner = SequenceTuner(
-            form.nucleotide_file_content,
-            form.clustal_file_content,
-            native_codon_tables,
-            host_codon_table,
-        )
-
         tuned_sequences = []
-        pipeline = sequence_tuner.tuning_pipeline(
-            form.mode,
-            form.conservation_threshold,
-            form.five_prime_region_tuning,
-            form.restriction_sites,
-        )
 
-        for seq_no in range(1, total_sequence_number + 1):
-            # Update state before process
+        if form.mode == TuningModeName.PROTEIN_STRUCTURE_ANALYSIS:
             step += 1
-            update_job_meta(
-                job, f"Process sequence {seq_no}/{total_sequence_number}...", step
+            update_job_meta(job, "Process protein structure...", step)
+            structure_tuner = StructureTuner(form.pdb_file_content, host_codon_table)
+            tuned_sequence = structure_tuner.tuning(
+                form.five_prime_region_tuning,
+                form.restriction_sites,
+                form.rsa_threshold,
+            )
+            tuned_sequences.append(tuned_sequence)
+
+        else:
+            sequence_tuner = SequenceTuner(
+                form.nucleotide_file_content,
+                form.clustal_file_content,
+                native_codon_tables,
+                host_codon_table,
             )
 
-            try:
-                tuned_sequence = next(pipeline)
-                tuned_sequences.append(tuned_sequence)
-                time.sleep(0.3)
+            pipeline = sequence_tuner.tuning_pipeline(
+                form.mode,
+                form.conservation_threshold,
+                form.five_prime_region_tuning,
+                form.restriction_sites,
+            )
 
-            except StopIteration:
-                break
+            for seq_no in range(1, total_sequence_number + 1):
+                # Update state before process
+                step += 1
+                update_job_meta(
+                    job, f"Process sequence {seq_no}/{total_sequence_number}...", step
+                )
+
+                try:
+                    tuned_sequence = next(pipeline)
+                    tuned_sequences.append(tuned_sequence)
+                    time.sleep(0.3)
+
+                except StopIteration:
+                    break
 
         step += 1
         update_job_meta(job, "Serialization of the results...", step)
@@ -174,6 +194,7 @@ def tune_sequences(token: OptionalTokenDependency, base_url: str, form: RunTunin
             "mode": form.mode,
             "slow_speed_threshold": form.slow_speed_threshold,
             "conservation_threshold": form.conservation_threshold,
+            "rsa_threshold": form.rsa_threshold,
             "five_prime_region_tuning": (
                 form.five_prime_region_tuning.model_dump()
                 if form.five_prime_region_tuning

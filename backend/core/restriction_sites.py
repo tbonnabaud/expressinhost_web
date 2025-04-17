@@ -1,7 +1,9 @@
 import re
 
 from ..logger import logger
+from ..schemas import RestrictionSite
 from .codon_tables import ProcessedCodonTable
+from .exceptions import ExpressInHostError
 
 
 def find_recognition_site_positions(
@@ -63,3 +65,37 @@ def replace_first_codon_within_recognition_site(
         updated_sequence.append(codon)
 
     return "".join(updated_sequence)
+
+
+def avoid_restriction_sites_for_sequence(
+    rna_sequence: str,
+    restriction_sites: list[RestrictionSite],
+    host_codon_table: ProcessedCodonTable,
+) -> str:
+    """Replace codons matching with each enzyme recognition sites."""
+    modified_rna_sequence = rna_sequence
+
+    for site in restriction_sites:
+        recognition_site_positions = find_recognition_site_positions(
+            site.sequence, modified_rna_sequence
+        )
+
+        if recognition_site_positions:
+            modified_rna_sequence = replace_first_codon_within_recognition_site(
+                modified_rna_sequence,
+                recognition_site_positions,
+                host_codon_table,
+            )
+
+    # Check if there are no more enzyme recognition sites
+    for site in restriction_sites:
+        recognition_site_positions = find_recognition_site_positions(
+            site.sequence, modified_rna_sequence
+        )
+
+        if recognition_site_positions != []:
+            raise ExpressInHostError(
+                f"There is still enzyme recognition sites for {site.enzyme} - {site.sequence}."
+            )
+
+    return modified_rna_sequence
