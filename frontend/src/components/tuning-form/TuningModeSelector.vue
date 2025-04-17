@@ -17,7 +17,7 @@ const model = defineModel<TuningModeName>()
       />
       <label for="protein_structure_analysis">
         <ToolTip>
-          Protein structure analysis
+          Protein structure analysis (experimental)
           <span class="material-icons question-marks">question_mark</span>
           <template #tooltip>
             Tuning mode, analyses the structure of a protein to determine slow
