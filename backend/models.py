@@ -122,7 +122,6 @@ class Result(Base):
     conservation_threshold: Mapped[float | None] = mapped_column(
         sa.Float, nullable=True
     )
-    rsa_threshold: Mapped[float | None] = mapped_column(sa.Float, nullable=True)
     five_prime_region_tuning: Mapped[dict | None] = mapped_column(JSONB, nullable=True)
     # Restriction enzyme recognition sites to avoid
     restriction_sites: Mapped[list[dict] | None] = mapped_column(JSONB, nullable=True)

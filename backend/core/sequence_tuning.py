@@ -23,10 +23,7 @@ from .five_prime_region_tuning import (
 )
 from .postprocessing import clear_output_sequence, compute_similarity
 from .preprocessing import align_nucleotide_sequences, dna_to_rna_sequences
-from .protein_structure import (
-    extract_structure_infos,
-    generate_mrna_from_residue_list,
-)
+from .protein_structure import extract_structure_infos, generate_mrna_from_residue_list
 from .restriction_sites import avoid_restriction_sites_for_sequence
 from .utils import get_clustal_symbol_sequence, parse_sequences, timeit
 
@@ -460,7 +457,6 @@ class StructureTuner:
         self,
         five_prime_region_tuning: FineTuningMode | SlowedDownMode | None,
         restriction_sites: list[RestrictionSite] | None,
-        rsa_threshold: float = 0.25,
     ) -> dict:
         # Write a temporary file because the algorithm need to have a filepath as input
         with NamedTemporaryFile(suffix=".pdb") as tmp_pdb_file:
@@ -474,7 +470,7 @@ class StructureTuner:
             [residue.amino_acid for residue in structure_infos.residue_list]
         )
         rna_sequence = generate_mrna_from_residue_list(
-            structure_infos.residue_list, self.host_codon_table, rsa_threshold
+            structure_infos.residue_list, self.host_codon_table
         )
 
         if five_prime_region_tuning:

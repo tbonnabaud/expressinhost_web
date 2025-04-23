@@ -214,7 +214,6 @@ class RunTuningForm(BaseModel):
     mode: TuningModeName
     slow_speed_threshold: float
     conservation_threshold: float | None
-    rsa_threshold: float | None
     five_prime_region_tuning: FivePrimeRegionTuningMode | None
     restriction_sites: list[RestrictionSite] | None
     send_email: bool = False
@@ -243,7 +242,6 @@ class Result(BaseModel):
     mode: str
     slow_speed_threshold: float
     conservation_threshold: float | None
-    rsa_threshold: float | None
     host_codon_table: CodonTable
     five_prime_region_tuning: FivePrimeRegionTuningMode | None
     # Restriction enzyme recognition sites to avoid

@@ -96,7 +96,6 @@ async function deleteResult() {
         <th v-if="result.conservation_threshold" scope="col">
           Conservation thresold
         </th>
-        <th v-if="result.rsa_threshold" scope="col">RSA thresold</th>
       </tr>
     </thead>
 
@@ -107,7 +106,6 @@ async function deleteResult() {
         <td v-if="result.conservation_threshold">
           {{ result.conservation_threshold * 100 }}%
         </td>
-        <td v-if="result.rsa_threshold">{{ result.rsa_threshold * 100 }}%</td>
       </tr>
     </tbody>
   </table>
