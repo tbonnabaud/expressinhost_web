@@ -5,7 +5,7 @@ from pathlib import Path
 from .core.constantes import TABLE_BASE_PATH
 from .crud.codon_tables import CodonTableRepository
 from .crud.codon_translations import CodonTranslationRepository
-from .database import LocalSession
+from .database import context_get_session_with_commit
 from .routes.codon_tables import assign_codon_table_id
 from .schemas import CodonTableFormWithTranslations, CodonTranslation
 
@@ -24,13 +24,14 @@ def read_rows_from_csv(path: Path) -> list[dict]:
 
 
 def main():
-    with LocalSession() as session:
+    with context_get_session_with_commit() as session:
         codon_table_repo = CodonTableRepository(session)
 
         if codon_table_repo.count_all() == 0:
             codon_translation_repo = CodonTranslationRepository(session)
 
             for path in get_csv_file_list(TABLE_BASE_PATH):
+                print(f"File: {path.name}")
                 csv_rows = read_rows_from_csv(path)
                 translations = [CodonTranslation(**row) for row in csv_rows]
 

@@ -20,7 +20,6 @@ import FastaInput from '@/components/tuning-form/FastaInput.vue'
 import ClustalInput from '@/components/tuning-form/ClustalInput.vue'
 import PdbInput from '@/components/tuning-form/PdbInput.vue'
 import RestrictionSiteSelector from '@/components/tuning-form/RestrictionSiteSelector.vue'
-import RsaThresholdSelector from '@/components/tuning-form/RsaThresholdSelector.vue'
 
 const emit = defineEmits(['submit'])
 
@@ -34,7 +33,6 @@ const baseForm: RunTrainingForm = reactive({
   mode: TuningModeName.DIRECT_MAPPING,
   slow_speed_threshold: 0.5,
   conservation_threshold: null,
-  rsa_threshold: null,
   five_prime_region_tuning: null,
   restriction_sites: [],
   send_email: false,
@@ -115,8 +113,6 @@ watch(
     // Set default values
     baseForm.conservation_threshold =
       value === TuningModeName.OPTIMISATION_AND_CONSERVATION_2 ? 0.75 : null
-    baseForm.rsa_threshold =
-      value === TuningModeName.PROTEIN_STRUCTURE_ANALYSIS ? 0.25 : null
   },
 )
 
@@ -335,10 +331,6 @@ async function cancelTuning() {
         <ConservationThresholdSelector
           v-if="baseForm.mode == TuningModeName.OPTIMISATION_AND_CONSERVATION_2"
           v-model="baseForm.conservation_threshold"
-        />
-        <RsaThresholdSelector
-          v-else-if="baseForm.mode == TuningModeName.PROTEIN_STRUCTURE_ANALYSIS"
-          v-model="baseForm.rsa_threshold"
         />
       </div>
     </section>
