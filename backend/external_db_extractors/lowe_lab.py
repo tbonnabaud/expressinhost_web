@@ -10,7 +10,7 @@ from selectolax.parser import HTMLParser, Node
 from ..crud.codon_tables import CodonTableRepository
 from ..crud.codon_translations import CodonTranslationRepository
 from ..crud.last_web_scraping import LastWebScrapingRepository
-from ..database import IntegrityError, LocalSession
+from ..database import IntegrityError, LocalSession, SQLAlchemyError
 from ..job_manager import Job, update_job_meta, web_scraping_queue
 from ..logger import scraping_logger
 from ..routes.codon_tables import assign_codon_table_id
@@ -19,7 +19,7 @@ from .mappings import AMINO_ACID_MAPPING, WOBBLE_MAPPING
 
 SOURCE = "Lowe Lab"
 BASE_URL = "https://gtrnadb.ucsc.edu"
-GENOME_LIST_URL = f"{BASE_URL}/cgi-bin/trna_chooseorg?org="
+GENOME_LIST_URL = f"{BASE_URL}/browse.html"
 
 # Third group to handle cell containing X/Y
 CELL_REGEX = re.compile(r"([A-Z]+)\s+(\d*)/?(\d*)")
@@ -163,12 +163,13 @@ def parse_trna_gene_summary(html_content: str):
 
 def parse_genome_list(html_content: str):
     tree = HTMLParser(html_content)
-    link_list = tree.css("li a")
+    link_list = tree.css(".panel td a")
 
     for link_node in link_list:
         href = link_node.attributes.get("href")
+        print(f"HREF: {href}")
         # Remove the first part containing ".."
-        page_link = f"{BASE_URL}{href[2:]}"
+        page_link = f"{BASE_URL}/{href}"
 
         yield GenomePageMetadata(link_node.text(), page_link)
 
@@ -263,7 +264,7 @@ async def run_scraping():
                     )
                     db_session.rollback()
 
-                except Exception as exc:
+                except SQLAlchemyError as exc:
                     scraping_logger.error(exc)
                     db_session.rollback()
 
