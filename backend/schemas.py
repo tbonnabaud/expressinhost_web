@@ -290,8 +290,8 @@ class RunInfoForm(BaseModel):
     five_prime_region_tuning_mode: str | None
 
 
-class FastaComparatorForm(BaseModel):
-    fasta1: str
-    fasta2: str
+class SequenceComparatorForm(BaseModel):
+    sequence1: str
+    sequence2: str
     host_codon_table_id: UUID
     slow_speed_threshold: float
