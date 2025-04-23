@@ -127,33 +127,31 @@ def extract_structure_infos(pdb_filename: str) -> StructureInfos | None:
 
 
 def select_codon_from_table(
-    amino_acid: str, host_codon_table: ProcessedCodonTable, is_slow: bool
+    amino_acid: str, host_codon_table: ProcessedCodonTable, rsa: float
 ) -> str:
     """
-    Selects a codon for a given amino acid from a codon table based on the desired speed.
+    Selects a codon for a given amino acid based on a host codon table and relative solvent accessibility (RSA).
 
-    This function filters the codon table to find codons that correspond to the specified
-    amino acid. It then selects a codon based on whether a slow or fast codon is desired.
-    If no codons are available for the desired speed, it selects the slowest fast codon
-    or the fastest slow codon as a fallback.
+    This function filters the codons corresponding to the specified amino acid from the host codon table
+    and selects one codon based on a weighted probability that considers the RSA and the rank of each codon.
 
     Parameters:
-        amino_acid (str): The single-letter code of the amino acid for which to select a codon.
-        host_codon_table (ProcessedCodonTable): A table containing codon information, including
-                                                amino acid, codon, and rank.
-        is_slow (bool): A flag indicating whether to select a slow codon (True) or a fast codon (False).
+        amino_acid (str): A single-letter code representing the amino acid.
+        host_codon_table (ProcessedCodonTable): A processed codon table containing codon information.
+        rsa (float): The relative solvent accessibility value.
 
     Returns:
-        str: The selected codon for the specified amino acid.
+        str: The selected codon as a string.
 
     Notes:
-    - The function uses a rank to determine the speed of a codon, where a lower rank indicates
-      a slower codon and a higher rank indicates a faster codon.
-    - The function uses weighted random selection to choose a codon based on its rank to not exhaust
-      the most abundant tRNA.
-    - If no codons are available for the desired speed, the function falls back to the slowest
-      fast codon or the fastest slow codon.
+    - If the amino acid is Methionine ('M'), the function returns 'AUG' directly.
+    - The probability of selecting a codon is calculated as:
+      `Probability(codon) = RSA + Rank(codon) * (1 - 2 * RSA)`
     """
+    # Skip Methionine because its RSA is greater than 1
+    if amino_acid == "M":
+        return "AUG"
+
     # Keep rows with a specific amino-acid
     filtered_rows = [
         row
@@ -162,43 +160,42 @@ def select_codon_from_table(
         if row.amino_acid == AMINO_ACID_LETTER_MAPPING[amino_acid]
     ]
 
-    slow_rows = [row for row in filtered_rows if row.rank <= 0.5]
-    fast_rows = [row for row in filtered_rows if row.rank >= 0.5]
+    available_codons = [row.codon for row in filtered_rows]
+    # Probability(codon) = RSA + Rank(codon) * (1 - 2 * RSA)
+    codon_weights = [rsa + row.rank * (1 - 2 * rsa) for row in filtered_rows]
+    print(codon_weights)
 
-    if is_slow:
-        if slow_rows:
-            available_slow_codons = [row.codon for row in slow_rows]
-            slow_codon_weights = [(1 - row.rank) ** 2 for row in slow_rows]
-
-            return random.choices(available_slow_codons, weights=slow_codon_weights)[0]
-
-        # Else return the slowest of the fast codons
-        else:
-            return min(fast_rows, key=lambda row: row.rank).codon
-
-    else:
-        if fast_rows:
-            available_fast_codons = [row.codon for row in fast_rows]
-            fast_codon_weights = [row.rank**2 for row in fast_rows]
-
-            return random.choices(available_fast_codons, weights=fast_codon_weights)[0]
-
-        # Else return the fastest of the slow codons
-        else:
-            return max(slow_rows, key=lambda row: row.rank).codon
+    return random.choices(available_codons, weights=codon_weights)[0]
 
 
 def generate_mrna_from_residue_list(
     residue_list: Iterable[Residue],
     host_codon_table: ProcessedCodonTable,
-    rsa_threshold: float = 0.25,
 ) -> str:
+    """
+    Generates an mRNA sequence from a list of residues using a host codon table.
+
+    This function iterates over a list of residues, selects a codon for each residue based on its
+    amino acid and relative solvent accessibility (RSA), and concatenates the selected codons to form
+    an mRNA sequence.
+
+    Parameters:
+        residue_list (Iterable[Residue]): An iterable of Residue objects, each representing an amino acid residue.
+        host_codon_table (ProcessedCodonTable): A processed codon table containing codon information.
+
+    Returns:
+        str: The generated mRNA sequence as a string of concatenated codons.
+
+    Notes:
+    - The function uses the `select_codon_from_table` function to select a codon for each residue.
+    - The RSA value of each residue is used to determine the probability of selecting each codon.
+    """
+
     def generator():
         for residue in residue_list:
-            # RSA > rsa_threshold means outside, so considered as slow
-            is_slow = residue.rsa > rsa_threshold
-
-            yield select_codon_from_table(residue.amino_acid, host_codon_table, is_slow)
+            yield select_codon_from_table(
+                residue.amino_acid, host_codon_table, residue.rsa
+            )
 
     return "".join(generator())
 
@@ -218,7 +215,7 @@ if __name__ == "__main__":
                 [residue.amino_acid for residue in structure_infos.residue_list]
             )
             mrna_sequence = generate_mrna_from_residue_list(
-                structure_infos.residue_list, host_codon_table, 0.25
+                structure_infos.residue_list, host_codon_table
             )
             output_aa = Seq(mrna_sequence).translate()
             assert input_aa == str(output_aa)

@@ -85,7 +85,6 @@ export interface RunTrainingForm {
   mode: TuningModeName
   slow_speed_threshold: number
   conservation_threshold: number | null
-  rsa_threshold: number | null
   five_prime_region_tuning: FivePrimeRegionTuningMode | null
   restriction_sites: RestrictionSite[]
   send_email: boolean
@@ -126,7 +125,6 @@ export interface Result {
   mode: string
   slow_speed_threshold: number
   conservation_threshold: number | null
-  rsa_threshold: number | null
   host_codon_table: CodonTable
   five_prime_region_tuning: FivePrimeRegionTuningMode | null
   restriction_sites: RestrictionSite[] | null
@@ -142,7 +140,6 @@ export interface ResultWithId {
   mode: string
   slow_speed_threshold: number
   conservation_threshold: number | null
-  rsa_threshold: number | null
   host_codon_table: CodonTable
   five_prime_region_tuning: FivePrimeRegionTuningMode | null
   restriction_sites: RestrictionSite[] | null

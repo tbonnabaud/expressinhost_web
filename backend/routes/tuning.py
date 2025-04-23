@@ -140,7 +140,6 @@ def tune_sequences(token: OptionalTokenDependency, base_url: str, form: RunTunin
             tuned_sequence = structure_tuner.tuning(
                 form.five_prime_region_tuning,
                 form.restriction_sites,
-                form.rsa_threshold,
             )
             tuned_sequences.append(tuned_sequence)
 
@@ -194,7 +193,6 @@ def tune_sequences(token: OptionalTokenDependency, base_url: str, form: RunTunin
             "mode": form.mode,
             "slow_speed_threshold": form.slow_speed_threshold,
             "conservation_threshold": form.conservation_threshold,
-            "rsa_threshold": form.rsa_threshold,
             "five_prime_region_tuning": (
                 form.five_prime_region_tuning.model_dump()
                 if form.five_prime_region_tuning
