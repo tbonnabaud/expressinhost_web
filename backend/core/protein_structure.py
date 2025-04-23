@@ -145,12 +145,21 @@ def select_codon_from_table(
 
     Notes:
     - If the amino acid is Methionine ('M'), the function returns 'AUG' directly.
+    - Else if the amino acid is Tryptophan ('W'), the function returns 'UGG' directly.
     - The probability of selecting a codon is calculated as:
       `Probability(codon) = RSA + Rank(codon) * (1 - 2 * RSA)`
     """
-    # Skip Methionine because its RSA is greater than 1
+    # Methionine has only one possibility
     if amino_acid == "M":
         return "AUG"
+
+    # Tryptophan has only one possibility
+    elif amino_acid == "W":
+        return "UGG"
+
+    # RSA above 1 is potentially either at the beginning or at the end of the structure
+    if rsa > 1:
+        rsa = 1
 
     # Keep rows with a specific amino-acid
     filtered_rows = [
