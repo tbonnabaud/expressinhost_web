@@ -158,6 +158,7 @@ def select_codon_from_table(
         return "UGG"
 
     # RSA above 1 is potentially either at the beginning or at the end of the structure
+    # In this case, set value to 1 to avoid negative weights
     if rsa > 1:
         rsa = 1
 
