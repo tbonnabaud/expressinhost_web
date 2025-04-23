@@ -167,7 +167,6 @@ def parse_genome_list(html_content: str):
 
     for link_node in link_list:
         href = link_node.attributes.get("href")
-        print(f"HREF: {href}")
         # Remove the first part containing ".."
         page_link = f"{BASE_URL}/{href}"
 
