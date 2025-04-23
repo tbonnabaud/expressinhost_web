@@ -163,7 +163,6 @@ def select_codon_from_table(
     available_codons = [row.codon for row in filtered_rows]
     # Probability(codon) = RSA + Rank(codon) * (1 - 2 * RSA)
     codon_weights = [rsa + row.rank * (1 - 2 * rsa) for row in filtered_rows]
-    print(codon_weights)
 
     return random.choices(available_codons, weights=codon_weights)[0]
 
