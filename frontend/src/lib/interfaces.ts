@@ -198,3 +198,10 @@ export interface RunInfoSequenceNumberStats {
   avg_sequence_number: number
   max_sequence_number: number
 }
+
+export interface SequenceComparatorForm {
+  sequence1: string
+  sequence2: string
+  host_codon_table_id: string
+  slow_speed_threshold: number
+}

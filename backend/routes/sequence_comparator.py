@@ -12,7 +12,7 @@ from .tuning import process_codon_table_from_db
 router = APIRouter(tags=["Sequence comparator"])
 
 
-@router.post("/compare-sequences", response_model=list[TunedSequence])
+@router.post("/compare-sequences", response_model=TunedSequence)
 def compare_sequences(
     session: SessionDependency,
     token: OptionalTokenDependency,
@@ -28,17 +28,22 @@ def compare_sequences(
         form.slow_speed_threshold,
     )
 
-    assert len(form.sequence1) == len(form.sequence2)
+    rna_seq1 = form.sequence1.replace("T", "U")
+    rna_seq2 = form.sequence2.replace("T", "U")
 
-    similarity = compute_similarity(form.sequence1, form.sequence2)
-    fasta1_seq_profiles = get_sequence_profiles(form.sequence1, processed_codon_table)
-    fasta2_seq_profiles = get_sequence_profiles(form.sequence2, processed_codon_table)
+    assert len(rna_seq1) == len(rna_seq2)
+
+    similarity = compute_similarity(rna_seq1, rna_seq2)
+    sequence1_profiles = get_sequence_profiles(rna_seq1, processed_codon_table)
+    sequence2_profiles = get_sequence_profiles(rna_seq2, processed_codon_table)
+
+    print(sequence1_profiles)
 
     return TunedSequence(
         name=f"{codon_table_meta.organism} - {codon_table_meta.name}",
-        input=form.sequence1,
-        output=form.sequence2,
-        similarity=similarity,
-        input_profiles=fasta1_seq_profiles,
-        output_profiles=fasta2_seq_profiles,
+        input=rna_seq1,
+        output=rna_seq2,
+        identity_percentage=similarity,
+        input_profiles=sequence1_profiles,
+        output_profiles=sequence2_profiles,
     )

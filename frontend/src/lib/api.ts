@@ -8,6 +8,8 @@ import type {
   UserPasswordForm,
   UserProfileForm,
   UserRoleForm,
+  SequenceComparatorForm,
+  TunedSequence,
 } from './interfaces'
 import { store } from './store'
 
@@ -193,6 +195,11 @@ export const API = {
   tunedSequences: tunedSequences,
   runInfos: runInfos,
   admin: admin,
+  compareSequences: async (form: SequenceComparatorForm) =>
+    (await REQUESTS.post(
+      '/compare-sequences',
+      form,
+    )) as ApiResponse<TunedSequence>,
 }
 
 export async function setCurrentUserInStore() {
