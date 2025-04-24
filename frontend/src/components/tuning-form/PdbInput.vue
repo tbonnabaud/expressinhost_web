@@ -46,11 +46,6 @@ async function setPdbContent(event: Event) {
 
     <div class="input-file">
       <input type="file" id="pdb" @change="setPdbContent" />
-
-      <i>
-        You can download an example PDB file
-        <a href="examples/AF-P37330-F1-model_v4.pdb" download>here</a>.
-      </i>
     </div>
   </div>
 </template>

@@ -1,8 +1,40 @@
 // Stop codons for DNA and mRNA
 const STOP_CODONS = ['UAG', 'UAA', 'UGA', 'TAG', 'TAA', 'TGA']
 
+export function checkSequence(sequence: string): string[] {
+  const errors: string[] = []
+
+  const invalidCharacters = sequence?.match(/[^ACTGU\r\n]/g)
+
+  if (invalidCharacters) {
+    for (const match of invalidCharacters) {
+      errors.push(`Invalid character "${match[0]}".`)
+    }
+  }
+
+  // Flatten the sequence
+  const flatSequence = sequence.replace(/\s/g, '')
+
+  if (flatSequence.length % 3 !== 0) {
+    errors.push(
+      `Invalid number of nucleotides (${flatSequence.length}). Should be a multiple of three.`,
+    )
+  } else {
+    // Check if there are stop codons before the end of the sequence
+    for (let i = 0; i < flatSequence.length - 3; i += 3) {
+      const codon = flatSequence.substring(i, i + 3)
+
+      if (STOP_CODONS.includes(codon)) {
+        errors.push(`Stop codon "${codon}" before the end of the sequence.`)
+      }
+    }
+  }
+
+  return errors
+}
+
 export function checkFasta(content: string): string[] {
-  const errors = []
+  const errors: string[] = []
 
   if (content == '') {
     errors.push('File is empty.')
@@ -16,33 +48,10 @@ export function checkFasta(content: string): string[] {
       const sequence = parsedBlock?.[2]
 
       if (header && sequence) {
-        // Check for invalid characters
-        const invalidCharacters = sequence?.match(/[^ACTGU\r\n]/g)
+        const sequenceErrors = checkSequence(sequence)
 
-        if (invalidCharacters) {
-          for (const match of invalidCharacters) {
-            errors.push(`Invalid character "${match[0]}" for ${header}.`)
-          }
-        }
-
-        // Flatten the sequence
-        const flatSequence = sequence.replace(/\s/g, '')
-
-        if (flatSequence.length % 3 !== 0) {
-          errors.push(
-            `Invalid number of nucleotides (${flatSequence.length}) for ${header}. Should be a multiple of three.`,
-          )
-        } else {
-          // Check if there are stop codons before the end of the sequence
-          for (let i = 0; i < flatSequence.length - 3; i += 3) {
-            const codon = flatSequence.substring(i, i + 3)
-
-            if (STOP_CODONS.includes(codon)) {
-              errors.push(
-                `Stop codon "${codon}" before the end of the sequence for ${header}.`,
-              )
-            }
-          }
+        for (const seqError of sequenceErrors) {
+          errors.push(`${header}: ${seqError}`)
         }
       } else if (header && !sequence) {
         errors.push(`Missing sequence for ${header}.`)

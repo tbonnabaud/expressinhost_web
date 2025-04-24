@@ -8,6 +8,7 @@ from .routes import (
     codon_tables,
     results,
     run_infos,
+    sequence_comparator,
     tuned_sequences,
     tuning,
     users,
@@ -42,6 +43,7 @@ api_app.include_router(results.router)
 api_app.include_router(tuned_sequences.router)
 api_app.include_router(tuning.router)
 api_app.include_router(run_infos.router)
+api_app.include_router(sequence_comparator.router)
 
 
 @api_app.get("/")

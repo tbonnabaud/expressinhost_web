@@ -9,6 +9,7 @@ import AdminView from '@/views/AdminView.vue'
 import ForgottenPasswordView from '@/views/ForgottenPasswordView.vue'
 import ResetPasswordView from '@/views/ResetPasswordView.vue'
 import UserView from '@/views/UserView.vue'
+import SequenceComparatorView from '@/views/SequenceComparatorView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -65,6 +66,11 @@ const router = createRouter({
       name: 'result',
       component: ResultView,
       props: true,
+    },
+    {
+      path: '/sequence-comparator',
+      name: 'sequence-comparator',
+      component: SequenceComparatorView,
     },
     {
       path: '/about',

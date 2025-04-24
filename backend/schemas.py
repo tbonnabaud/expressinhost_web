@@ -288,3 +288,10 @@ class RunInfoForm(BaseModel):
     slow_speed_threshold: float
     conservation_threshold: float | None
     five_prime_region_tuning_mode: str | None
+
+
+class SequenceComparatorForm(BaseModel):
+    sequence1: str
+    sequence2: str
+    host_codon_table_id: UUID
+    slow_speed_threshold: float

@@ -51,6 +51,11 @@ function logout() {
         <li v-if="user">
           <RouterLink to="/results" class="secondary">Results</RouterLink>
         </li>
+        <li>
+          <RouterLink to="/sequence-comparator" class="secondary">
+            Sequence comparator
+          </RouterLink>
+        </li>
         <li v-if="user && user.role == 'admin'">
           <RouterLink to="/admin" class="secondary">Administration</RouterLink>
         </li>

@@ -47,11 +47,6 @@ async function setFastaContent(event: Event) {
 
     <div class="input-file">
       <input type="file" id="fasta" @change="setFastaContent" />
-
-      <i>
-        You can download an example sequence file
-        <a href="/examples/Rad51_nucleotide.txt" download>here</a>.
-      </i>
     </div>
   </div>
 </template>
