@@ -48,6 +48,7 @@ function setComparedSequences(value: TunedSequence | null) {
 #sequenceComparatorResult {
   flex: 3;
   width: 500px;
+  margin: auto 1em;
 }
 
 @media (max-width: 1024px) {
@@ -57,7 +58,6 @@ function setComparedSequences(value: TunedSequence | null) {
 
   #sequenceComparatorResult {
     width: 100%;
-    margin: auto 1em;
   }
 }
 </style>
