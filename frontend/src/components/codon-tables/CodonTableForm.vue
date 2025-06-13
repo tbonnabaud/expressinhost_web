@@ -91,51 +91,78 @@ async function fetchCodonTableTranslations(codonTableId: string) {
   }
 }
 
-function prepareForm(): CodonTableForm | null {
+function prepareForm(): CodonTableForm {
   if (formRef.value?.checkValidity()) {
     return {
       organism: codonTableOrganism.value,
       name: codonTableName.value,
       translations: Object.values(translationMapping).flat(),
     }
+  } else {
+    throw new Error('Invalid form.')
   }
+}
 
-  return null
+function nameIsUnique(organism: string, name: string): boolean {
+  return (
+    codonTableList.value.filter(
+      table => table.organism == organism && table.name == name,
+    ).length === 0
+  )
 }
 
 async function addNewCodonTable() {
-  const form = prepareForm()
+  try {
+    const form = prepareForm()
 
-  if (form) {
-    const [data, error] = await API.codonTables.add(form)
+    if (nameIsUnique(form.organism, form.name)) {
+      const [data, error] = await API.codonTables.add(form)
 
-    if (!error && data) {
-      console.log('Codon table added successfully.')
-      alert('Codon table added successfully.')
-      // Add the new item to the list
-      await pushCodonTableToList(data)
+      if (!error && data) {
+        console.log('Codon table added successfully.')
+        alert('Codon table added successfully.')
+        // Add the new item to the list
+        await pushCodonTableToList(data)
+      }
+    } else {
+      alert(`${form.organism} - ${form.name} already exists.`)
     }
+  } catch (error) {
+    console.error(error)
   }
 }
 
 async function updateExistingCodonTable() {
-  const form = prepareForm()
+  try {
+    const form = prepareForm()
 
-  if (form && selectedCodonTable.value) {
-    const [, error] = await API.codonTables.update(
-      selectedCodonTable.value.id,
-      form,
-    )
+    if (selectedCodonTable.value) {
+      // Check organism + name unicity if one of them are changed for update
+      if (
+        (selectedCodonTable.value.organism != form.organism ||
+          selectedCodonTable.value.name != form.name) &&
+        !nameIsUnique(form.organism, form.name)
+      ) {
+        alert(`${form.organism} - ${form.name} already exists.`)
+      } else {
+        const [, error] = await API.codonTables.update(
+          selectedCodonTable.value.id,
+          form,
+        )
 
-    if (!error) {
-      console.log('Codon table updated successfully.')
-      alert('Codon table updated successfully.')
-      // Refresh selected table with new values
-      selectedCodonTable.value = Object.assign(selectedCodonTable.value, {
-        organism: codonTableOrganism.value,
-        name: codonTableName.value,
-      })
+        if (!error) {
+          console.log('Codon table updated successfully.')
+          alert('Codon table updated successfully.')
+          // Refresh selected table with new values
+          selectedCodonTable.value = Object.assign(selectedCodonTable.value, {
+            organism: codonTableOrganism.value,
+            name: codonTableName.value,
+          })
+        }
+      }
     }
+  } catch (error) {
+    console.error(error)
   }
 }
 
