@@ -97,7 +97,7 @@ function resetForm() {
 <template>
   <form @submit.prevent="runComparison">
     <div>
-      <label>Codon table</label>
+      <label>Host organism</label>
       <CodonTableSearchSelect
         :options="codonTableList"
         v-model="selectedCodonTable"
