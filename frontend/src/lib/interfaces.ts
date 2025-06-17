@@ -83,7 +83,7 @@ export interface RunTrainingForm {
   host_codon_table_id: string
   sequences_native_codon_tables: Record<string, string>
   mode: TuningModeName
-  slow_speed_threshold: number
+  slow_speed_threshold: number | null
   conservation_threshold: number | null
   five_prime_region_tuning: FivePrimeRegionTuningMode | null
   restriction_sites: RestrictionSite[]
@@ -123,7 +123,7 @@ export interface Result {
   host_codon_table_id: string
   sequences_native_codon_tables: Record<string, string>
   mode: string
-  slow_speed_threshold: number
+  slow_speed_threshold: number | null
   conservation_threshold: number | null
   host_codon_table: CodonTable
   five_prime_region_tuning: FivePrimeRegionTuningMode | null
@@ -138,7 +138,7 @@ export interface ResultWithId {
   host_codon_table_id: string
   sequences_native_codon_tables: Record<string, string>
   mode: string
-  slow_speed_threshold: number
+  slow_speed_threshold: number | null
   conservation_threshold: number | null
   host_codon_table: CodonTable
   five_prime_region_tuning: FivePrimeRegionTuningMode | null
@@ -183,7 +183,7 @@ export interface RunInfo {
   duration: string
   sequence_number: number
   mode: string
-  slow_speed_threshold: number
+  slow_speed_threshold: number | null
   conservation_threshold: number | null
 }
 
@@ -203,5 +203,4 @@ export interface SequenceComparatorForm {
   sequence1: string
   sequence2: string
   host_codon_table_id: string
-  slow_speed_threshold: number
 }

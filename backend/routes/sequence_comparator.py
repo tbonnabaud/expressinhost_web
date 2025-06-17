@@ -23,9 +23,7 @@ def compare_sequences(
         current_user_id, form.host_codon_table_id
     )
     processed_codon_table = process_codon_table_from_db(
-        CodonTranslationRepository(session),
-        form.host_codon_table_id,
-        form.slow_speed_threshold,
+        CodonTranslationRepository(session), form.host_codon_table_id
     )
 
     rna_seq1 = form.sequence1.replace("T", "U")

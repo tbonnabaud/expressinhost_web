@@ -9,7 +9,7 @@ from fastapi.responses import StreamingResponse
 from rq import get_current_job
 
 from ..authentication import OptionalTokenDependency, check_is_member, get_current_user
-from ..core.codon_tables import process_raw_codon_table
+from ..core.codon_tables import ProcessedCodonTable, process_raw_codon_table
 from ..core.exceptions import ExpressInHostError
 from ..core.sequence_tuning import SequenceTuner, StructureTuner
 from ..crud.codon_tables import CodonTableRepository
@@ -54,35 +54,26 @@ def get_native_codon_table_ids(
 
 
 def process_codon_table_from_db(
-    codon_translation_repo: CodonTranslationRepository,
-    codon_table_id: UUID,
-    slow_speed_threshold: float,
-):
+    codon_translation_repo: CodonTranslationRepository, codon_table_id: UUID
+) -> ProcessedCodonTable:
     condon_translations = codon_translation_repo.list_from_table(codon_table_id)
 
-    return process_raw_codon_table(
-        [tr.__dict__ for tr in condon_translations], slow_speed_threshold
-    )
+    return process_raw_codon_table([tr.__dict__ for tr in condon_translations])
 
 
 def get_processed_tables(
     session: Session,
     native_codon_table_ids: list[UUID],
     host_codon_table_id: UUID,
-    slow_speed_threshold: float,
 ):
     codon_translation_repo = CodonTranslationRepository(session)
     native_codon_tables = [
-        process_codon_table_from_db(
-            codon_translation_repo, codon_table_id, slow_speed_threshold
-        )
+        process_codon_table_from_db(codon_translation_repo, codon_table_id)
         for codon_table_id in native_codon_table_ids
     ]
 
     host_codon_table = process_codon_table_from_db(
-        codon_translation_repo,
-        host_codon_table_id,
-        slow_speed_threshold,
+        codon_translation_repo, host_codon_table_id
     )
 
     return native_codon_tables, host_codon_table
@@ -123,10 +114,7 @@ def tune_sequences(token: OptionalTokenDependency, base_url: str, form: RunTunin
 
             # Processed codon tables
             native_codon_tables, host_codon_table = get_processed_tables(
-                session,
-                native_codon_table_ids,
-                form.host_codon_table_id,
-                form.slow_speed_threshold,
+                session, native_codon_table_ids, form.host_codon_table_id
             )
 
         time.sleep(0.5)
@@ -153,6 +141,7 @@ def tune_sequences(token: OptionalTokenDependency, base_url: str, form: RunTunin
 
             pipeline = sequence_tuner.tuning_pipeline(
                 form.mode,
+                form.slow_speed_threshold,
                 form.conservation_threshold,
                 form.five_prime_region_tuning,
                 form.restriction_sites,

@@ -11,7 +11,7 @@ from ..schemas import (
     SlowedDownMode,
 )
 from .checks import check_amino_acido_conservation, check_nucleotides_clustal_identity
-from .codon_tables import ProcessedCodonTable
+from .codon_tables import ProcessedCodonTable, compute_codon_table_speed_symbols
 from .exceptions import (
     ExpressInHostError,
     NoAminoAcidConservation,
@@ -191,6 +191,7 @@ def optimisation_and_conservation_2(
     symbol_sequence: str,
     native_codon_tables: list[ProcessedCodonTable],
     host_codon_table: ProcessedCodonTable,
+    slow_speed_threshold: float,
     conservation_threshold: float,
 ) -> Iterator[str]:
     cpt_symbols = [0.0 for _ in range(len(aligned_nucleotide_sequences[0]))]
@@ -199,15 +200,21 @@ def optimisation_and_conservation_2(
     for seq, native_codon_table in zip(
         aligned_nucleotide_sequences, native_codon_tables
     ):
+        native_indexes_and_rows = list(enumerate(native_codon_table.values()))
+        speed_col = [row.speed for _, row in native_indexes_and_rows]
+        speed_symbols = compute_codon_table_speed_symbols(
+            speed_col, slow_speed_threshold
+        )
+
         for t in range(int(len(seq) / 3)):
             input_codon = seq[3 * t : 3 * t + 3]
 
             if input_codon != "---":
-                for native_row in native_codon_table.values():
+                for native_index, native_row in native_indexes_and_rows:
                     # When native codon is found
                     if (
                         native_row.codon == input_codon
-                        and native_row.symbol_speed == "S"
+                        and speed_symbols[native_index] == "S"
                     ):
                         cpt_symbols[t] += 1.0
 
@@ -329,7 +336,10 @@ class SequenceTuner:
                 )
 
     def get_tuning_iterator(
-        self, mode: str, conservation_threshold: float | None
+        self,
+        mode: str,
+        slow_speed_threshold: float | None,
+        conservation_threshold: float | None,
     ) -> Iterator[str]:
         cleared_nucleotide_sequences = dna_to_rna_sequences(self.nucleotide_records)
 
@@ -362,6 +372,7 @@ class SequenceTuner:
                     self.symbol_sequence,
                     self.native_codon_tables,
                     self.host_codon_table,
+                    slow_speed_threshold,
                     conservation_threshold,
                 )
 
@@ -373,13 +384,16 @@ class SequenceTuner:
     def tuning_pipeline(
         self,
         mode: str,
+        slow_speed_threshold: float | None,
         conservation_threshold: float | None,
         five_prime_region_tuning: (
             PartialUntuningMode | FineTuningMode | SlowedDownMode | None
         ),
         restriction_sites: list[RestrictionSite] | None,
     ) -> Iterator[dict]:
-        tuning_iterator = self.get_tuning_iterator(mode, conservation_threshold)
+        tuning_iterator = self.get_tuning_iterator(
+            mode, slow_speed_threshold, conservation_threshold
+        )
 
         for input_record, output_rna_sequence, native_codon_table in zip(
             self.nucleotide_records,
@@ -517,6 +531,7 @@ def tune_sequences(
     native_codon_tables: list[ProcessedCodonTable],
     host_codon_table: ProcessedCodonTable,
     mode: str,
+    slow_speed__threshold: float | None,
     conservation_threshold: float | None,
     five_prime_region_tuning: PartialUntuningMode | FineTuningMode | None,
 ) -> list[dict]:
@@ -527,7 +542,7 @@ def tune_sequences(
         host_codon_table,
     )
     pipeline = sequence_tuner.tuning_pipeline(
-        mode, conservation_threshold, five_prime_region_tuning
+        mode, slow_speed__threshold, conservation_threshold, five_prime_region_tuning
     )
 
     return list(pipeline)

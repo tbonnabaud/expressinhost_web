@@ -34,7 +34,10 @@ defineProps<{ result: Result }>()
         <div class="grid">
           <p>
             <strong>Slow speed threshold:</strong>
-            {{ result.slow_speed_threshold * 100 }}%
+            <span v-if="result.slow_speed_threshold">
+              {{ result.slow_speed_threshold * 100 }}%
+            </span>
+            <span v-else> None</span>
           </p>
           <p>
             <strong>Conservation threshold:</strong>
