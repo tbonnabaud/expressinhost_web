@@ -75,13 +75,8 @@ export function checkPdb(content: string): string[] {
   const errors: string[] = []
   const lines = content.split('\n')
 
-  // Check if the file starts with the correct header
-  if (!lines[0]?.startsWith('HEADER')) {
-    errors.push('Missing or incorrect HEADER record.')
-  }
-
   // Check for required records in the PDB file
-  const requiredRecords = ['TITLE', 'COMPND', 'SOURCE', 'SEQRES', 'ATOM', 'END']
+  const requiredRecords = ['MODEL', 'ATOM', 'ENDMDL', 'END']
 
   for (const record of requiredRecords) {
     if (!lines.some(line => line.startsWith(record))) {
