@@ -322,7 +322,7 @@ async function cancelTuning() {
       />
       <i>
         You can download an example sequence file
-        <a href="/examples/Rad51_nucleotide.txt" download>here</a>.
+        <a href="/examples/Rad51_CLUSTAL.txt" download>here</a>.
       </i>
     </section>
 
