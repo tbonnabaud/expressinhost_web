@@ -92,7 +92,9 @@ async function deleteResult() {
     <thead>
       <tr>
         <th scope="col">Mode</th>
-        <th scope="col">Slow speed thresold</th>
+        <th v-if="result.slow_speed_threshold" scope="col">
+          Slow speed thresold
+        </th>
         <th v-if="result.conservation_threshold" scope="col">
           Conservation thresold
         </th>
