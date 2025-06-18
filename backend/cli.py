@@ -39,15 +39,12 @@ def run_as_cli(
     ]
 
     native_codon_tables = [
-        process_codon_table_from_file(
-            TABLE_BASE_PATH / f"{name}.csv", SLOW_SPEED_THRESHOLD
-        )
+        process_codon_table_from_file(TABLE_BASE_PATH / f"{name}.csv")
         for name in native_codon_table_names
     ]
 
     host_codon_table = process_codon_table_from_file(
-        TABLE_BASE_PATH / f"{host_codon_table_name}.csv",
-        SLOW_SPEED_THRESHOLD,
+        TABLE_BASE_PATH / f"{host_codon_table_name}.csv"
     )
 
     if clustal_file_path is None:
@@ -57,6 +54,8 @@ def run_as_cli(
             native_codon_tables,
             host_codon_table,
             mode,
+            SLOW_SPEED_THRESHOLD,
+            None,
             None,
         )
 
@@ -68,7 +67,9 @@ def run_as_cli(
             native_codon_tables,
             host_codon_table,
             mode,
+            SLOW_SPEED_THRESHOLD,
             CONSERVATION_THRESHOLD,
+            None,
         )
 
 

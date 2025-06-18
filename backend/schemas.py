@@ -212,7 +212,7 @@ class RunTuningForm(BaseModel):
     host_codon_table_id: UUID
     sequences_native_codon_tables: dict[str, UUID]
     mode: TuningModeName
-    slow_speed_threshold: float
+    slow_speed_threshold: float | None
     conservation_threshold: float | None
     five_prime_region_tuning: FivePrimeRegionTuningMode | None
     restriction_sites: list[RestrictionSite] | None
@@ -240,7 +240,7 @@ class Result(BaseModel):
     host_codon_table_id: UUID
     sequences_native_codon_tables: dict[str, UUID]
     mode: str
-    slow_speed_threshold: float
+    slow_speed_threshold: float | None
     conservation_threshold: float | None
     host_codon_table: CodonTable
     five_prime_region_tuning: FivePrimeRegionTuningMode | None
@@ -275,7 +275,7 @@ class RunInfo(BaseModel):
     duration: timedelta
     sequence_number: int
     mode: TuningModeName
-    slow_speed_threshold: float
+    slow_speed_threshold: float | None
     conservation_threshold: float | None
     five_prime_region_tuning_mode: str | None
 
@@ -285,7 +285,7 @@ class RunInfoForm(BaseModel):
     duration: timedelta
     sequence_number: int
     mode: str
-    slow_speed_threshold: float
+    slow_speed_threshold: float | None
     conservation_threshold: float | None
     five_prime_region_tuning_mode: str | None
 
@@ -294,4 +294,3 @@ class SequenceComparatorForm(BaseModel):
     sequence1: str
     sequence2: str
     host_codon_table_id: UUID
-    slow_speed_threshold: float

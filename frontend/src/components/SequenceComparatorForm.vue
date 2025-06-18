@@ -13,7 +13,6 @@ const form = reactive<SequenceComparatorForm>({
   sequence1: '',
   sequence2: '',
   host_codon_table_id: '',
-  slow_speed_threshold: 0.5,
 })
 
 const formErrors = reactive({
@@ -88,7 +87,6 @@ function resetForm() {
     sequence1: '',
     sequence2: '',
     host_codon_table_id: '',
-    slow_speed_threshold: 0.5,
   })
   emit('done', null)
 }
@@ -102,9 +100,6 @@ function resetForm() {
         :options="codonTableList"
         v-model="selectedCodonTable"
       />
-    </div>
-    <div>
-      <SlowSpeedThresholdSelector v-model="form.slow_speed_threshold" />
     </div>
 
     <div>

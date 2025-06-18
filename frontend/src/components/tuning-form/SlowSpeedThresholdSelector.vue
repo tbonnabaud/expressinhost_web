@@ -2,7 +2,7 @@
 import { toFixedFloat } from '@/lib/helpers'
 import ToolTip from '@/components/ToolTip.vue'
 
-const model = defineModel<number>()
+const model = defineModel<number | null>()
 </script>
 
 <template>

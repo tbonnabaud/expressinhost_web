@@ -31,7 +31,7 @@ const baseForm: RunTrainingForm = reactive({
   host_codon_table_id: '',
   sequences_native_codon_tables: {},
   mode: TuningModeName.DIRECT_MAPPING,
-  slow_speed_threshold: 0.5,
+  slow_speed_threshold: null,
   conservation_threshold: null,
   five_prime_region_tuning: null,
   restriction_sites: [],
@@ -111,8 +111,13 @@ watch(
   () => baseForm.mode,
   value => {
     // Set default values
-    baseForm.conservation_threshold =
-      value === TuningModeName.OPTIMISATION_AND_CONSERVATION_2 ? 0.75 : null
+    if (value === TuningModeName.OPTIMISATION_AND_CONSERVATION_2) {
+      baseForm.slow_speed_threshold = 0.5
+      baseForm.conservation_threshold = 0.75
+    } else {
+      baseForm.slow_speed_threshold = null
+      baseForm.conservation_threshold = null
+    }
   },
 )
 
@@ -317,25 +322,30 @@ async function cancelTuning() {
       />
       <i>
         You can download an example sequence file
-        <a href="/examples/Rad51_nucleotide.txt" download>here</a>.
+        <a href="/examples/Rad51_CLUSTAL.txt" download>here</a>.
       </i>
     </section>
 
     <hr />
 
-    <section>
-      <h2>Thresholds</h2>
+    <template
+      v-if="baseForm.mode == TuningModeName.OPTIMISATION_AND_CONSERVATION_2"
+    >
+      <section>
+        <h2>Thresholds</h2>
 
-      <div class="flex-container">
-        <SlowSpeedThresholdSelector v-model="baseForm.slow_speed_threshold" />
-        <ConservationThresholdSelector
-          v-if="baseForm.mode == TuningModeName.OPTIMISATION_AND_CONSERVATION_2"
-          v-model="baseForm.conservation_threshold"
-        />
-      </div>
-    </section>
+        <div class="flex-container">
+          <SlowSpeedThresholdSelector
+            v-model.number="baseForm.slow_speed_threshold"
+          />
+          <ConservationThresholdSelector
+            v-model.number="baseForm.conservation_threshold"
+          />
+        </div>
+      </section>
 
-    <hr />
+      <hr />
+    </template>
 
     <section>
       <h2>Specific tuning of mRNA's 5’ region</h2>

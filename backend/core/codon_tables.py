@@ -17,7 +17,6 @@ class ProcessedCodonTableRow:
     wobble_rate: float
     rank: float
     speed: float
-    symbol_speed: str
 
 
 @dataclass(slots=True)
@@ -35,9 +34,7 @@ class ProcessedCodonTable:
         return self.indexed_rows.values()
 
 
-def process_raw_codon_table(
-    raw_codon_table: list[dict], slow_speed_threshold: float
-) -> ProcessedCodonTable:
+def process_raw_codon_table(raw_codon_table: list[dict]) -> ProcessedCodonTable:
     """Any raw data table contains:
     - column 1: amino acid (amino_acid)
     - column 2: anti-codon (anticodon)
@@ -56,7 +53,7 @@ def process_raw_codon_table(
         raw_codon_table (list[dict]): raw table
 
     Returns:
-        ProcessedCodonTable: indexed processed table with three more columns (rank, speed and symbol_speed)
+        ProcessedCodonTable: indexed processed table with three more columns (rank and speed)
     """
     # Column 1 of the input raw table
     amino_acid_col = [row["amino_acid"] for row in raw_codon_table]
@@ -75,8 +72,6 @@ def process_raw_codon_table(
     rank_col = np.zeros(61, dtype=np.float64)
     # Column 8 to be added to the output processed table
     speed_col = np.zeros(61, dtype=np.float64)
-    # Column 9 to be added to the output processed table
-    symbol_speed_col = ["0" for _ in range(61)]
 
     # This index allows to know with which amino acid of the list we are dealing (the first is "Ala" the second is "Arg"...)
     aa_num = 0
@@ -166,19 +161,6 @@ def process_raw_codon_table(
 
     # Calculate the "SPEED" and the average "SPEED" over the entire table
     speed_col = gcn_col / gcn_tot
-    average_speed = speed_col.mean()
-
-    # Search the lowest "SPEED" over the entire table
-    lowest_speed = speed_col.min()
-
-    # Tag the codons of low "SPEED" over the entire table
-    for k in range(61):
-        # If codon's SPEED is below the threshold set by the slow_speed_threshold.
-        # That threshold is a limit SPEED value, independent from the number of codons that can fall in that category.
-        if speed_col[k] < lowest_speed + (
-            slow_speed_threshold * (average_speed - lowest_speed)
-        ):
-            symbol_speed_col[k] = "S"
 
     return ProcessedCodonTable(
         indexed_rows={
@@ -192,16 +174,34 @@ def process_raw_codon_table(
                 wobble_rate_col,
                 rank_col,
                 speed_col,
-                symbol_speed_col,
             )
         }
     )
 
 
-def process_codon_table_from_file(
-    filepath: Path, slow_speed_threshold: float
-) -> ProcessedCodonTable:
+def compute_codon_table_speed_symbols(
+    speed_col: list[float], slow_speed_threshold: float
+) -> list[str]:
+    symbol_speed_col = ["0" for _ in range(61)]
+    speed_array = np.array(speed_col)
+    average_speed = speed_array.mean()
+    # Search the lowest "SPEED" over the entire column
+    lowest_speed = speed_array.min()
+
+    # Tag the codons of low "SPEED" over the entire table
+    for k in range(61):
+        # If codon's SPEED is below the threshold set by the slow_speed_threshold.
+        # That threshold is a limit SPEED value, independent from the number of codons that can fall in that category.
+        if speed_array[k] < lowest_speed + (
+            slow_speed_threshold * (average_speed - lowest_speed)
+        ):
+            symbol_speed_col[k] = "S"
+
+    return symbol_speed_col
+
+
+def process_codon_table_from_file(filepath: Path) -> ProcessedCodonTable:
     with open(filepath) as file:
         reader = csv.DictReader(file, delimiter="\t")
 
-        return process_raw_codon_table(list(reader), slow_speed_threshold)
+        return process_raw_codon_table(list(reader))

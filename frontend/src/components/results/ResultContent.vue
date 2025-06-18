@@ -102,7 +102,9 @@ async function deleteResult() {
     <tbody>
       <tr>
         <td>{{ mode }}</td>
-        <td>{{ result.slow_speed_threshold * 100 }}%</td>
+        <td v-if="result.slow_speed_threshold">
+          {{ result.slow_speed_threshold * 100 }}%
+        </td>
         <td v-if="result.conservation_threshold">
           {{ result.conservation_threshold * 100 }}%
         </td>

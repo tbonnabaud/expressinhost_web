@@ -118,7 +118,7 @@ class Result(Base):
     )
     sequences_native_codon_tables: Mapped[dict] = mapped_column(JSONB)
     mode: Mapped[str] = mapped_column(sa.String)
-    slow_speed_threshold: Mapped[float] = mapped_column(sa.Float)
+    slow_speed_threshold: Mapped[float | None] = mapped_column(sa.Float, nullable=True)
     conservation_threshold: Mapped[float | None] = mapped_column(
         sa.Float, nullable=True
     )
@@ -165,7 +165,7 @@ class RunInfo(Base):
     duration: Mapped[timedelta] = mapped_column(sa.Interval)
     sequence_number: Mapped[int] = mapped_column(sa.Integer)
     mode: Mapped[str] = mapped_column(sa.String)
-    slow_speed_threshold: Mapped[float] = mapped_column(sa.Float)
+    slow_speed_threshold: Mapped[float | None] = mapped_column(sa.Float, nullable=True)
     conservation_threshold: Mapped[float | None] = mapped_column(
         sa.Float, nullable=True
     )
