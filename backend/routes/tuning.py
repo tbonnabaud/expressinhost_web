@@ -281,7 +281,12 @@ async def run_tuning(
         else light_queue
     )
     job = selected_queue.enqueue(
-        tune_sequences, token, str(request.base_url), form, failure_ttl=500
+        tune_sequences,
+        token,
+        str(request.base_url),
+        form,
+        job_timeout=-1,  # -1 for infinite timeout, if None the default value 180 is used
+        failure_ttl=500,
     )
 
     return job.id
