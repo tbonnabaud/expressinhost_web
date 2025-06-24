@@ -120,8 +120,6 @@ export function checkClustalMatchingFasta(
       block.matchAll(/^(\S+)\s+([A-Z\-]+)\s+(\d+)/gm),
     )
     const blockNumber = blockIndex + 1
-
-    // TEST
     const maxArraylength = Math.max(fastaIDs.length, clustalLines.length)
 
     for (let i = 0; i < maxArraylength; i++) {
