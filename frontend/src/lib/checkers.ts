@@ -121,19 +121,18 @@ export function checkClustalMatchingFasta(
     )
     const blockNumber = blockIndex + 1
 
-    if (clustalLines.length !== fastaIDs.length) {
-      errors.push(
-        `Wrong number of lines in block ${blockNumber}, should be ${fastaIDs.length}.`,
-      )
-    } else {
-      for (const [lineIndex, line] of clustalLines.entries()) {
-        const clustalID = line[1]
+    // TEST
+    const maxArraylength = Math.max(fastaIDs.length, clustalLines.length)
 
-        if (fastaIDs[lineIndex] !== clustalID) {
-          errors.push(
-            `IDs matching error in block ${blockNumber}. FASTA: ${fastaIDs[lineIndex]}, CLUSTAL: ${clustalID}.`,
-          )
-        }
+    for (let i = 0; i < maxArraylength; i++) {
+      const fastaID = fastaIDs[i]
+      const clustalLine = clustalLines[i]
+      const clustalID = clustalLine ? clustalLine[1] : undefined
+
+      if (fastaID !== clustalID) {
+        errors.push(
+          `IDs matching error in block ${blockNumber}. FASTA: ${fastaID}, CLUSTAL: ${clustalID}.`,
+        )
       }
     }
   }
