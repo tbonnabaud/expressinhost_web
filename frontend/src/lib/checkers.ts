@@ -129,7 +129,7 @@ export function checkClustalMatchingFasta(
 
       if (fastaID !== clustalID) {
         errors.push(
-          `IDs matching error in block ${blockNumber}. FASTA: ${fastaID}, CLUSTAL: ${clustalID}.`,
+          `ID mismatch in block ${blockNumber} -> FASTA: ${fastaID}, CLUSTAL: ${clustalID}.`,
         )
       }
     }
