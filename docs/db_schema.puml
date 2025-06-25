@@ -2,7 +2,7 @@
 skinparam linetype ortho
 skinparam dpi 200
 
-left to right direction
+' left to right direction
 
 entity User {
     * id: uuid <<PK>>
@@ -52,7 +52,7 @@ entity Result {
     * host_codon_table_id: uuid <<FK>>
     * sequences_native_codon_tables: jsonb
     * mode: varchar
-    * slow_speed_threshold: float
+    slow_speed_threshold: float
     conservation_threshold: float
     five_prime_region_tuning: jsonb
 }
@@ -76,7 +76,7 @@ entity RunInfo {
     * duration: interval
     * sequence_number: int
     * mode: varchar
-    * slow_speed_threshold: float
+    slow_speed_threshold: float
     conservation_threshold: float
     five_prime_region_tuning_mode: varchar
 }
