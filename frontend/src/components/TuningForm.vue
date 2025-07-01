@@ -242,7 +242,8 @@ async function cancelTuning() {
         <template #tooltip>
           The organism in which the mRNA is to be expressed. The tRNA-GCN codon
           table of the host organism is utilised for codon tuning. For custom
-          codon tables, head to "Codon tables" section in the navigation bar.
+          codon tables, login and head to "Codon tables" section in the
+          navigation bar.
         </template>
       </ToolTip>
 
