@@ -30,7 +30,8 @@ async function setPdbContent(event: Event) {
         <span class="material-icons question-marks">question_mark</span>
       </label>
       <template #tooltip>
-        A text containing the structure of a protein, in PDB format.
+        Text based Protein Data Bank file (.pdb) that contains detailed 3D
+        structural information about the protein.
       </template>
     </ToolTip>
     <WithAlertError :errors="errors">
