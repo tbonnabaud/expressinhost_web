@@ -13,7 +13,7 @@ const user = store.currentUser
       <BannerSlideshow id="banner" />
 
       <p id="summary">
-        <strong>ExpressInHost</strong> tunes codon sequences for recombinant
+        <strong>ExpressInHost</strong> tunes gene sequences for recombinant
         protein expression in a host organism
       </p>
     </div>
@@ -24,11 +24,11 @@ const user = store.currentUser
         ExpressInHost offers novel innovative solutions for codon optimisation.
         ExpressInHost tunes mRNA sequences to enhance their expression while
         considering the challenge of proper protein folding in a host organism.
-        For thousands of different organisms, and customisable ones, leveraging
-        tRNA gene copy number data, it analyses and compares translation speed
-        properties in native and host organisms, possibly also incorporating
-        evolutionary insights and optimising mRNA structural properties for
-        ribosome binding.
+        Utilising tRNA gene copy number data from thousands of organisms,
+        including customisable ones, it analyses and compares translational
+        speed profiles between native and host systems. This approach also
+        incorporates evolutionary perspectives and optimises mRNA structural
+        features for efficient ribosome binding.
       </p>
 
       <p>
