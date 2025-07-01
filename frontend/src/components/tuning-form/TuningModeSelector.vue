@@ -101,6 +101,7 @@ const model = defineModel<TuningModeName>()
   display: flex;
   column-gap: 2em;
   justify-content: center;
+  text-align: center;
 }
 
 @media (max-width: 1024px) {
