@@ -25,11 +25,11 @@
   border-radius: 6px;
   padding: 10px;
   opacity: 0;
-
   position: absolute;
   z-index: 1;
-  top: -150%;
-  left: 105%;
+  top: 125%;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 .tooltip:hover .tooltiptext {
