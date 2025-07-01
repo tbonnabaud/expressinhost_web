@@ -360,7 +360,16 @@ async function cancelTuning() {
     <hr />
 
     <section>
-      <h2>Restriction enzyme recognition sites to avoid</h2>
+      <ToolTip>
+        <h2>
+          Restriction enzyme recognition sites to avoid
+          <span class="material-icons question-marks">question_mark</span>
+        </h2>
+        <template #tooltip>
+          Choose one or more (upto 6) restriction enzyme recognition sites to be
+          avoided in the final output sequence.
+        </template>
+      </ToolTip>
 
       <div id="restrictionSiteSelector">
         <RestrictionSiteSelector v-model="baseForm.restriction_sites" />
