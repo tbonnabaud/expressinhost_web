@@ -20,8 +20,10 @@ const model = defineModel<TuningModeName>()
           Protein structure analysis
           <span class="material-icons question-marks">question_mark</span>
           <template #tooltip>
-            Tuning mode, analyses the structure of a protein to determine slow
-            and fast parts.
+            Tuning mode, analyses the 3D structure of the protein to determine
+            the degree of burial or exposure of each amino acid residue and
+            selects codons based on these values (Relative Solvent
+            Accessibility, RSA).
           </template>
         </ToolTip>
       </label>
@@ -63,7 +65,7 @@ const model = defineModel<TuningModeName>()
             identify conserved amino acids across a set of orthologous proteins
             from different organisms. The translation speed profile is maximised
             excepted at the conserved positions. Requirement: CLUSTAL alignment
-            file.
+            file + mRNA sequences of orthologous proteins.
           </template>
         </ToolTip>
       </label>
@@ -85,7 +87,8 @@ const model = defineModel<TuningModeName>()
             each sequence in the set of orthologous proteins from different
             organisms, and identifies conserved slow translation codons. The
             translation speed profile is maximised excepted at the conserved
-            positions. Requirement: CLUSTAL alignment file.
+            positions. Requirement: CLUSTAL alignment file + mRNA sequences of
+            orthologous proteins.
           </template>
         </ToolTip>
       </label>
