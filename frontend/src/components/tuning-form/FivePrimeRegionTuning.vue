@@ -49,8 +49,8 @@ watch(fivePrimeMode, value => {
           Like the whole sequence
           <span class="material-icons question-marks">question_mark</span>
           <template #tooltip>
-            Here nothing to be done, the output sequences are the ones from the
-            modes as they are.
+            The mRNA 5’ region of the Open Reading Frame (ORF) is treated
+            similar to the whole sequence.
           </template>
         </ToolTip>
       </label>
@@ -63,9 +63,8 @@ watch(fivePrimeMode, value => {
           Untuned
           <span class="material-icons question-marks">question_mark</span>
           <template #tooltip>
-            In this mode the N first selected codons of the sequences are
-            exactly like the ones that was initially input by the user (no
-            tuning has taken place).
+            The mRNA 5’ region of the Open Reading Frame (ORF) is left
+            unoptimized and matches the native organism mRNA.
           </template>
         </ToolTip>
       </label>
@@ -75,13 +74,14 @@ watch(fivePrimeMode, value => {
       <label>
         <input type="radio" value="slowed_down" v-model="fivePrimeMode" />
         Slowed down
-        <!-- <ToolTip>
+        <ToolTip>
           Slowed down
           <span class="material-icons question-marks">question_mark</span>
           <template #tooltip>
-            TODO
+            The mRNA 5’ region of the Open Reading Frame (ORF) is replaced with
+            slow codons to facilitate translation initiation.
           </template>
-        </ToolTip> -->
+        </ToolTip>
       </label>
     </div>
 
@@ -98,13 +98,10 @@ watch(fivePrimeMode, value => {
           Fine-tuned
           <span class="material-icons question-marks">question_mark</span>
           <template #tooltip>
-            In this mode the sequences are optimised with OSTIR software. User
-            selects a number of codons between 1 and 10 codons, that defines the
-            codon window. The larger the codon window, the longer the
-            calculation time, due to the greater number of combinations (of the
-            order of the factorial). For example, per sequence, it may take
-            about 3 seconds for a window of 5 codons, but more than half an hour
-            for 10.
+            Multiple combinations of codons are tested for mRNA 5’ region of the
+            Open Reading Frame (ORF) to identify the most open form without
+            secondary structures. Requirement: 5’ UTR region that will be
+            present in the expression vector.
           </template>
         </ToolTip>
       </label>
@@ -153,7 +150,17 @@ watch(fivePrimeMode, value => {
     v-else-if="!isGuest && fivePrimeMode == 'fine_tuning' && model"
   >
     <div class="input-range" v-if="'codon_window_size' in model">
-      <label> Codon window size = {{ model.codon_window_size }} codons </label>
+      <label>
+        <ToolTip>
+          Codon window size = {{ model.codon_window_size }} codons
+          <span class="material-icons question-marks">question_mark</span>
+          <template #tooltip>
+            Increasing the codon window generates more combinations to find the
+            best structure, but also increases the computational time. Average
+            time: 10 minutes for codon window of 8.
+          </template>
+        </ToolTip>
+      </label>
       <input
         type="range"
         min="1"
