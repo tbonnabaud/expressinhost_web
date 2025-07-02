@@ -242,7 +242,8 @@ async function cancelTuning() {
         <template #tooltip>
           The organism in which the mRNA is to be expressed. The tRNA-GCN codon
           table of the host organism is utilised for codon tuning. For custom
-          codon tables, head to "Codon tables" section in the navigation bar.
+          codon tables, login and head to "Codon tables" section in the
+          navigation bar.
         </template>
       </ToolTip>
 
@@ -359,7 +360,16 @@ async function cancelTuning() {
     <hr />
 
     <section>
-      <h2>Restriction enzyme recognition sites to avoid</h2>
+      <ToolTip>
+        <h2>
+          Restriction enzyme recognition sites to avoid
+          <span class="material-icons question-marks">question_mark</span>
+        </h2>
+        <template #tooltip>
+          Choose one or more (upto 6) restriction enzyme recognition sites to be
+          avoided in the final output sequence.
+        </template>
+      </ToolTip>
 
       <div id="restrictionSiteSelector">
         <RestrictionSiteSelector v-model="baseForm.restriction_sites" />
