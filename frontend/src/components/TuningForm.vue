@@ -226,6 +226,18 @@ async function cancelTuning() {
 <template>
   <form id="runTuningForm" @submit.prevent="runTuning">
     <section>
+      <ToolTip>
+        <h2>
+          Task name
+          <span class="material-icons question-marks">question_mark</span>
+        </h2>
+
+        <template #tooltip>
+          Choose the name of the task (optional). It will be used in the Results
+          tab (for logged users only).
+        </template>
+      </ToolTip>
+
       <input
         type="text"
         placeholder="Name of the task (optional)"
@@ -253,7 +265,7 @@ async function cancelTuning() {
     </section>
 
     <section>
-      <h2>Mode</h2>
+      <h2>Tuning mode</h2>
 
       <TuningModeSelector v-model="baseForm.mode" />
     </section>
