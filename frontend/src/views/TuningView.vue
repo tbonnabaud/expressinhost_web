@@ -20,7 +20,7 @@ function goBackToForm() {
 
 <template>
   <main class="container">
-    <h1>Sequence tuning</h1>
+    <h1>Tuning</h1>
 
     <hr />
 
