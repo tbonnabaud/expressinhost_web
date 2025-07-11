@@ -13,7 +13,7 @@ const user = store.currentUser
       <BannerSlideshow id="banner" />
 
       <p id="summary">
-        <strong>ExpressInHost</strong> tunes genes for recombinant protein
+        <strong>ExpressInHost</strong> tunes genes<br />for recombinant protein
         expression
       </p>
     </div>
@@ -21,25 +21,26 @@ const user = store.currentUser
     <div id="description">
       <p>
         In the rapidly evolving field of recombinant protein expression,
-        ExpressInHost offers novel innovative solutions for codon optimisation.
-        ExpressInHost tunes mRNA sequences to enhance their expression while
-        considering the challenge of proper protein folding in a host organism.
-        Utilising tRNA gene copy number data from thousands of organisms,
-        including customisable ones, it analyses and compares translational
-        speed profiles between native and host systems. This approach also
-        incorporates evolutionary perspectives and optimises mRNA structural
-        features for efficient ribosome binding.
+        <strong>ExpressInHost</strong> offers novel and innovative solutions for
+        codon optimisation. <strong>ExpressInHost</strong> tunes mRNA sequences
+        to enhance their expression while considering the challenge of proper
+        protein folding in a host organism. Utilising tRNA gene copy number data
+        from thousands of organisms, including customisable ones, it analyses
+        and compares translational speed profiles between native and host
+        systems. <strong>ExpressInHost</strong> also incorporates evolutionary
+        perspectives and optimises mRNA structural features for efficient
+        ribosome binding.
       </p>
 
       <p>
-        ExpressInHost is a free, user-friendly, and fully open source web
-        application that builds on our
+        <strong>ExpressInHost</strong> is a free, user-friendly, and fully open
+        source web application that builds on our
         <a
           href="https://openresearchsoftware.metajnl.com/articles/10.5334/jors.385"
           target="_blank"
           >previous work</a
         >
-        as well as on open source work from other groups for
+        as well as on open source results from other groups for
         <a href="https://gtrnadb.ucsc.edu/" target="_blank">tRNA data</a>
         collection and
         <a
@@ -84,7 +85,6 @@ const user = store.currentUser
   padding: 0.5em;
   color: whitesmoke;
   text-shadow: 0 0 5px #303030;
-  width: 100%;
 }
 
 #description {
