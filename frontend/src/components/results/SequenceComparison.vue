@@ -73,12 +73,12 @@ function colorSequences(inputSequence: string, outputSequence: string) {
     </summary>
 
     <p v-if="nativeCodonTable">
-      <strong>&rarr; Native codon table: </strong>
+      <strong>&rarr; Native tRNA GCN table: </strong>
       <i>{{ nativeCodonTable.organism }}</i> - {{ nativeCodonTable.name }}
     </p>
     <p v-else>
       <span class="warning-icons material-icons">warning</span>
-      Native codon table not found
+      Native tRNA GCN table not found
       <span class="warning-icons material-icons">warning</span>
     </p>
 

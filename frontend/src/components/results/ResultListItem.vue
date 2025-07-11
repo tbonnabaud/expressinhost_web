@@ -24,7 +24,7 @@ defineProps<{ result: Result }>()
       <div class="result-item-parameters">
         <div class="grid">
           <p>
-            <strong>Codon table:</strong>
+            <strong>tRNA GCN table:</strong>
             &nbsp;<i>{{ result.host_codon_table.organism }}</i> -
             {{ result.host_codon_table.name }}
           </p>

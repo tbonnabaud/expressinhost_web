@@ -78,7 +78,7 @@ async function deleteResult() {
 
   <hr />
 
-  <h3>Host codon table</h3>
+  <h3>Host tRNA GCN table</h3>
   <hr />
   <p v-if="result.host_codon_table">
     <i>{{ result.host_codon_table.organism }}</i> -

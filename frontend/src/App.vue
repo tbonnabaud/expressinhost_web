@@ -44,7 +44,7 @@ function logout() {
         <li><RouterLink to="/" class="secondary">Home</RouterLink></li>
         <li v-if="user">
           <RouterLink to="/codon-tables" class="secondary"
-            >Codon tables</RouterLink
+            >tRNA GCN tables</RouterLink
           >
         </li>
         <li><RouterLink to="/tuning" class="secondary">Tuning</RouterLink></li>

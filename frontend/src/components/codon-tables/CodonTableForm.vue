@@ -196,7 +196,7 @@ async function deleteCodonTable() {
       >?
     </p>
 
-    <p v-else>No codon table selected.</p>
+    <p v-else>No tRNA GCN table selected.</p>
 
     <footer>
       <button class="secondary" @click="openDeleteModal = false">Cancel</button>
@@ -207,7 +207,7 @@ async function deleteCodonTable() {
   <form @submit.prevent @keydown.enter.prevent ref="table-form">
     <div id="actions">
       <div class="meta-table-field">
-        <label id="codonTableSelect">Existing codon table</label>
+        <label id="codonTableSelect">Existing tRNA GCN table</label>
         <CodonTableSearchSelect
           :options="codonTableList"
           v-model="selectedCodonTable"

@@ -9,7 +9,7 @@ const user = store.currentUser
 <template>
   <main class="container-fluid">
     <template v-if="user">
-      <h1>Codon tables</h1>
+      <h1>tRNA GCN tables</h1>
       <hr />
 
       <CodonTableForm />

@@ -228,7 +228,7 @@ async function cancelTuning() {
     <section>
       <input
         type="text"
-        placeholder="Name of the run (optional)"
+        placeholder="Name of the task (optional)"
         v-model="baseForm.name"
       />
     </section>
@@ -240,10 +240,9 @@ async function cancelTuning() {
           <span class="material-icons question-marks">question_mark</span>
         </h2>
         <template #tooltip>
-          The organism in which the mRNA is to be expressed. The tRNA-GCN codon
+          Choose the organism in which the mRNA is to be expressed. The tRNA GCN
           table of the host organism is utilised for codon tuning. For custom
-          codon tables, login and head to "Codon tables" section in the
-          navigation bar.
+          tables, login and head to "tRNA GCN tables" tab in the navigation bar.
         </template>
       </ToolTip>
 
