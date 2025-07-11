@@ -20,10 +20,9 @@ const model = defineModel<TuningModeName>()
           Protein structure analysis
           <span class="material-icons question-marks">question_mark</span>
           <template #tooltip>
-            Tuning mode, analyses the 3D structure of the protein to determine
-            the degree of burial or exposure of each amino acid residue and
-            selects codons based on these values (Relative Solvent
-            Accessibility, RSA).
+            Analyses the 3D structure of the protein to determine the degree of
+            burial or exposure of each amino acid residue and selects codons
+            based on these values (Relative Solvent Accessibility, RSA).
           </template>
         </ToolTip>
       </label>
@@ -42,8 +41,8 @@ const model = defineModel<TuningModeName>()
           Direct mapping
           <span class="material-icons question-marks">question_mark</span>
           <template #tooltip>
-            Tuning mode, mimics the translation speed profile from the native
-            organism into the host organism.
+            Mimics the translation speed profile from the native organism into
+            the host organism.
           </template>
         </ToolTip>
       </label>
@@ -61,9 +60,9 @@ const model = defineModel<TuningModeName>()
           Optimisation and conservation 1
           <span class="material-icons question-marks">question_mark</span>
           <template #tooltip>
-            Tuning mode, performs a protein sequence similarity analysis to
-            identify conserved amino acids across a set of orthologous proteins
-            from different organisms. The translation speed profile is maximised
+            Performs a protein sequence similarity analysis to identify
+            conserved amino acids across a set of orthologous proteins from
+            different organisms. The translation speed profile is maximised
             excepted at the conserved positions. Requirement: CLUSTAL alignment
             file + mRNA sequences of orthologous proteins.
           </template>
@@ -83,12 +82,12 @@ const model = defineModel<TuningModeName>()
           Optimisation and conservation 2
           <span class="material-icons question-marks">question_mark</span>
           <template #tooltip>
-            Tuning mode, individually analyses the translation speed profile of
-            each sequence in the set of orthologous proteins from different
-            organisms, and identifies conserved slow translation codons. The
-            translation speed profile is maximised excepted at the conserved
-            positions. Requirement: CLUSTAL alignment file + mRNA sequences of
-            orthologous proteins.
+            Individually analyses the translation speed profile of each sequence
+            in the set of orthologous proteins from different organisms, and
+            identifies conserved slow translation codons. The translation speed
+            profile is maximised excepted at the conserved positions.
+            Requirement: CLUSTAL alignment file + mRNA sequences of orthologous
+            proteins.
           </template>
         </ToolTip>
       </label>
