@@ -13,8 +13,8 @@ const user = store.currentUser
       <BannerSlideshow id="banner" />
 
       <p id="summary">
-        <strong>ExpressInHost</strong> tunes gene sequences for recombinant
-        protein expression in a host organism
+        <strong>ExpressInHost</strong> tunes genes for recombinant protein
+        expression
       </p>
     </div>
 
@@ -84,6 +84,7 @@ const user = store.currentUser
   padding: 0.5em;
   color: whitesmoke;
   text-shadow: 0 0 5px #303030;
+  width: 100%;
 }
 
 #description {
