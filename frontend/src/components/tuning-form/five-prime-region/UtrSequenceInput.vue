@@ -3,6 +3,7 @@ import { ref, watch } from 'vue'
 import { UTR_EXAMPLE } from '@/lib/referentials'
 import { checkUtrSequence } from '@/lib/checkers'
 import WithAlertError from '@/components/WithAlertError.vue'
+import ToolTip from '@/components/ToolTip.vue'
 
 const model = defineModel<string>()
 const utr = ref('')
@@ -20,11 +21,20 @@ function addExampleUTR() {
 
 <template>
   <WithAlertError :errors="errors">
-    <label id="utrSequenceLabel" for="utrSequence">5' UTR sequence</label>
+    <label id="utrSequenceLabel" for="utrSequence">
+      <ToolTip>
+        5' UTR sequence
+        <span class="material-icons question-marks">question_mark</span>
+        <template #tooltip>
+          The part before the 5' region of the Open Reading Frame (ORF) in the
+          vector backbone used (minimum 35 nucleotides).
+        </template>
+      </ToolTip>
+    </label>
     <textarea
       id="utrSequence"
       v-model="utr"
-      placeholder="Put 5' UTR sequence."
+      placeholder="Paste the 5' UTR sequence."
       rows="3"
       spellcheck="false"
     ></textarea>
