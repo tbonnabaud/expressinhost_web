@@ -26,12 +26,13 @@ async function setFastaContent(event: Event) {
   <div id="fastaInput">
     <ToolTip>
       <label for="fastaContent">
-        Fasta format
+        FASTA format
         <span class="material-icons question-marks">question_mark</span>
       </label>
       <template #tooltip>
-        A text containing the mRNA coding sequence(s), with each sequence
-        preceded by a carat (">"), followed by an unique sequence identifier.
+        A text containing the mRNA sequence(s) according to FASTA format.
+        Optionally, if the identifiers or comments contain the name of the
+        native organisms, it might be detected automatically.
       </template>
     </ToolTip>
     <WithAlertError :errors="errors">
@@ -40,7 +41,7 @@ async function setFastaContent(event: Event) {
         rows="10"
         spellcheck="false"
         v-model="fastaContent"
-        placeholder="Put your FASTA sequences here or import a file using the button below."
+        placeholder="Paste the whole FASTA content here or import the file using the button below."
         required
       ></textarea>
     </WithAlertError>
