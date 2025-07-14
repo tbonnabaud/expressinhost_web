@@ -272,7 +272,7 @@ async function cancelTuning() {
     </section>
 
     <section v-if="baseForm.mode == TuningModeName.PROTEIN_STRUCTURE_ANALYSIS">
-      <h2>Structure of the native organism</h2>
+      <h2>Structure of the native protein</h2>
       <PdbInput id="pdbInput" v-model="baseForm.pdb_file_content" />
       <i>
         You can download an example PDB file
