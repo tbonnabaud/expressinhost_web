@@ -49,8 +49,8 @@ watch(fivePrimeMode, value => {
           Like the whole sequence
           <span class="material-icons question-marks">question_mark</span>
           <template #tooltip>
-            The mRNA 5’ region of the Open Reading Frame (ORF) is treated
-            similar to the whole sequence.
+            The 5’ region of the Open Reading Frame (ORF) is treated exactly
+            like the whole mRNA sequence.
           </template>
         </ToolTip>
       </label>
@@ -63,8 +63,8 @@ watch(fivePrimeMode, value => {
           Untuned
           <span class="material-icons question-marks">question_mark</span>
           <template #tooltip>
-            The mRNA 5’ region of the Open Reading Frame (ORF) is left
-            unoptimized and matches the native organism mRNA.
+            The 5’ region of the Open Reading Frame (ORF) is left untuned and
+            remains like the native mRNA.
           </template>
         </ToolTip>
       </label>
@@ -73,13 +73,12 @@ watch(fivePrimeMode, value => {
     <div>
       <label>
         <input type="radio" value="slowed_down" v-model="fivePrimeMode" />
-        Slowed down
         <ToolTip>
           Slowed down
           <span class="material-icons question-marks">question_mark</span>
           <template #tooltip>
-            The mRNA 5’ region of the Open Reading Frame (ORF) is replaced with
-            slow codons to facilitate translation initiation.
+            The 5’ region of the Open Reading Frame (ORF) is replaced with the
+            slowest codons to facilitate translation initiation.
           </template>
         </ToolTip>
       </label>
@@ -98,9 +97,10 @@ watch(fivePrimeMode, value => {
           Fine-tuned
           <span class="material-icons question-marks">question_mark</span>
           <template #tooltip>
-            Multiple combinations of codons are tested for mRNA 5’ region of the
-            Open Reading Frame (ORF) to identify the most open form without
-            secondary structures. Requirement: 5’ UTR region that will be
+            All combinations of codons are tested for the 5’ region of the Open
+            Reading Frame (ORF) to identify the most open form with minimal
+            secondary structures.
+            <br /><strong>Requirement:</strong> 5’ UTR region that will be
             present in the expression vector.
           </template>
         </ToolTip>
@@ -114,7 +114,7 @@ watch(fivePrimeMode, value => {
   >
     <div class="input-range" v-if="'untuned_codon_number' in model">
       <label>
-        Number of untuned codons = {{ model.untuned_codon_number }} codons
+        Number of untuned codons: {{ model.untuned_codon_number }} codons
       </label>
       <input
         type="range"
@@ -132,7 +132,7 @@ watch(fivePrimeMode, value => {
   >
     <div class="input-range" v-if="'slowed_down_codon_number' in model">
       <label>
-        Number of slowed down codons =
+        Number of slowed down codons:
         {{ model.slowed_down_codon_number }} codons
       </label>
       <input
@@ -152,12 +152,13 @@ watch(fivePrimeMode, value => {
     <div class="input-range" v-if="'codon_window_size' in model">
       <label>
         <ToolTip>
-          Codon window size = {{ model.codon_window_size }} codons
+          Number of fine-tuned codons: {{ model.codon_window_size }} codons
           <span class="material-icons question-marks">question_mark</span>
           <template #tooltip>
-            Increasing the codon window generates more combinations to find the
-            best structure, but also increases the computational time. Average
-            time: 10 minutes for codon window of 8.
+            <strong>Warning:</strong> increasing the codon window generates more
+            combinations to find the best (i.e. most open) mRNA structure, but
+            also increases exponentially the computational time. Indicative
+            time: 10 minutes for a window of 8 codons.
           </template>
         </ToolTip>
       </label>
