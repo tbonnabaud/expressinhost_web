@@ -276,7 +276,7 @@ async function cancelTuning() {
       <h2>Structure of the native protein</h2>
       <PdbInput id="pdbInput" v-model="baseForm.pdb_file_content" />
       <i>
-        You can download an example PDB file
+        You can download an example file
         <a href="examples/AF-P37330-F1-model_v4.pdb" download>here</a>.
       </i>
     </section>
@@ -290,7 +290,7 @@ async function cancelTuning() {
           v-model="baseForm.nucleotide_file_content"
         />
         <i>
-          You can download an example sequence file
+          You can download an example file
           <a href="/examples/Rad51_nucleotide.txt" download>here</a>.
         </i>
       </section>
@@ -327,7 +327,7 @@ async function cancelTuning() {
     </template>
 
     <section v-if="clustalIsRequired">
-      <h2>Alignments</h2>
+      <h2>CLUSTAL alignment</h2>
 
       <ClustalInput
         id="clustalInput"
@@ -335,7 +335,7 @@ async function cancelTuning() {
         :fasta-content="baseForm.nucleotide_file_content"
       />
       <i>
-        You can download an example sequence file
+        You can download an example file
         <a href="/examples/Rad51_CLUSTAL.txt" download>here</a>.
       </i>
     </section>
