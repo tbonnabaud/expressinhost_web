@@ -114,7 +114,7 @@ async function deleteResult() {
     </tbody>
   </table>
 
-  <h3>Five prime region tuning</h3>
+  <h3>5' prime region tuning</h3>
   <hr />
 
   <div v-if="result.five_prime_region_tuning">
@@ -169,7 +169,7 @@ async function deleteResult() {
 
   <div v-else>None</div>
 
-  <h3>Restriction enzyme recognition sites to avoid</h3>
+  <h3>Restriction enzyme recognition sites avoided</h3>
   <hr />
 
   <div v-if="result.restriction_sites">
