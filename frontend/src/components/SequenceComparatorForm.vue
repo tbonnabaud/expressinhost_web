@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import CodonTableSearchSelect from './codon-tables/CodonTableSearchSelect.vue'
-import SlowSpeedThresholdSelector from './tuning-form/SlowSpeedThresholdSelector.vue'
 import SequenceInput from '@/components/SequenceInput.vue'
 import { onMounted, reactive, ref, watch } from 'vue'
 import type { CodonTable, SequenceComparatorForm } from '@/lib/interfaces'
@@ -103,7 +102,7 @@ function resetForm() {
     </div>
 
     <div>
-      <label for="sequence1Input">Sequence 1</label>
+      <label for="sequence1Input">mRNA sequence 1</label>
       <SequenceInput
         id="sequence1Input"
         v-model="form.sequence1"
@@ -113,7 +112,7 @@ function resetForm() {
     </div>
 
     <div>
-      <label for="sequence2Input">Sequence 2</label>
+      <label for="sequence2Input">mRNA sequence 2</label>
       <SequenceInput
         id="sequence2Input"
         v-model="form.sequence2"

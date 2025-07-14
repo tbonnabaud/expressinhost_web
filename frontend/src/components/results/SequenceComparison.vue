@@ -83,7 +83,7 @@ function colorSequences(inputSequence: string, outputSequence: string) {
     </p>
 
     <p>
-      <strong>&rarr; Similarity: </strong>
+      <strong>&rarr; Codon similarity (input <i>vs</i> output): </strong>
       {{ tunedSequence.identity_percentage.toFixed() }}%
     </p>
 

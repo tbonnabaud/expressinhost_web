@@ -78,7 +78,7 @@ async function deleteResult() {
 
   <hr />
 
-  <h3>Host tRNA GCN table</h3>
+  <h3>Host organism</h3>
   <hr />
   <p v-if="result.host_codon_table">
     <i>{{ result.host_codon_table.organism }}</i> -
@@ -183,7 +183,7 @@ async function deleteResult() {
 
   <div v-else>None</div>
 
-  <h3>Sequence profiles</h3>
+  <h3>Sequence analysis</h3>
   <hr />
 
   <div v-if="result.mode == TuningModeName.PROTEIN_STRUCTURE_ANALYSIS">
