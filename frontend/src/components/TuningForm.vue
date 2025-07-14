@@ -461,7 +461,14 @@ async function cancelTuning() {
         </button>
       </template>
 
-      <button v-else id="runTuningButton" type="submit">Run tuning</button>
+      <button
+        v-else
+        id="runTuningButton"
+        type="submit"
+        :disabled="!dataConsent"
+      >
+        Run tuning
+      </button>
     </div>
   </form>
 </template>
