@@ -189,7 +189,7 @@ async function deleteCodonTable() {
     @close="openDeleteModal = false"
   >
     <p v-if="selectedCodonTable">
-      Do you really want to delete the codon table
+      Do you really want to delete the tRNA GCN table
       <strong>
         <i>{{ selectedCodonTable.organism }}</i> -
         {{ selectedCodonTable.name }} </strong
