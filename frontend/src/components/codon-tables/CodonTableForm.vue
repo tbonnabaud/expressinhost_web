@@ -207,7 +207,7 @@ async function deleteCodonTable() {
   <form @submit.prevent @keydown.enter.prevent ref="table-form">
     <div id="actions">
       <div class="meta-table-field">
-        <label id="codonTableSelect">Existing tRNA GCN table</label>
+        <label id="codonTableSelect">tRNA GCN table</label>
         <CodonTableSearchSelect
           :options="codonTableList"
           v-model="selectedCodonTable"
