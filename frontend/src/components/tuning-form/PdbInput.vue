@@ -40,7 +40,7 @@ async function setPdbContent(event: Event) {
         rows="10"
         spellcheck="false"
         v-model="pdbContent"
-        placeholder="Put your PDB content here or import a file using the button below."
+        placeholder="Paste the whole content of the PDB file here or import the file using the button below."
         required
       ></textarea>
     </WithAlertError>
