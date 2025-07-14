@@ -41,8 +41,9 @@ async function setClustalContent(event: Event) {
       <template #tooltip>
         A text containing multiple sequence alignment data of orthologous
         proteins from different organisms. The alignment must include the amino
-        acid sequence corresponding to the uploaded FASTA sequence, and must
-        strictly follow the same order.
+        acid sequences corresponding to the uploaded FASTA data, and must
+        strictly follow the same sequence order. The alignment must precisely be
+        of CLUSTAL format.
       </template>
     </ToolTip>
     <WithAlertError :errors="errors.concat(matchingErrors)">
@@ -51,7 +52,7 @@ async function setClustalContent(event: Event) {
         rows="10"
         spellcheck="false"
         v-model="clustalContent"
-        placeholder="Put your CLUSTAL here or import a file using the button below."
+        placeholder="Paste the whole CLUSTAL content here or import the file using the button below."
         required
       ></textarea>
     </WithAlertError>
