@@ -361,7 +361,7 @@ async function cancelTuning() {
     </template>
 
     <section>
-      <h2>Specific tuning of mRNA's 5’ region</h2>
+      <h2>Specific tuning of mRNA 5’ region</h2>
 
       <FivePrimeRegionTuning
         v-model="baseForm.five_prime_region_tuning"
