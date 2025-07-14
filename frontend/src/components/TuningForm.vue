@@ -374,12 +374,12 @@ async function cancelTuning() {
     <section>
       <ToolTip>
         <h2>
-          Restriction enzyme recognition sites to avoid
+          Restriction enzyme recognition sites to be avoided
           <span class="material-icons question-marks">question_mark</span>
         </h2>
         <template #tooltip>
-          Choose one or more (upto 6) restriction enzyme recognition sites to be
-          avoided in the final output sequence.
+          Choose up to 3 restriction enzyme recognition sites to be avoided in
+          the final tuned sequence(s).
         </template>
       </ToolTip>
 
@@ -398,7 +398,7 @@ async function cancelTuning() {
           v-model="baseForm.send_email"
         />
         <label for="sendEmailCheckbox">
-          Send an e-mail when the job is completed.
+          Send me an e-mail when the task is completed.
         </label>
       </div>
     </template>
