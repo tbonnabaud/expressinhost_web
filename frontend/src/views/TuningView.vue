@@ -26,7 +26,7 @@ function goBackToForm() {
 
     <div v-if="tuningOutput.result">
       <button id="goBackToFormButton" @click="goBackToForm">
-        Go back to form
+        Go back to a new form
       </button>
 
       <ResultContent
