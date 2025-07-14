@@ -50,7 +50,7 @@ defineProps<{ result: Result }>()
 
         <div>
           <p>
-            <strong>Five prime region tuning: </strong>
+            <strong>5' prime region tuning: </strong>
             <span v-if="result.five_prime_region_tuning">
               {{
                 FIVE_PRIME_REGION_TUNING_LABEL_MAPPING[
