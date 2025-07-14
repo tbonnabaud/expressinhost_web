@@ -51,6 +51,7 @@ const selectedSequencesNativeCodonTables = ref(
 const codonTableList = ref([] as Array<CodonTable>)
 const tuningLoading = ref(false)
 const currentJobId = ref(null as string | null)
+const dataConsent = ref(false)
 
 const {
   state: tuningState,
@@ -406,13 +407,18 @@ async function cancelTuning() {
     <hr />
 
     <div id="dataConsent">
-      <input id="dataConsentCheckbox" type="checkbox" checked required />
+      <input
+        id="dataConsentCheckbox"
+        type="checkbox"
+        v-model="dataConsent"
+        required
+      />
       <label for="dataConsentCheckbox">
         Uploaded data are sent to our server for computing but are not shared
         with any third-party. Results are not saved unless you are logged-in. We
         take reasonable measures to protect the data you upload and store on our
         servers. While we strive to maintain a secure environment, we cannot
-        guarantee absolute security. We are not liable for any unauthorized
+        guarantee absolute security. We are not liable for any unauthorised
         access, loss, or disclosure of data. By checking this box, you
         acknowledge that you have read and understand this Data Privacy Policy
         and agree to the collection, processing, and storage of your data as
