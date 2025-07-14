@@ -282,7 +282,7 @@ async function cancelTuning() {
 
     <template v-else>
       <section>
-        <h2>Sequences of native organisms</h2>
+        <h2>Sequences of native mRNAs</h2>
 
         <FastaInput
           id="fastaInput"
@@ -295,13 +295,13 @@ async function cancelTuning() {
       </section>
 
       <section>
-        <h2>Codon tables for the native organisms</h2>
+        <h2>tRNA GCN tables of the native organisms</h2>
 
         <table v-if="Object.keys(selectedSequencesNativeCodonTables).length">
           <thead>
             <tr>
-              <th>Sequence name</th>
-              <th>Codon table</th>
+              <th>Sequence identifier detected</th>
+              <th>tRNA GCN table of organism detected</th>
             </tr>
           </thead>
 
@@ -310,7 +310,7 @@ async function cancelTuning() {
               v-for="seq in Object.keys(selectedSequencesNativeCodonTables)"
               :key="seq"
             >
-              <td>{{ seq }}</td>
+              <td>{{ seq.split(' ')[0] }}</td>
               <td class="select-cell">
                 <CodonTableSearchSelect
                   v-model="selectedSequencesNativeCodonTables[seq]"
