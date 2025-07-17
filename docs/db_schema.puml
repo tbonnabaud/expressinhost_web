@@ -2,7 +2,7 @@
 skinparam linetype ortho
 skinparam dpi 200
 
-' left to right direction
+left to right direction
 
 entity User {
     * id: uuid <<PK>>
@@ -81,7 +81,7 @@ entity RunInfo {
     five_prime_region_tuning_mode: varchar
 }
 
-User ||--o{ CodonTable
+User |o--o{ CodonTable
 CodonTable ||--o{ CodonTranslation
 User ||--o{ Result
 CodonTable ||--o{ Result

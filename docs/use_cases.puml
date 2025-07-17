@@ -2,10 +2,10 @@
 left to right direction
 skinparam dpi 200
 
-actor LoggedUser
-actor Admin
+actor Guest
 actor Member
-actor GuestUser
+actor Admin
+
 
 usecase "Add/edit/remove codon tables" as u1
 usecase "Run tuning" as u2
@@ -15,18 +15,17 @@ usecase "Access to previous results" as u5
 usecase "Edit/remove users" as u6
 usecase "Access usage statistics" as u7
 
-Admin --> LoggedUser #line:MediumPurple
-Member --> LoggedUser #line:MediumPurple
+Admin <-- Member #line:MediumPurple
 
-GuestUser --> u2 #line:LimeGreen
-GuestUser --> u3 #line:LimeGreen
-GuestUser --> u4 #line:LimeGreen
+Guest --> u2 #line:LimeGreen
+Guest --> u3 #line:LimeGreen
+Guest --> u4 #line:LimeGreen
 
-LoggedUser --> u1 #line:DodgerBlue
-LoggedUser --> u2 #line:DodgerBlue
-LoggedUser --> u3 #line:DodgerBlue
-LoggedUser --> u4 #line:DodgerBlue
-LoggedUser --> u5 #line:DodgerBlue
+Member --> u1 #line:DodgerBlue
+Member --> u2 #line:DodgerBlue
+Member --> u3 #line:DodgerBlue
+Member --> u4 #line:DodgerBlue
+Member --> u5 #line:DodgerBlue
 
 Admin --> u6 #line:Crimson
 Admin --> u7 #line:Crimson
