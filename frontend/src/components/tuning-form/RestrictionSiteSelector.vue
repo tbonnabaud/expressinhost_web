@@ -43,10 +43,15 @@ function addSiteSequence() {
     model.value = []
   }
 
-  const site = siteToAdd.value
+  // Maximum of 3 sites
+  if (model.value.length < 3) {
+    const site = siteToAdd.value
 
-  if (site !== null && !model.value.includes(site)) {
-    model.value.push(site)
+    if (site !== null && !model.value.includes(site)) {
+      model.value.push(site)
+    }
+  } else {
+    alert('Maximum number of sites reached.')
   }
 }
 
