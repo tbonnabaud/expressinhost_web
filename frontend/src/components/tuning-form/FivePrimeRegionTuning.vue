@@ -182,6 +182,7 @@ watch(fivePrimeMode, value => {
   display: flex;
   column-gap: 2em;
   justify-content: center;
+  text-align: center;
 }
 
 #partialUntuningModeOptions,
