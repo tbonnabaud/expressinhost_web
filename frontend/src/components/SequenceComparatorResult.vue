@@ -54,8 +54,8 @@ function colorSequences(inputSequence: string, outputSequence: string) {
 
     <div class="flex-container sequence-comparison">
       <div class="sequence-group-label">
-        <label>Input: </label>
-        <label>Output: </label>
+        <label>Sequence 1:</label>
+        <label>Sequence 2:</label>
       </div>
 
       <div class="sequence-group">
@@ -73,7 +73,9 @@ function colorSequences(inputSequence: string, outputSequence: string) {
         <ProfileChart
           v-if="comparedSequences.input_profiles"
           title="Speed profiles"
+          input-title="Sequence 1"
           :input-values="comparedSequences.input_profiles.speed"
+          output-title="Sequence 2"
           :output-values="comparedSequences.output_profiles.speed"
         />
       </div>
@@ -83,7 +85,9 @@ function colorSequences(inputSequence: string, outputSequence: string) {
         <ProfileChart
           v-if="comparedSequences.input_profiles"
           title="Rank profiles"
+          input-title="Sequence 1"
           :input-values="comparedSequences.input_profiles.rank"
+          output-title="Sequence 2"
           :output-values="comparedSequences.output_profiles.rank"
         />
       </div>

@@ -108,7 +108,9 @@ function colorSequences(inputSequence: string, outputSequence: string) {
         <ProfileChart
           v-if="tunedSequence.input_profiles"
           title="Speed profiles"
+          input-title="Input"
           :input-values="tunedSequence.input_profiles.speed"
+          output-title="Output"
           :output-values="tunedSequence.output_profiles.speed"
         />
       </div>
@@ -118,7 +120,9 @@ function colorSequences(inputSequence: string, outputSequence: string) {
         <ProfileChart
           v-if="tunedSequence.input_profiles"
           title="Rank profiles"
+          input-title="Input"
           :input-values="tunedSequence.input_profiles.rank"
+          output-title="Output"
           :output-values="tunedSequence.output_profiles.rank"
         />
       </div>
