@@ -9,6 +9,7 @@ const tuningOutput = ref({} as TuningOutput)
 function handleSubmit(output: TuningOutput) {
   if (output) {
     tuningOutput.value = output
+    window.scrollTo(0, 0)
   }
 }
 
