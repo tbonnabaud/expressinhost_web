@@ -85,16 +85,16 @@ watch(fivePrimeMode, value => {
     </div>
 
     <div>
-      <label :aria-disabled="isGuest">
+      <label>
         <input
           type="radio"
           value="fine_tuning"
           v-model="fivePrimeMode"
           :disabled="isGuest"
         />
-        <span v-if="isGuest">Fine-tuned (for logged user only)</span>
-        <ToolTip v-else>
-          Fine-tuned
+        <ToolTip>
+          <span v-if="isGuest">Fine-tuned (for logged user only) </span>
+          <span v-else>Fine-tuned </span>
           <span class="material-icons question-marks">question_mark</span>
           <template #tooltip>
             All combinations of codons are tested for the 5’ region of the Open
