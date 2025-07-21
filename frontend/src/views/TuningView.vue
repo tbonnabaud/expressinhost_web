@@ -14,8 +14,10 @@ function handleSubmit(output: TuningOutput) {
 }
 
 function goBackToForm() {
-  localStorage.removeItem('tuningJobId')
-  tuningOutput.value = {} as TuningOutput
+  if (confirm('Are you sure to want to go back to a new form?')) {
+    localStorage.removeItem('tuningJobId')
+    tuningOutput.value = {} as TuningOutput
+  }
 }
 </script>
 
