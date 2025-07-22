@@ -88,7 +88,7 @@ async function deleteResult() {
   <h3>Parameters</h3>
   <hr />
 
-  <table>
+  <table id="parameterTable">
     <thead>
       <tr>
         <th scope="col">Mode</th>
@@ -118,7 +118,7 @@ async function deleteResult() {
   <hr />
 
   <div v-if="result.five_prime_region_tuning">
-    <table>
+    <table id="fivePrimeRegionTable">
       <thead>
         <tr>
           <th scope="col">Mode</th>
@@ -214,6 +214,10 @@ async function deleteResult() {
 </template>
 
 <style scoped>
+#parameterTable,
+#fivePrimeRegionTable {
+  width: auto;
+}
 table th,
 table td {
   text-align: center;
