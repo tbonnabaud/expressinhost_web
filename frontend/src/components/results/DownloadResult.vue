@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { TuningOutput, TunedSequence, CodonTable } from '@/lib/interfaces'
+import type { TuningOutput, TunedSequence } from '@/lib/interfaces'
 import { downloadFile } from '@/lib/helpers'
 import { API } from '@/lib/api'
 import JSZip from 'jszip'
