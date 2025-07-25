@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import type { TuningOutput, TunedSequence } from '@/lib/interfaces'
+import type { TuningOutput, TunedSequence, CodonTable } from '@/lib/interfaces'
 import { downloadFile } from '@/lib/helpers'
+import { API } from '@/lib/api'
 import JSZip from 'jszip'
 import { ref } from 'vue'
 
@@ -69,6 +70,39 @@ function formatProfileCSV(
   return csvRows.join('\n')
 }
 
+async function fetchCodonTableFullName(id: string) {
+  const [data, error] = await API.codonTables.get(id)
+
+  if (!error && data) {
+    return `${data.organism} - ${data.name}`
+  } else {
+    return null
+  }
+}
+
+async function parametersToJSON() {
+  const result = props.result
+  const parameters: Record<string, any> = {}
+  parameters.creation_date = result.creation_date
+  parameters.name = result.name
+  parameters.mode = result.mode
+  parameters.slow_speed_threshold = result.slow_speed_threshold
+  parameters.conservation_threshold = result.conservation_threshold
+  parameters.five_prime_region_tuning = result.five_prime_region_tuning
+  parameters.restriction_sites = result.restriction_sites
+  parameters.host_codon_table = `${result.host_codon_table.organism} - ${result.host_codon_table.name}`
+  parameters.sequences_native_codon_tables = {}
+
+  for (const [key, value] of Object.entries(
+    result.sequences_native_codon_tables,
+  )) {
+    parameters.sequences_native_codon_tables[key] =
+      await fetchCodonTableFullName(value)
+  }
+
+  return JSON.stringify(parameters, null, 2)
+}
+
 async function downloadZip() {
   isLoading.value = true
   const zip = new JSZip()
@@ -80,6 +114,9 @@ async function downloadZip() {
 
   // Add the files into the archive
   zip.file(fastaFileName, fastaContent)
+
+  // Add parameters as JSON file
+  zip.file('parameters.json', parametersToJSON())
 
   for (const tunedSequence of props.tuned_sequences) {
     // Match only ID to avoid a too long name
