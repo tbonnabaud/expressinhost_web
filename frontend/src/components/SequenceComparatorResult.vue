@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { TunedSequence } from '@/lib/interfaces'
 import ProfileChart from './results/ProfileChart.vue'
+import SequenceComparatorDownload from './SequenceComparatorDownload.vue'
 import { computed } from 'vue'
 
 const props = defineProps<{
@@ -92,6 +93,8 @@ function colorSequences(inputSequence: string, outputSequence: string) {
         />
       </div>
     </div>
+
+    <SequenceComparatorDownload :compared-sequences="comparedSequences" />
   </div>
 </template>
 
