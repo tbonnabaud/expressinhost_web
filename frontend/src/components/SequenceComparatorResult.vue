@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { TunedSequence } from '@/lib/interfaces'
 import ProfileChart from './results/ProfileChart.vue'
-import { computed, ref } from 'vue'
+import { computed } from 'vue'
 
 const props = defineProps<{
   comparedSequences: TunedSequence
