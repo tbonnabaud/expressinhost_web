@@ -51,7 +51,9 @@ const outputCodonList = computed(() => {
     <h5 class="profile-title">Speed profiles</h5>
     <ProfileChart
       title="Speed profiles"
+      input-title="Input"
       :input-values="[]"
+      output-title="Output"
       :output-values="tunedSequence.output_profiles.speed"
     />
   </div>
@@ -60,7 +62,9 @@ const outputCodonList = computed(() => {
     <h5 class="profile-title">Rank profiles</h5>
     <ProfileChart
       title="Rank profiles"
+      input-title="Input"
       :input-values="[]"
+      output-title="Output"
       :output-values="tunedSequence.output_profiles.rank"
     />
   </div>
