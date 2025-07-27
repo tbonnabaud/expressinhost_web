@@ -56,7 +56,9 @@ export function checkFasta(content: string): string[] {
       } else if (header && !sequence) {
         errors.push(`Missing sequence for ${header}.`)
       } else {
-        errors.push('Invalid format.')
+        errors.push(
+          'Invalid header (make sure there is no space between the > and the ID).',
+        )
         // If one block is not correctly formatted return directly the result
         return errors
       }

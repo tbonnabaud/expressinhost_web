@@ -69,6 +69,16 @@ async function fetchCodonTables() {
   }
 }
 
+function fillWithExemple1() {
+  form.sequence1 =
+    'ATGGATAACGATCGTCAAAAGGCGCTTGATACTCGTTATCAAGAATATGGAGAAGTCGTTCGGGAAGGGGGCGGTTATTAG'
+}
+
+function fillWithExemple2() {
+  form.sequence2 =
+    'ATGATTACTTTCATTTATTTCTTTGGCAACTATTATTTATTACCTTCCTATCTATTCTTATATCAACAATTACAAGTTTAG'
+}
+
 async function runComparison() {
   if (form.host_codon_table_id) {
     const [data, error] = await API.compareSequences(form)
@@ -109,7 +119,13 @@ function resetForm() {
         :errors="formErrors.sequence1"
         required
       />
+
+      <button @click.prevent="fillWithExemple1" class="outline secondary">
+        Fill with an example
+      </button>
     </div>
+
+    <br />
 
     <div>
       <label for="sequence2Input">mRNA sequence 2</label>
@@ -119,6 +135,10 @@ function resetForm() {
         :errors="formErrors.sequence2"
         required
       />
+
+      <button @click.prevent="fillWithExemple2" class="outline secondary">
+        Fill with an example
+      </button>
     </div>
 
     <button id="submitButton" type="submit" :disabled="!isFormValid">

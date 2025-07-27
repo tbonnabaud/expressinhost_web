@@ -5,7 +5,9 @@ import type { ChartOptions } from 'chart.js'
 
 const props = defineProps<{
   title: string
+  inputTitle: string
   inputValues: Array<number>
+  outputTitle: string
   outputValues: Array<number>
 }>()
 
@@ -16,7 +18,7 @@ const data = computed(() => {
     labels: [...props.outputValues.keys()],
     datasets: [
       {
-        label: 'Input sequence',
+        label: props.inputTitle,
         data: props.inputValues,
         pointStyle: false,
         borderColor: '#D55E00',
@@ -24,7 +26,7 @@ const data = computed(() => {
         borderWidth: 2,
       },
       {
-        label: 'Output sequence',
+        label: props.outputTitle,
         data: props.outputValues,
         pointStyle: false,
         borderColor: '#0072B2',

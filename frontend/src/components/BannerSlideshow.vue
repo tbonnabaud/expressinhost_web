@@ -23,15 +23,13 @@ function prevImage() {
 
 <template>
   <div class="slider">
-    <TransitionGroup name="slide" tag="div">
+    <Transition name="slide" mode="out-in">
       <img
-        v-for="(image, index) in images"
-        :key="index"
-        :src="image"
-        :alt="'Slideshow Image ' + index"
-        v-show="currentIndex == index"
+        :key="currentIndex"
+        :src="images[currentIndex]"
+        :alt="'Slideshow Image ' + currentIndex"
       />
-    </TransitionGroup>
+    </Transition>
 
     <a class="prev" @click="prevImage">&#10094;</a>
     <a class="next" @click="nextImage">&#10095;</a>

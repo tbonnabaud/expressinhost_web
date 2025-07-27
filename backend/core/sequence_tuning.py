@@ -437,6 +437,10 @@ class SequenceTuner:
                     "Amino acid sequences from input and output are supposed to be the same."
                 )
 
+            # Force AUG as start codon
+            if cleared_output_rna_sequence[0:3] != "AUG":
+                cleared_output_rna_sequence = "AUG" + cleared_output_rna_sequence[3:]
+
             # mRNA to DNA sequences
             cleared_output_dna_sequence = cleared_output_rna_sequence.replace("U", "T")
             input_dna_sequence = str(input_record.seq)

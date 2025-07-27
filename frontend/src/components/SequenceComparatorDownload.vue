@@ -1,22 +1,21 @@
 <script setup lang="ts">
-import type { TuningOutput, TunedSequence } from '@/lib/interfaces'
+import type { TunedSequence } from '@/lib/interfaces'
 import { downloadFile } from '@/lib/helpers'
 import { API } from '@/lib/api'
 import JSZip from 'jszip'
 import { ref } from 'vue'
 
-const props = defineProps<TuningOutput>()
+const props = defineProps<{
+  comparedSequences: TunedSequence
+}>()
 
 const isLoading = ref(false)
 
-function foldSequence(sequence: string) {
-  return sequence.replace(/(.{80})/g, '$1\n')
-}
+function formatToFasta(comparedSequences: TunedSequence) {
+  const seq1 = `>Sequence1 ${comparedSequences.name}\n${comparedSequences.input}`
+  const seq2 = `>Sequence2 ${comparedSequences.name}\n${comparedSequences.output}`
 
-function formatToFasta(tunedSequences: Array<TunedSequence>) {
-  return tunedSequences
-    .map(e => `>${e.name}\n${foldSequence(e.output)}`)
-    .join('\n\n')
+  return `${seq1}\n\n${seq2}`
 }
 
 /**
@@ -80,77 +79,49 @@ async function fetchCodonTableFullName(id: string) {
   }
 }
 
-async function parametersToJSON() {
-  const result = props.result
-  const parameters: Record<string, any> = {}
-  parameters.creation_date = result.creation_date
-  parameters.name = result.name
-  parameters.mode = result.mode
-  parameters.slow_speed_threshold = result.slow_speed_threshold
-  parameters.conservation_threshold = result.conservation_threshold
-  parameters.five_prime_region_tuning = result.five_prime_region_tuning
-  parameters.restriction_sites = result.restriction_sites
-  parameters.host_codon_table = `${result.host_codon_table.organism} - ${result.host_codon_table.name}`
-  parameters.sequences_native_codon_tables = {}
-
-  for (const [key, value] of Object.entries(
-    result.sequences_native_codon_tables,
-  )) {
-    parameters.sequences_native_codon_tables[key] =
-      await fetchCodonTableFullName(value)
-  }
-
-  return JSON.stringify(parameters, null, 2)
-}
-
 async function downloadZip() {
   isLoading.value = true
   const zip = new JSZip()
   // FASTA
-  const fastaContent = formatToFasta(props.tuned_sequences)
-  const fastaFileName = `tuned_sequences_${props.result.mode}.fasta`
+  const fastaContent = formatToFasta(props.comparedSequences)
+  const fastaFileName = `compared_sequences_${props.comparedSequences.name}.fasta`
   // ZIP file name
-  const zipFileName = `${props.result.name}.zip`
+  const zipFileName = `${props.comparedSequences.name}.zip`
 
   // Add the files into the archive
   zip.file(fastaFileName, fastaContent)
 
-  // Add parameters as JSON file
-  zip.file('parameters.json', parametersToJSON())
+  // Match only ID to avoid a too long name
+  const matchId = props.comparedSequences.name.match(/^\S+/)
 
-  for (const tunedSequence of props.tuned_sequences) {
-    // Match only ID to avoid a too long name
-    const matchId = tunedSequence.name.match(/^\S+/)
-
-    if (matchId) {
-      const seqId = matchId[0]
-      const inputCodonArray = tunedSequence.input.match(/.{3}/g) || []
-      const outputCodonArray = tunedSequence.output.match(/.{3}/g) || []
-      // Add speed profiles
-      zip.file(
-        `speeds/${seqId}_speed_profiles.csv`,
-        formatProfileCSV(
-          inputCodonArray,
-          tunedSequence.input_profiles?.speed,
-          outputCodonArray,
-          tunedSequence.output_profiles.speed,
-          'speed',
-        ),
-      )
-      // Add rank profiles
-      zip.file(
-        `ranks/${seqId}_rank_profiles.csv`,
-        formatProfileCSV(
-          inputCodonArray,
-          tunedSequence.input_profiles?.rank,
-          outputCodonArray,
-          tunedSequence.output_profiles.rank,
-          'rank',
-        ),
-      )
-    } else {
-      console.warn(`ID not found for sequence: ${tunedSequence.name}`)
-    }
+  if (matchId) {
+    const seqId = matchId[0]
+    const inputCodonArray = props.comparedSequences.input.match(/.{3}/g) || []
+    const outputCodonArray = props.comparedSequences.output.match(/.{3}/g) || []
+    // Add speed profiles
+    zip.file(
+      `speeds/${seqId}_speed_profiles.csv`,
+      formatProfileCSV(
+        inputCodonArray,
+        props.comparedSequences.input_profiles?.speed,
+        outputCodonArray,
+        props.comparedSequences.output_profiles.speed,
+        'speed',
+      ),
+    )
+    // Add rank profiles
+    zip.file(
+      `ranks/${seqId}_rank_profiles.csv`,
+      formatProfileCSV(
+        inputCodonArray,
+        props.comparedSequences.input_profiles?.rank,
+        outputCodonArray,
+        props.comparedSequences.output_profiles.rank,
+        'rank',
+      ),
+    )
+  } else {
+    console.warn(`ID not found for sequence: ${props.comparedSequences.name}`)
   }
 
   const zipBlob = await zip.generateAsync({ type: 'blob' })
