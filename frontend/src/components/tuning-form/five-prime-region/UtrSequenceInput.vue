@@ -54,4 +54,8 @@ function addExampleUTR() {
   font-size: 90%;
   padding: 5px 10px;
 }
+
+textarea {
+  font-family: 'Courier New', Courier, monospace;
+}
 </style>

@@ -21,3 +21,9 @@ const model = defineModel<string>()
     ></textarea>
   </WithAlertError>
 </template>
+
+<style scoped>
+textarea {
+  font-family: 'Courier New', Courier, monospace;
+}
+</style>
