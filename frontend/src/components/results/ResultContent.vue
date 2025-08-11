@@ -114,7 +114,7 @@ async function deleteResult() {
     </tbody>
   </table>
 
-  <h3>5' prime region tuning</h3>
+  <h3>Specific tuning of mRNA 5' region tuning</h3>
   <hr />
 
   <div v-if="result.five_prime_region_tuning">
