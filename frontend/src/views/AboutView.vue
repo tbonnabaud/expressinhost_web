@@ -11,13 +11,21 @@
 
     <p>
       The ExpressInHost Web Application is a
-      <a href="https://github.com/XXXX">free and open source</a> software,
-      released under the
+      <a href="https://github.com/tbonnabaud/expressinhost_web"
+        >free and open source</a
+      >
+      software, released under the
       <a href="https://www.gnu.org/licenses/agpl-3.0.txt"
         >GNU Affero General Public License v3.0 (AGPL-3.0)</a
-      >. See the <a href="https://github.com/XXXX/LICENSE">License</a> and
-      <a href="https://github.com/XXXX/COPYRIGHT">Copyright notice</a> files for
-      details.
+      >. See the
+      <a href="https://github.com/tbonnabaud/expressinhost_web/LICENSE"
+        >License</a
+      >
+      and
+      <a href="https://github.com/tbonnabaud/expressinhost_web/COPYRIGHT.md"
+        >Copyright notice</a
+      >
+      files for details.
     </p>
 
     <p>
@@ -28,7 +36,7 @@
       >. Attribution must be given to the creators — the ExpressInHost Web team
       — by citing our
       <!-- UPDATE-LINK-AFTER-PUBLICATION -->
-      <a href="UPDATE-LINK-AFTER-PUBLICATION">release article</a> and our
+      <a href="">release article</a> and our
       <a href="https://doi.org/10.5334/jors.385">previous work</a>.
     </p>
   </main>

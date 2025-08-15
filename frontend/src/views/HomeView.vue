@@ -34,8 +34,10 @@ const user = store.currentUser
 
       <p>
         <strong>ExpressInHost</strong> is a free, user-friendly, and fully
-        <!-- TODO: link to github repository -->
-        <a href="">open source</a> web application that builds on our
+        <a href="https://github.com/tbonnabaud/expressinhost_web"
+          >open source</a
+        >
+        web application that builds on our
         <a
           href="https://openresearchsoftware.metajnl.com/articles/10.5334/jors.385"
           target="_blank"
