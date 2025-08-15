@@ -9,7 +9,7 @@
       >.
     </p>
 
-    <p>
+    <p id="licenseTexts">
       🅭 All results obtained from our softwares, e.g. by using this web
       interface, are licensed under the
       <a href="https://creativecommons.org/licenses/by/4.0/legalcode.txt">
@@ -35,5 +35,9 @@ p {
 
 p {
   font-size: 1.5em;
+}
+
+#licenseTexts {
+  font-size: 1em;
 }
 </style>
