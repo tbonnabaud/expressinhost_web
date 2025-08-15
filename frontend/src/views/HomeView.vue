@@ -33,8 +33,9 @@ const user = store.currentUser
       </p>
 
       <p>
-        <strong>ExpressInHost</strong> is a free, user-friendly, and fully open
-        source web application that builds on our
+        <strong>ExpressInHost</strong> is a free, user-friendly, and fully
+        <!-- TODO: link to github repository -->
+        <a href="">open source</a> web application that builds on our
         <a
           href="https://openresearchsoftware.metajnl.com/articles/10.5334/jors.385"
           target="_blank"
@@ -54,7 +55,22 @@ const user = store.currentUser
   </main>
 
   <footer id="contact">
-    Contact: <a href="mailto:Adelaide.Raguin@hhu.de">Adélaïde Raguin</a>
+    <p>Contact: <a href="mailto:Adelaide.Raguin@hhu.de">Adélaïde Raguin</a></p>
+
+    <p>
+      🅭 All results obtained from our softwares, e.g. by using this web
+      interface, are licensed under the
+      <a href="https://creativecommons.org/licenses/by/4.0/legalcode.txt">
+        CC BY 4.0 terms
+      </a>
+      , including that attribution must be given to the creator, the
+      ExpressInHost team, by citing <a href="">our release article</a> and
+      <a
+        href="https://openresearchsoftware.metajnl.com/articles/10.5334/jors.385"
+      >
+        our previous work </a
+      >.
+    </p>
   </footer>
 </template>
 
