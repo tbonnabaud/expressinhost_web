@@ -130,4 +130,8 @@ const user = store.currentUser
     text-align: center;
   }
 }
+
+footer {
+  margin: 2em 5em;
+}
 </style>
