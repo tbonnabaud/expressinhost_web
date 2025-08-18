@@ -18,11 +18,13 @@
       <a href="https://www.gnu.org/licenses/agpl-3.0.txt"
         >GNU Affero General Public License v3.0 (AGPL-3.0)</a
       >. See the
-      <a href="https://github.com/tbonnabaud/expressinhost_web/LICENSE"
+      <a
+        href="https://github.com/tbonnabaud/expressinhost_web/blob/main/LICENSE"
         >License</a
       >
       and
-      <a href="https://github.com/tbonnabaud/expressinhost_web/COPYRIGHT.md"
+      <a
+        href="https://github.com/tbonnabaud/expressinhost_web/blob/main/COPYRIGHT.md"
         >Copyright notice</a
       >
       files for details.
