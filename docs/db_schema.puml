@@ -82,9 +82,9 @@ entity RunInfo {
 }
 
 User |o--o{ CodonTable
-CodonTable ||--{ CodonTranslation
+CodonTable ||--|{ CodonTranslation
 User ||--o{ Result
 CodonTable ||--o{ Result
-Result ||--o{ TunedSequence
+Result ||--|{ TunedSequence
 
 @enduml
