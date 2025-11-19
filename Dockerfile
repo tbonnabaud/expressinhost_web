@@ -23,6 +23,11 @@ ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get -y dist-upgrade && apt-get install -y curl dssp && \
     apt-get clean && apt-get autoremove && rm -rf /var/lib/apt/lists/*
 
+# Files for dssp
+RUN curl -o /var/cache/libcifpp/components.cif https://files.wwpdb.org/pub/pdb/data/monomers/components.cif
+RUN curl -o /var/cache/libcifpp/mmcif_pdbx.dic https://mmcif.wwpdb.org/dictionaries/ascii/mmcif_pdbx_v50.dic
+RUN curl -o /var/cache/libcifpp/mmcif_ma.dic https://github.com/ihmwg/ModelCIF/raw/master/dist/mmcif_ma.dic
+
 # Install ViennaRNA package
 RUN curl -L -o /tmp/viennarna_2.7.0-1_amd64.deb "https://www.tbi.univie.ac.at/RNA/download/debian/debian_12/viennarna_2.7.0-1_amd64.deb"
 RUN dpkg -i /tmp/viennarna_2.7.0-1_amd64.deb || apt-get install -y -f
