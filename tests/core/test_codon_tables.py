@@ -134,501 +134,9 @@ def test_processed_codon_table_values():
     assert row2 in values
 
 
-def test_process_raw_codon_table():
+def test_process_raw_codon_table(raw_codon_table_data):
     """Test processing raw codon table data."""
-    # Use the full codon table from create_test_codon_table_file
-    raw_data = [
-        {
-            "amino_acid": "Ala",
-            "anticodon": "IGC",
-            "codon": "GCU",
-            "trna_gcn": "2.5",
-            "wobble_codon": "GCU",
-            "wobble_rate": "0.0",
-        },
-        {
-            "amino_acid": "Ala",
-            "anticodon": "GGC",
-            "codon": "GCC",
-            "trna_gcn": "3.0",
-            "wobble_codon": "GCC",
-            "wobble_rate": "0.0",
-        },
-        {
-            "amino_acid": "Ala",
-            "anticodon": "CGC",
-            "codon": "GCG",
-            "trna_gcn": "1.5",
-            "wobble_codon": "GCG",
-            "wobble_rate": "0.0",
-        },
-        {
-            "amino_acid": "Ala",
-            "anticodon": "UGC",
-            "codon": "GCA",
-            "trna_gcn": "2.0",
-            "wobble_codon": "GCA",
-            "wobble_rate": "0.0",
-        },
-        {
-            "amino_acid": "Arg",
-            "anticodon": "ICG",
-            "codon": "CGU",
-            "trna_gcn": "1.0",
-            "wobble_codon": "CGU",
-            "wobble_rate": "0.0",
-        },
-        {
-            "amino_acid": "Arg",
-            "anticodon": "GCG",
-            "codon": "CGC",
-            "trna_gcn": "2.0",
-            "wobble_codon": "CGC",
-            "wobble_rate": "0.0",
-        },
-        {
-            "amino_acid": "Arg",
-            "anticodon": "CCG",
-            "codon": "CGG",
-            "trna_gcn": "0.5",
-            "wobble_codon": "CGG",
-            "wobble_rate": "0.0",
-        },
-        {
-            "amino_acid": "Arg",
-            "anticodon": "UCG",
-            "codon": "CGA",
-            "trna_gcn": "0.8",
-            "wobble_codon": "CGA",
-            "wobble_rate": "0.0",
-        },
-        {
-            "amino_acid": "Arg",
-            "anticodon": "ICU",
-            "codon": "AGA",
-            "trna_gcn": "0.0",
-            "wobble_codon": "CGU",
-            "wobble_rate": "0.3",
-        },
-        {
-            "amino_acid": "Arg",
-            "anticodon": "GCU",
-            "codon": "AGG",
-            "trna_gcn": "0.0",
-            "wobble_codon": "CGC",
-            "wobble_rate": "0.3",
-        },
-        {
-            "amino_acid": "Asn",
-            "anticodon": "IGU",
-            "codon": "AAU",
-            "trna_gcn": "3.0",
-            "wobble_codon": "AAU",
-            "wobble_rate": "0.0",
-        },
-        {
-            "amino_acid": "Asn",
-            "anticodon": "GUU",
-            "codon": "AAC",
-            "trna_gcn": "4.0",
-            "wobble_codon": "AAC",
-            "wobble_rate": "0.0",
-        },
-        {
-            "amino_acid": "Asp",
-            "anticodon": "IGU",
-            "codon": "GAU",
-            "trna_gcn": "2.5",
-            "wobble_codon": "GAU",
-            "wobble_rate": "0.0",
-        },
-        {
-            "amino_acid": "Asp",
-            "anticodon": "GUC",
-            "codon": "GAC",
-            "trna_gcn": "3.5",
-            "wobble_codon": "GAC",
-            "wobble_rate": "0.0",
-        },
-        {
-            "amino_acid": "Cys",
-            "anticodon": "IGC",
-            "codon": "UGU",
-            "trna_gcn": "1.5",
-            "wobble_codon": "UGU",
-            "wobble_rate": "0.0",
-        },
-        {
-            "amino_acid": "Cys",
-            "anticodon": "GCA",
-            "codon": "UGC",
-            "trna_gcn": "2.5",
-            "wobble_codon": "UGC",
-            "wobble_rate": "0.0",
-        },
-        {
-            "amino_acid": "Gln",
-            "anticodon": "IUG",
-            "codon": "CAG",
-            "trna_gcn": "3.0",
-            "wobble_codon": "CAG",
-            "wobble_rate": "0.0",
-        },
-        {
-            "amino_acid": "Gln",
-            "anticodon": "CUG",
-            "codon": "CAA",
-            "trna_gcn": "2.0",
-            "wobble_codon": "CAA",
-            "wobble_rate": "0.0",
-        },
-        {
-            "amino_acid": "Glu",
-            "anticodon": "IUC",
-            "codon": "GAG",
-            "trna_gcn": "3.5",
-            "wobble_codon": "GAG",
-            "wobble_rate": "0.0",
-        },
-        {
-            "amino_acid": "Glu",
-            "anticodon": "CUC",
-            "codon": "GAA",
-            "trna_gcn": "2.5",
-            "wobble_codon": "GAA",
-            "wobble_rate": "0.0",
-        },
-        {
-            "amino_acid": "Gly",
-            "anticodon": "ICC",
-            "codon": "GGU",
-            "trna_gcn": "2.0",
-            "wobble_codon": "GGU",
-            "wobble_rate": "0.0",
-        },
-        {
-            "amino_acid": "Gly",
-            "anticodon": "GCC",
-            "codon": "GGC",
-            "trna_gcn": "3.0",
-            "wobble_codon": "GGC",
-            "wobble_rate": "0.0",
-        },
-        {
-            "amino_acid": "Gly",
-            "anticodon": "CCC",
-            "codon": "GGG",
-            "trna_gcn": "1.5",
-            "wobble_codon": "GGG",
-            "wobble_rate": "0.0",
-        },
-        {
-            "amino_acid": "Gly",
-            "anticodon": "UCC",
-            "codon": "GGA",
-            "trna_gcn": "2.5",
-            "wobble_codon": "GGA",
-            "wobble_rate": "0.0",
-        },
-        {
-            "amino_acid": "His",
-            "anticodon": "IGU",
-            "codon": "CAU",
-            "trna_gcn": "2.0",
-            "wobble_codon": "CAU",
-            "wobble_rate": "0.0",
-        },
-        {
-            "amino_acid": "His",
-            "anticodon": "GUG",
-            "codon": "CAC",
-            "trna_gcn": "3.0",
-            "wobble_codon": "CAC",
-            "wobble_rate": "0.0",
-        },
-        {
-            "amino_acid": "Ile",
-            "anticodon": "IAU",
-            "codon": "AUU",
-            "trna_gcn": "3.0",
-            "wobble_codon": "AUU",
-            "wobble_rate": "0.0",
-        },
-        {
-            "amino_acid": "Ile",
-            "anticodon": "GAU",
-            "codon": "AUC",
-            "trna_gcn": "4.0",
-            "wobble_codon": "AUC",
-            "wobble_rate": "0.0",
-        },
-        {
-            "amino_acid": "Ile",
-            "anticodon": "CAU",
-            "codon": "AUA",
-            "trna_gcn": "1.5",
-            "wobble_codon": "AUA",
-            "wobble_rate": "0.0",
-        },
-        {
-            "amino_acid": "Leu",
-            "anticodon": "IAG",
-            "codon": "CUG",
-            "trna_gcn": "4.0",
-            "wobble_codon": "CUG",
-            "wobble_rate": "0.0",
-        },
-        {
-            "amino_acid": "Leu",
-            "anticodon": "GAG",
-            "codon": "CUC",
-            "trna_gcn": "3.0",
-            "wobble_codon": "CUC",
-            "wobble_rate": "0.0",
-        },
-        {
-            "amino_acid": "Leu",
-            "anticodon": "CAG",
-            "codon": "CUU",
-            "trna_gcn": "2.0",
-            "wobble_codon": "CUU",
-            "wobble_rate": "0.0",
-        },
-        {
-            "amino_acid": "Leu",
-            "anticodon": "UAG",
-            "codon": "CUA",
-            "trna_gcn": "1.0",
-            "wobble_codon": "CUA",
-            "wobble_rate": "0.0",
-        },
-        {
-            "amino_acid": "Leu",
-            "anticodon": "IAA",
-            "codon": "UUG",
-            "trna_gcn": "2.5",
-            "wobble_codon": "UUG",
-            "wobble_rate": "0.0",
-        },
-        {
-            "amino_acid": "Leu",
-            "anticodon": "CAA",
-            "codon": "UUA",
-            "trna_gcn": "1.5",
-            "wobble_codon": "UUA",
-            "wobble_rate": "0.0",
-        },
-        {
-            "amino_acid": "Lys",
-            "anticodon": "IUU",
-            "codon": "AAG",
-            "trna_gcn": "3.5",
-            "wobble_codon": "AAG",
-            "wobble_rate": "0.0",
-        },
-        {
-            "amino_acid": "Lys",
-            "anticodon": "CUU",
-            "codon": "AAA",
-            "trna_gcn": "4.5",
-            "wobble_codon": "AAA",
-            "wobble_rate": "0.0",
-        },
-        {
-            "amino_acid": "Met",
-            "anticodon": "IAU",
-            "codon": "AUG",
-            "trna_gcn": "5.0",
-            "wobble_codon": "AUG",
-            "wobble_rate": "0.0",
-        },
-        {
-            "amino_acid": "Phe",
-            "anticodon": "IAA",
-            "codon": "UUU",
-            "trna_gcn": "3.0",
-            "wobble_codon": "UUU",
-            "wobble_rate": "0.0",
-        },
-        {
-            "amino_acid": "Phe",
-            "anticodon": "GAA",
-            "codon": "UUC",
-            "trna_gcn": "4.0",
-            "wobble_codon": "UUC",
-            "wobble_rate": "0.0",
-        },
-        {
-            "amino_acid": "Pro",
-            "anticodon": "IGG",
-            "codon": "CCU",
-            "trna_gcn": "2.0",
-            "wobble_codon": "CCU",
-            "wobble_rate": "0.0",
-        },
-        {
-            "amino_acid": "Pro",
-            "anticodon": "GGG",
-            "codon": "CCC",
-            "trna_gcn": "3.0",
-            "wobble_codon": "CCC",
-            "wobble_rate": "0.0",
-        },
-        {
-            "amino_acid": "Pro",
-            "anticodon": "CGG",
-            "codon": "CCG",
-            "trna_gcn": "1.5",
-            "wobble_codon": "CCG",
-            "wobble_rate": "0.0",
-        },
-        {
-            "amino_acid": "Pro",
-            "anticodon": "UGG",
-            "codon": "CCA",
-            "trna_gcn": "2.5",
-            "wobble_codon": "CCA",
-            "wobble_rate": "0.0",
-        },
-        {
-            "amino_acid": "Ser",
-            "anticodon": "IGA",
-            "codon": "UCU",
-            "trna_gcn": "2.5",
-            "wobble_codon": "UCU",
-            "wobble_rate": "0.0",
-        },
-        {
-            "amino_acid": "Ser",
-            "anticodon": "GGA",
-            "codon": "UCC",
-            "trna_gcn": "3.5",
-            "wobble_codon": "UCC",
-            "wobble_rate": "0.0",
-        },
-        {
-            "amino_acid": "Ser",
-            "anticodon": "CGA",
-            "codon": "UCG",
-            "trna_gcn": "1.5",
-            "wobble_codon": "UCG",
-            "wobble_rate": "0.0",
-        },
-        {
-            "amino_acid": "Ser",
-            "anticodon": "UGA",
-            "codon": "UCA",
-            "trna_gcn": "2.0",
-            "wobble_codon": "UCA",
-            "wobble_rate": "0.0",
-        },
-        {
-            "amino_acid": "Ser",
-            "anticodon": "ICU",
-            "codon": "AGU",
-            "trna_gcn": "0.0",
-            "wobble_codon": "UCU",
-            "wobble_rate": "0.3",
-        },
-        {
-            "amino_acid": "Ser",
-            "anticodon": "GCU",
-            "codon": "AGC",
-            "trna_gcn": "0.0",
-            "wobble_codon": "UCC",
-            "wobble_rate": "0.3",
-        },
-        {
-            "amino_acid": "Thr",
-            "anticodon": "IGU",
-            "codon": "ACU",
-            "trna_gcn": "2.5",
-            "wobble_codon": "ACU",
-            "wobble_rate": "0.0",
-        },
-        {
-            "amino_acid": "Thr",
-            "anticodon": "GGU",
-            "codon": "ACC",
-            "trna_gcn": "3.5",
-            "wobble_codon": "ACC",
-            "wobble_rate": "0.0",
-        },
-        {
-            "amino_acid": "Thr",
-            "anticodon": "CGU",
-            "codon": "ACG",
-            "trna_gcn": "1.5",
-            "wobble_codon": "ACG",
-            "wobble_rate": "0.0",
-        },
-        {
-            "amino_acid": "Thr",
-            "anticodon": "UGU",
-            "codon": "ACA",
-            "trna_gcn": "2.0",
-            "wobble_codon": "ACA",
-            "wobble_rate": "0.0",
-        },
-        {
-            "amino_acid": "Trp",
-            "anticodon": "ICA",
-            "codon": "UGG",
-            "trna_gcn": "4.0",
-            "wobble_codon": "UGG",
-            "wobble_rate": "0.0",
-        },
-        {
-            "amino_acid": "Tyr",
-            "anticodon": "IUA",
-            "codon": "UAU",
-            "trna_gcn": "2.5",
-            "wobble_codon": "UAU",
-            "wobble_rate": "0.0",
-        },
-        {
-            "amino_acid": "Tyr",
-            "anticodon": "GUA",
-            "codon": "UAC",
-            "trna_gcn": "3.5",
-            "wobble_codon": "UAC",
-            "wobble_rate": "0.0",
-        },
-        {
-            "amino_acid": "Val",
-            "anticodon": "IAC",
-            "codon": "GUU",
-            "trna_gcn": "3.0",
-            "wobble_codon": "GUU",
-            "wobble_rate": "0.0",
-        },
-        {
-            "amino_acid": "Val",
-            "anticodon": "GAC",
-            "codon": "GUC",
-            "trna_gcn": "4.0",
-            "wobble_codon": "GUC",
-            "wobble_rate": "0.0",
-        },
-        {
-            "amino_acid": "Val",
-            "anticodon": "CAC",
-            "codon": "GUG",
-            "trna_gcn": "2.0",
-            "wobble_codon": "GUG",
-            "wobble_rate": "0.0",
-        },
-        {
-            "amino_acid": "Val",
-            "anticodon": "UAC",
-            "codon": "GUA",
-            "trna_gcn": "2.5",
-            "wobble_codon": "GUA",
-            "wobble_rate": "0.0",
-        },
-    ]
-
-    result = process_raw_codon_table(raw_data)
+    result = process_raw_codon_table(raw_codon_table_data)
 
     assert isinstance(result, ProcessedCodonTable)
     assert "GCU" in result.indexed_rows
@@ -689,28 +197,174 @@ def test_compute_codon_table_speed_symbols_all_slow():
 
 def test_process_raw_codon_table_with_wobble():
     """Test processing codon table with wobble codons (GCN = 0)."""
-    raw_data = [
-        {
-            "amino_acid": "Arg",
-            "anticodon": "ICG",
-            "codon": "CGU",
-            "trna_gcn": "2.0",
-            "wobble_codon": "CGU",
-            "wobble_rate": "0.0",
-        },
-        {
-            "amino_acid": "Arg",
-            "anticodon": "ICU",
-            "codon": "AGU",
-            "trna_gcn": "0.0",  # This should be calculated via wobble
-            "wobble_codon": "CGU",
-            "wobble_rate": "0.3",
-        },
+    # Create a minimal dataset with wobble codons
+    # We need all 61 codons for the function to work properly
+    # Use simple amino acids with wobble cases
+    raw_data = []
+
+    # Add Ala codons (no wobble)
+    for codon in ["GCU", "GCC", "GCA", "GCG"]:
+        raw_data.append(
+            {
+                "amino_acid": "Ala",
+                "anticodon": "IGC",
+                "codon": codon,
+                "trna_gcn": "2.0",
+                "wobble_codon": codon,
+                "wobble_rate": "0.0",
+            }
+        )
+
+    # Add Arg codons with wobble (key test case)
+    raw_data.extend(
+        [
+            {
+                "amino_acid": "Arg",
+                "anticodon": "ICG",
+                "codon": "CGU",
+                "trna_gcn": "2.0",
+                "wobble_codon": "CGU",
+                "wobble_rate": "0.0",
+            },
+            {
+                "amino_acid": "Arg",
+                "anticodon": "GCG",
+                "codon": "CGC",
+                "trna_gcn": "3.0",
+                "wobble_codon": "CGC",
+                "wobble_rate": "0.0",
+            },
+            {
+                "amino_acid": "Arg",
+                "anticodon": "CCG",
+                "codon": "CGG",
+                "trna_gcn": "1.0",
+                "wobble_codon": "CGG",
+                "wobble_rate": "0.0",
+            },
+            {
+                "amino_acid": "Arg",
+                "anticodon": "UCG",
+                "codon": "CGA",
+                "trna_gcn": "1.5",
+                "wobble_codon": "CGA",
+                "wobble_rate": "0.0",
+            },
+            {
+                "amino_acid": "Arg",
+                "anticodon": "ICU",
+                "codon": "AGA",
+                "trna_gcn": "0.0",  # This should be calculated via wobble
+                "wobble_codon": "CGU",
+                "wobble_rate": "0.3",
+            },
+            {
+                "amino_acid": "Arg",
+                "anticodon": "GCU",
+                "codon": "AGG",
+                "trna_gcn": "0.0",  # This should be calculated via wobble
+                "wobble_codon": "CGC",
+                "wobble_rate": "0.4",
+            },
+        ]
+    )
+
+    # Fill in remaining codons to reach 61 total (using simple dummy data)
+    remaining_codons = [
+        ("Asn", "AAU"),
+        ("Asn", "AAC"),
+        ("Asp", "GAU"),
+        ("Asp", "GAC"),
+        ("Cys", "UGU"),
+        ("Cys", "UGC"),
+        ("Gln", "CAA"),
+        ("Gln", "CAG"),
+        ("Glu", "GAA"),
+        ("Glu", "GAG"),
+        ("Gly", "GGU"),
+        ("Gly", "GGC"),
+        ("Gly", "GGA"),
+        ("Gly", "GGG"),
+        ("His", "CAU"),
+        ("His", "CAC"),
+        ("Ile", "AUU"),
+        ("Ile", "AUC"),
+        ("Ile", "AUA"),
+        ("Leu", "UUA"),
+        ("Leu", "UUG"),
+        ("Leu", "CUU"),
+        ("Leu", "CUC"),
+        ("Leu", "CUA"),
+        ("Leu", "CUG"),
+        ("Lys", "AAA"),
+        ("Lys", "AAG"),
+        ("Met", "AUG"),
+        ("Phe", "UUU"),
+        ("Phe", "UUC"),
+        ("Pro", "CCU"),
+        ("Pro", "CCC"),
+        ("Pro", "CCA"),
+        ("Pro", "CCG"),
+        ("Ser", "UCU"),
+        ("Ser", "UCC"),
+        ("Ser", "UCA"),
+        ("Ser", "UCG"),
+        ("Ser", "AGU"),
+        ("Ser", "AGC"),
+        ("Thr", "ACU"),
+        ("Thr", "ACC"),
+        ("Thr", "ACA"),
+        ("Thr", "ACG"),
+        ("Trp", "UGG"),
+        ("Tyr", "UAU"),
+        ("Tyr", "UAC"),
+        ("Val", "GUU"),
+        ("Val", "GUC"),
+        ("Val", "GUA"),
+        ("Val", "GUG"),
     ]
 
-    # The function expects 61 codons, so we need to provide a complete set
-    # For testing, we'll check that wobble calculation works
-    # This is a simplified test
+    for aa, codon in remaining_codons:
+        raw_data.append(
+            {
+                "amino_acid": aa,
+                "anticodon": "XXX",
+                "codon": codon,
+                "trna_gcn": "2.0",
+                "wobble_codon": codon,
+                "wobble_rate": "0.0",
+            }
+        )
+
+    result = process_raw_codon_table(raw_data)
+
+    # Test that wobble codons were processed correctly
+    assert isinstance(result, ProcessedCodonTable)
+
+    # Check AGA codon (should wobble from CGU with rate 0.3)
+    # Expected GCN = 2.0 * (1 - 0.3) = 1.4
+    aga_row = result.get_row("AGA")
+    assert aga_row is not None
+    assert aga_row.amino_acid == "Arg"
+    assert abs(aga_row.trna_gcn - 1.4) < 0.001, (
+        f"Expected GCN 1.4, got {aga_row.trna_gcn}"
+    )
+
+    # Check AGG codon (should wobble from CGC with rate 0.4)
+    # Expected GCN = 3.0 * (1 - 0.4) = 1.8
+    agg_row = result.get_row("AGG")
+    assert agg_row is not None
+    assert agg_row.amino_acid == "Arg"
+    assert abs(agg_row.trna_gcn - 1.8) < 0.001, (
+        f"Expected GCN 1.8, got {agg_row.trna_gcn}"
+    )
+
+    # Verify the original codon CGU wasn't modified
+    cgu_row = result.get_row("CGU")
+    assert cgu_row.trna_gcn == 2.0
+
+    # Verify all 61 codons are present
+    assert len(result.indexed_rows) == 61
 
 
 def test_processed_codon_table_rank_calculation():
@@ -722,9 +376,9 @@ def test_processed_codon_table_rank_calculation():
 
         # Check all ranks are between 0 and 1
         for row in result.values():
-            assert (
-                0 <= row.rank <= 1
-            ), f"Rank {row.rank} for codon {row.codon} is out of range"
+            assert 0 <= row.rank <= 1, (
+                f"Rank {row.rank} for codon {row.codon} is out of range"
+            )
 
     finally:
         Path(temp_file_path).unlink()
@@ -741,9 +395,9 @@ def test_processed_codon_table_speed_sum():
         total_speed = sum(row.speed for row in result.values())
 
         # Should sum to approximately 1 (allowing for floating point errors and wobble rate adjustments)
-        assert (
-            abs(total_speed - 1.0) < 0.02
-        ), f"Speed sum {total_speed} is not close to 1"
+        assert abs(total_speed - 1.0) < 0.02, (
+            f"Speed sum {total_speed} is not close to 1"
+        )
 
     finally:
         Path(temp_file_path).unlink()
