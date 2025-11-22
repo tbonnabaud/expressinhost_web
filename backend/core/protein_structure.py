@@ -127,8 +127,11 @@ def extract_structure_infos(pdb_filename: str) -> StructureInfos | None:
 
         return StructureInfos(name=name, residue_list=residue_list)
 
-    except Exception as exc:
-        raise ExpressInHostError(str(exc))
+    except UserWarning as user_warning:
+        raise ExpressInHostError(str(user_warning))
+
+    except Exception:
+        raise ExpressInHostError("Unable to open the PDB file")
 
 
 def select_codon_from_table(

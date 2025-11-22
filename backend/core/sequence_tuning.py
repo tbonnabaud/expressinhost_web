@@ -481,9 +481,6 @@ class StructureTuner:
             tmp_pdb_file.write(self.pdb_content.encode())
             structure_infos = extract_structure_infos(tmp_pdb_file.name)
 
-        if structure_infos is None:
-            raise ExpressInHostError("Unable to open the PDB file.")
-
         input_aa_sequence = "".join(
             [residue.amino_acid for residue in structure_infos.residue_list]
         )
