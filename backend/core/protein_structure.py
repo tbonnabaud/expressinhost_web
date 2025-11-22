@@ -8,7 +8,6 @@ import numpy as np
 from Bio.PDB import DSSP, PDBParser, ShrakeRupley
 from Bio.Seq import Seq
 
-from ..logger import logger
 from .codon_tables import ProcessedCodonTable, process_codon_table_from_file
 from .exceptions import ExpressInHostError
 
