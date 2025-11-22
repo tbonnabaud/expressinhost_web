@@ -123,7 +123,7 @@ def test_check_amino_acido_conservation_partial_sequence():
     nucleotide_record = SeqRecord(Seq(nucleotide_seq), id="test1")
 
     # Processed sequence with additional codons after stop (should be ignored)
-    processed_nucleotide = "AUGAGAUGGUAAAAAAA"
+    processed_nucleotide = "AUGAGAUGGUAAAAAAAG"
 
     result = check_amino_acido_conservation(nucleotide_record, processed_nucleotide)
     assert result is True
