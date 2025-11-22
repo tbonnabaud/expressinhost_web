@@ -9,11 +9,21 @@ services:
       - expressinhost-volume:/var/lib/postgresql/data
     env_file:
       - .env.compose
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   broker:
     image: redis
     ports:
       - 6379:6379
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
 
   web:
     image: expressinhostweb
@@ -25,8 +35,10 @@ services:
     env_file:
       - .env.compose
     depends_on:
-      - db
-      - broker
+      db:
+        condition: service_healthy
+      broker:
+        condition: service_healthy
     # restart: always
 
 volumes:
