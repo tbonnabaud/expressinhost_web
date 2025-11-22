@@ -40,8 +40,24 @@ def parse_sequences(
     raw_content: str, format: Literal["fasta", "clustal"]
 ) -> list[SeqRecord]:
     try:
-        return [record for record in SeqIO.parse(StringIO(raw_content), format)]
+        records = [record for record in SeqIO.parse(StringIO(raw_content), format)]
 
+        # If no records were parsed, the format is likely invalid
+        if not records:
+            if format == "clustal":
+                raise ClustalFormatError(
+                    "Fail to parse file. Ensure header start with CLUSTAL and file is correctly formatted."
+                )
+            else:
+                raise FastaFormatError(
+                    "Fail to parse file. Ensure file is correctly formatted."
+                )
+
+        return records
+
+    except (FastaFormatError, ClustalFormatError):
+        # Re-raise our custom exceptions
+        raise
     except Exception:
         if format == "clustal":
             raise ClustalFormatError(
