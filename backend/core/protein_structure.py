@@ -1,5 +1,6 @@
 import os
 import random
+import warnings
 from dataclasses import dataclass
 from typing import Iterable
 
@@ -7,7 +8,9 @@ import numpy as np
 from Bio.PDB import DSSP, PDBParser, ShrakeRupley
 from Bio.Seq import Seq
 
+from ..logger import logger
 from .codon_tables import ProcessedCodonTable, process_codon_table_from_file
+from .exceptions import ExpressInHostError
 
 AMINO_ACID_LETTER_MAPPING = {
     "G": "Gly",
@@ -80,13 +83,17 @@ def extract_structure_infos(pdb_filename: str) -> StructureInfos | None:
     (solvent accessibility surface area) and RSA (relative SASA).
     """
     try:
-        parser = PDBParser()
-        structure = parser.get_structure("protein", pdb_filename)
-        name = parser.get_header().get("name")
-        model = structure[0]
+        # Use a context manager to capture warnings
+        with warnings.catch_warnings():
+            # Treat UserWarnings as errors to handle DSSP parsing issues (e.g., malformed PDB)
+            warnings.simplefilter("error", UserWarning)
+            parser = PDBParser()
+            structure = parser.get_structure("protein", pdb_filename)
+            name = parser.get_header().get("name")
+            model = structure[0]
 
-        # DSSP for secondary structure
-        dssp = DSSP(model, pdb_filename)
+            # DSSP for secondary structure
+            dssp = DSSP(model, pdb_filename)
 
         # SASA values extraction
         sr = ShrakeRupley()
@@ -121,9 +128,8 @@ def extract_structure_infos(pdb_filename: str) -> StructureInfos | None:
 
         return StructureInfos(name=name, residue_list=residue_list)
 
-    except Exception as e:
-        print(f"Error processing {pdb_filename}: {str(e)}")
-        return None
+    except Exception as exc:
+        raise ExpressInHostError(str(exc))
 
 
 def select_codon_from_table(
