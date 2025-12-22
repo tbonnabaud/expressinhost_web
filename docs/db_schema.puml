@@ -1,0 +1,90 @@
+@startuml db_schema
+skinparam linetype ortho
+skinparam dpi 200
+
+left to right direction
+
+entity User {
+    * id: uuid <<PK>>
+    --
+    * creation_date: datetime
+    * email: varchar
+    * hashed_password: varchar
+    * role: varchar
+    * full_name: varchar
+    * contact_consent: boolean
+}
+
+entity LastWebScraping {
+    * source: varchar <<PK>>
+    * release: varchar <<PK>>
+    --
+    * scraping_date: datetime
+}
+
+entity CodonTable {
+    * id: uuid <<PK>>
+    --
+    user_id: uuid <<FK>>
+    * creation_date: datetime
+    * name: varchar
+    * organism: varchar
+    source: varchar
+}
+
+entity CodonTranslation {
+    * codon_table_id: uuid <<PK, FK>>
+    * codon: char(3) <<PK>>
+    --
+    * anticodon: char(3)
+    * amino_acid: char(3)
+    * trna_gcn: float
+    * wobble_codon: char(3)
+    * wobble_rate: float
+}
+
+entity Result {
+    * id: uuid <<PK>>
+    --
+    user_id: uuid <<FK>>
+    * creation_date: datetime
+    * name: varchar
+    * host_codon_table_id: uuid <<FK>>
+    * sequences_native_codon_tables: jsonb
+    * mode: varchar
+    slow_speed_threshold: float
+    conservation_threshold: float
+    five_prime_region_tuning: jsonb
+}
+
+entity TunedSequence {
+    * id: uuid <<PK>>
+    --
+    * result_id: uuid <<FK>>
+    * name: varchar
+    * input: text
+    * output: text
+    * identity_percentage: float
+    * input_profiles: jsonb
+    * output_profiles: jsonb
+}
+
+entity RunInfo {
+    * id: uuid <<PK>>
+    --
+    * creation_date: datetime
+    * duration: interval
+    * sequence_number: int
+    * mode: varchar
+    slow_speed_threshold: float
+    conservation_threshold: float
+    five_prime_region_tuning_mode: varchar
+}
+
+User |o--o{ CodonTable
+CodonTable ||--|{ CodonTranslation
+User ||--o{ Result
+CodonTable ||--o{ Result
+Result ||--|{ TunedSequence
+
+@enduml

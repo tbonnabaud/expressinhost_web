@@ -1,0 +1,13 @@
+.vscode
+.venv
+venv
+.conda
+output
+tmp
+dist
+.env
+.env.compose
+*.pyc
+*.log
+*.log.*
+.coverage

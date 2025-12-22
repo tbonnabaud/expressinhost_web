@@ -1,0 +1,57 @@
+@import '@picocss/pico/css/pico.css';
+@import 'material-icons/iconfont/material-icons.css';
+@import './sequences.css';
+
+:root {
+  --pico-font-size: 100%;
+}
+
+@media (min-width: 1024px) {
+  .container {
+    padding-left: 12em;
+    padding-right: 12em;
+  }
+}
+
+.flex-container {
+  display: flex;
+}
+
+.centered {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.danger {
+  background-color: #ce3838;
+  border-color: #ce3838;
+  transition: all 0.2s ease;
+}
+
+.danger:hover {
+  filter: brightness(120%);
+}
+
+span.question-marks {
+  border: 2px solid salmon;
+  border-radius: 50%;
+  font-size: 1rem;
+}
+
+.input-range {
+  text-align: center;
+  width: 100%;
+}
+
+.input-range input {
+  width: 90%;
+  margin-bottom: 1em;
+}
+
+@media (prefers-color-scheme: dark) {
+  .danger {
+    background-color: #ad1f1f;
+    border-color: #ad1f1f;
+  }
+}

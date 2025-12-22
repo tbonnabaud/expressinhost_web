@@ -1,0 +1,37 @@
+# Ignore Python cache files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.coverage
+
+# Ignore virtual environment directories
+venv/
+env/
+.venv/
+
+# Ignore log files
+*.log
+*.log.*
+
+# Ignore Node.js dependencies and build artifacts
+node_modules/
+npm-debug.log
+yarn-error.log
+dist/
+build/
+
+# Ignore local configuration files
+*.env
+*.env.compose
+*.local
+
+# Ignore IDE/editor specific files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Ignore OS generated files
+.DS_Store
+Thumbs.db

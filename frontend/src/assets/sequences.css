@@ -1,0 +1,32 @@
+.input-sequence > .modified-codon {
+  background-color: #e69f00;
+  z-index: 1;
+}
+
+.output-sequence > .modified-codon {
+  background-color: #56b4e9;
+}
+
+@media (prefers-color-scheme: dark) {
+  .input-sequence > .modified-codon {
+    background-color: #d55e00;
+    z-index: 1;
+  }
+
+  .output-sequence > .modified-codon {
+    background-color: #0072b2;
+  }
+}
+
+.codon {
+  margin-right: 0.3em;
+}
+
+.codon:hover {
+  opacity: 0.8;
+}
+
+.codon[data-tooltip] {
+  cursor: default;
+  border-bottom: none;
+}

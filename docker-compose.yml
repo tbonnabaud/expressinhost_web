@@ -1,0 +1,45 @@
+# version: '3.4'
+
+services:
+  db:
+    image: postgres:17
+    ports:
+      - 5432:5432
+    volumes:
+      - expressinhost-volume:/var/lib/postgresql/data
+    env_file:
+      - .env.compose
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  broker:
+    image: redis:7
+    ports:
+      - 6379:6379
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  web:
+    image: expressinhostweb
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    ports:
+      - 8000:8000
+    env_file:
+      - .env.compose
+    depends_on:
+      db:
+        condition: service_healthy
+      broker:
+        condition: service_healthy
+    # restart: always
+
+volumes:
+  expressinhost-volume:
