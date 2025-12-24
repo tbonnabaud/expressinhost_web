@@ -3,7 +3,6 @@ import type {
   RunTrainingForm,
   UserForm,
   UserLogin,
-  Token,
   CodonTableForm,
   UserPasswordForm,
   UserProfileForm,
@@ -22,6 +21,7 @@ type ApiResponse<T> = [T, null] | [null, ApiError]
 
 const client = axios.create({
   baseURL: '/api',
+  withCredentials: true, // Enable sending cookies with requests
 })
 
 // Interceptor to unify error handling
@@ -31,7 +31,7 @@ client.interceptors.response.use(
     if (axios.isAxiosError(error) && error.response) {
       if (error.response.status == 401) {
         console.warn(error.message, error.response.data)
-        localStorage.removeItem('accessToken')
+        // Cookie is cleared by server, just clear user state
         store.emptyCurrentUser()
       } else {
         console.error(error.message, error.response.data)
@@ -52,21 +52,6 @@ client.interceptors.response.use(
   },
 )
 
-// Interceptor to add access token if exists
-client.interceptors.request.use(
-  request => {
-    const accessToken = localStorage.getItem('accessToken')
-    if (accessToken) {
-      request.headers['Authorization'] = `Bearer ${accessToken}`
-    }
-    return request
-  },
-  error => {
-    console.error(error)
-    return Promise.reject(error)
-  },
-)
-
 async function makeRequest(config: AxiosRequestConfig) {
   try {
     const response = await client.request(config)
@@ -76,23 +61,30 @@ async function makeRequest(config: AxiosRequestConfig) {
   }
 }
 
-async function postForm(url: string, form: UserLogin) {
-  try {
-    const response = await client.postForm(url, form)
-    return [response.data, null] as [Token, null]
-  } catch (error) {
-    return [null, error] as [null, ApiError]
-  }
-}
-
 async function login(form: UserLogin) {
-  const [data, error] = await postForm('/auth/token', form)
+  // Submit traditional form to allow browser to follow redirect and set cookie
+  const formElement = document.createElement('form')
+  formElement.method = 'POST'
+  formElement.action = '/api/auth/token'
 
-  if (!error && data) {
-    localStorage.setItem('accessToken', data.access_token)
-  }
+  const usernameInput = document.createElement('input')
+  usernameInput.type = 'hidden'
+  usernameInput.name = 'username'
+  usernameInput.value = form.username
 
-  return error
+  const passwordInput = document.createElement('input')
+  passwordInput.type = 'hidden'
+  passwordInput.name = 'password'
+  passwordInput.value = form.password
+
+  formElement.appendChild(usernameInput)
+  formElement.appendChild(passwordInput)
+
+  document.body.appendChild(formElement)
+  formElement.submit()
+
+  // Form submission causes page reload, so this never returns
+  return null
 }
 
 const REQUESTS = {
@@ -107,8 +99,16 @@ const REQUESTS = {
 
 const auth = {
   login: async (form: UserLogin) => await login(form),
-  logout: () => localStorage.removeItem('accessToken'),
-  isLoggedIn: () => localStorage.getItem('accessToken') !== null,
+  logout: async () => {
+    await REQUESTS.post('/auth/logout')
+    store.emptyCurrentUser()
+  },
+  isLoggedIn: async () => {
+    // Can't check httpOnly cookie from JavaScript
+    // Instead, try to get current user to verify authentication
+    const [, error] = await REQUESTS.get('/users/me')
+    return error === null
+  },
   sendResetPasswordLink: async (email: string) =>
     await REQUESTS.get('/auth/password-forgotten', { user_email: email }),
 }

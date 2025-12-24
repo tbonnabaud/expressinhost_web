@@ -3,19 +3,54 @@ from typing import Annotated
 
 import bcrypt
 import jwt
-from fastapi import Depends, status
+from fastapi import Depends, Request, status
 from fastapi.exceptions import HTTPException
-from fastapi.security import OAuth2PasswordBearer
 
 from .crud.users import User, UserRepository
 from .database import Session, SessionDependency
 from .settings import settings
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/token")
-optional_oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/token", auto_error=False)
 
-TokenDependency = Annotated[str, Depends(oauth2_scheme)]
-OptionalTokenDependency = Annotated[str | None, Depends(optional_oauth2_scheme)]
+def oauth2_cookie_scheme(request: Request, auto_error: bool = True) -> str | None:
+    """
+    Extract JWT token from httpOnly cookie instead of Authorization header.
+
+    Args:
+        request: FastAPI Request object
+        auto_error: If True, raise 401 when cookie is missing. If False, return None.
+
+    Returns:
+        JWT token string or None
+
+    Raises:
+        HTTPException: 401 if cookie missing and auto_error=True
+    """
+    token = request.cookies.get("access_token")
+
+    if not token and auto_error:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Not authenticated",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+    return token
+
+
+def oauth2_scheme_dependency(request: Request) -> str:
+    """Dependency that extracts token from cookie and raises error if missing."""
+    return oauth2_cookie_scheme(request, auto_error=True)
+
+
+def optional_oauth2_scheme_dependency(request: Request) -> str | None:
+    """Dependency that extracts token from cookie but allows missing token."""
+    return oauth2_cookie_scheme(request, auto_error=False)
+
+
+TokenDependency = Annotated[str, Depends(oauth2_scheme_dependency)]
+OptionalTokenDependency = Annotated[
+    str | None, Depends(optional_oauth2_scheme_dependency)
+]
 
 
 def hash_password(password: str) -> str:

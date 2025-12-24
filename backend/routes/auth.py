@@ -1,15 +1,16 @@
 from datetime import timedelta
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, Request
+from fastapi import APIRouter, Depends, Request, Response
 from fastapi.exceptions import HTTPException
+from fastapi.responses import RedirectResponse
 from fastapi.security import OAuth2PasswordRequestForm
 
 from ..authentication import check_password, create_token
 from ..crud.users import UserRepository
 from ..database import SessionDependency
 from ..email_service import send_email
-from ..schemas import Token
+from ..settings import settings
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 
@@ -31,7 +32,38 @@ def get_access_token(
         data={"sub": user.email}, expires_delta=ACCESS_TOKEN_EXPIRE_DELTA
     )
 
-    return Token(access_token=access_token, token_type="bearer")
+    # Create redirect response to home page
+    response = RedirectResponse(url="/", status_code=302)
+
+    # Set httpOnly cookie with JWT token
+    response.set_cookie(
+        key="access_token",
+        value=access_token,
+        httponly=True,
+        secure=settings.COOKIE_SECURE,
+        samesite="lax",
+        max_age=43200,  # 12 hours in seconds (matches ACCESS_TOKEN_EXPIRE_DELTA)
+        path="/",
+    )
+
+    return response
+
+
+@router.post("/logout")
+def logout():
+    """
+    Logout endpoint that clears the authentication cookie.
+
+    Returns:
+        Response with deleted cookie
+    """
+    response = Response(status_code=200)
+    response.delete_cookie(
+        key="access_token",
+        path="/",
+        samesite="lax",
+    )
+    return response
 
 
 @router.get("/password-forgotten")
