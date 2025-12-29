@@ -10,6 +10,8 @@ class Settings(BaseSettings):
     # openssl rand -hex 32
     JWT_SECRET_KEY: str
     JWT_ALGORITHM: str = "HS256"
+    # Cookie security: set to False in development, True in production
+    COOKIE_SECURE: bool = True
     # No reply e-mail to send password reset link
     MAIL_SERVER: str | None = None
     MAIL_PORT: int = 465

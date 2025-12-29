@@ -2,7 +2,7 @@ from uuid import UUID
 
 from fastapi import APIRouter
 
-from ..authentication import TokenDependency, get_current_user
+from ..authentication import JWTDependency
 from ..crud.results import ResultRepository
 from ..database import SessionDependency, SessionWithCommitDependency
 from ..schemas import Result
@@ -14,43 +14,31 @@ router = APIRouter(tags=["Results"])
 @router.get("/users/me/results", response_model=list[Result])
 def list_user_results(
     session: SessionDependency,
-    token: TokenDependency,
+    jwt: JWTDependency,
     filter_params: FilterParamDependency,
 ):
-    current_user = get_current_user(session, token)
-
     return ResultRepository(session).list_from_user(
-        current_user.id, filter_params.offset, filter_params.limit
+        jwt.sub, filter_params.offset, filter_params.limit
     )
 
 
 @router.get("/users/me/results/count", response_model=int)
-def count_user_results(session: SessionDependency, token: TokenDependency):
-    current_user = get_current_user(session, token)
-
-    return ResultRepository(session).count_from_user(current_user.id)
+def count_user_results(session: SessionDependency, jwt: JWTDependency):
+    return ResultRepository(session).count_from_user(jwt.sub)
 
 
 @router.get("/users/me/results/{result_id}", response_model=Result)
-def get_user_result(
-    session: SessionDependency, token: TokenDependency, result_id: UUID
-):
-    current_user = get_current_user(session, token)
-
-    return ResultRepository(session).get(current_user.id, result_id)
+def get_user_result(session: SessionDependency, jwt: JWTDependency, result_id: UUID):
+    return ResultRepository(session).get(jwt.sub, result_id)
 
 
 @router.delete("/users/me/results/{result_id}")
 def delete_user_result(
-    session: SessionWithCommitDependency, token: TokenDependency, result_id: UUID
+    session: SessionWithCommitDependency, jwt: JWTDependency, result_id: UUID
 ):
-    current_user = get_current_user(session, token)
-
-    return ResultRepository(session).delete(current_user.id, result_id)
+    return ResultRepository(session).delete(jwt.sub, result_id)
 
 
 @router.delete("/users/me/results")
-def delete_user_results(session: SessionWithCommitDependency, token: TokenDependency):
-    current_user = get_current_user(session, token)
-
-    return ResultRepository(session).delete_all(current_user.id)
+def delete_user_results(session: SessionWithCommitDependency, jwt: JWTDependency):
+    return ResultRepository(session).delete_all(jwt.sub)

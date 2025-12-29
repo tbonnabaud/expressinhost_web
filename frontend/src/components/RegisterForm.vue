@@ -25,10 +25,9 @@ watch(
 )
 
 async function handleSubmit() {
-  const [data, error] = await API.users.register(form)
+  const [, error] = await API.users.register(form)
 
   if (!error) {
-    console.log(data)
     // Redirect to home
     router.push('/')
   } else if (error.code == 409) {
@@ -40,19 +39,16 @@ async function handleSubmit() {
 <template>
   <form @submit.prevent="handleSubmit">
     <fieldset>
-      <label
-        >Full name
+      <label>Full name
         <input type="text" v-model="form.full_name" required />
       </label>
 
-      <label
-        >Email
+      <label>Email
         <input type="email" v-model="form.email" required />
       </label>
 
       <WithAlertError :error="passwordError">
-        <label
-          >Password
+        <label>Password
           <i id="passwordIndications">
             (between 8 and 20 characters, with at least one letter and one
             number)

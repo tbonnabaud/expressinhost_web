@@ -1,13 +1,11 @@
 <script setup lang="ts">
-import { RouterLink, useRouter } from 'vue-router'
+import { RouterLink } from 'vue-router'
 import BaseModal from './BaseModal.vue'
 import { reactive, useTemplateRef } from 'vue'
-import { API, setCurrentUserInStore } from '@/lib/api'
+import { API } from '@/lib/api'
 
 defineProps<{ open: boolean }>()
 const emit = defineEmits(['close'])
-
-const router = useRouter()
 
 const form = reactive({
   username: '',
@@ -17,15 +15,11 @@ const formRef = useTemplateRef('login-form')
 
 async function handleSubmit() {
   if (formRef.value?.checkValidity()) {
-    const error = await API.auth.login(form)
-    if (error === null) {
-      await setCurrentUserInStore()
-      emit('close')
-      // Redirect to home
-      router.push('/')
-    } else if (error.code === 400) {
-      alert(error.detail)
-    }
+    // Login submits a traditional form that causes page reload
+    // The server will set cookie and redirect to home page
+    await API.auth.login(form)
+    // Note: If we reach here, login failed (otherwise page would have reloaded)
+    // Error handling is done via server redirect or page reload
   } else {
     formRef.value?.reportValidity()
   }

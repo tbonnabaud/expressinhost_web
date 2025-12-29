@@ -11,7 +11,7 @@ const openLoginForm = ref(false)
 const openMenu = ref(window.innerWidth > 768)
 
 onMounted(async () => {
-  API.auth.isLoggedIn()
+  // Try to load user from cookie-based authentication
   await setCurrentUserInStore()
   window.addEventListener('resize', handleResize)
 })
@@ -24,9 +24,8 @@ function handleResize() {
   openMenu.value = window.innerWidth > 768
 }
 
-function logout() {
-  API.auth.logout()
-  store.emptyCurrentUser()
+async function logout() {
+  await API.auth.logout()
   router.push('/')
 }
 </script>
