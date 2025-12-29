@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from ..authentication import OptionalTokenDependency, get_current_user
+from ..authentication import OptionalJWTDependency
 from ..core.postprocessing import compute_similarity
 from ..core.sequence_tuning import get_sequence_profiles
 from ..crud.codon_tables import CodonTableRepository
@@ -15,10 +15,10 @@ router = APIRouter(tags=["Sequence comparator"])
 @router.post("/compare-sequences", response_model=TunedSequence)
 def compare_sequences(
     session: SessionDependency,
-    token: OptionalTokenDependency,
+    jwt: OptionalJWTDependency,
     form: SequenceComparatorForm,
 ):
-    current_user_id = get_current_user(session, token).id if token else None
+    current_user_id = jwt and jwt.sub
     codon_table_meta = CodonTableRepository(session).get(
         current_user_id, form.host_codon_table_id
     )

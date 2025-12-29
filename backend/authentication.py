@@ -1,56 +1,33 @@
+from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
 from typing import Annotated
+from uuid import UUID, uuid4
 
 import bcrypt
 import jwt
-from fastapi import Depends, Request, status
+from fastapi import Cookie, Depends, status
 from fastapi.exceptions import HTTPException
 
-from .crud.users import User, UserRepository
-from .database import Session, SessionDependency
+from .redis_client import redis_client
 from .settings import settings
 
 
-def oauth2_cookie_scheme(request: Request, auto_error: bool = True) -> str | None:
+@dataclass
+class JWTPayload:
     """
-    Extract JWT token from httpOnly cookie instead of Authorization header.
+    Dataclass representing the JWT token payload structure.
 
-    Args:
-        request: FastAPI Request object
-        auto_error: If True, raise 401 when cookie is missing. If False, return None.
-
-    Returns:
-        JWT token string or None
-
-    Raises:
-        HTTPException: 401 if cookie missing and auto_error=True
+    Attributes:
+        sub: User ID (subject)
+        role: User's role (e.g., 'admin', 'member')
+        exp: Token expiration timestamp
+        for_reset: Optional flag indicating if token is for password reset
     """
-    token = request.cookies.get("access_token")
 
-    if not token and auto_error:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Not authenticated",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
-
-    return token
-
-
-def oauth2_scheme_dependency(request: Request) -> str:
-    """Dependency that extracts token from cookie and raises error if missing."""
-    return oauth2_cookie_scheme(request, auto_error=True)
-
-
-def optional_oauth2_scheme_dependency(request: Request) -> str | None:
-    """Dependency that extracts token from cookie but allows missing token."""
-    return oauth2_cookie_scheme(request, auto_error=False)
-
-
-TokenDependency = Annotated[str, Depends(oauth2_scheme_dependency)]
-OptionalTokenDependency = Annotated[
-    str | None, Depends(optional_oauth2_scheme_dependency)
-]
+    sub: UUID
+    role: str
+    exp: datetime
+    for_reset: bool = False
 
 
 def hash_password(password: str) -> str:
@@ -69,40 +46,44 @@ def check_password(password: str, hashed_password: str) -> bool:
     return bcrypt.checkpw(password.encode(), hashed_password.encode())
 
 
-def create_token(data: dict, expires_delta: timedelta | None = None) -> str:
+# Access token
+def create_access_token(
+    user_id: UUID,
+    user_role: str,
+    expires_delta: timedelta,
+    for_reset: bool = False,
+) -> str:
     """
-    The `create_token` function generates a JWT token with optional expiration time.
+    The `create_access_token` function generates a JWT token with the specified expiration time.
 
     Args:
-        data (dict): The `data` parameter is a dictionary containing the information that you want to
-        encode into the token. This information could include user details, permissions, or any other
-        data that needs to be included in the token.
-
-        expires_delta (timedelta | None): The `expires_delta` parameter is used to specify the duration
-        for which the token will be valid. If a value is provided for `expires_delta`, the token
-        will expire after that duration. Default is 15 minutes.
+        user_id (UUID): The user's unique identifier (stored as 'sub' in the token).
+        user_role (str): The user's role (e.g., 'admin', 'member').
+        expires_delta (timedelta): The duration for which the token will be valid.
+        for_reset (bool): Whether this token is for password reset. Defaults to False.
 
     Returns:
-        str: The function `create_token` returns a string which is the encoded JSON Web Token (JWT)
-        containing the data provided along with an expiration time.
+        str: The encoded JSON Web Token (JWT) containing the user information and expiration time.
     """
-    to_encode = data.copy()
+    payload = {
+        "sub": str(user_id),
+        "role": user_role,
+    }
 
-    if expires_delta:
-        expire = datetime.now(timezone.utc) + expires_delta
+    if for_reset:
+        payload["for_reset"] = True
 
-    else:
-        expire = datetime.now(timezone.utc) + timedelta(minutes=15)
+    expire = datetime.now(timezone.utc) + expires_delta
 
-    to_encode.update({"exp": expire})
+    payload["exp"] = expire
     encoded_jwt = jwt.encode(
-        to_encode, settings.JWT_SECRET_KEY, algorithm=settings.JWT_ALGORITHM
+        payload, settings.JWT_SECRET_KEY, algorithm=settings.JWT_ALGORITHM
     )
 
     return encoded_jwt
 
 
-def decode_access_token(token: str) -> dict:
+def decode_access_token(token: str) -> JWTPayload:
     """
     The function `decode_access_token` decodes a JWT access token using a secret key and algorithm
     specified in the settings.
@@ -114,73 +95,114 @@ def decode_access_token(token: str) -> dict:
         HTTPException: Error 401 Unauthorized.
 
     Returns:
-        dict: A dictionary containing the decoded information from the access token
+        JWTPayload: A dataclass containing the decoded information from the access token
     """
     try:
-        return jwt.decode(
+        payload: dict = jwt.decode(
             token, settings.JWT_SECRET_KEY, algorithms=[settings.JWT_ALGORITHM]
+        )
+        return JWTPayload(
+            sub=UUID(payload["sub"]),
+            role=payload["role"],
+            exp=datetime.fromtimestamp(payload["exp"], tz=timezone.utc),
+            for_reset=payload.get("for_reset", False),
+        )
+
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Token has expired",
         )
 
     except jwt.InvalidTokenError:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid authentication credentials",
-            headers={"WWW-Authenticate": "Bearer"},
         )
 
 
-def get_current_user(
-    session: Session, token: str, check_for_reset: bool = False
-) -> User:
+# Refresh token
+def create_refresh_token(user_id: UUID, expires_delta: timedelta) -> str:
     """
-    The function `get_current_user` retrieves the current user based on the provided access token and
-    session, handling authentication errors if necessary.
+    Create a refresh token (UUID) and store it in Redis with the user's ID.
+
+    Args:
+        user_id: The user's ID
+        expires_delta: Time delta for token expiration
+
+    Returns:
+        str: The generated refresh token (UUID)
     """
-    payload = decode_access_token(token)
-    email: str | None = payload.get("sub")
-    for_reset: bool | None = payload.get("for_reset")
-
-    if email and (check_for_reset and for_reset or not check_for_reset):
-        user = UserRepository(session).get_by_email(email)
-
-        if user:
-            return user
-
-    raise HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Invalid authentication credentials",
-        headers={"WWW-Authenticate": "Bearer"},
+    refresh_token = str(uuid4())
+    # Store in Redis with user_id as value and expiration time
+    redis_client.setex(
+        f"refresh_token:{refresh_token}",
+        int(expires_delta.total_seconds()),
+        str(user_id),
     )
+    return refresh_token
 
 
-def check_is_member(session: SessionDependency, token: TokenDependency) -> bool:
-    user = get_current_user(session, token)
+def verify_refresh_token(refresh_token: str) -> UUID | None:
+    """
+    Verify a refresh token and return the associated user ID.
 
-    if user is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="User not found",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
+    Args:
+        refresh_token: The refresh token to verify
 
-    return True
+    Returns:
+        UUID | None: The user's ID if token is valid, None otherwise
+    """
+    user_id = redis_client.get(f"refresh_token:{refresh_token}")
+
+    if user_id:
+        return UUID(user_id)
+
+    return None
 
 
-def check_is_admin(session: SessionDependency, token: TokenDependency) -> bool:
-    user = get_current_user(session, token)
+def revoke_refresh_token(refresh_token: str) -> None:
+    """
+    Revoke a refresh token by deleting it from Redis.
 
-    if user is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="User not found",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
+    Args:
+        refresh_token: The refresh token to revoke
+    """
+    redis_client.delete(f"refresh_token:{refresh_token}")
 
-    elif user.role != "admin":
+
+# Dependencies
+def extract_jwt_payload(
+    access_token: Annotated[str | None, Cookie()] = None,
+) -> JWTPayload:
+    print("coucou")
+    if access_token is None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Not admin",
-            headers={"WWW-Authenticate": "Bearer"},
+            detail="Access token missing",
         )
+
+    return decode_access_token(access_token)
+
+
+def extract_optional_jwt_payload(
+    access_token: Annotated[str | None, Cookie()] = None,
+) -> JWTPayload | None:
+    if access_token is None:
+        return None
+
+    return decode_access_token(access_token)
+
+
+# Aliases
+JWTDependency = Annotated[JWTPayload, Depends(extract_jwt_payload)]
+OptionalJWTDependency = Annotated[
+    JWTPayload | None, Depends(extract_optional_jwt_payload)
+]
+
+
+def check_is_admin(jwt: JWTDependency) -> bool:
+    if jwt.role != "admin":
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Not admin")
 
     return True

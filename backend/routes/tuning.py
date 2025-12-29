@@ -8,7 +8,7 @@ from fastapi.exceptions import HTTPException
 from fastapi.responses import StreamingResponse
 from rq import get_current_job
 
-from ..authentication import OptionalTokenDependency, check_is_member, get_current_user
+from ..authentication import JWTDependency, OptionalJWTDependency
 from ..core.codon_tables import ProcessedCodonTable, process_raw_codon_table
 from ..core.exceptions import ExpressInHostError
 from ..core.sequence_tuning import SequenceTuner, StructureTuner
@@ -17,6 +17,7 @@ from ..crud.codon_translations import CodonTranslationRepository
 from ..crud.results import ResultRepository
 from ..crud.run_infos import RunInfoRepository
 from ..crud.tuned_sequences import TunedSequenceRepository
+from ..crud.users import UserRepository
 from ..database import Session, context_get_session, context_get_session_with_commit
 from ..email_service import send_email
 from ..job_manager import (
@@ -79,7 +80,7 @@ def get_processed_tables(
     return native_codon_tables, host_codon_table
 
 
-def tune_sequences(token: OptionalTokenDependency, base_url: str, form: RunTuningForm):
+def tune_sequences(jwt: OptionalJWTDependency, base_url: str, form: RunTuningForm):
     job = get_current_job()
 
     # Extract native codon table IDs of the form
@@ -101,10 +102,8 @@ def tune_sequences(token: OptionalTokenDependency, base_url: str, form: RunTunin
 
     try:
         with context_get_session() as session:
-            # Get user if token
-            user = get_current_user(session, token) if token else None
-
-            if user is None and isinstance(
+            # Fine-tuning mode only accessible for connected user
+            if jwt is None and isinstance(
                 form.five_prime_region_tuning, FineTuningMode
             ):
                 form.five_prime_region_tuning = None
@@ -211,7 +210,8 @@ def tune_sequences(token: OptionalTokenDependency, base_url: str, form: RunTunin
                 ).model_dump()
             )
 
-            if user:
+            if jwt:
+                user = UserRepository(session).get(jwt.sub)
                 result["user_id"] = user.id
                 result_id = ResultRepository(session).add(result)
 
@@ -222,7 +222,7 @@ def tune_sequences(token: OptionalTokenDependency, base_url: str, form: RunTunin
                 TunedSequenceRepository(session).add_batch(tuned_sequences)
 
             host_codon_table = CodonTableRepository(session).get(
-                user and user.id, form.host_codon_table_id
+                jwt and jwt.sub, form.host_codon_table_id
             )
             result["host_codon_table"] = CodonTable.model_validate(
                 host_codon_table
@@ -230,7 +230,7 @@ def tune_sequences(token: OptionalTokenDependency, base_url: str, form: RunTunin
 
         time.sleep(0.5)
 
-        if user and form.send_email and result_id:
+        if jwt and form.send_email and result_id:
             result_url = f"{base_url}results/{result_id}"
             send_email(
                 user.email,
@@ -272,7 +272,7 @@ def tune_sequences(token: OptionalTokenDependency, base_url: str, form: RunTunin
 @router.post("/run-tuning")
 async def run_tuning(
     request: Request,
-    token: OptionalTokenDependency,
+    jwt: OptionalJWTDependency,
     form: RunTuningForm,
 ):
     selected_queue = (
@@ -282,7 +282,7 @@ async def run_tuning(
     )
     job = selected_queue.enqueue(
         tune_sequences,
-        token,
+        jwt,
         str(request.base_url),
         form,
         job_timeout=-1,  # -1 for infinite timeout, if None the default value 180 is used
@@ -297,7 +297,7 @@ def stream_tuning_state(job_id: str):
     return StreamingResponse(stream_job_state(job_id), media_type="text/event-stream")
 
 
-@router.delete("/tuning/{job_id}", dependencies=[Depends(check_is_member)])
+@router.delete("/tuning/{job_id}", dependencies=[Depends(JWTDependency)])
 def cancel_tuning(job_id: str):
     cancel_job(job_id)
 

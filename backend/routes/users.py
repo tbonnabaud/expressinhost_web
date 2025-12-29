@@ -3,12 +3,7 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, status
 from fastapi.exceptions import HTTPException
 
-from ..authentication import (
-    TokenDependency,
-    check_is_admin,
-    get_current_user,
-    hash_password,
-)
+from ..authentication import JWTDependency, check_is_admin, hash_password
 from ..crud.users import UserRepository
 from ..database import SessionDependency, SessionWithCommitDependency
 from ..schemas import User, UserForm, UserPasswordForm, UserProfileForm, UserRoleForm
@@ -23,8 +18,8 @@ def list_users(session: SessionDependency, filter_params: FilterParamDependency)
 
 
 @router.get("/users/me", response_model=User)
-def get_me(session: SessionDependency, token: TokenDependency):
-    current_user = get_current_user(session, token)
+def get_me(session: SessionDependency, jwt: JWTDependency):
+    current_user = UserRepository(session).get(jwt.sub)
 
     if current_user is None:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "Not found.")
@@ -56,31 +51,27 @@ def add_user(session: SessionWithCommitDependency, data: UserForm):
 @router.put("/users/me/profile")
 def update_me_profile(
     session: SessionWithCommitDependency,
-    token: TokenDependency,
+    jwt: JWTDependency,
     data: UserProfileForm,
 ):
-    current_user = get_current_user(session, token)
     updated_user = data.model_dump()
 
-    return UserRepository(session).update(current_user.id, updated_user)
+    return UserRepository(session).update(jwt.sub, updated_user)
 
 
 @router.put("/users/me/password")
 def update_me_password(
-    session: SessionWithCommitDependency, data: UserPasswordForm, reset: bool = False
+    session: SessionWithCommitDependency, jwt: JWTDependency, data: UserPasswordForm
 ):
-    current_user = get_current_user(session, data.reset_token, check_for_reset=reset)
     updated_user = {}
     updated_user["hashed_password"] = hash_password(data.password)
 
-    return UserRepository(session).update(current_user.id, updated_user)
+    return UserRepository(session).update(jwt.sub, updated_user)
 
 
 @router.delete("/users/me")
-def delete_me(session: SessionWithCommitDependency, token: TokenDependency):
-    current_user = get_current_user(session, token)
-
-    return UserRepository(session).delete(current_user.id)
+def delete_me(session: SessionWithCommitDependency, jwt: JWTDependency):
+    return UserRepository(session).delete(jwt.sub)
 
 
 @router.put("/users/{user_id}/role", dependencies=[Depends(check_is_admin)])

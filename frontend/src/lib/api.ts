@@ -29,14 +29,6 @@ client.interceptors.response.use(
   response => response,
   error => {
     if (axios.isAxiosError(error) && error.response) {
-      if (error.response.status == 401) {
-        console.warn(error.message, error.response.data)
-        // Cookie is cleared by server, just clear user state
-        store.emptyCurrentUser()
-      } else {
-        console.error(error.message, error.response.data)
-      }
-
       return Promise.reject({
         code: error.response.status,
         detail: error.response.data.detail,
@@ -52,11 +44,59 @@ client.interceptors.response.use(
   },
 )
 
-async function makeRequest(config: AxiosRequestConfig) {
+let isRefreshing = false
+let refreshPromise: Promise<boolean> | null = null
+
+async function refreshAccessToken(): Promise<boolean> {
+  try {
+    // Call the refresh endpoint to get new tokens
+    await client.post('/auth/refresh')
+    return true
+  } catch (error) {
+    console.error('Failed to refresh token:', error)
+    return false
+  }
+}
+
+async function makeRequest(config: AxiosRequestConfig, isRetry = false) {
   try {
     const response = await client.request(config)
     return [response.data, null]
   } catch (error) {
+    const apiError = error as ApiError
+
+    // If we get a 401 and haven't already retried, attempt to refresh the token
+    if (apiError.code === 401 && !isRetry) {
+      // If a refresh is already in progress, wait for it
+      if (isRefreshing && refreshPromise) {
+        const refreshSucceeded = await refreshPromise
+        if (refreshSucceeded) {
+          // Retry the original request after successful refresh
+          return makeRequest(config, true)
+        } else {
+          // Refresh failed, clear user state
+          store.emptyCurrentUser()
+        }
+      } else {
+        // Start a new refresh
+        isRefreshing = true
+        refreshPromise = refreshAccessToken()
+
+        const refreshSucceeded = await refreshPromise
+
+        isRefreshing = false
+        refreshPromise = null
+
+        if (refreshSucceeded) {
+          // Retry the original request with the new access token
+          return makeRequest(config, true)
+        } else {
+          // Refresh failed, clear user state
+          store.emptyCurrentUser()
+        }
+      }
+    }
+
     return [null, error] as [null, ApiError]
   }
 }
@@ -203,7 +243,7 @@ export const API = {
 }
 
 export async function setCurrentUserInStore() {
-  const [data, error] = await API.users.me()
+  const [data, error] = await API.users.me()  
 
   if (error === null) {
     store.setCurrentUser(data)
