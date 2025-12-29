@@ -94,14 +94,14 @@ nav {
 nav ul {
   display: flex;
   align-items: center;
-  gap: 1em;
+  gap: clamp(0.5rem, 1.5vw, 1.5rem);
   list-style: none;
   padding: 0;
   margin: 0;
 }
 
 nav li {
-  font-size: clamp(1rem, 2vw, 1.5rem);
+  font-size: clamp(0.9rem, 1.5vw, 1.25rem);
 }
 
 nav a.router-link-exact-active button {
@@ -151,27 +151,31 @@ nav a.router-link-exact-active:hover {
   transform: scale(0.95);
 }
 
-@media (min-width: 769px) and (max-width: 1024px) {
-  nav li {
-    font-size: 1.2rem;
-  }
-}
-
-@media (max-width: 1024px) {
+/* Intermediate screens (tablets, small laptops 1024-1366px) */
+@media (min-width: 769px) and (max-width: 1366px) {
   nav {
     padding: 0 1em;
   }
 
   nav ul {
-    gap: 0;
+    gap: clamp(0.3rem, 1vw, 0.8rem);
   }
 
   nav li {
-    font-size: 1em;
+    font-size: clamp(0.85rem, 1.2vw, 1rem);
   }
 
   .nav-links {
-    margin-left: auto;
+    margin-left: 1em;
+  }
+
+  .user-buttons {
+    gap: 0.3rem;
+  }
+
+  .user-buttons button {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.9rem;
   }
 }
 
