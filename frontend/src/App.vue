@@ -101,7 +101,7 @@ nav ul {
 }
 
 nav li {
-  font-size: 1.5em;
+  font-size: clamp(1rem, 2vw, 1.5rem);
 }
 
 nav a.router-link-exact-active button {
@@ -137,7 +137,24 @@ nav a.router-link-exact-active:hover {
 .burger-menu {
   display: none;
   cursor: pointer;
-  font-size: 1.5em;
+  font-size: 2em;
+  padding: 0.25em;
+  user-select: none;
+  transition: transform 0.2s ease;
+}
+
+.burger-menu:hover {
+  transform: scale(1.1);
+}
+
+.burger-menu:active {
+  transform: scale(0.95);
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  nav li {
+    font-size: 1.2rem;
+  }
 }
 
 @media (max-width: 1024px) {
@@ -175,6 +192,25 @@ nav a.router-link-exact-active:hover {
   .nav-links {
     margin-left: 0;
     justify-content: center;
+    flex-direction: column;
+    width: 100%;
+    text-align: center;
+  }
+
+  .user-buttons {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .nav-links li,
+  .user-buttons li {
+    width: 100%;
+    padding: 0.5rem 0;
+  }
+
+  .nav-links a,
+  .user-buttons button {
+    width: 100%;
   }
 }
 </style>

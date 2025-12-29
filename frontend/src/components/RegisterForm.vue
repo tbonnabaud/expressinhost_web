@@ -39,16 +39,19 @@ async function handleSubmit() {
 <template>
   <form @submit.prevent="handleSubmit">
     <fieldset>
-      <label>Full name
+      <label
+        >Full name
         <input type="text" v-model="form.full_name" required />
       </label>
 
-      <label>Email
+      <label
+        >Email
         <input type="email" v-model="form.email" required />
       </label>
 
       <WithAlertError :error="passwordError">
-        <label>Password
+        <label
+          >Password
           <i id="passwordIndications">
             (between 8 and 20 characters, with at least one letter and one
             number)

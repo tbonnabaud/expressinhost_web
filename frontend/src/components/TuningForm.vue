@@ -298,29 +298,34 @@ async function cancelTuning() {
       <section>
         <h2>tRNA GCN tables of the native organisms</h2>
 
-        <table v-if="Object.keys(selectedSequencesNativeCodonTables).length">
-          <thead>
-            <tr>
-              <th>Sequence identifier detected</th>
-              <th>tRNA GCN table of organism detected</th>
-            </tr>
-          </thead>
+        <div
+          v-if="Object.keys(selectedSequencesNativeCodonTables).length"
+          class="table-wrapper"
+        >
+          <table>
+            <thead>
+              <tr>
+                <th>Sequence identifier detected</th>
+                <th>tRNA GCN table of organism detected</th>
+              </tr>
+            </thead>
 
-          <tbody>
-            <tr
-              v-for="seq in Object.keys(selectedSequencesNativeCodonTables)"
-              :key="seq"
-            >
-              <td>{{ seq.split(' ')[0] }}</td>
-              <td class="select-cell">
-                <CodonTableSearchSelect
-                  v-model="selectedSequencesNativeCodonTables[seq]"
-                  :options="codonTableList"
-                />
-              </td>
-            </tr>
-          </tbody>
-        </table>
+            <tbody>
+              <tr
+                v-for="seq in Object.keys(selectedSequencesNativeCodonTables)"
+                :key="seq"
+              >
+                <td>{{ seq.split(' ')[0] }}</td>
+                <td class="select-cell">
+                  <CodonTableSearchSelect
+                    v-model="selectedSequencesNativeCodonTables[seq]"
+                    :options="codonTableList"
+                  />
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
 
         <p v-else>No sequence. Please provide a valid FASTA file.</p>
       </section>
@@ -531,7 +536,7 @@ td {
 #cancelTuningButton {
   height: 100%;
   margin-top: 1em;
-  width: 20%;
+  width: clamp(120px, 30%, 200px);
 }
 
 #tuningProgress {
@@ -548,12 +553,53 @@ td {
 }
 
 #restrictionSiteSelector {
-  margin: auto 15rem;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: min(600px, 90%);
+  padding-left: clamp(1rem, 5vw, 4rem);
+  padding-right: clamp(1rem, 5vw, 4rem);
 }
 
-@media (max-width: 786px) {
+/* Table wrapper for responsive horizontal scrolling */
+.table-wrapper {
+  overflow-x: auto;
+  margin: 1rem 0;
+  border-radius: var(--pico-border-radius);
+  position: relative;
+}
+
+.table-wrapper table {
+  margin-bottom: 0;
+  min-width: 500px;
+}
+
+/* Visual scroll indicator for mobile */
+.table-wrapper::after {
+  content: '← Scroll →';
+  display: none;
+  position: sticky;
+  right: 0;
+  bottom: 0;
+  background: var(--pico-primary);
+  color: var(--pico-primary-inverse);
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+  border-radius: var(--pico-border-radius);
+  opacity: 0.8;
+}
+
+@media (max-width: 768px) {
   #cancelTuningButton {
-    width: 50%;
+    width: min(200px, 80%);
+  }
+
+  #restrictionSiteSelector {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .table-wrapper::after {
+    display: block;
   }
 }
 </style>

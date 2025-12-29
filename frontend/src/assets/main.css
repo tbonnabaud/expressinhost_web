@@ -6,10 +6,35 @@
   --pico-font-size: 100%;
 }
 
+.container {
+  padding-left: var(--pico-spacing, 1rem);
+  padding-right: var(--pico-spacing, 1rem);
+}
+
+/* Tablet - moderate padding */
+@media (min-width: 768px) {
+  .container {
+    padding-left: clamp(2rem, 5vw, 6rem);
+    padding-right: clamp(2rem, 5vw, 6rem);
+  }
+}
+
+/* Desktop - comfortable reading width */
 @media (min-width: 1024px) {
   .container {
-    padding-left: 12em;
-    padding-right: 12em;
+    padding-left: clamp(6rem, 10vw, 12rem);
+    padding-right: clamp(6rem, 10vw, 12rem);
+  }
+}
+
+/* Large desktop - cap maximum */
+@media (min-width: 1440px) {
+  .container {
+    padding-left: 12rem;
+    padding-right: 12rem;
+    max-width: 1600px;
+    margin-left: auto;
+    margin-right: auto;
   }
 }
 
@@ -54,4 +79,71 @@ span.question-marks {
     background-color: #ad1f1f;
     border-color: #ad1f1f;
   }
+}
+
+/* Responsive Utility Classes */
+
+/* Responsive table wrapper utility */
+.responsive-table-wrapper {
+  overflow-x: auto;
+  margin: 1rem 0;
+  border-radius: var(--pico-border-radius);
+  position: relative;
+}
+
+.responsive-table-wrapper table {
+  margin-bottom: 0;
+  min-width: 500px;
+}
+
+/* Scroll indicator */
+.responsive-table-wrapper::before {
+  content: '← Scroll →';
+  position: sticky;
+  left: 0;
+  top: 0;
+  display: none;
+  background: var(--pico-primary);
+  color: var(--pico-primary-inverse);
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+  text-align: center;
+  opacity: 0.8;
+  z-index: 1;
+}
+
+@media (max-width: 768px) {
+  .responsive-table-wrapper::before {
+    display: block;
+  }
+}
+
+/* Fluid spacing utilities */
+.spacing-fluid-sm {
+  margin: clamp(0.5rem, 2vw, 1rem);
+}
+
+.spacing-fluid-md {
+  margin: clamp(1rem, 3vw, 2rem);
+}
+
+.spacing-fluid-lg {
+  margin: clamp(2rem, 5vw, 4rem);
+}
+
+/* Responsive text sizing */
+.text-fluid-sm {
+  font-size: clamp(0.875rem, 1.5vw, 1rem);
+}
+
+.text-fluid-base {
+  font-size: clamp(1rem, 2vw, 1.25rem);
+}
+
+.text-fluid-lg {
+  font-size: clamp(1.25rem, 3vw, 1.75rem);
+}
+
+.text-fluid-xl {
+  font-size: clamp(1.5rem, 4vw, 2.5rem);
 }

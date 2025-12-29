@@ -11,7 +11,12 @@ const props = defineProps<{
   outputValues: Array<number>
 }>()
 
-const chartWidth = computed(() => props.outputValues.length * 10)
+const chartWidth = computed(() => {
+  const calculatedWidth = props.outputValues.length * 10
+  const minWidth = 600 // Minimum for readability
+  const maxWidth = 3000 // Prevent excessive width
+  return Math.max(minWidth, Math.min(calculatedWidth, maxWidth))
+})
 
 const data = computed(() => {
   return {
@@ -68,7 +73,14 @@ const options: ChartOptions = {
 
 <style scoped>
 .chart-container {
-  height: 20vh;
+  height: clamp(200px, 20vh, 400px);
   min-width: 100%;
+  max-width: 100%;
+}
+
+@media (max-width: 768px) {
+  .chart-container {
+    height: clamp(150px, 25vh, 300px);
+  }
 }
 </style>

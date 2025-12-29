@@ -355,7 +355,7 @@ async function deleteCodonTable() {
 #actions {
   margin-bottom: 2em;
   display: grid;
-  grid-template-columns: 2.5fr 2.5fr 2fr 2fr;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 1em;
   padding-bottom: 0;
 }
@@ -370,18 +370,39 @@ async function deleteCodonTable() {
 
 .codon-table-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 15px;
 }
 
-@media (max-width: 1024px) {
+/* Tablet landscape - 2 columns */
+@media (min-width: 769px) and (max-width: 1199px) {
+  .codon-table-grid {
+    grid-template-columns: repeat(2, 1fr);
+    padding: 0 clamp(2rem, 5vw, 4rem);
+  }
+}
+
+/* Tablet portrait */
+@media (min-width: 481px) and (max-width: 768px) {
   #actions {
-    display: flex;
-    flex-direction: column;
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .codon-table-grid {
+    grid-template-columns: repeat(1, 1fr);
+    padding: 0 2rem;
   }
 
   .action-button-group {
-    margin-top: 1em;
+    grid-column: 1 / -1;
+  }
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+  #actions {
+    display: flex;
+    flex-direction: column;
   }
 
   .action-button-group button {
@@ -389,10 +410,8 @@ async function deleteCodonTable() {
   }
 
   .codon-table-grid {
-    display: grid;
     grid-template-columns: repeat(1, 1fr);
-    gap: 15px;
-    padding: 0 150px;
+    padding: 0;
   }
 }
 
@@ -405,7 +424,7 @@ async function deleteCodonTable() {
 
   .codon-table-grid {
     padding: 0;
-    overflow-y: scroll;
+    overflow-y: auto;
   }
 }
 </style>
