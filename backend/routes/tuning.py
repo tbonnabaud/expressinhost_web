@@ -8,7 +8,7 @@ from fastapi.exceptions import HTTPException
 from fastapi.responses import StreamingResponse
 from rq import get_current_job
 
-from ..authentication import JWTDependency, OptionalJWTDependency
+from ..authentication import JWTDependency, JWTPayload, OptionalJWTDependency
 from ..core.codon_tables import ProcessedCodonTable, process_raw_codon_table
 from ..core.exceptions import ExpressInHostError
 from ..core.sequence_tuning import SequenceTuner, StructureTuner
@@ -80,7 +80,7 @@ def get_processed_tables(
     return native_codon_tables, host_codon_table
 
 
-def tune_sequences(jwt: OptionalJWTDependency, base_url: str, form: RunTuningForm):
+def tune_sequences(jwt: JWTPayload, base_url: str, form: RunTuningForm):
     job = get_current_job()
 
     # Extract native codon table IDs of the form
