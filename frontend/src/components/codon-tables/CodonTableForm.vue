@@ -370,11 +370,11 @@ async function deleteCodonTable() {
 
 .codon-table-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(3, 1fr);
   gap: 15px;
 }
 
-/* Tablet landscape - 2 columns */
+/* Medium screens - 2 columns */
 @media (min-width: 769px) and (max-width: 1199px) {
   .codon-table-grid {
     grid-template-columns: repeat(2, 1fr);
