@@ -17,7 +17,7 @@ const model = defineModel<Array<CodonTranslation>>()
       <table>
         <thead>
           <tr>
-            <th>Anticodon</th>
+            <th>Anti-codon</th>
             <th>Codon</th>
             <th>tRNA GCN</th>
             <th>Wobble codon</th>
@@ -26,16 +26,9 @@ const model = defineModel<Array<CodonTranslation>>()
         </thead>
 
         <tbody v-if="model">
-          <PartialCodonTableRow
-            v-for="(row, index) in model"
-            :key="row.codon"
-            :codon="row.codon"
-            :anticodon="row.anticodon"
-            :value="row"
-            v-model:trna-gcn="model[index].trna_gcn"
-            v-model:wobble-codon="model[index].wobble_codon"
-            v-model:wobble-rate="model[index].wobble_rate"
-          />
+          <PartialCodonTableRow v-for="(row, index) in model" :key="row.codon" :codon="row.codon"
+            :anticodon="row.anticodon" :value="row" v-model:trna-gcn="model[index].trna_gcn"
+            v-model:wobble-codon="model[index].wobble_codon" v-model:wobble-rate="model[index].wobble_rate" />
         </tbody>
       </table>
     </div>
@@ -66,7 +59,17 @@ section:hover {
 }
 
 th {
+  text-align: center;
   white-space: nowrap;
+}
+
+/* Fit Anticodon and Codon columns to content */
+th:nth-child(1),
+th:nth-child(2),
+td:nth-child(1),
+td:nth-child(2) {
+  width: 1%;
+  white-space: wrap;
 }
 
 /* Responsive table wrapper */
