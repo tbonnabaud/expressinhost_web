@@ -183,17 +183,12 @@ async function deleteCodonTable() {
 </script>
 
 <template>
-  <BaseModal
-    :open="openDeleteModal"
-    title="Confirm the deletion"
-    @close="openDeleteModal = false"
-  >
+  <BaseModal :open="openDeleteModal" title="Confirm the deletion" @close="openDeleteModal = false">
     <p v-if="selectedCodonTable">
       Do you really want to delete the tRNA GCN table
       <strong>
         <i>{{ selectedCodonTable.organism }}</i> -
-        {{ selectedCodonTable.name }} </strong
-      >?
+        {{ selectedCodonTable.name }} </strong>?
     </p>
 
     <p v-else>No tRNA GCN table selected.</p>
@@ -208,38 +203,20 @@ async function deleteCodonTable() {
     <div id="actions">
       <div class="meta-table-field">
         <label id="codonTableSelect">tRNA GCN table</label>
-        <CodonTableSearchSelect
-          :options="codonTableList"
-          v-model="selectedCodonTable"
-        />
+        <CodonTableSearchSelect :options="codonTableList" v-model="selectedCodonTable" />
       </div>
 
       <div class="meta-table-field">
         <label>Organism</label>
-        <input
-          type="text"
-          placeholder="Organism"
-          v-model="codonTableOrganism"
-          list="existingOrganisms"
-          required
-        />
+        <input type="text" placeholder="Organism" v-model="codonTableOrganism" list="existingOrganisms" required />
         <datalist id="existingOrganisms">
-          <option
-            v-for="org in existingOrganisms"
-            :value="org"
-            :key="org"
-          ></option>
+          <option v-for="org in existingOrganisms" :value="org" :key="org"></option>
         </datalist>
       </div>
 
       <div class="meta-table-field">
         <label>Table name</label>
-        <input
-          type="text"
-          placeholder="Table name"
-          v-model="codonTableName"
-          required
-        />
+        <input type="text" placeholder="Table name" v-model="codonTableName" required />
       </div>
 
       <div class="action-button-group">
@@ -248,11 +225,7 @@ async function deleteCodonTable() {
           Update
         </button>
         <button @click="addNewCodonTable">Save as new</button>
-        <button
-          class="danger"
-          :disabled="!isEditable"
-          @click="openDeleteModal = true"
-        >
+        <button class="danger" :disabled="!isEditable" @click="openDeleteModal = true">
           Delete
         </button>
       </div>
@@ -260,92 +233,32 @@ async function deleteCodonTable() {
 
     <div class="codon-table-grid">
       <div class="column">
-        <PartialCodonTable
-          title="Alanine (Ala)"
-          v-model="translationMapping.Ala"
-        />
-        <PartialCodonTable
-          title="Arginine (Arg)"
-          v-model="translationMapping.Arg"
-        />
-        <PartialCodonTable
-          title="Asparagine (Asn)"
-          v-model="translationMapping.Asn"
-        />
-        <PartialCodonTable
-          title="Aspartic acid (Asp)"
-          v-model="translationMapping.Asp"
-        />
-        <PartialCodonTable
-          title="Cysteine (Cys)"
-          v-model="translationMapping.Cys"
-        />
-        <PartialCodonTable
-          title="Glutamic acid (Glu)"
-          v-model="translationMapping.Glu"
-        />
-        <PartialCodonTable
-          title="Glutamine (Gln)"
-          v-model="translationMapping.Gln"
-        />
+        <PartialCodonTable title="Alanine (Ala)" v-model="translationMapping.Ala" />
+        <PartialCodonTable title="Arginine (Arg)" v-model="translationMapping.Arg" />
+        <PartialCodonTable title="Asparagine (Asn)" v-model="translationMapping.Asn" />
+        <PartialCodonTable title="Aspartic acid (Asp)" v-model="translationMapping.Asp" />
+        <PartialCodonTable title="Cysteine (Cys)" v-model="translationMapping.Cys" />
+        <PartialCodonTable title="Glutamic acid (Glu)" v-model="translationMapping.Glu" />
+        <PartialCodonTable title="Glutamine (Gln)" v-model="translationMapping.Gln" />
       </div>
 
       <div class="column">
-        <PartialCodonTable
-          title="Glycine (Gly)"
-          v-model="translationMapping.Gly"
-        />
-        <PartialCodonTable
-          title="Histidine (His)"
-          v-model="translationMapping.His"
-        />
-        <PartialCodonTable
-          title="Isoleucine (Ile)"
-          v-model="translationMapping.Ile"
-        />
-        <PartialCodonTable
-          title="Leucine (Leu)"
-          v-model="translationMapping.Leu"
-        />
-        <PartialCodonTable
-          title="Lysine (Lys)"
-          v-model="translationMapping.Lys"
-        />
-        <PartialCodonTable
-          title="Methionine (Met)"
-          v-model="translationMapping.Met"
-        />
-        <PartialCodonTable
-          title="Phenylalanine (Phe)"
-          v-model="translationMapping.Phe"
-        />
+        <PartialCodonTable title="Glycine (Gly)" v-model="translationMapping.Gly" />
+        <PartialCodonTable title="Histidine (His)" v-model="translationMapping.His" />
+        <PartialCodonTable title="Isoleucine (Ile)" v-model="translationMapping.Ile" />
+        <PartialCodonTable title="Leucine (Leu)" v-model="translationMapping.Leu" />
+        <PartialCodonTable title="Lysine (Lys)" v-model="translationMapping.Lys" />
+        <PartialCodonTable title="Methionine (Met)" v-model="translationMapping.Met" />
+        <PartialCodonTable title="Phenylalanine (Phe)" v-model="translationMapping.Phe" />
       </div>
 
       <div class="column">
-        <PartialCodonTable
-          title="Proline (Pro)"
-          v-model="translationMapping.Pro"
-        />
-        <PartialCodonTable
-          title="Serine (Ser)"
-          v-model="translationMapping.Ser"
-        />
-        <PartialCodonTable
-          title="Threonine (Thr)"
-          v-model="translationMapping.Thr"
-        />
-        <PartialCodonTable
-          title="Tryptophan (Trp)"
-          v-model="translationMapping.Trp"
-        />
-        <PartialCodonTable
-          title="Tyrosine (Tyr)"
-          v-model="translationMapping.Tyr"
-        />
-        <PartialCodonTable
-          title="Valine (Val)"
-          v-model="translationMapping.Val"
-        />
+        <PartialCodonTable title="Proline (Pro)" v-model="translationMapping.Pro" />
+        <PartialCodonTable title="Serine (Ser)" v-model="translationMapping.Ser" />
+        <PartialCodonTable title="Threonine (Thr)" v-model="translationMapping.Thr" />
+        <PartialCodonTable title="Tryptophan (Trp)" v-model="translationMapping.Trp" />
+        <PartialCodonTable title="Tyrosine (Tyr)" v-model="translationMapping.Tyr" />
+        <PartialCodonTable title="Valine (Val)" v-model="translationMapping.Val" />
       </div>
     </div>
   </form>
