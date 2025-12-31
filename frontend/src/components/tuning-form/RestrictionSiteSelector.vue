@@ -155,19 +155,43 @@ input[type='radio'] {
 
 .restriction-site-selector {
   display: flex;
+  gap: 0.5em;
+  flex-wrap: wrap;
 }
 
 .restriction-site-selector > details {
-  flex: 1;
+  flex: 1 1 auto;
+  min-width: 200px;
 }
 
 .restriction-site-selector > button {
-  margin-left: 0.5em;
+  flex: 0 0 auto;
+  min-width: 80px;
 }
 
 @media (max-width: 768px) {
   .option-list {
-    width: 90vw;
+    width: calc(100vw - 2rem);
+    max-width: 500px;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .restriction-site-selector {
+    flex-direction: column;
+  }
+
+  .restriction-site-selector > details,
+  .restriction-site-selector > button {
+    width: 100%;
+  }
+}
+
+/* Very small phone optimization */
+@media (max-width: 380px) {
+  .option-list {
+    width: calc(100vw - 1rem);
   }
 }
 </style>

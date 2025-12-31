@@ -13,30 +13,25 @@ const model = defineModel<Array<CodonTranslation>>()
   <section>
     <h2>{{ title }}</h2>
 
-    <table>
-      <thead>
-        <tr>
-          <th>Anticodon</th>
-          <th>Codon</th>
-          <th>tRNA GCN</th>
-          <th>Wobble codon</th>
-          <th>Activity (%)</th>
-        </tr>
-      </thead>
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Anti-codon</th>
+            <th>Codon</th>
+            <th>tRNA GCN</th>
+            <th>Wobble codon</th>
+            <th>Activity (%)</th>
+          </tr>
+        </thead>
 
-      <tbody v-if="model">
-        <PartialCodonTableRow
-          v-for="(row, index) in model"
-          :key="row.codon"
-          :codon="row.codon"
-          :anticodon="row.anticodon"
-          :value="row"
-          v-model:trna-gcn="model[index].trna_gcn"
-          v-model:wobble-codon="model[index].wobble_codon"
-          v-model:wobble-rate="model[index].wobble_rate"
-        />
-      </tbody>
-    </table>
+        <tbody v-if="model">
+          <PartialCodonTableRow v-for="(row, index) in model" :key="row.codon" :codon="row.codon"
+            :anticodon="row.anticodon" :value="row" v-model:trna-gcn="model[index].trna_gcn"
+            v-model:wobble-codon="model[index].wobble_codon" v-model:wobble-rate="model[index].wobble_rate" />
+        </tbody>
+      </table>
+    </div>
   </section>
 </template>
 
@@ -64,6 +59,42 @@ section:hover {
 }
 
 th {
+  text-align: center;
   white-space: nowrap;
+}
+
+/* Fit Anticodon and Codon columns to content */
+th:nth-child(1),
+th:nth-child(2),
+td:nth-child(1),
+td:nth-child(2) {
+  width: 1%;
+  white-space: wrap;
+}
+
+/* Responsive table wrapper */
+.table-container {
+  overflow-x: auto;
+  margin: 0.5rem 0;
+}
+
+.table-container table {
+  margin-bottom: 0;
+  min-width: 400px;
+}
+
+@media (max-width: 768px) {
+  .table-container {
+    border-radius: var(--pico-border-radius);
+  }
+
+  .table-container table {
+    font-size: 0.9rem;
+    min-width: 350px;
+  }
+
+  section {
+    padding: 10px;
+  }
 }
 </style>

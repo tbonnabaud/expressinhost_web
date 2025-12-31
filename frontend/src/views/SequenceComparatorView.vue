@@ -47,7 +47,8 @@ function setComparedSequences(value: TunedSequence | null) {
 
 #sequenceComparatorResult {
   flex: 3;
-  width: 500px;
+  width: 100%;
+  min-width: 0;
   margin: auto 1em;
 }
 
@@ -58,6 +59,23 @@ function setComparedSequences(value: TunedSequence | null) {
 
   #sequenceComparatorResult {
     width: 100%;
+    margin: 1em 0;
+  }
+
+  #sequenceComparatorForm {
+    width: 100%;
+  }
+}
+
+/* Intermediate breakpoint for tablets */
+@media (min-width: 769px) and (max-width: 1024px) {
+  #sequenceComparator {
+    gap: 1em;
+  }
+
+  #sequenceComparatorForm,
+  #sequenceComparatorResult {
+    flex: 1 1 100%;
   }
 }
 </style>

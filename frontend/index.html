@@ -23,20 +23,34 @@
   }
 
   body {
-    min-height: 100%;
-    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
     margin: 0;
     padding: 0;
   }
 
+  #app {
+    flex: 1 0 auto;
+  }
+
   #mainFooter {
     font-size: small;
-    position: absolute;
-    bottom: 0;
-    right: 0;
+    flex-shrink: 0;
+    display: flex;
+    justify-content: flex-end;
+    padding: 1rem 0;
   }
 
   #mainFooter a {
-    margin: 10px 20px;
+    margin: 0 clamp(0.5rem, 2vw, 1.25rem);
+  }
+
+  @media (max-width: 768px) {
+    #mainFooter {
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
   }
 </style>

@@ -96,16 +96,17 @@ const user = store.currentUser
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  font-size: 2.5em;
+  font-size: clamp(1.25rem, 4vw, 2.5rem);
   backdrop-filter: blur(15px);
-  padding: 0.5em;
+  padding: clamp(0.5rem, 2vw, 1rem);
   color: whitesmoke;
   text-shadow: 0 0 5px #303030;
+  max-width: 90%;
 }
 
 #description {
-  margin: 2em 5em;
-  font-size: 1.5em;
+  margin: clamp(1rem, 3vw, 2rem) clamp(1rem, 5vw, 5rem);
+  font-size: clamp(1rem, 2vw, 1.5rem);
   text-align: justify;
 }
 
@@ -114,24 +115,13 @@ const user = store.currentUser
   font-style: italic;
 }
 
-@media (max-width: 1024px) {
-  #summary {
-    font-size: 2em;
-  }
-}
-
 @media (max-width: 768px) {
-  #summary {
-    font-size: 1.5em;
-  }
-
   #description {
-    font-size: 1em;
-    text-align: center;
+    text-align: left;
   }
 }
 
 footer {
-  margin: 2em 5em;
+  margin: clamp(1rem, 3vw, 2rem) clamp(1rem, 5vw, 5rem);
 }
 </style>

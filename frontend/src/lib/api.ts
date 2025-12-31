@@ -243,7 +243,7 @@ export const API = {
 }
 
 export async function setCurrentUserInStore() {
-  const [data, error] = await API.users.me()  
+  const [data, error] = await API.users.me()
 
   if (error === null) {
     store.setCurrentUser(data)

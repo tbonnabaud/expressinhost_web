@@ -108,16 +108,33 @@ function colorSequences(inputSequence: string, outputSequence: string) {
 }
 
 .sequence {
-  height: 2.5em;
+  height: auto;
+  line-height: 2.5em;
   white-space: nowrap;
   font-family: monospace;
-  font-size: 1.5em;
+  font-size: clamp(1rem, 2vw, 1.5rem);
 }
 
 .sequence-group {
-  overflow-x: scroll;
-  /* overflow-y: visible; */
+  overflow-x: auto;
+  overflow-y: visible;
   margin: 1em 0 0 1em;
+  position: relative;
+}
+
+/* Scroll indicator for mobile */
+.sequence-group::after {
+  content: '→';
+  position: absolute;
+  right: 0;
+  top: 0;
+  background: var(--pico-primary);
+  color: var(--pico-primary-inverse);
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+  border-radius: var(--pico-border-radius);
+  opacity: 0;
+  transition: opacity 0.2s;
 }
 
 .sequence-group-label {
@@ -131,7 +148,23 @@ function colorSequences(inputSequence: string, outputSequence: string) {
 }
 
 .sequence-comparison {
-  height: 145px;
+  min-height: 145px;
+  height: auto;
+  max-height: 300px;
+}
+
+@media (max-width: 768px) {
+  .sequence-group:not(:hover)::after {
+    opacity: 0.7;
+  }
+
+  .sequence {
+    font-size: 1rem;
+  }
+
+  .sequence-comparison {
+    min-height: 100px;
+  }
 }
 
 details summary {

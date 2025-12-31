@@ -66,15 +66,7 @@ function updateWobbleRate() {
       </select>
     </td>
     <td>
-      <input
-        type="number"
-        v-model="activity"
-        min="0"
-        max="100"
-        step="1"
-        @change="updateWobbleRate"
-        required
-      />
+      <input type="number" v-model="activity" min="0" max="100" step="1" @change="updateWobbleRate" required />
     </td>
   </tr>
 </template>
@@ -82,6 +74,7 @@ function updateWobbleRate() {
 <style scoped>
 td {
   margin: 0;
+  text-align: center;
 }
 
 input,
