@@ -288,7 +288,7 @@ async function deleteCodonTable() {
 }
 
 /* Medium screens - 2 columns on first row, 1 on second */
-@media (max-width: 1365px) {
+@media (max-width: 1366px) {
   .codon-table-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
