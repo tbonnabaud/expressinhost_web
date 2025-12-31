@@ -287,16 +287,12 @@ async function deleteCodonTable() {
   gap: 15px;
 }
 
-/* Medium screens - 2 columns on first row, 1 on second */
+/* Medium screens - single column layout */
 @media (max-width: 1366px) {
   .codon-table-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: 1fr;
     gap: 15px;
-  }
-
-  .codon-table-grid .column:nth-child(3) {
-    grid-column: 1 / -1;
   }
 }
 
