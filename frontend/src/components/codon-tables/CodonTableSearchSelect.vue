@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { computed, ref, watch, nextTick, onMounted, onUnmounted } from 'vue'
 import type { CodonTable } from '@/lib/interfaces'
 
 const DEFAULT_NUMBER_TO_SHOW = 100
@@ -11,6 +11,12 @@ const model = defineModel<CodonTable | null>()
 const filter = ref('')
 const collapseDropdown = ref(true)
 const optionsToShow = ref(DEFAULT_NUMBER_TO_SHOW)
+const summaryRef = ref<HTMLElement | null>(null)
+const dropdownStyle = ref({
+  top: '0px',
+  left: '0px',
+  width: '300px',
+})
 
 const filteredOptions = computed(() => {
   const lowerCaseFilter = filter.value.toLowerCase()
@@ -27,8 +33,37 @@ watch(filter, () => {
   optionsToShow.value = DEFAULT_NUMBER_TO_SHOW
 })
 
-watch(collapseDropdown, () => {
+function updateDropdownPosition() {
+  if (summaryRef.value) {
+    const rect = summaryRef.value.getBoundingClientRect()
+    dropdownStyle.value = {
+      top: `${rect.bottom + 4}px`,
+      left: `${rect.left}px`,
+      width: `${Math.max(rect.width, 300)}px`,
+    }
+  }
+}
+
+function handleWindowScroll() {
+  if (!collapseDropdown.value) {
+    updateDropdownPosition()
+  }
+}
+
+watch(collapseDropdown, async value => {
   optionsToShow.value = DEFAULT_NUMBER_TO_SHOW
+
+  if (!value) {
+    await nextTick()
+    updateDropdownPosition()
+    window.addEventListener('scroll', handleWindowScroll, true)
+  } else {
+    window.removeEventListener('scroll', handleWindowScroll, true)
+  }
+})
+
+onUnmounted(() => {
+  window.removeEventListener('scroll', handleWindowScroll, true)
 })
 
 function handleScroll(event: Event) {
@@ -48,10 +83,7 @@ function closeDropdown() {
 
 <template>
   <details class="dropdown" :open="!collapseDropdown">
-    <summary
-      class="summary-select"
-      @click.prevent="collapseDropdown = !collapseDropdown"
-    >
+    <summary ref="summaryRef" class="summary-select" @click.prevent="collapseDropdown = !collapseDropdown">
       <template v-if="model">
         <i>{{ model.organism }}</i> - {{ model.name }}
       </template>
@@ -59,30 +91,21 @@ function closeDropdown() {
       <template v-else>Select one...</template>
     </summary>
 
-    <ul v-if="!collapseDropdown" class="option-dropdown">
+    <ul v-if="!collapseDropdown" class="option-dropdown"
+      :style="{ top: dropdownStyle.top, left: dropdownStyle.left, width: dropdownStyle.width }">
       <li>
         <input type="search" placeholder="Filter..." v-model="filter" />
       </li>
       <div class="option-list" @scroll="handleScroll">
         <li>
           <label>
-            <input
-              type="radio"
-              v-model="model"
-              :value="null"
-              @change="closeDropdown"
-            />
+            <input type="radio" v-model="model" :value="null" @change="closeDropdown" />
             (None)
           </label>
         </li>
         <li v-for="option in filteredOptions" :key="option.id">
           <label>
-            <input
-              type="radio"
-              v-model="model"
-              :value="option"
-              @change="closeDropdown"
-            />
+            <input type="radio" v-model="model" :value="option" @change="closeDropdown" />
             <i>{{ option.organism }}</i> - {{ option.name }}
           </label>
         </li>
@@ -92,6 +115,16 @@ function closeDropdown() {
 </template>
 
 <style scoped>
+.dropdown {
+  position: relative;
+}
+
+.option-dropdown {
+  position: fixed;
+  z-index: 9999;
+  padding: 0;
+}
+
 .option-list {
   max-height: 30em;
   overflow-y: scroll;
@@ -110,8 +143,13 @@ input[type='radio'] {
 }
 
 @media (max-width: 768px) {
+  .option-dropdown {
+    min-width: 90vw !important;
+    max-width: 90vw !important;
+  }
+
   .option-list {
-    width: 90vw;
+    width: 100%;
   }
 }
 </style>
