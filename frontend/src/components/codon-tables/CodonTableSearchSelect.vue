@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watch, nextTick, onMounted, onUnmounted } from 'vue'
+import { computed, ref, watch, onUnmounted } from 'vue'
 import type { CodonTable } from '@/lib/interfaces'
 
 const DEFAULT_NUMBER_TO_SHOW = 100
@@ -50,11 +50,10 @@ function handleWindowScroll() {
   }
 }
 
-watch(collapseDropdown, async value => {
+watch(collapseDropdown, value => {
   optionsToShow.value = DEFAULT_NUMBER_TO_SHOW
 
   if (!value) {
-    await nextTick()
     updateDropdownPosition()
     window.addEventListener('scroll', handleWindowScroll, true)
   } else {
