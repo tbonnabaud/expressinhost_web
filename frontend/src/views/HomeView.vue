@@ -13,7 +13,7 @@ const user = store.currentUser
       <BannerSlideshow id="banner" />
 
       <p id="summary">
-        <strong>ExpressInHost</strong> tunes genes<br />for recombinant protein
+        <strong>ExpressInHost_web</strong> tunes genes<br />for recombinant protein
         expression
       </p>
     </div>
@@ -21,19 +21,19 @@ const user = store.currentUser
     <div id="description">
       <p>
         In the rapidly evolving field of recombinant protein expression,
-        <strong>ExpressInHost</strong> offers novel and innovative solutions for
-        codon optimisation. <strong>ExpressInHost</strong> tunes mRNA sequences
+        <strong>ExpressInHost_web</strong> offers novel and innovative solutions for
+        codon optimisation. <strong>ExpressInHost_web</strong> tunes mRNA sequences
         to enhance their expression while considering the challenge of proper
         protein folding in a host organism. Utilising tRNA gene copy number data
         from thousands of organisms, including customisable ones, it analyses
         and compares translational speed profiles between native and host
-        systems. <strong>ExpressInHost</strong> also incorporates evolutionary
+        systems. <strong>ExpressInHost_web</strong> also incorporates evolutionary
         perspectives and optimises mRNA structural features for efficient
         ribosome binding.
       </p>
 
       <p>
-        <strong>ExpressInHost</strong> is a free, user-friendly, and fully
+        <strong>ExpressInHost_web</strong> is a free, user-friendly, and fully
         <a href="https://github.com/tbonnabaud/expressinhost_web"
           >open source</a
         >
@@ -65,7 +65,7 @@ const user = store.currentUser
       <a href="https://creativecommons.org/licenses/by/4.0/legalcode.txt"
         >CC BY 4.0 terms</a
       >, including that attribution must be given to the creator, the
-      ExpressInHost team, by citing <a href="">our release article</a> and
+      ExpressInHost_web team, by citing <a href="">our release article</a> and
       <a
         href="https://openresearchsoftware.metajnl.com/articles/10.5334/jors.385"
         >our previous work</a

@@ -35,7 +35,7 @@ async function logout() {
     <nav>
       <ul id="navBrand">
         <li><img id="logo" src="./assets/cropped_logo.png" alt="Logo" /></li>
-        <li><strong>ExpressInHost</strong></li>
+        <li><strong>ExpressInHost_web</strong></li>
         <li class="burger-menu" @click="openMenu = !openMenu">☰</li>
       </ul>
 

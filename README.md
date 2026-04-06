@@ -1,6 +1,6 @@
 # ExpressInHost_web
 
-ExpressInHost is a web application for codon optimization in recombinant protein expression. It optimizes mRNA sequences to enhance protein expression while considering proper protein folding in host organisms.
+ExpressInHost_web is a web application for codon optimization in recombinant protein expression. It optimizes mRNA sequences to enhance protein expression while considering proper protein folding in host organisms.
 
 It builds on our [previous work](https://openresearchsoftware.metajnl.com/articles/10.5334/jors.385) as well as on open source work from other groups for [tRNA data](https://gtrnadb.ucsc.edu/) collection and [ribosome binding](https://joss.theoj.org/papers/10.21105/joss.03362) properties.
 

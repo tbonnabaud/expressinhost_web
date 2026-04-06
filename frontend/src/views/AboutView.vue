@@ -10,7 +10,7 @@
     </p>
 
     <p>
-      The ExpressInHost Web Application is a
+      The ExpressInHost_web Application is a
       <a href="https://github.com/tbonnabaud/expressinhost_web"
         >free and open source</a
       >
@@ -35,7 +35,7 @@
       interface, are licensed under the
       <a href="https://creativecommons.org/licenses/by/4.0/legalcode.txt"
         >Creative Commons Attribution 4.0 International License (CC BY 4.0)</a
-      >. Attribution must be given to the creators — the ExpressInHost Web team
+      >. Attribution must be given to the creators — the ExpressInHost_web team
       — by citing our
       <!-- UPDATE-LINK-AFTER-PUBLICATION -->
       <a href="">release article</a> and our
